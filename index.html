@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <title>test</title>
+    
+    <script id='sap-ui-bootstrap' type='text/javascript'
+    src='./resources/sap-ui-core.js'
+    data-sap-ui-theme='sap_mvi'
+	data-sap-ui-xx-fakeOS="android"
+    data-sap-ui-libs='sap.m,sap.makit'></script>
+    
+    <script src="phonegap.js"></script>
+    <!-- add 'sap.ui.table' and/or other libraries if required -->
+    
+    <script>
+          SSTestData = {
+                charttype : "column",
+                mydata : [ ]};
+            
+        function getSingleSeriesJSONDataModel() {
+          
+            var model = new sap.ui.model.json.JSONModel();
+            model.setData(SSTestData);
+            
+            return model;
+        }
+        
+        
+        // define Controller type
+        
+        sap.ui.controller("my.own.controller", {
+            
+            // implement an event handler in the Controller
+            doSomething: function() {
+                
+            }
+        });
+              
+		
+		// create a mobile App
+		// it initializes the HTML page for mobile use and provides animated page handling
+		var app = new sap.m.App("myApp", {initialPage:"page0"}); // page1 should be displayed first
+		var fulldat;
+		var date = new Date();
+		var mnth = (date.getMonth()+1)>9?(date.getMonth()+1):("0"+(date.getMonth()+1));
+		var dat = date.getDate()>9?date.getDate():("0"+date.getDate());
+		fulldat=date.getFullYear()+"-"+mnth+"-"+dat;
+		var calorie = 5;
+		 // create the first page of your application
+      var page0 = new sap.m.Page("page0", {
+          title: "Login Page",
+		  
+          content :[
+			  
+				 	  new sap.m.Input({placeholder : "Enter User Id"}),
+					  new sap.m.Input({placeholder : "Enter Password"}),,
+				      new sap.m.Button({   // content is just one Button
+						  text : "Login",
+						  tap : function() {
+							  app.to("page1", "flip");   // when tapped, it triggers drilldown to page 2
+						  }
+				       })
+			        ]
+      });
+
+		//create first page of application
+		var page1 = new sap.m.Page("page1", {
+          title: "Resolution Tracker",
+          
+         
+          icon: "http://www.sap.com/global/ui/images/global/sap-logo.png",
+			showNavButton: true,       // page 2 should display a back button
+		   navButtonTap: function(){ 
+              app.back();            // when tapped, the back button should navigate back up to page 0
+          },
+          content : [
+		//to create horizontal flexible box layout
+			new sap.m.HBox("oHBox_restype", 
+			  {
+				items:
+				[
+				  new sap.m.Label( 
+				  {
+					text:"Resolution Type:",
+					  design: "Bold",
+					width: "150px",
+				  }),
+				  
+				 selectbox = new sap.m.Select("txt_type",{
+					  type : "Text",
+					 items:[{text:"Morning Walk"},{text:"Jogging"},{text:"Evening Walk"}]
+					}),
+				    
+				]
+			  }),
+			
+		new sap.m.HBox("oHBox_nextpg1", 
+			  {
+				items:
+				[
+				  new sap.m.Label( 
+				  {
+					text:"Target Distance:",
+					  design: "Bold",
+					width: "150px",
+				  }),
+				  
+				  new sap.m.Input("txt_target1",{
+					  type : "Text",
+					}),
+				    
+					new sap.m.Label( 
+				  {
+					text:" km",
+					  design: "Bold",
+					width: "130px",
+				  }),
+				]
+			  }),
+			  
+		new sap.m.HBox("oHBox_bodyWt", 
+			  {
+				items:
+				[
+				  new sap.m.Label( 
+				  {
+					text:"Body Weight:",
+					  design: "Bold",
+					width: "150px",
+				  }),
+				  
+				  new sap.m.Input("txt_bodywt",{
+					  type : "Text",
+					}),
+				    
+					new sap.m.Label( 
+				  {
+					text:" kg",
+					  design: "Bold",
+					width: "130px",
+				  }),
+				]
+			  }),
+			  		
+			  
+			   new sap.m.Button({   // create a new Button
+              text : "Add",
+              tap : function() {
+				  $("#txt_date-inner").val((date.getFullYear()).toString()+"-"+mnth+"-"+dat);
+				  page1.setTitle($("#txt_type-nat option:selected").text()+" Chart");
+                  app.to("page2", "flip");   // when tapped, it triggers drilldown to page 2
+              }
+          })
+					]
+      });
+
+		
+	
+      // create second page of your application
+     var page2 = new sap.m.Page("page2", {
+          title: "Resolution Tracker",
+		  showNavButton: true,       // page 2 should display a back button
+		   navButtonTap: function(){ 
+			  //app.back();            // when tapped, the back button should navigate back up to page 0
+			  app.to("page1", "flip");
+          },
+		  content :[
+		  
+			new sap.m.HBox("oHBox_datepicker", 
+			  {
+				items:
+				[
+				  new sap.m.Label( 
+				  {
+					text:"Date:",
+					  design: "Bold",
+					width: "130px",
+				  }),
+				  
+				  new sap.m.Input("txt_date",{
+					  type : "Date",
+					  value : fulldat
+					}),
+					
+								    
+				]
+			  }),
+			
+		new sap.m.HBox("oHBox_distance", 
+			  {
+				items:
+				[
+				  new sap.m.Label( 
+				  {
+					text:"Distance:",
+					  design: "Bold",
+					width: "130px",
+				  }),
+				  
+				  new sap.m.Input("txt_distance",{
+					  type : "Text",
+					}),
+				    
+					new sap.m.Label( 
+				  {
+					text:"km",
+					  design: "Bold",
+					width: "130px",
+				  }),
+				]
+			  }),
+			  
+					/*	new sap.m.HBox("oHBox_caloriesBurnt", 
+					{
+					items:
+					[
+					new sap.m.Label( 
+					 {
+					text:"Calories:",
+					  design: "Bold",
+					width: "150px",
+				  }),
+				  
+				  new sap.m.Input("txt_target2",{
+					  type : "Text",
+					}),
+				    
+					new sap.m.Label( 
+				  {
+					text:" kCal",
+					  design: "Bold",
+					width: "130px",
+				  }),
+				]
+			  }),
+				*/
+
+		  
+		  new sap.m.Button({   // content is just one Button
+              text : "Add",
+              tap : function() {
+				  var oChart = new sap.makit.CombinationChart({
+				height: "80%", width: "100%",
+				category : new sap.makit.Category({ column : "date" }),
+				series : new sap.makit.Series({ column : "date" }),
+				values : [new sap.makit.Value({ expression : "distance", format : "string" })],
+			categoryRegions : [
+			new sap.makit.Category({
+				column : "date",
+				displayName : "Date"
+			})]
+		});
+				 
+		var cal = 0.75 * $("#txt_distance-inner").val() * $("#txt_bodywt-inner").val() * 2.20;
+				  var item = {
+					  'date': ($("#txt_date-inner").val()).toString(),
+					  'distance': $("#txt_distance-inner").val(),
+					  'target': $("#txt_target1-inner").val(),
+			  //'calorie': $("#txt_target2-inner").val()
+			  'calorie': cal.toString()
+					}
+				  SSTestData.mydata.push(item);
+				  var model = new sap.ui.model.json.JSONModel();
+				  model.setData(SSTestData);
+				  // layerObj1.setModel(model);
+				  //layer2.setModel(model);
+				 var layerObj1 = new sap.makit.Layer({
+        type : "Column",
+        drawOnSecondaryAxis: false,
+			values : [new sap.makit.Value({
+			expression : "distance", format : "number", displayName : "Distance"
+		})]
+        });
+		
+		
+		
+		layerObj1.addColumn(new sap.makit.Column({name:"date", value:"{date}",type:"Date"}));
+		//layerObj1.addColumn(new sap.makit.Column({name:"cost", value:"{cost}"}));
+		layerObj1.addColumn(new sap.makit.Column({name:"distance", value:"{distance}", type:"string"}));
+		
+		
+		var layer2 = new sap.makit.Layer({
+			type : sap.makit.ChartType.Line,
+			drawOnSecondaryAxis : false,
+			//series : new sap.makit.Series({	column : "target", displayName : "Target" }),
+			values : [new sap.makit.Value({
+				expression : "target",
+				format : "number",
+				displayName : "Target"
+			})],
+			lineThickness:3
+		});
+    
+		layer2.addColumn(new sap.makit.Column({name:"date", value:"{date}"}));
+		layer2.addColumn(new sap.makit.Column({name:"target", value:"{target}"}));
+		    
+		
+		var layer3 = new sap.makit.Layer({
+      type : sap.makit.ChartType.Line,
+      drawOnSecondaryAxis : true,
+      //series : new sap.makit.Series({ column : "target", displayName : "Target" }),
+      values : [new sap.makit.Value({
+        expression : "calorie",
+        format : "number",
+        displayName : "Calorie"
+      })],
+      lineThickness:3
+    });
+    
+    layer3.addColumn(new sap.makit.Column({name:"date", value:"{date}"}));
+    layer3.addColumn(new sap.makit.Column({name:"calorie", value:"{calorie}", type:"number"})); 
+
+		//layer2.addColumn(new sap.makit.Column({name:"revenue", value:"{revenue}", type:"number"}));	
+		layerObj1.setModel(model);
+		layer2.setModel(model);		
+		layer3.setModel(model);		
+		layerObj1.bindRows("/mydata");
+		layer2.bindRows("/mydata");
+		layer3.bindRows("/mydata");
+				  // oChart.destroyLayers();
+				  oChart.addLayer(layerObj1);		
+				  oChart.addLayer(layer2);
+					oChart.addLayer(layer3);
+				  page3.destroyContent();
+				  page3.addContent(oChart);
+				  //  page2.addContent(target_dist);
+                  app.to("page3", "flip");   // when tapped, it triggers drilldown to page 3
+              }
+          })
+					]
+      });
+
+
+      // create the second page of your application
+      var page3 = new sap.m.Page("page3", {
+          title: "Resolution Chart",
+          showNavButton: true,       // page 2 should display a back button
+          navButtonTap: function(){ 
+			  app.back();            // when tapped, the back button should navigate back up to page 1
+			  //app.to("page1", "flip");
+          },
+          icon: "http://www.sap.com/global/ui/images/global/sap-logo.png"
+		  //,
+		  //content : oChart
+      });
+
+      app.addPage(page0).addPage(page1).addPage(page2).addPage(page3); // add both pages to the App
+
+      app.placeAt("content"); // place the App into the HTML document
+
+    </script>
+   <style>
+        #myChart {
+            height: 400px !important;
+        }
+    </style>
+  </head>
+  <body class="sapUiBody">
+    <div id="content"></div>
+  </body>
+</html>
