@@ -6,10 +6,11 @@
     <script id='sap-ui-bootstrap' type='text/javascript'
     src='./resources/sap-ui-core.js'
     data-sap-ui-theme='sap_mvi'
-
+	data-sap-ui-xx-fakeOS="android"
     data-sap-ui-libs='sap.m,sap.makit'></script>
     
     <script src="phonegap.js"></script>
+    <script src="cordova-2.5.0.js"></script>
     <!-- add 'sap.ui.table' and/or other libraries if required -->
     
     <script>
@@ -49,7 +50,7 @@
 		 // create the first page of your application
       var page0 = new sap.m.Page("page0", {
           title: "Login Page",
-		  
+          icon: "http://www.sap.com/global/ui/images/global/sap-logo.png",
           content :[
 			  
 				 	  new sap.m.Input({placeholder : "Enter User Id"}),
@@ -159,10 +160,11 @@
       // create second page of your application
      var page2 = new sap.m.Page("page2", {
           title: "Resolution Tracker",
+          icon: "http://www.sap.com/global/ui/images/global/sap-logo.png",
 		  showNavButton: true,       // page 2 should display a back button
 		   navButtonTap: function(){ 
-			  //app.back();            // when tapped, the back button should navigate back up to page 0
-			  app.to("page1", "flip");
+			  app.back();            // when tapped, the back button should navigate back up to page 0
+			  //app.to("page1", "flip");
           },
 		  content :[
 		  
@@ -324,7 +326,7 @@
 				  page3.destroyContent();
 				  page3.addContent(oChart);
 				  //  page2.addContent(target_dist);
-                  app.to("page3", "flip");   // when tapped, it triggers drilldown to page 3
+                  app.to("page3", "fade");   // when tapped, it triggers drilldown to page 3
               }
           })
 					]
@@ -344,7 +346,7 @@
 		  //content : oChart
       });
 
-      app.addPage(page0).addPage(page1).addPage(page2).addPage(page3); // add both pages to the App
+      app.addPage(page0).addPage(page1).addPage(page2).addPage(page3); // add all pages to the App
 
       app.placeAt("content"); // place the App into the HTML document
 
