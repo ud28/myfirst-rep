@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.viz (1.8.4)
+ * Initialization Code and shared classes of library sap.viz (1.12.1)
  */
 jQuery.sap.declare("sap.viz.library");
 jQuery.sap.require("sap.ui.core.Core");
@@ -39,10 +39,10 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Bar_drawingEffect",
     "sap.viz.ui5.types.Bubble_drawingEffect",
     "sap.viz.ui5.types.Combination_drawingEffect",
-    "sap.viz.ui5.types.Legend_alignment",
-    "sap.viz.ui5.types.Legend_drawingEffect",
-    "sap.viz.ui5.types.Legend_position",
-    "sap.viz.ui5.types.Legend_type",
+    "sap.viz.ui5.types.Datalabel_orientation",
+    "sap.viz.ui5.types.Datalabel_outsidePosition",
+    "sap.viz.ui5.types.Datalabel_paintingMode",
+    "sap.viz.ui5.types.Datalabel_position",
     "sap.viz.ui5.types.Line_drawingEffect",
     "sap.viz.ui5.types.Line_marker_shape",
     "sap.viz.ui5.types.Pie_drawingEffect",
@@ -53,7 +53,11 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Title_alignment",
     "sap.viz.ui5.types.Tooltip_drawingEffect",
     "sap.viz.ui5.types.VerticalBar_drawingEffect",
-    "sap.viz.ui5.types.controller.Interaction_selectability_mode"
+    "sap.viz.ui5.types.controller.Interaction_selectability_mode",
+    "sap.viz.ui5.types.legend.Common_alignment",
+    "sap.viz.ui5.types.legend.Common_drawingEffect",
+    "sap.viz.ui5.types.legend.Common_position",
+    "sap.viz.ui5.types.legend.Common_type"
   ],
   interfaces: [],
   controls: [
@@ -62,6 +66,12 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.Column",
     "sap.viz.ui5.Combination",
     "sap.viz.ui5.Donut",
+    "sap.viz.ui5.DualBar",
+    "sap.viz.ui5.DualColumn",
+    "sap.viz.ui5.DualCombination",
+    "sap.viz.ui5.DualLine",
+    "sap.viz.ui5.DualStackedColumn",
+    "sap.viz.ui5.DualStackedColumn100",
     "sap.viz.ui5.Line",
     "sap.viz.ui5.Pie",
     "sap.viz.ui5.Scatter",
@@ -79,6 +89,8 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Axis_axisline",
     "sap.viz.ui5.types.Axis_gridline",
     "sap.viz.ui5.types.Axis_label",
+    "sap.viz.ui5.types.Axis_layoutInfo",
+    "sap.viz.ui5.types.Axis_scale",
     "sap.viz.ui5.types.Axis_title",
     "sap.viz.ui5.types.Background",
     "sap.viz.ui5.types.Background_border",
@@ -91,15 +103,22 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Bar_tooltip",
     "sap.viz.ui5.types.Bubble",
     "sap.viz.ui5.types.Bubble_animation",
-    "sap.viz.ui5.types.Bubble_tooltip",
+    "sap.viz.ui5.types.Bubble_axisTooltip",
+    "sap.viz.ui5.types.Bubble_hoverline",
     "sap.viz.ui5.types.Combination",
     "sap.viz.ui5.types.Combination_animation",
     "sap.viz.ui5.types.Combination_bar",
+    "sap.viz.ui5.types.Combination_dataShape",
     "sap.viz.ui5.types.Combination_line",
     "sap.viz.ui5.types.Combination_line_marker",
     "sap.viz.ui5.types.Combination_tooltip",
+    "sap.viz.ui5.types.Datalabel",
+    "sap.viz.ui5.types.Datatransform",
+    "sap.viz.ui5.types.Datatransform_autoBinning",
+    "sap.viz.ui5.types.Datatransform_dataSampling",
+    "sap.viz.ui5.types.Datatransform_dataSampling_grid",
     "sap.viz.ui5.types.Legend",
-    "sap.viz.ui5.types.Legend_title",
+    "sap.viz.ui5.types.Legend_layout",
     "sap.viz.ui5.types.Line",
     "sap.viz.ui5.types.Line_animation",
     "sap.viz.ui5.types.Line_hoverline",
@@ -108,27 +127,35 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Pie",
     "sap.viz.ui5.types.Pie_animation",
     "sap.viz.ui5.types.Pie_tooltip",
+    "sap.viz.ui5.types.RootContainer",
+    "sap.viz.ui5.types.RootContainer_layout",
     "sap.viz.ui5.types.Scatter",
     "sap.viz.ui5.types.Scatter_animation",
-    "sap.viz.ui5.types.Scatter_tooltip",
+    "sap.viz.ui5.types.Scatter_axisTooltip",
+    "sap.viz.ui5.types.Scatter_hoverline",
     "sap.viz.ui5.types.StackedVerticalBar",
     "sap.viz.ui5.types.StackedVerticalBar_animation",
     "sap.viz.ui5.types.StackedVerticalBar_tooltip",
     "sap.viz.ui5.types.Title",
+    "sap.viz.ui5.types.Title_layout",
     "sap.viz.ui5.types.Tooltip",
     "sap.viz.ui5.types.VerticalBar",
     "sap.viz.ui5.types.VerticalBar_animation",
     "sap.viz.ui5.types.VerticalBar_tooltip",
     "sap.viz.ui5.types.XYContainer",
     "sap.viz.ui5.types.controller.Interaction",
-    "sap.viz.ui5.types.controller.Interaction_selectability"
+    "sap.viz.ui5.types.controller.Interaction_selectability",
+    "sap.viz.ui5.types.layout.Dock",
+    "sap.viz.ui5.types.layout.Stack",
+    "sap.viz.ui5.types.legend.Common",
+    "sap.viz.ui5.types.legend.Common_title"
   ],
-  version: "1.8.4"});
+  version: "1.12.1"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -142,7 +169,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_gridline_type");
 /**
  * @class List (Enum) type ui5/types/Axis_gridline_type
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -174,7 +201,7 @@ sap.viz.ui5.types.Axis_gridline_type = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -188,7 +215,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_position");
 /**
  * @class List (Enum) type ui5/types/Axis_position
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -226,7 +253,7 @@ sap.viz.ui5.types.Axis_position = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -240,7 +267,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_type");
 /**
  * @class List (Enum) type ui5/types/Axis_type
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -266,7 +293,7 @@ sap.viz.ui5.types.Axis_type = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -280,7 +307,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_direction");
 /**
  * @class List (Enum) type ui5/types/Background_direction
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -306,7 +333,7 @@ sap.viz.ui5.types.Background_direction = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -320,7 +347,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Background_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -346,7 +373,7 @@ sap.viz.ui5.types.Background_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -360,7 +387,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Bar_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -386,7 +413,7 @@ sap.viz.ui5.types.Bar_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -400,7 +427,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Bubble_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -426,7 +453,7 @@ sap.viz.ui5.types.Bubble_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -440,7 +467,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Combination_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -466,7 +493,7 @@ sap.viz.ui5.types.Combination_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -474,45 +501,39 @@ sap.viz.ui5.types.Combination_drawingEffect = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.viz.ui5.types.Legend_alignment.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_alignment");
+// Provides enumeration sap.viz.ui5.types.Datalabel_orientation.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_orientation");
 
 /**
- * @class List (Enum) type ui5/types/Legend_alignment
+ * @class List (Enum) type ui5/types/Datalabel_orientation
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
  */
-sap.viz.ui5.types.Legend_alignment = {
+sap.viz.ui5.types.Datalabel_orientation = {
   
     /**
-     * Value start 
+     * Value horizontal 
      * @public
      */
-    start : "start",
+    horizontal : "horizontal",
 
     /**
-     * Value middle 
+     * Value vertical 
      * @public
      */
-    middle : "middle",
-
-    /**
-     * Value end 
-     * @public
-     */
-    end : "end"
+    vertical : "vertical"
 
   };
   
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -520,61 +541,39 @@ sap.viz.ui5.types.Legend_alignment = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.viz.ui5.types.Legend_drawingEffect.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_drawingEffect");
+// Provides enumeration sap.viz.ui5.types.Datalabel_outsidePosition.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_outsidePosition");
 
 /**
- * @class List (Enum) type ui5/types/Legend_drawingEffect
+ * @class List (Enum) type ui5/types/Datalabel_outsidePosition
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
  */
-sap.viz.ui5.types.Legend_drawingEffect = {
+sap.viz.ui5.types.Datalabel_outsidePosition = {
   
     /**
-     * Value normal 
+     * Value up 
      * @public
      */
-    normal : "normal",
+    up : "up",
 
     /**
-     * Value glossy 
+     * Value down 
      * @public
      */
-    glossy : "glossy"
+    down : "down",
 
-  };
-  
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5)
- * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
- */
+    /**
+     * Value left 
+     * @public
+     */
+    left : "left",
 
-/* ----------------------------------------------------------------------------------
- * Hint: This is a derived (generated) file. Changes should be done in the underlying 
- * source files only (*.type, *.js) or they will be lost after the next generation.
- * ---------------------------------------------------------------------------------- */
-
-// Provides enumeration sap.viz.ui5.types.Legend_position.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_position");
-
-/**
- * @class List (Enum) type ui5/types/Legend_position
- *
- * @version 1.8.4
- * @static
- * @public
- * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
- */
-sap.viz.ui5.types.Legend_position = {
-  
     /**
      * Value right 
      * @public
@@ -586,7 +585,7 @@ sap.viz.ui5.types.Legend_position = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -594,51 +593,79 @@ sap.viz.ui5.types.Legend_position = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.viz.ui5.types.Legend_type.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_type");
+// Provides enumeration sap.viz.ui5.types.Datalabel_paintingMode.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_paintingMode");
 
 /**
- * @class List (Enum) type ui5/types/Legend_type
+ * @class List (Enum) type ui5/types/Datalabel_paintingMode
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
  */
-sap.viz.ui5.types.Legend_type = {
+sap.viz.ui5.types.Datalabel_paintingMode = {
   
     /**
-     * Value ColorLegend 
+     * Value rectCoordinate 
      * @public
      */
-    ColorLegend : "ColorLegend",
+    rectCoordinate : "rectCoordinate",
 
     /**
-     * Value BubbleColorLegend 
+     * Value polarCoordinate 
      * @public
      */
-    BubbleColorLegend : "BubbleColorLegend",
-
-    /**
-     * Value SizeLegend 
-     * @public
-     */
-    SizeLegend : "SizeLegend",
-
-    /**
-     * Value MeasureBasedColoringLegend 
-     * @public
-     */
-    MeasureBasedColoringLegend : "MeasureBasedColoringLegend"
+    polarCoordinate : "polarCoordinate"
 
   };
   
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.Datalabel_position.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_position");
+
+/**
+ * @class List (Enum) type ui5/types/Datalabel_position
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.Datalabel_position = {
+  
+    /**
+     * Value inside 
+     * @public
+     */
+    inside : "inside",
+
+    /**
+     * Value outside 
+     * @public
+     */
+    outside : "outside"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -652,7 +679,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Line_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -678,7 +705,7 @@ sap.viz.ui5.types.Line_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -692,7 +719,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_marker_shape");
 /**
  * @class List (Enum) type ui5/types/Line_marker_shape
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -754,7 +781,7 @@ sap.viz.ui5.types.Line_marker_shape = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -768,7 +795,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Pie_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -794,7 +821,7 @@ sap.viz.ui5.types.Pie_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -808,7 +835,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_valign");
 /**
  * @class List (Enum) type ui5/types/Pie_valign
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -834,7 +861,7 @@ sap.viz.ui5.types.Pie_valign = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -848,7 +875,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Scatter_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -874,7 +901,7 @@ sap.viz.ui5.types.Scatter_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -888,7 +915,7 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/StackedVerticalBar_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -914,7 +941,7 @@ sap.viz.ui5.types.StackedVerticalBar_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -928,7 +955,7 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_mode");
 /**
  * @class List (Enum) type ui5/types/StackedVerticalBar_mode
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -954,7 +981,7 @@ sap.viz.ui5.types.StackedVerticalBar_mode = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -968,7 +995,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Title_alignment");
 /**
  * @class List (Enum) type ui5/types/Title_alignment
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1000,7 +1027,7 @@ sap.viz.ui5.types.Title_alignment = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1014,7 +1041,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Tooltip_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Tooltip_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1040,7 +1067,7 @@ sap.viz.ui5.types.Tooltip_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1054,7 +1081,7 @@ jQuery.sap.declare("sap.viz.ui5.types.VerticalBar_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/VerticalBar_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1080,7 +1107,7 @@ sap.viz.ui5.types.VerticalBar_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1094,7 +1121,7 @@ jQuery.sap.declare("sap.viz.ui5.types.controller.Interaction_selectability_mode"
 /**
  * @class List (Enum) type ui5/types/controller/Interaction_selectability_mode
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1123,93 +1150,281 @@ sap.viz.ui5.types.controller.Interaction_selectability_mode = {
 
   };
   
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_alignment.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_alignment");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_alignment
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_alignment = {
+  
+    /**
+     * Value start 
+     * @public
+     */
+    start : "start",
+
+    /**
+     * Value middle 
+     * @public
+     */
+    middle : "middle",
+
+    /**
+     * Value end 
+     * @public
+     */
+    end : "end"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_drawingEffect.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_drawingEffect");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_drawingEffect
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_drawingEffect = {
+  
+    /**
+     * Value normal 
+     * @public
+     */
+    normal : "normal",
+
+    /**
+     * Value glossy 
+     * @public
+     */
+    glossy : "glossy"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_position.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_position");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_position
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_position = {
+  
+    /**
+     * Value right 
+     * @public
+     */
+    right : "right",
+
+    /**
+     * Value left 
+     * @public
+     */
+    left : "left"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_type.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_type");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_type
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_type = {
+  
+    /**
+     * Value ColorLegend 
+     * @public
+     */
+    ColorLegend : "ColorLegend",
+
+    /**
+     * Value BubbleColorLegend 
+     * @public
+     */
+    BubbleColorLegend : "BubbleColorLegend",
+
+    /**
+     * Value SizeLegend 
+     * @public
+     */
+    SizeLegend : "SizeLegend",
+
+    /**
+     * Value MeasureBasedColoringLegend 
+     * @public
+     */
+    MeasureBasedColoringLegend : "MeasureBasedColoringLegend"
+
+  };
+  
 
 // -----------------------------------------------------------------------------
 // Begin of Library Initialization coding, copied from shared.js
 // -----------------------------------------------------------------------------
 
-//enforce early loading of D3 and Charting lib to load sap.viz.core early 
-jQuery.sap.require("sap.ui.thirdparty.d3");
-jQuery.sap.require("sap.viz.libs.canvg");
-jQuery.sap.require("sap.viz.libs.rgbcolor");
-jQuery.sap.require("sap.viz.libs.sap-viz");
+// check whether browser supports svg
+sap.viz.__svg_support = !!document.createElementNS && !!document.createElementNS("http://www.w3.org/2000/svg","svg").createSVGRect;
+
+if ( sap.viz.__svg_support ) {
+	//enforce early loading of D3 and Charting lib to load sap.viz.core early 
+	jQuery.sap.require("sap.ui.thirdparty.d3");
+	jQuery.sap.require("sap.viz.libs.canvg");
+	jQuery.sap.require("sap.viz.libs.rgbcolor");
+	jQuery.sap.require("sap.viz.libs.sap-viz");
+}
 
 (function() {
 
-	function initLegacySupport() {
-		
-		var LEGACY_NAMES = {
-				"sap.viz.core.BaseChart" : "sap.viz.ui5.core.BaseChart",
-				"sap.viz.core.BaseStructuredType" : "sap.viz.ui5.core.BaseStructuredType",
-				"sap.viz.core.Dataset" : "sap.viz.ui5.data.Dataset",
-				"sap.viz.core.DimensionDefinition" : "sap.viz.ui5.data.DimensionDefinition",
-				"sap.viz.core.FlattenedDataset" : "sap.viz.ui5.data.FlattenedDataset",			
-				"sap.viz.core.MeasureDefinition" : "sap.viz.ui5.data.MeasureDefinition",			
-				"sap.viz.Bar" : "sap.viz.ui5.Bar",
-				"sap.viz.Bubble" : "sap.viz.ui5.Bubble",
-				"sap.viz.VerticalBar" : "sap.viz.ui5.Column",
-				"sap.viz.Combination" : "sap.viz.ui5.Combination",
-				"sap.viz.Donut" : "sap.viz.ui5.Donut",
-				"sap.viz.Line" : "sap.viz.ui5.Line",
-				"sap.viz.Pie" : "sap.viz.ui5.Pie",
-				"sap.viz.Scatter" : "sap.viz.ui5.Scatter",
-				"sap.viz.StackedVerticalBar" : "sap.viz.ui5.StackedColumn",
-				"sap.viz.PercentageStackedVerticalBar" : "sap.viz.ui5.StackedColumn100"
-		};
-	
-		// create stubs for the most important legacy class names
-		jQuery.each(LEGACY_NAMES, function(sOld,sNew) {
-			// delegate constructor
-			jQuery.sap.setObject(sOld, function() {
-				var oNewClass = jQuery.sap.getObject(sNew);
-				var oInstance = jQuery.sap.newObject(oNewClass.prototype);
-				return oNewClass.apply(oInstance, arguments) || oInstance;
-			});
-			// delegate extend
-			jQuery.sap.setObject(sOld + ".extend", function() {
-				return jQuery.sap.getObject(sNew).extend.apply(this, arguments);
-			});
-		});
-		
-		// create stubs for the enum types (static classes)
-		var oLibrary = sap.ui.getCore().getLoadedLibraries()["sap.viz"];
-		if ( oLibrary && oLibrary.types ) {
-			jQuery.each(oLibrary.types, function(idx, sName) {
-				if ( sName.indexOf("sap.viz.ui5.types.") === 0 ) {
-					jQuery.sap.setObject("sap.viz.types." + sName.slice("sap.viz.ui5.types.".length), jQuery.sap.getObject(sName));
-				}
-			});
-		}
-	}
-	
-	initLegacySupport();
-	
-	var bInitialized = false;
+  function initLegacySupport() {
+    
+    var LEGACY_NAMES = {
+        "sap.viz.core.BaseChart" : "sap.viz.ui5.core.BaseChart",
+        "sap.viz.core.BaseStructuredType" : "sap.viz.ui5.core.BaseStructuredType",
+        "sap.viz.core.Dataset" : "sap.viz.ui5.data.Dataset",
+        "sap.viz.core.DimensionDefinition" : "sap.viz.ui5.data.DimensionDefinition",
+        "sap.viz.core.FlattenedDataset" : "sap.viz.ui5.data.FlattenedDataset",      
+        "sap.viz.core.MeasureDefinition" : "sap.viz.ui5.data.MeasureDefinition",      
+        "sap.viz.Bar" : "sap.viz.ui5.Bar",
+        "sap.viz.Bubble" : "sap.viz.ui5.Bubble",
+        "sap.viz.VerticalBar" : "sap.viz.ui5.Column",
+        "sap.viz.Combination" : "sap.viz.ui5.Combination",
+        "sap.viz.Donut" : "sap.viz.ui5.Donut",
+        "sap.viz.Line" : "sap.viz.ui5.Line",
+        "sap.viz.Pie" : "sap.viz.ui5.Pie",
+        "sap.viz.Scatter" : "sap.viz.ui5.Scatter",
+        "sap.viz.StackedVerticalBar" : "sap.viz.ui5.StackedColumn",
+        "sap.viz.PercentageStackedVerticalBar" : "sap.viz.ui5.StackedColumn100"
+    };
+  
+    // create stubs for the most important legacy class names
+    jQuery.each(LEGACY_NAMES, function(sOld,sNew) {
+      // delegate constructor
+      jQuery.sap.setObject(sOld, function() {
+        var oNewClass = jQuery.sap.getObject(sNew);
+        var oInstance = jQuery.sap.newObject(oNewClass.prototype);
+        return oNewClass.apply(oInstance, arguments) || oInstance;
+      });
+      // delegate extend
+      jQuery.sap.setObject(sOld + ".extend", function() {
+        return jQuery.sap.getObject(sNew).extend.apply(this, arguments);
+      });
+    });
+    
+    // create stubs for the enum types (static classes)
+    var oLibrary = sap.ui.getCore().getLoadedLibraries()["sap.viz"];
+    if ( oLibrary && oLibrary.types ) {
+      jQuery.each(oLibrary.types, function(idx, sName) {
+        if ( sName.indexOf("sap.viz.ui5.types.") === 0 ) {
+          jQuery.sap.setObject("sap.viz.types." + sName.slice("sap.viz.ui5.types.".length), jQuery.sap.getObject(sName));
+        }
+      });
+    }
+  }
+  
+  initLegacySupport();
+  
+  var bInitialized = false;
 
 	sap.viz._initializeVIZ = function() {
 		
-		if ( !bInitialized ) {
+		if ( !bInitialized && sap.viz.__svg_support ) {
 
-			if ( sap.viz.lang && sap.viz.lang.langManager && jQuery.isArray(sap.viz.lang.langManager.loadPath) ) {
-				var sPath = jQuery.sap.getModulePath("sap.viz.resources.langs", "/");
-				sap.viz.lang.langManager.loadPath = [sPath];
-				jQuery.sap.log.info("VIZ: load path for lang manager set to " + sPath);
-			}
+      if ( sap.viz.lang && sap.viz.lang.langManager && jQuery.isArray(sap.viz.lang.langManager.loadPath) ) {
+        var sPath = jQuery.sap.getModulePath("sap.viz.resources.langs", "/");
+        sap.viz.lang.langManager.loadPath = [sPath];
+        jQuery.sap.log.info("VIZ: load path for lang manager set to " + sPath);
+      }
 
-		  // initialize the environment
-			sap.viz.env.initialize({
-				'locale': sap.ui.getCore().getConfiguration().getLanguage(),
-				'log' : 'debug' // TODO translate levels, attach to logging to be notified about level changes
-			});
-			jQuery.sap.log.info("VIZ: env initialized (locale=" + sap.ui.getCore().getConfiguration().getLanguage() + ")");
+      // initialize the environment
+      var oLocale = sap.ui.getCore().getConfiguration().getLocale();
+      var sVIZLanguageId = oLocale.getLanguage(); // + (oLocale.getRegion() ? "_" + oLocale.getRegion() : "");
+      if(sVIZLanguageId === 'zh'){
+        sVIZLanguageId = oLocale.getLanguage() + (oLocale.getRegion() ? "_" + oLocale.getRegion() : "");
+      }
+      sap.viz.env.initialize({
+        'locale': sVIZLanguageId,
+        'log' : 'debug' // TODO translate levels, attach to logging to be notified about level changes
+      });
+      jQuery.sap.log.info("VIZ: env initialized (locale=" + sap.ui.getCore().getConfiguration().getLanguage() + ")");
 
-			// attach to theme changes
-			sap.ui.getCore().attachThemeChanged(function(evt) {
-				// TODO propagate CSS content to VIZ TemplateManager
-			});
+      // attach to theme changes
+      sap.ui.getCore().attachThemeChanged(function(evt) {
+        // TODO propagate CSS content to VIZ TemplateManager
+      });
 
-			bInitialized = true;
-		}
-	};
+      bInitialized = true;
+    }
+  };
 
 }());

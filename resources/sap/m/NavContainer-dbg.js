@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '100%')</li>
  * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getDefaultTransitionName defaultTransitionName} : string (default: "slide")</li></ul>
+ * <li>{@link #getDefaultTransitionName defaultTransitionName} : string</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -61,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -81,7 +81,7 @@ sap.ui.core.Control.extend("sap.m.NavContainer", { metadata : {
 		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
-		"defaultTransitionName" : {type : "string", group : "Appearance", defaultValue : "slide"}
+		"defaultTransitionName" : {type : "string", group : "Appearance", defaultValue : null}
 	},
 	defaultAggregation : "pages",
 	aggregations : {
@@ -128,7 +128,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -140,6 +139,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#setHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -153,7 +153,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -165,6 +164,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -178,7 +178,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -191,11 +190,12 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
+
 /**
  * Getter for property <code>defaultTransitionName</code>.
- * The type of the transition/animation to apply when "to()" is called without defining the transition to use. The default is "slide", other options are: "fade" and "show" and the names of any registered custom transitions.
+ * The type of the transition/animation to apply when "to()" is called without defining a transition type to use. The default is "slide" on iOS and Android; on Windows Phone the default is "door". Other options are: "fade", "flip" and "show" - and the names of any registered custom transitions.
  *
- * Default value is <code>"slide"</code>
+ * Default value is empty/<code>undefined</code>
  *
  * @return {string} the value of property <code>defaultTransitionName</code>
  * @public
@@ -204,11 +204,10 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Setter for property <code>defaultTransitionName</code>.
  *
- * Default value is <code>"slide"</code> 
+ * Default value is empty/<code>undefined</code> 
  *
  * @param {string} sDefaultTransitionName  new value for property <code>defaultTransitionName</code>
  * @return {sap.m.NavContainer} <code>this</code> to allow method chaining
@@ -217,20 +216,20 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#setDefaultTransitionName
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>pages</code>.<br/>
- * The content entities between which this NavContainer navigates. These can be of type sap.m.Page, sap.m.Carousel or any other control with fullscreen/page semantics.
+ * The content entities between which this NavContainer navigates. These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
  * 
  * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}
- * 
- * 
  * 
  * @return {sap.ui.core.Control[]}
  * @public
  * @name sap.m.NavContainer#getPages
  * @function
  */
+
 
 /**
  * Inserts a page into the aggregation named <code>pages</code>.
@@ -248,7 +247,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Adds some page <code>oPage</code> 
  * to the aggregation named <code>pages</code>.
@@ -261,7 +259,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Removes an page from the aggregation named <code>pages</code>.
  *
@@ -272,7 +269,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>pages</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -281,7 +277,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#removeAllPages
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>pages</code> 
@@ -294,7 +289,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#indexOfPage
  * @function
  */
-
+	
 
 /**
  * Destroys all the pages in the aggregation 
@@ -304,6 +299,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#destroyPages
  * @function
  */
+
 
 /**
  * This association can be used to define which page is displayed initially. If the given page does not exist or no page is given, the first page which has been added is considered as initial page.
@@ -316,7 +312,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#getInitialPage
  * @function
  */
-
 
 /**
  * This association can be used to define which page is displayed initially. If the given page does not exist or no page is given, the first page which has been added is considered as initial page.
@@ -333,6 +328,8 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
+
+	
 /**
  * The event is fired when navigation between two pages has been triggered. The transition (if any) to the new page has not started yet.
  * This event can be aborted by the application with preventDefault(), which means that there will be no navigation. 
@@ -379,7 +376,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'navigate' event of this <code>sap.m.NavContainer</code>.<br/>
  *
@@ -395,7 +391,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#detachNavigate
  * @function
  */
-
 
 /**
  * Fire event navigate to attached listeners.
@@ -423,6 +418,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#fireNavigate
  * @function
  */
+
 
 /**
  * The event is fired when navigation between two pages has completed. In case of animated transitions this event is fired with some delay after the "navigate" event. 
@@ -468,7 +464,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'afterNavigate' event of this <code>sap.m.NavContainer</code>.<br/>
  *
@@ -484,7 +479,6 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#detachAfterNavigate
  * @function
  */
-
 
 /**
  * Fire event afterNavigate to attached listeners.
@@ -510,6 +504,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * @name sap.m.NavContainer#fireAfterNavigate
  * @function
  */
+
 
 /**
  * Navigates to the next page (with drill-down semantic) with the given (or default) animation. This creates a new history item inside the NavContainer and allows going back.
@@ -657,7 +652,7 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
 
 
 /**
- * Returns the currently displayed page-level control.
+ * Returns the currently displayed page-level control. Note: it is not necessarily an instance of sap.m.Page, but it could also be a sap.ui.core.View, sap.m.Carousel, or whatever is aggregated.
  *
  * @name sap.m.NavContainer.prototype.getCurrentPage
  * @function
@@ -693,9 +688,13 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * 
  * The contract for "to" and "back" is that they may do an animation of their choice, but it should not take "too long". At the beginning of the transition the target page "oToPage" does have the CSS class "sapMNavItemHidden" which initially hides the target page (visibility:hidden). The transition can do any preparation (e.g. move that page out of the screen or make it transparent) and then should remove this CSS class.
  * After the animation the target page "oToPage" should cover the entire screen and the source page "oFromPage" should not be visible anymore. This page should then have the CSS class "sapMNavItemHidden".
- * For adding/removing this or other CSS classes, the transition can use the addStyleClass/removeStyleClass method, but it should make sure to give "true" as second parameter to avoid re-rendering:
- * oFromPage.addStyleClass("sapMNavItemHidden", true);
+ * For adding/removing this or other CSS classes, the transition can use the addStyleClass/removeStyleClass method:
+ * oFromPage.addStyleClass("sapMNavItemHidden");
  * When the transition is complete, it MUST call the given fCallback method to inform the NavContainer that navigation has finished!
+ * 
+ * Hint: if the target page of your transition stays black on iPhone, try wrapping the animation start into a
+ * setTimeout(..., 0)
+ * block (delayed, but without waiting).
  * 
  * This method can be called on any NavContainer instance or statically on the sap.m.NavContainer type. However, the transition will always be registered for the type (and ALL instances), not for the single instance on which this method was invoked.
  * 
@@ -710,12 +709,12 @@ sap.m.NavContainer.M_EVENTS = {'navigate':'navigate','afterNavigate':'afterNavig
  * Make sure to only use names that will not collide with transitions which may be added to the NavContainer later. A suggestion is to use the prefix "c_" or "_" for your custom transitions to ensure this.
  * @param {object} 
  *         oTo
- *         The function which will be called by the NavContainer when the application navigates "to()", using this animation's name.
+ *         The function which will be called by the NavContainer when the application navigates "to()", using this animation's name. The NavContainer instance is the "this" context within the animation function.
  * 
  * See the documentation of NavContainer.addCustomTransitions for more details about this function.
  * @param {object} 
  *         oBack
- *         The function which will be called by the NavContainer when the application navigates "back()" from a page where it had navigated to using this animation's name.
+ *         The function which will be called by the NavContainer when the application navigates "back()" from a page where it had navigated to using this animation's name. The NavContainer instance is the "this" context within the animation function.
  * 
  * See the documentation of NavContainer.addCustomTransitions for more details about this function.
 
@@ -836,6 +835,14 @@ sap.m.NavContainer.prototype.getPage = function(pageId) {
 	return null;
 };
 
+sap.m.NavContainer.prototype.getDefaultTransitionName = function() {
+	var sName = this.getProperty("defaultTransitionName");
+	if (!sName) {
+		sName = jQuery.os.winphone ? "door" : "slide";
+	}
+	return sName;
+};
+
 
 sap.m.NavContainer.prototype._ensurePageStackInitialized = function() {
 	if (this._pageStack.length === 0) {
@@ -877,9 +884,10 @@ sap.m.NavContainer.prototype._afterTransitionCallback = function(oNavInfo, oData
 	oEvent.srcControl = this; // store the element on the event (aligned with jQuery syntax)
 	oNavInfo.from._handleEvent(oEvent);
 	
-	this.fireAfterNavigate(oNavInfo);
 	this._iTransitionsCompleted++;
 	this._bNavigating = false;
+	
+	this.fireAfterNavigate(oNavInfo);
 	// TODO: destroy HTML? Remember to destroy ALL HTML of several pages when backToTop has been called
 };
 
@@ -962,12 +970,12 @@ sap.m.NavContainer.prototype.to = function(pageId, transitionName, data, oTransi
 			// render the page that should get visible
 			var oToPageDomRef;
 			if (!(oToPageDomRef = oToPage.getDomRef()) || sap.ui.core.RenderManager.isPreservedContent(oToPageDomRef)) {
-				oToPage.addStyleClass("sapMNavItemRendering", true);
+				oToPage.addStyleClass("sapMNavItemRendering");
 				jQuery.sap.log.debug("Rendering 'to' page '" + oToPage.toString() + "' for 'to' navigation");
 				var rm = sap.ui.getCore().createRenderManager();
 				rm.render(oToPage, this.getDomRef());
 				rm.destroy();
-				oToPage.addStyleClass("sapMNavItemHidden", true).removeStyleClass("sapMNavItemRendering", true);
+				oToPage.addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRendering");
 			}
 	
 			var oTransition = sap.m.NavContainer.transitions[transitionName] || sap.m.NavContainer.transitions["slide"];
@@ -982,7 +990,7 @@ sap.m.NavContainer.prototype.to = function(pageId, transitionName, data, oTransi
 			}, 5000);
 	
 			this._bNavigating = true;
-			oTransition.to(oFromPage, oToPage, jQuery.proxy(function(){this._afterTransitionCallback(oNavInfo, data);}, this), oTransitionParameters); // trigger the transition
+			oTransition.to.call(this, oFromPage, oToPage, jQuery.proxy(function(){this._afterTransitionCallback(oNavInfo, data);}, this), oTransitionParameters); // trigger the transition
 			
 		} else {
 			jQuery.sap.log.info("Navigation to page with ID '" + pageId + "' has been aborted by the application");
@@ -1118,7 +1126,7 @@ sap.m.NavContainer.prototype._backTo = function(sType, backData, oTransitionPara
 				jQuery.sap.log.info("'Hidden' back navigation in not-rendered NavContainer " + this.toString());
 				return this;
 			}
-	
+			
 			var oTransition = sap.m.NavContainer.transitions[mode] || sap.m.NavContainer.transitions["slide"];
 	
 			// Track proper invocation of the callback  TODO: only do this during development?
@@ -1135,18 +1143,25 @@ sap.m.NavContainer.prototype._backTo = function(sType, backData, oTransitionPara
 			// make sure the to-page is rendered
 			var oToPageDomRef;
 			if (!(oToPageDomRef = oToPage.getDomRef()) || sap.ui.core.RenderManager.isPreservedContent(oToPageDomRef)) {
-				oToPage.addStyleClass("sapMNavItemRendering", true);
+				oToPage.addStyleClass("sapMNavItemRendering");
 				jQuery.sap.log.debug("Rendering 'to' page '" + oToPage.toString() + "' for back navigation");
 				var rm = sap.ui.getCore().createRenderManager();
 				var childPos = this.$().children().index(oFromPage.getDomRef());
 				rm.renderControl(oToPage);
 				rm.flush(this.getDomRef(), false, childPos);
 				rm.destroy();
-				oToPage.addStyleClass("sapMNavItemHidden", true).removeStyleClass("sapMNavItemRendering", true);
+				oToPage.addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRendering");
+			}
+			
+			//if the from page and to page are identical, the transition is skipped.
+			if(oFromPage.getId() === oToPage.getId()){
+				jQuery.sap.log.info("Transition is skipped when navigating back to the same page instance" + oToPage.toString());
+				this._afterTransitionCallback(oNavInfo, oToPageData, backData);
+				return this;
 			}
 			
 			// trigger the transition
-			oTransition.back(oFromPage, oToPage, jQuery.proxy(function(){this._afterTransitionCallback(oNavInfo, oToPageData, backData);}, this), oTransitionParameters); // trigger the transition
+			oTransition.back.call(this, oFromPage, oToPage, jQuery.proxy(function(){this._afterTransitionCallback(oNavInfo, oToPageData, backData);}, this), oTransitionParameters); // trigger the transition
 		}
 	}
 	return this;
@@ -1170,14 +1185,14 @@ sap.m.NavContainer.transitions = sap.m.NavContainer.transitions || {}; // make s
 
 sap.m.NavContainer.transitions["show"] = {
 	to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-		oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class which has been added by the NavContainer before the transition was called
-		oFromPage.addStyleClass("sapMNavItemHidden", true);
+		oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class which has been added by the NavContainer before the transition was called
+		oFromPage.addStyleClass("sapMNavItemHidden");
 		fCallback();
 	},
 	
 	back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-		oToPage.removeStyleClass("sapMNavItemHidden", true);
-		oFromPage.addStyleClass("sapMNavItemHidden", true); // instantly hide the previous page
+		oToPage.removeStyleClass("sapMNavItemHidden");
+		oFromPage.addStyleClass("sapMNavItemHidden"); // instantly hide the previous page
 		fCallback();
 	}
 };
@@ -1185,231 +1200,404 @@ sap.m.NavContainer.transitions["show"] = {
 
 //*** SLIDE Transition ***
 
-sap.m.NavContainer.transitions["slide"] = {
-
-	to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-		// set the style classes that represent the initial state
-		oToPage.addStyleClass("sapMNavItemRight", true);     // the page to navigate to should be placed just right of the visible area
-		oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
-
-		// iPhone needs some time... there is no animation without waiting
-		window.setTimeout(function(){
+if (jQuery.support.cssTransitions) {
+	sap.m.NavContainer.transitions["slide"] = {
+	
+		to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			oFromPage.addStyleClass("sapMNavItemCenter");
+			window.setTimeout(function(){ // iPhone seems to need a zero timeout here, otherwise the to page is black (and may suddenly become visible when the DOM is touched)
 			
-			var bOneTransitionFinished = false;
-			var fAfterTransition = null; // make Eclipse aware that this variable is defined
-			fAfterTransition = function() {
-				if (!bOneTransitionFinished) {
-					// the first one of both transitions finished
-					bOneTransitionFinished = true;
-				} else {
-					// the second transition now also finished => clean up
-					oFromPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-					oToPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
+				// set the style classes that represent the initial state
+				oToPage.addStyleClass("sapMNavItemRight");     // the page to navigate to should be placed just right of the visible area
+				oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
+				
+		
+				// iPhone needs some time... there is no animation without waiting
+				window.setTimeout(function(){
 					
-					// clean up the style classes
-					oToPage.removeStyleClass("sapMNavItemSliding", true);
-					oFromPage.removeStyleClass("sapMNavItemSliding", true).addStyleClass("sapMNavItemHidden", true).removeStyleClass("sapMNavItemLeft", true);
-
-					// notify the NavContainer that the animation is complete
-					fCallback();
-				}
-			};
-			
-			oFromPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			oToPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			
-			// set the new style classes that represent the end state (and thus start the transition)
-			oToPage.addStyleClass("sapMNavItemSliding", true).removeStyleClass("sapMNavItemRight", true);
-			oFromPage.addStyleClass("sapMNavItemSliding", true).addStyleClass("sapMNavItemLeft", true);
-
-		}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
-	},
-
-	back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-		// set the style classes that represent the initial state
-		oToPage.addStyleClass("sapMNavItemLeft", true);     // the page to navigate back to should be placed just left of the visible area
-		oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
-
-		// iPhone needs some time... there is no animation without waiting
-		window.setTimeout(function() {
-			
-			var bOneTransitionFinished = false;
-			var fAfterTransition = null; // make Eclipse aware that this variable is defined
-			fAfterTransition = function() {
-				if (!bOneTransitionFinished) {
-					// the first one of both transitions finished
-					bOneTransitionFinished = true;
-				} else {
-					// the second transition now also finished => clean up
-					oFromPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-					oToPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
+					var bOneTransitionFinished = false;
+					var fAfterTransition = null; // make Eclipse aware that this variable is defined
+					fAfterTransition = function() {
+						jQuery(this).unbind("webkitTransitionEnd transitionend");
+						if (!bOneTransitionFinished) {
+							// the first one of both transitions finished
+							bOneTransitionFinished = true;
+						} else {
+							// the second transition now also finished => clean up the style classes
+							oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
+							oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemLeft");
+		
+							// notify the NavContainer that the animation is complete
+							fCallback();
+						}
+					};
 					
-					// clean up the style classes
-					oToPage.removeStyleClass("sapMNavItemSliding", true);
-					oFromPage.removeStyleClass("sapMNavItemSliding", true).addStyleClass("sapMNavItemHidden", true).removeStyleClass("sapMNavItemRight", true);
-
-					// notify the NavContainer that the animation is complete
-					fCallback();
-				}
-			};
+					oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					
+					// set the new style classes that represent the end state (and thus start the transition)
+					oToPage.addStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemCenter").removeStyleClass("sapMNavItemRight");
+					oFromPage.addStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter").addStyleClass("sapMNavItemLeft");
+		
+				}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
 			
-			oFromPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			oToPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			
-			// set the new style classes that represent the end state (and thus start the transition)
-			oToPage.addStyleClass("sapMNavItemSliding", true).removeStyleClass("sapMNavItemLeft", true); // transition from left position to normal/center position starts now
-			oFromPage.addStyleClass("sapMNavItemSliding", true).addStyleClass("sapMNavItemRight", true); // transition from normal position to right position starts now
+			},0); // iPhone seems to need a zero timeout here, otherwise the to page is black (and may suddenly become visible when the DOM is touched)
+		},
+	
+		back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			// set the style classes that represent the initial state
+			oToPage.addStyleClass("sapMNavItemLeft");     // the page to navigate back to should be placed just left of the visible area
+			oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
+			oFromPage.addStyleClass("sapMNavItemCenter");
+	
+			// iPhone needs some time... there is no animation without waiting
+			window.setTimeout(function() {
+				
+				var bOneTransitionFinished = false;
+				var fAfterTransition = null; // make Eclipse aware that this variable is defined
+				fAfterTransition = function() {
+					jQuery(this).unbind("webkitTransitionEnd transitionend");
+					if (!bOneTransitionFinished) {
+						// the first one of both transitions finished
+						bOneTransitionFinished = true;
+					} else {
+						// the second transition now also finished => clean up the style classes
+						oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
+						oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRight");
+	
+						// notify the NavContainer that the animation is complete
+						fCallback();
+					}
+				};
+				
+				oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+				oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+				
+				// set the new style classes that represent the end state (and thus start the transition)
+				oToPage.addStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemCenter").removeStyleClass("sapMNavItemLeft"); // transition from left position to normal/center position starts now
+				oFromPage.addStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter").addStyleClass("sapMNavItemRight"); // transition from normal position to right position starts now
+	
+			}, 100); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
+		}
+	};
+	
+} else { // no CSS transitions, IE9 support
+	sap.m.NavContainer.transitions["slide"] = {
+		to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var $ToPage = oToPage.$();
+			$ToPage.css("left", "100%");
+			oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class which has been added by the NavContainer before the transition was called
 
-		}, 100); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
-	}
-};
+			$ToPage.animate({left: "0%"}, 300);
+			var $FromPage = oFromPage.$();
+			$FromPage.animate({left: "-100%"}, 300, function(){
+				oFromPage.addStyleClass("sapMNavItemHidden");
+				$FromPage.css("left", "0");
+				fCallback();
+			});
+		},
+
+		back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var $ToPage = oToPage.$();
+			$ToPage.css("left", "-100%");
+			oToPage.removeStyleClass("sapMNavItemHidden");
+
+			$ToPage.animate({left: "0%"}, 300);
+			var $FromPage = oFromPage.$();
+			$FromPage.animate({left: "100%"}, 300, function(){
+				oFromPage.addStyleClass("sapMNavItemHidden");
+				$FromPage.css("left", "0");
+				fCallback();
+			});
+		}
+	};
+}
 
 
 //*** FADE Transition ***
 
-sap.m.NavContainer.transitions["fade"] = {
-
-		to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-			// set the style classes that represent the initial state
-			oToPage.addStyleClass("sapMNavItemTransparent", true);
-			oToPage.removeStyleClass("sapMNavItemHidden", true);
-
-			// iPhone needs some time for rendering, there is no animation without waiting
-			window.setTimeout(function(){
-				
-				// the code to be executed after the new page has completed fading in
-				var fAfterTransition = null; // make Eclipse aware that this variable is defined
-				fAfterTransition = function() {
-					oToPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
+if (jQuery.support.cssTransitions) {
+	sap.m.NavContainer.transitions["fade"] = {
+	
+			to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+				// set the style classes that represent the initial state
+				oToPage.addStyleClass("sapMNavItemTransparent");
+				oToPage.removeStyleClass("sapMNavItemHidden");
+	
+				// iPhone needs some time for rendering, there is no animation without waiting
+				window.setTimeout(function(){
 					
-					// clean up the style classes
-					oFromPage.addStyleClass("sapMNavItemHidden", true);
-					oToPage.removeStyleClass("sapMNavItemFading", true).removeStyleClass("sapMNavItemOpaque", true);
+					// the code to be executed after the new page has completed fading in
+					var fAfterTransition = null; // make Eclipse aware that this variable is defined
+					fAfterTransition = function() {
+						jQuery(this).unbind("webkitTransitionEnd transitionend");
+						// clean up the style classes
+						oFromPage.addStyleClass("sapMNavItemHidden");
+						oToPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemOpaque");
+	
+						// notify the NavContainer that the animation is complete
+						fCallback();
+					};
+					
+					oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					
+					// set the new style classes that represent the end state (and thus start the transition)
+					oToPage.addStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemTransparent").addStyleClass("sapMNavItemOpaque");
+					
+				}, 10);
+			},
+	
+			back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+				// set the style classes that represent the initial state
+				oFromPage.addStyleClass("sapMNavItemOpaque");
+				oToPage.removeStyleClass("sapMNavItemHidden");
+	
+				// iPhone needs some time for rendering, there is no animation without waiting
+				window.setTimeout(function() {
+					
+					// the code to be executed after the new page has completed fading in
+					var fAfterTransition = null; // make Eclipse aware that this variable is defined
+					fAfterTransition = function() {
+						jQuery(this).unbind("webkitTransitionEnd transitionend");
+						// clean up the style classes
+						oFromPage.removeStyleClass("sapMNavItemFading").addStyleClass("sapMNavItemHidden"); // TODO: destroy HTML?
+						oFromPage.removeStyleClass("sapMNavItemTransparent");
+	
+						// notify the NavContainer that the animation is complete
+						fCallback();
+					};
+					
+					oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					
+					// set the new style classes that represent the end state (and thus start the transition)
+					oFromPage.addStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemOpaque");
+					oFromPage.addStyleClass("sapMNavItemTransparent");
+	
+				}, 10);
+			}
+	};
 
-					// notify the NavContainer that the animation is complete
-					fCallback();
-				};
-				
-				oToPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-				
-				// set the new style classes that represent the end state (and thus start the transition)
-				oToPage.addStyleClass("sapMNavItemFading", true).removeStyleClass("sapMNavItemTransparent", true).addStyleClass("sapMNavItemOpaque");
-				
-			}, 10);
+} else { // no CSS transitions, IE9 support
+	sap.m.NavContainer.transitions["fade"] = {
+		to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var $ToPage = oToPage.$();
+			$ToPage.css("opacity", "0");
+			oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class which has been added by the NavContainer before the transition was called
+
+			$ToPage.animate({opacity: "1"}, 500, function(){
+				oFromPage.addStyleClass("sapMNavItemHidden");
+				fCallback();
+			});
 		},
 
 		back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-			// set the style classes that represent the initial state
-			oFromPage.addStyleClass("sapMNavItemOpaque", true);
-			oToPage.removeStyleClass("sapMNavItemHidden", true);
+			var $FromPage = oFromPage.$();
+			oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class which has been added by the NavContainer before the transition was called
 
-			// iPhone needs some time for rendering, there is no animation without waiting
-			window.setTimeout(function() {
-				
-				// the code to be executed after the new page has completed fading in
-				var fAfterTransition = null; // make Eclipse aware that this variable is defined
-				fAfterTransition = function() {
-					oFromPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-					
-					// clean up the style classes
-					oFromPage.removeStyleClass("sapMNavItemFading", true).addStyleClass("sapMNavItemHidden", true); // TODO: destroy HTML?
-					oFromPage.removeStyleClass("sapMNavItemTransparent", true);
-
-					// notify the NavContainer that the animation is complete
-					fCallback();
-				};
-				
-				oFromPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-				
-				// set the new style classes that represent the end state (and thus start the transition)
-				oFromPage.addStyleClass("sapMNavItemFading", true).removeStyleClass("sapMNavItemOpaque", true);
-				oFromPage.addStyleClass("sapMNavItemTransparent", true);
-
-			}, 10);
+			$FromPage.animate({opacity: "0"}, 500, function(){
+				oFromPage.addStyleClass("sapMNavItemHidden");
+				$FromPage.css("opacity", "1");
+				fCallback();
+			});
 		}
-};
+	};
+}
 
 
 //*** FLIP Transition ***
 
-sap.m.NavContainer.transitions["flip"] = {
-
-	to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-		// set the style classes that represent the initial state
-		oToPage.addStyleClass("sapMNavItemFlipNext", true);     // the page to navigate to should be placed just right of the visible area
-		oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
-
-		// iPhone needs some time... there is no animation without waiting
-		window.setTimeout(function(){
+if (jQuery.support.cssTransitions) {
+	sap.m.NavContainer.transitions["flip"] = {
+	
+		to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var that = this;
+			window.setTimeout(function(){ // iPhone seems to need a zero timeout here, otherwise the to page is black (and may suddenly become visible when the DOM is touched)
+				
+				var isAndroid23 = (jQuery.os.android && jQuery.os.fVersion === 2.3);
+				
+				// if not Android2.3 then add perspective styles to NavContainer
+				!isAndroid23 && that.$().addClass("sapMNavFlip");
 			
-			var bOneTransitionFinished = false;
-			var fAfterTransition = null; // make Eclipse aware that this variable is defined
-			fAfterTransition = function() {
-				if (!bOneTransitionFinished) {
-					// the first one of both transitions finished
-					bOneTransitionFinished = true;
-				} else {
-					// the second transition now also finished => clean up
-					oFromPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-					oToPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
+				// set the style classes that represent the initial state
+				oToPage.addStyleClass("sapMNavItemFlipNext");     // the page to navigate to should be placed just right of the visible area
+				oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
+		
+				// iPhone needs some time... there is no animation without waiting
+				window.setTimeout(function(){
 					
-					// clean up the style classes
-					oToPage.removeStyleClass("sapMNavItemFlipping", true);
-					oFromPage.removeStyleClass("sapMNavItemFlipping", true).addStyleClass("sapMNavItemHidden", true).removeStyleClass("sapMNavItemFlipPrevious", true);
-
-					// notify the NavContainer that the animation is complete
-					fCallback();
-				}
-			};
-			
-			oFromPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			oToPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			
-			// set the new style classes that represent the end state (and thus start the transition)
-			oToPage.addStyleClass("sapMNavItemFlipping", true).removeStyleClass("sapMNavItemFlipNext", true);
-			oFromPage.addStyleClass("sapMNavItemFlipping", true).addStyleClass("sapMNavItemFlipPrevious", true);
-
-		}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
-	},
-
-	back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
-		// set the style classes that represent the initial state
-		oToPage.addStyleClass("sapMNavItemFlipPrevious", true);     // the page to navigate back to should be placed just left of the visible area
-		oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
-
-		// iPhone needs some time... there is no animation without waiting
-		window.setTimeout(function() {
-			
-			var bOneTransitionFinished = false;
-			var fAfterTransition = null; // make Eclipse aware that this variable is defined
-			fAfterTransition = function() {
-				if (!bOneTransitionFinished) {
-					// the first one of both transitions finished
-					bOneTransitionFinished = true;
-				} else {
-					// the second transition now also finished => clean up
-					oFromPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-					oToPage.detachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
+					var bOneTransitionFinished = false;
+					var fAfterTransition = null; // make Eclipse aware that this variable is defined
+					fAfterTransition = function() {
+						jQuery(this).unbind("webkitTransitionEnd transitionend");
+						if (!bOneTransitionFinished) {
+							// the first one of both transitions finished
+							bOneTransitionFinished = true;
+						} else {
+							// the second transition now also finished => clean up the style classes
+							oToPage.removeStyleClass("sapMNavItemFlipping");
+							oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipPrevious");
+							!isAndroid23 && that.$().removeClass("sapMNavFlip");
+							
+							// notify the NavContainer that the animation is complete
+							fCallback();
+						}
+					};
 					
-					// clean up the style classes
-					oToPage.removeStyleClass("sapMNavItemFlipping", true);
-					oFromPage.removeStyleClass("sapMNavItemFlipping", true).addStyleClass("sapMNavItemHidden", true).removeStyleClass("sapMNavItemFlipNext", true);
-
-					// notify the NavContainer that the animation is complete
-					fCallback();
-				}
-			};
+					oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					
+					// set the new style classes that represent the end state (and thus start the transition)
+					oToPage.addStyleClass("sapMNavItemFlipping").removeStyleClass("sapMNavItemFlipNext");
+					oFromPage.addStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemFlipPrevious");
+		
+				}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few#
+			}, 0);
+		},
+	
+		back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var that = this,
+				isAndroid23 = (jQuery.os.android && jQuery.os.fVersion === 2.3);
 			
-			oFromPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
-			oToPage.attachBrowserEvent("webkitTransitionEnd transitionend msTransitionEnd", fAfterTransition);
+			// if not Android2.3 then add perspective styles to NavContainer
+			!isAndroid23 && that.$().addClass("sapMNavFlip");
 			
-			// set the new style classes that represent the end state (and thus start the transition)
-			oToPage.addStyleClass("sapMNavItemFlipping", true).removeStyleClass("sapMNavItemFlipPrevious", true); // transition from left position to normal/center position starts now
-			oFromPage.addStyleClass("sapMNavItemFlipping", true).addStyleClass("sapMNavItemFlipNext", true); // transition from normal position to right position starts now
+			// set the style classes that represent the initial state
+			oToPage.addStyleClass("sapMNavItemFlipPrevious");     // the page to navigate back to should be placed just left of the visible area
+			oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
+	
+			// iPhone needs some time... there is no animation without waiting
+			window.setTimeout(function() {
+				
+				var bOneTransitionFinished = false;
+				var fAfterTransition = null; // make Eclipse aware that this variable is defined
+				fAfterTransition = function() {
+					jQuery(this).unbind("webkitTransitionEnd transitionend");
+					if (!bOneTransitionFinished) {
+						// the first one of both transitions finished
+						bOneTransitionFinished = true;
+					} else {
+						// the second transition now also finished => clean up the style classes
+						oToPage.removeStyleClass("sapMNavItemFlipping");
+						oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipNext");
+						!isAndroid23 && that.$().removeClass("sapMNavFlip");
+	
+						// notify the NavContainer that the animation is complete
+						fCallback();
+					}
+				};
+				
+				oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+				oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+				
+				// set the new style classes that represent the end state (and thus start the transition)
+				oToPage.addStyleClass("sapMNavItemFlipping").removeStyleClass("sapMNavItemFlipPrevious"); // transition from left position to normal/center position starts now
+				oFromPage.addStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemFlipNext"); // transition from normal position to right position starts now
+	
+			}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
+		}
+	};
 
-		}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
-	}
-};
+} else { // no CSS transitions, IE9 support
+	sap.m.NavContainer.transitions["flip"] = sap.m.NavContainer.transitions["slide"];
+}
+
+
+//*** DOOR Transition ***
+
+if (jQuery.support.cssTransitions) {
+	sap.m.NavContainer.transitions["door"] = {
+	
+		to: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var that = this;
+			window.setTimeout(function(){ // iPhone seems to need a zero timeout here, otherwise the to page is black (and may suddenly become visible when the DOM is touched)
+				
+				var isAndroid23 = (jQuery.os.android && jQuery.os.fVersion === 2.3);
+				
+				// if not Android2.3 then add perspective styles to NavContainer
+				!isAndroid23 && that.$().addClass("sapMNavDoor");
+			
+				// set the style classes that represent the initial state
+				oToPage.addStyleClass("sapMNavItemDoorInNext");     // the page to navigate to should be placed just right of the visible area
+				oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
+		
+				// iPhone needs some time... there is no animation without waiting
+				window.setTimeout(function(){
+					
+					var bOneTransitionFinished = false;
+					var fAfterTransition = null; // make Eclipse aware that this variable is defined
+					fAfterTransition = function() {
+						jQuery(this).unbind("webkitAnimationEnd animationend");
+						if (!bOneTransitionFinished) {
+							// the first one of both transitions finished
+							bOneTransitionFinished = true;
+						} else {
+							// the second transition now also finished => clean up the style classes
+							oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorInNext");
+							oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorInPrevious");
+							!isAndroid23 && that.$().removeClass("sapMNavDoor");
+							
+							// notify the NavContainer that the animation is complete
+							fCallback();
+						}
+					};
+					
+					oFromPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
+					oToPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
+					
+					// set the new style classes that represent the end state (and thus start the transition)
+					oToPage.addStyleClass("sapMNavItemDooring");
+					oFromPage.addStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemDoorInPrevious");
+		
+				}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few#
+			}, 0);
+		},
+	
+		back: function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+			var that = this,
+				isAndroid23 = (jQuery.os.android && jQuery.os.fVersion === 2.3);
+			
+			// if not Android2.3 then add perspective styles to NavContainer
+			!isAndroid23 && that.$().addClass("sapMNavDoor");
+			
+			// set the style classes that represent the initial state
+			oToPage.addStyleClass("sapMNavItemDoorOutNext");     // the page to navigate back to should be placed just left of the visible area
+			oToPage.removeStyleClass("sapMNavItemHidden"); // remove the "hidden" class now which has been added by the NavContainer before the animation was called
+	
+			// iPhone needs some time... there is no animation without waiting
+			window.setTimeout(function() {
+				
+				var bOneTransitionFinished = false;
+				var fAfterTransition = null; // make Eclipse aware that this variable is defined
+				fAfterTransition = function() {
+					jQuery(this).unbind("webkitAnimationEnd animationend");
+					if (!bOneTransitionFinished) {
+						// the first one of both transitions finished
+						bOneTransitionFinished = true;
+					} else {
+						// the second transition now also finished =>  clean up the style classes
+						oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorOutNext");
+						oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorOutPrevious");
+						!isAndroid23 && that.$().removeClass("sapMNavDoor");
+	
+						// notify the NavContainer that the animation is complete
+						fCallback();
+					}
+				};
+				
+				oFromPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
+				oToPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
+				
+				// set the new style classes that represent the end state (and thus start the transition)
+				oToPage.addStyleClass("sapMNavItemDooring"); // transition from left position to normal/center position starts now
+				oFromPage.addStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemDoorOutPrevious"); // transition from normal position to right position starts now
+	
+			}, 60); // this value has been found by testing on actual devices; with "10" there are frequent "no-animation" issues, with "100" there are none, with "50" there are very few
+		}
+	};
+
+} else { // no CSS transitions, IE9 support
+	sap.m.NavContainer.transitions["door"] = sap.m.NavContainer.transitions["slide"];
+}
 
 
 sap.m.NavContainer.prototype.addCustomTransition = function(sName, fTo, fBack) {
@@ -1486,11 +1674,11 @@ sap.m.NavContainer.prototype.insertPage = function(oPage, iIndex) {
 
 /**
  * sap.m.NavContainerChild is an artificial interface with the only purpose to bear the documentation of 
- * pseudo events triggered by sap.m.NavContainer on its child controls when navigation occures and child controls are displayed/hidden.
+ * pseudo events triggered by sap.m.NavContainer on its child controls when navigation occurs and child controls are displayed/hidden.
  * 
  * Interested parties outside the child control can listen to one or more of these events by registering a Delegate:
  * <pre>
- * page1.addDelegate({
+ * page1.addEventDelegate({
  *    onBeforeShow: function(evt) {
  *       // page1 is about to be shown; act accordingly - if required you can read event information from the evt object
  *    },

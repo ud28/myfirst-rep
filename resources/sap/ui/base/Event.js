@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.base.Event");jQuery.sap.require("sap.ui.base.Object");
 sap.ui.base.Event=function(i,s,p){sap.ui.base.Object.apply(this);if(arguments.length>0){this.init(i,s,p)}};

@@ -1,3 +1,4 @@
+.theming
 Chart.css
 images
 images/annotation_BarButtonItem.png
@@ -26,6 +27,7 @@ images/undo_BarButtonItem.png
 images/undo_d_BarButtonItem.png
 images/whatif_icon.png
 library-RTL.css
+library-complete.less
 library-parameters-RTL.json
 library-parameters.json
 library.css

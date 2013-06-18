@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.Interface
@@ -14,7 +14,7 @@ jQuery.sap.declare("sap.ui.base.Interface");
  *        only the defined functions will be visible, no internals of the class can be accessed.
  *
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @param {sap.ui.base.Object}
  *            oObject the instance that needs an interface created
  * @param {string[]}
@@ -35,7 +35,7 @@ sap.ui.base.Interface = function(oObject, aMethods) {
 		return function() {
 //				return oObject[sMethodName].apply(oObject, arguments);
 				var tmp = oObject[sMethodName].apply(oObject, arguments);
-				return (!(tmp instanceof sap.ui.core.Element)&&(tmp instanceof sap.ui.base.Object))?tmp.getInterface():tmp;
+				return (!(tmp instanceof sap.ui.core.Element||tmp instanceof sap.ui.core.Component)&&(tmp instanceof sap.ui.base.Object))?tmp.getInterface():tmp;
 			};
 	}
 

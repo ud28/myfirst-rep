@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -110,8 +110,28 @@ sap.viz.ui5.core.BaseStructuredType.prototype._getOptions = function() {
 			mProps,mDefaults,mAggrs,n,oValue;
 	
 	// HACK: convert UI5 wrapper names back to VIZ names
-	function toviz(n) {
-		return n === 'toolTip' ? 'tooltip' : n;
+	function tovizKey(n) {
+	  n = (n === 'toolTip' ? 'tooltip' : n);
+		return n;
+	}
+	
+	function tovizValue(n){
+	  var result = n;
+	  switch(n){
+	  case 'triangleUp' : 
+	    result = 'triangle-up';
+	    break;
+	  case 'triangleDown' :
+	    result = 'triangle-down';
+	    break;
+	  case 'triangleLeft' :
+	    result = 'triangle-left';
+	    break;
+	  case 'triangleRight' :
+	    result = 'triangle-right';
+	    break;
+	  }
+    return result;
 	}
 	
 	// enforce enrichment of metadata 
@@ -127,7 +147,7 @@ sap.viz.ui5.core.BaseStructuredType.prototype._getOptions = function() {
 	    oValue = this.getProperty(n);
 	    // use values only for non-default values
 	    if ( oValue !== mDefaults[n] ) {
-	    	mOptions[toviz(n)] = oValue;
+	    	mOptions[tovizKey(n)] = tovizValue(oValue);
 	    }
 		}
 	}
@@ -141,7 +161,7 @@ sap.viz.ui5.core.BaseStructuredType.prototype._getOptions = function() {
 	    oValue = this.getAggregation(n, null);
 	    if ( oValue !== null ) {
 	    	// transitively retrieve options 
-	    	mOptions[toviz(n)] = oValue._getOptions();
+	    	mOptions[tovizKey(n)] = oValue._getOptions();
 	    }
 		}
 	}

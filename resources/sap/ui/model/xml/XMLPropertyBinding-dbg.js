@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the XML model implementation of a property binding
@@ -15,21 +15,16 @@ jQuery.sap.require("sap.ui.model.PropertyBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.xml.XMLPropertyBinding
+ * @extends sap.ui.model.PropertyBinding
  */
-sap.ui.model.xml.XMLPropertyBinding = function(oModel, sPath, oContext){
-	sap.ui.model.PropertyBinding.apply(this, arguments);
-
-	this.oValue = this._getValue();
-};
-sap.ui.model.xml.XMLPropertyBinding.prototype = jQuery.sap.newObject(sap.ui.model.PropertyBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.xml.XMLPropertyBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.PropertyBinding",
-  publicMethods : [
-	// methods
-  ]
+sap.ui.model.PropertyBinding.extend("sap.ui.model.xml.XMLPropertyBinding", /** @lends sap.ui.model.xml.XMLPropertyBinding */ {
+	
+	constructor : function(oModel, sPath, oContext){
+		sap.ui.model.PropertyBinding.apply(this, arguments);
+	
+		this.oValue = this._getValue();
+	}
 
 });
 

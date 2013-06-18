@@ -1,9 +1,9 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
-jQuery.sap.declare("sap.ui.core.Control");jQuery.sap.require("sap.ui.core.Element");sap.ui.core.Element.extend("sap.ui.core.Control",{metadata:{"abstract":true,publicMethods:["placeAt","attachBrowserEvent","detachBrowserEvent","getLayoutData","setLayoutData"],library:"sap.ui.core",properties:{},aggregations:{layoutData:{name:"layoutData",type:"sap.ui.core.LayoutData",multiple:false,singularName:"layoutData"}},associations:{},events:{}},constructor:function(i,s){this.bAllowTextSelection=true;sap.ui.core.Element.apply(this,arguments);this.bOutput=this.getDomRef()!=null},renderer:null});
+jQuery.sap.declare("sap.ui.core.Control");jQuery.sap.require("sap.ui.core.Element");sap.ui.core.Element.extend("sap.ui.core.Control",{metadata:{stereotype:"control","abstract":true,publicMethods:["placeAt","attachBrowserEvent","detachBrowserEvent"],library:"sap.ui.core",properties:{},aggregations:{},associations:{},events:{}},constructor:function(i,s){this.bAllowTextSelection=true;sap.ui.core.Element.apply(this,arguments);this.bOutput=this.getDomRef()!=null},renderer:null});
 sap.ui.core.Control.prototype.clone=function(){var c=sap.ui.core.Element.prototype.clone.apply(this,arguments);if(this.aBindParameters){for(var i=0,l=this.aBindParameters.length;i<l;i++){var p=this.aBindParameters[i];c.attachBrowserEvent(p.sEventType,p.fnHandler,p.oListener!==this?p.oListener:undefined)}}c.bAllowTextSelection=this.bAllowTextSelection;return c};
 jQuery.sap.require("sap.ui.core.CustomStyleClassSupport");sap.ui.core.CustomStyleClassSupport.apply(sap.ui.core.Control.prototype);
 sap.ui.core.Control.prototype.isActive=function(){return jQuery.sap.domById(this.sId)!=null};

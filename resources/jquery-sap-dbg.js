@@ -2,7 +2,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -98,7 +98,7 @@
 			tag: oTag,
 			url: sUrl,
 			resourceRoot: sResourceRoot
-		}
+		};
 	})();
 
 	/**
@@ -107,14 +107,14 @@
 	 */
 	(function() {
 		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
-			var bRestart = false,
-				sRestartUrl = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
+			window["sap-ui-bRestart"] = false;
+			window["sap-ui-sRestartUrl"] = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
 
 			// function to replace the bootstrap tag with a newly created script tag to enable
 			// restarting the core from a different server
 			function restartCore() {
 				var oScript = _oBootstrap.tag,
-					sScript = "<script src=\"" + sRestartUrl + "\"";
+					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
 						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue + "\"";
@@ -122,16 +122,28 @@
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
+				
+				// clean up cachebuster stuff
+				jQuery("#sap-ui-bootstrap-cachebusted").remove();
+				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
+				
 				document.write(sScript);
-				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + sRestartUrl);
+				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + window["sap-ui-sRestartUrl"]);
 				oRestart.name = "Restart";
+				
+				// clean up
+				delete window["sap-ui-bRestart"];
+				delete window["sap-ui-sRestartUrl"];
+				
 				throw oRestart;
 			};
 
-			// debugger stops here. if you want to restart from a different server you can adapt the URL
-			// here and set bRestart to true.
+			// debugger stops here. To restart UI5 from somewhere else (default: localhost), set:
+			//    window["sap-ui-bRestart"] = true
+			// If you want to restart from a different server than localhost, you can adapt the URL, e.g.: 
+			//    window["sap-ui-sRestartUrl"] = "http://someserver:8080/sapui5/resources/sap-ui-core.js"
 			debugger;
-			if (bRestart) {
+			if (window["sap-ui-bRestart"]) {
 				restartCore();
 			}
 		}
@@ -245,7 +257,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP AG.
 	 *
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @namespace
 	 * @public
 	 * @static
@@ -1351,7 +1363,9 @@
 				// execute the script in the window context
 				mod.state = 'executing';
 				_execStack.push(sModuleName);
-				if (_window.execScript && (!mod.data || mod.data.length < MAX_EXEC_SCRIPT_LENGTH) ) { 
+				if ( typeof mod.data === "function" ) {
+					mod.data.apply(window);
+				} else if (_window.execScript && (!mod.data || mod.data.length < MAX_EXEC_SCRIPT_LENGTH) ) { 
 					try {
 						mod.data && _window.execScript(mod.data); // execScript fails if data is empty
 					} catch (e) {
@@ -1375,6 +1389,11 @@
 				mod.state = 'failed';
 				mod.error = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 				mod.data = undefined;
+				if ( window["sap-ui-debug"] && (oCfgData["xx-showloaderrors"] || /sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search)) ) {
+					jQuery.sap.log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
+					jQuery.sap.includeScript(mod.url);
+					return;
+				}
 			}
 		}
 	}
@@ -1439,6 +1458,9 @@
 	jQuery.sap.registerPreloadedModules = function(oData, bAsync, oSyncPoint) {
 		if ( _verbose ) {
 			jQuery.sap.log.debug(sLogPrefix + "adding preloaded modules from '" + oData.url + "'");
+		}
+		if ( oData.name ) {
+			mPreloadModules[oData.name] = true;
 		}
 		jQuery.each(oData.modules, function(sName,sContent) {
 			if ( !mModules[sName] ) {
@@ -1512,6 +1534,13 @@
 		if (sId) {
 			oLink.id = sId;
 		}
+		
+		oLink.onload = function(){
+			jQuery(oLink).attr("sap-ui-ready", "true");
+		}
+		oLink.onerror = function(){
+			jQuery(oLink).attr("sap-ui-ready", "false");
+		}
 
 		// check for existence of the link
 		var oOld, bReplace;
@@ -1565,21 +1594,140 @@
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added
 
+	/**
+	 * Holds information about the browser's capabilities and quirks.
+	 * This object is provided and documented by jQuery. 
+	 * But it is extended by SAPUI5 with detection for features not covered by jQuery. This documentation ONLY covers the detection properties added by UI5.
+	 * For the standard detection properties, please refer to the jQuery documentation.
+	 * 
+	 * These properties added by UI5 are only available temporarily until jQuery adds feature detection on their own.
+	 * 
+	 * @name jQuery.support
+	 * @namespace
+	 * @since 1.12
+	 * @public
+	 */
+	
 	if (!jQuery.support) {
 		jQuery.support = {};
 	}
+	
+	jQuery.extend(jQuery.support, {touch: "ontouchend" in document}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+
+	var aPrefixes = ["Webkit", "ms", "Moz"];
+	var oStyle = document.documentElement.style;
+	
+	var preserveOrTestCssPropWithPrefixes = function(detectionName, propName) {
+		if (jQuery.support[detectionName] === undefined) {
+			
+			if (oStyle[propName] !== undefined) { // without vendor prefix
+				jQuery.support[detectionName] = true;
+				return;
+				
+			} else { // try vendor prefixes
+				propName = propName.charAt(0).toUpperCase() + propName.slice(1);
+				for (var i in aPrefixes) {
+					if (oStyle[aPrefixes[i]+propName] !== undefined) {
+						jQuery.support[detectionName] = true;
+						return;
+					}
+				}
+			}
+			jQuery.support[detectionName] = false;
+		}
+	};
 
 	/**
-	 * jQuery.support.flexBoxLayout is true if the current browser supports the CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * Whether the current browser supports (2D) CSS transforms
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransforms
 	 */
-	if (jQuery.support.flexBoxLayout === undefined) {
-		jQuery.support.flexBoxLayout =
-			((document.documentElement.style.MozBoxFlex !== undefined) ||
-				(document.documentElement.style.WebkitBoxFlex !== undefined) ||
-				(document.documentElement.style.MsBoxFlex !== undefined) ||
-				(document.documentElement.style.BoxFlex !== undefined));
+	preserveOrTestCssPropWithPrefixes("cssTransforms", "transform");
+
+	/**
+	 * Whether the current browser supports 3D CSS transforms
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransforms3d
+	 */
+	preserveOrTestCssPropWithPrefixes("cssTransforms3d", "perspective");
+
+	/**
+	 * Whether the current browser supports CSS transitions
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransitions
+	 */
+	preserveOrTestCssPropWithPrefixes("cssTransitions", "transition");
+
+	/**
+	 * Whether the current browser supports (named) CSS animations
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssAnimations
+	 */
+	preserveOrTestCssPropWithPrefixes("cssAnimations", "animationName");
+
+	/**
+	 * Whether the current browser supports CSS gradients. Note that ANY support for CSS gradients leads to "true" here, no matter what the syntax is.
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssGradients
+	 */
+	if (jQuery.support.cssGradients === undefined) {
+		var oElem = document.createElement('div'),
+		oStyle = oElem.style;
+		try {
+			oStyle.backgroundImage = "linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-moz-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-webkit-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-ms-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-webkit-gradient(linear, left top, right bottom, from(red), to(white))";
+		} catch (e) {/* no support...*/}
+		jQuery.support.cssGradients = (oStyle.backgroundImage && oStyle.backgroundImage.indexOf("gradient") > -1);
+		
+		oElem = null; // free for garbage collection
 	}
 
+	/**
+	 * Whether the current browser supports the OLD CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.flexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("flexBoxLayout", "boxFlex");
+
+	/**
+	 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.ie10FlexBoxLayout
+	 * @since 1.12.0
+	 */
+	preserveOrTestCssPropWithPrefixes("ie10FlexBoxLayout", "flexOrder");	// Just using one of the IE10 properties that's not in the new FlexBox spec
+	
+	/**
+	 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.newFlexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
+
+	/**
+	 * Whether the current browser needs a polyfill as a fallback for flex box support
+	 * @type {boolean}
+	 * @private
+	 * @name jQuery.support.useFlexBoxPolyfill
+	 * @since 1.12.0
+	 */
+	if(!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
+		jQuery.support.useFlexBoxPolyfill = true;
+	} else {
+		jQuery.support.useFlexBoxPolyfill = false;
+	}
+	
 	// *********** fixes for (pending) jQuery bugs **********
 	if (!jQuery.support.opacity) {
 		(function() {
@@ -1646,7 +1794,7 @@
 					jQuery.sap.measure.start(url.url, "Request for "+ url.url);
 					fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
-				}
+				};
 			}else if(fnAjax){
 				jQuery.ajax = fnAjax;
 			}
@@ -1963,7 +2111,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.dom') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
@@ -2092,7 +2240,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		sTagName = this.prop("tagName");
 		sType = this.prop("type");
 
-		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password"))
+		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password" || sType == "search"))
 				|| sTagName == "TEXTAREA" )) {
 
 			var oDomRef = this.get(0);
@@ -2556,7 +2704,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 
 
 	/*!
-	 * The following functions are taken from jQuery UI 1.8.17
+	 * The following functions are taken from jQuery UI 1.8.17 but modified
 	 *
 	 * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
 	 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -2615,6 +2763,8 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		 * http://jquery.org/license
 		 *
 		 * http://docs.jquery.com/UI
+		 *
+		 * But since visible is modified, focusable is different too the jQuery UI version too.
 		 */
 		jQuery.extend( jQuery.expr[ ":" ], {
 			/**
@@ -2624,6 +2774,22 @@ jQuery.sap.declare("jquery.sap.dom", false);
 			 * as it is semantically the same thing and intended to do exactly the same.
 			 */
 			focusable: function( element ) {
+				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
+			}
+		});
+	}
+
+	if (!jQuery.expr[":"].sapFocusable) {
+		/*!
+		 * Do not use jQuery UI focusable because this might be overwritten if jQuery UI is loaded
+		 */
+		jQuery.extend( jQuery.expr[ ":" ], {
+			/**
+			 * This defines the jQuery ":sapFocusable" selector; If already present, nothing is
+			 * done here, so we will not overwrite any previous implementation.
+			 * If jQuery UI is loaded later on, this implementation here will NOT be overwritten by.
+			 */
+			sapFocusable: function( element ) {
 				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
 			}
 		});
@@ -2738,7 +2904,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.events') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides functionality related to eventing.
@@ -2747,7 +2913,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.keycodes') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /*
@@ -3278,157 +3444,197 @@ jQuery.sap.KeyCodes = {
 
 
 
-(function(){
+(function() {
 
 	jQuery.sap._touchToMouseEvent = true;
 
-	if ("ontouchend" in document) {
+	var onTouchStart,
+		onTouchMove,
+		onTouchEnd,
+		onTouchCancel,
+		onMouseEvent,
+		aMouseEvents,
+		bIsSimulatingTouchToMouseEvent = false;
 
-		var bHandleEvent = false;
-		var oTarget = null;
-		var bIsMoved = false;
-		var iStartX = null;
-		var iStartY = null;
+	if (jQuery.browser.webkit && /Mobile/.test(navigator.userAgent) && "ontouchend" in document) {
 
-		/**
-		 * Fires a synthetic mouse event for a given type and native touch event.
-		 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var fireMouseEvent = function(sType, oEvent) {
+		bIsSimulatingTouchToMouseEvent = true;
 
-			if (!bHandleEvent || !jQuery.sap._touchToMouseEvent) {
-				return;
-			}
-			
-			// we need mapping of the different event types to get the correct target
-			var oMappedEvent = oEvent.type == "touchend" ? oEvent.changedTouches[0] : oEvent.touches[0]; 
+		var simulateTouchToMouseEvent = (function() {
+			var document = window.document,
+				bHandleEvent = false,
+				oTarget = null,
+				bIsMoved = false,
+				iStartX,
+				iStartY,
+				i = 0;
 
-		    // create the synthetic event
-			var newEvent = document.createEvent('MouseEvent');  // trying to create an actual TouchEvent will create an error
-		    newEvent.initMouseEvent(sType, true, true, window, oEvent.detail,
-		    		oMappedEvent.screenX, oMappedEvent.screenY, oMappedEvent.clientX, oMappedEvent.clientY,
-		    		oEvent.ctrlKey, oEvent.shiftKey, oEvent.altKey, oEvent.metaKey,
-		    		oEvent.button, oEvent.relatedTarget);
-		    
-		    newEvent.isSynthetic = true;
+			aMouseEvents = ["mousedown", "mouseover", "mouseup", "mouseout", "click"];
 
-		    // Timeout needed. Do not interrupt the native event handling.
-		    window.setTimeout(function() {
-		    	oTarget.dispatchEvent(newEvent);
-		    },0);
-		};
+			/**
+			 * Fires a synthetic mouse event for a given type and native touch event.
+			 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			var fireMouseEvent = function(sType, oEvent) {
 
-
-		/**
-		 * Checks if the target of the event is an input field.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @return {Boolean} whether the target of the event is an input field.
-		 */
-		var isInputField = function(oEvent) {
-			return oEvent.target.tagName.match(/input|textarea|select/i);
-		};
-
-		
-		/**
-		 * Mouse event handler. Prevents propagation for native events. 
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onMouseEvent = function(oEvent) {
-			if (!oEvent.isSynthetic && !isInputField(oEvent) && jQuery.sap._touchToMouseEvent) {
-				oEvent.stopPropagation();
-				oEvent.preventDefault();
-			}
-		};
-
-
-		/**
-		 * Touch start event handler. Called whenever a finger is added to the surface. Fires mouse start event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchStart = function(oEvent) {
-			var oTouches = oEvent.touches;
-
-			bHandleEvent = (oTouches.length == 1 && !isInputField(oEvent));
-
-			if (bHandleEvent) {
-				bIsMoved = false;
-				var oTouch = oTouches[0];
-
-				// As we are only interested in the first touch target, we remember it
-				oTarget = oTouch.target;
-			    if(oTarget.nodeType == 3) {
-			    	// no text node
-			    	oTarget = oTarget.parentNode;
-			    }
-
-			    // Remember the start position of the first touch to determine if a click was performed or not.
-				iStartX = oTouch.clientX;
-				iStartY = oTouch.clientY;
-				fireMouseEvent("mousedown", oEvent);
-			}
-		};
-
-
-		/**
-		 * Touch move event handler. Fires mouse move event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchMove = function(oEvent) {
-			if (bHandleEvent) {
-				var oTouch = oEvent.touches[0];
-				// Check if the finger is moved. When the finger was moved, no "click" event is fired.
-				if (Math.abs(oTouch.clientX - iStartX) > 10 || Math.abs(oTouch.clientY - iStartY) > 10) {
-					bIsMoved = true;
+				if (!bHandleEvent) {
+					return;
 				}
-				if (bIsMoved) {
-					// Fire "mousemove" event only when the finger was moved. This is to prevent unwanted movements. 
-					fireMouseEvent("mousemove", oEvent);
+
+				// we need mapping of the different event types to get the correct target
+				var oMappedEvent = oEvent.type == "touchend" ? oEvent.changedTouches[0] : oEvent.touches[0]; 
+
+				// create the synthetic event
+				var newEvent = document.createEvent('MouseEvent');  // trying to create an actual TouchEvent will create an error
+				newEvent.initMouseEvent(sType, true, true, window, oEvent.detail,
+						oMappedEvent.screenX, oMappedEvent.screenY, oMappedEvent.clientX, oMappedEvent.clientY,
+						oEvent.ctrlKey, oEvent.shiftKey, oEvent.altKey, oEvent.metaKey,
+						oEvent.button, oEvent.relatedTarget);
+
+				newEvent.isSynthetic = true;
+
+				// Timeout needed. Do not interrupt the native event handling.
+				window.setTimeout(function() {
+						oTarget.dispatchEvent(newEvent);
+				}, 0);
+			};
+
+			/**
+			 * Checks if the target of the event is an input field.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @return {Boolean} whether the target of the event is an input field.
+			 */
+			var isInputField = function(oEvent) {
+				return oEvent.target.tagName.match(/input|textarea|select/i);
+			};
+
+			/**
+			 * Mouse event handler. Prevents propagation for native events. 
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onMouseEvent = function(oEvent) {
+				if (!oEvent.isSynthetic && !isInputField(oEvent)) {
+					oEvent.stopPropagation();
+					oEvent.preventDefault();
 				}
+			};
+
+			/**
+			 * Touch start event handler. Called whenever a finger is added to the surface. Fires mouse start event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchStart = function(oEvent) {
+				var oTouches = oEvent.touches,
+					oTouch;
+
+				bHandleEvent = (oTouches.length == 1 && !isInputField(oEvent));
+
+				if (bHandleEvent) {
+					bIsMoved = false;
+					oTouch = oTouches[0];
+
+					// As we are only interested in the first touch target, we remember it
+					oTarget = oTouch.target;
+					if(oTarget.nodeType == 3) {
+
+						// no text node
+						oTarget = oTarget.parentNode;
+					}
+
+					// Remember the start position of the first touch to determine if a click was performed or not.
+					iStartX = oTouch.clientX;
+					iStartY = oTouch.clientY;
+					fireMouseEvent("mousedown", oEvent);
+				}
+			};
+
+			/**
+			 * Touch move event handler. Fires mouse move event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchMove = function(oEvent) {
+				var oTouch;
+
+				if (bHandleEvent) {
+					oTouch = oEvent.touches[0];
+
+					// Check if the finger is moved. When the finger was moved, no "click" event is fired.
+					if (Math.abs(oTouch.clientX - iStartX) > 10 || Math.abs(oTouch.clientY - iStartY) > 10) {
+						bIsMoved = true;
+					}
+
+					if (bIsMoved) {
+
+						// Fire "mousemove" event only when the finger was moved. This is to prevent unwanted movements. 
+						fireMouseEvent("mousemove", oEvent);
+					}
+				}
+			};
+
+			/**
+			 * Touch end event handler. Fires mouse up and click event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchEnd = function(oEvent) {
+				fireMouseEvent("mouseup", oEvent);
+				if (!bIsMoved) {
+					fireMouseEvent("click", oEvent);
+				}
+			};
+
+			/**
+			 * Touch cancel event handler. Fires mouse up event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchCancel = function(oEvent) {
+				fireMouseEvent("mouseup", oEvent);
+			};
+
+			// Bind mouse events
+			for (; i < aMouseEvents.length; i++) {
+
+				// Add click on capturing phase to prevent propagation if necessary
+				document.addEventListener(aMouseEvents[i], onMouseEvent, true);
 			}
-		};
 
-
-		/**
-		 * Touch end event handler. Fires mouse up and click event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchEnd = function(oEvent) {
-			fireMouseEvent("mouseup", oEvent);
-			if (!bIsMoved) {
-				fireMouseEvent("click", oEvent);
-			}
-		};
-
-		
-		/**
-		 * Touch cancel event handler. Fires mouse up event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchCancel = function(oEvent) {
-			fireMouseEvent("mouseup", oEvent);
-		};
-
-		// Add click on capturing phase to prevent propagation if necessary
-		document.addEventListener('mousedown', onMouseEvent, true);
-		document.addEventListener('mouseover', onMouseEvent, true);
-		document.addEventListener('mouseup', onMouseEvent, true);
-		document.addEventListener('mouseout', onMouseEvent, true);
-		document.addEventListener('click', onMouseEvent, true);
-		// Bind touch events
-		document.addEventListener('touchstart', onTouchStart, true);
-		document.addEventListener('touchmove', onTouchMove, true);
-		document.addEventListener('touchend', onTouchEnd, true);
-		document.addEventListener('touchcancel', onTouchCancel, true);
+			// Bind touch events
+			document.addEventListener('touchstart', onTouchStart, true);
+			document.addEventListener('touchmove', onTouchMove, true);
+			document.addEventListener('touchend', onTouchEnd, true);
+			document.addEventListener('touchcancel', onTouchCancel, true);
+		}());
 	}
-	
 
+	/**
+	 * Disable touch to mouse handling
+	 *
+	 * @public
+	 */
+	jQuery.sap.disableTouchToMouseHandling = function() {
+		var i = 0;
+
+		if (!bIsSimulatingTouchToMouseEvent) {
+			return;
+		}
+
+		// unbind touch events
+		document.removeEventListener('touchstart', onTouchStart, true);
+		document.removeEventListener('touchmove', onTouchMove, true);
+		document.removeEventListener('touchend', onTouchEnd, true);
+		document.removeEventListener('touchcancel', onTouchCancel, true);
+
+		// unbind mouse events
+		for (; i < aMouseEvents.length; i++) {
+			document.removeEventListener(aMouseEvents[i], onMouseEvent, true);
+		}
+	};
 
 	/**
 	 * List of DOM events that a UIArea automatically takes care of.
@@ -3459,7 +3665,8 @@ jQuery.sap.KeyCodes = {
 		"dragleave",
 		"dragend",
 		"drop",
-		"paste"
+		"paste",
+		"cut"
 	];
 
 
@@ -3912,6 +4119,10 @@ jQuery.sap.KeyCodes = {
 			// also simulate touch events when sap-ui-xx-fakeOS is set (independently of the value and the current browser)
 			bSimulate = bSimulate || (document.location.search.indexOf("sap-ui-xx-fakeOS") > -1 || !!jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS")); // only allowed as URL parameter or in the bootstrap tag
 			
+			// always simulate touch events when the mobile lib is involved (FIXME: hack for Kelley, this does currently not work with dynamic library loading)
+			var sLibs = jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-libs");
+			bSimulate = bSimulate || (sLibs && sLibs.match(/sap.m\b/));
+
 			return bSimulate;
 		}
 
@@ -3920,7 +4131,7 @@ jQuery.sap.KeyCodes = {
 		var aAdditionalControlEvents = [];
 		var aAdditionalPseudoEvents = [];
 
-		if("ontouchend" in document){ //Touch events natively supported
+		if(jQuery.support.touch){ //Touch events natively supported
 			jQuery.sap.touchEventMode = "ON";
 
 			//ensure that "oEvent.touches", ... works (and not only "oEvent.originalEvent.touches", ...)
@@ -3947,14 +4158,25 @@ jQuery.sap.KeyCodes = {
 						$this = jQuery(this);
 						var fHandler = function(oEvent) {
 							if(!(oEvent.type != "mouseout" || (oEvent.type === "mouseout" && jQuery.sap.checkMouseEnterOrLeave(oEvent, that)))){
-								return;
+								var bSkip = true;
+								var sControlId = $this.data("__touchstart_control");
+								if(sControlId){
+									var oCtrlDom = jQuery.sap.domById(sControlId);
+									if(oCtrlDom && jQuery.sap.checkMouseEnterOrLeave(oEvent, oCtrlDom)){
+										bSkip = false;
+									}
+								}
+								if(bSkip){
+									return;
+								}
 							}
-
 							var oNewEvent = jQuery.event.fix(oEvent.originalEvent);
 							oNewEvent.type = sSapName;
+							//reset the _sapui_handledByUIArea flag
+							if (oNewEvent.originalEvent._sapui_firstUIArea) {
+								oNewEvent.originalEvent._sapui_handledByUIArea = false;
+							}
 
-							//TODO Extend if necessary
-							//Extended by adding changedTouches and targetTouches which equal to touches
 							var aTouches = [{
 								identifier: 1,
 								pageX: oNewEvent.pageX,
@@ -3963,23 +4185,36 @@ jQuery.sap.KeyCodes = {
 								clientY: oNewEvent.clientY,
 								screenX: oNewEvent.screenX,
 								screenY: oNewEvent.screenY,
+								target: oNewEvent.target,
 								radiusX: 1,
 								radiusY: 1,
 								rotationAngle: 0
 							}];
-							
-							oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
-							
-							//when touchend, the touches and targetTouches should be empty array
-							if(sName === "touchend"){
-								oNewEvent.touches = oNewEvent.targetTouches = [];
+
+							switch (sName) {
+								case "touchstart":
+								case "touchmove":
+									oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
+									break;
+	
+								case "touchend":
+									oNewEvent.changedTouches = aTouches;
+									oNewEvent.touches = oNewEvent.targetTouches = [];
+									break;
+
+								// no default
 							}
-							
+
 							if(sName === "touchstart" || $this.data("__touch_in_progress")){
 								$this.data("__touch_in_progress", "X");
+								var oControl = jQuery.fn.control ? jQuery(oEvent.target).control(0) : null;
+								if(oControl){
+									$this.data("__touchstart_control", oControl.getId());
+								}
 								oHandle.handler.call(that, oNewEvent);
 								if(sName === "touchend"){
 									$this.removeData("__touch_in_progress");
+									$this.removeData("__touchstart_control");
 								}
 							}
 						};
@@ -4289,13 +4524,12 @@ jQuery.sap.KeyCodes = {
 	}
 
 }());
-
 }; // end of jquery.sap.events
 if ( !jQuery.sap.isDeclared('jquery.sap.mobile') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides common helper functions for the mobile version of UI5 
@@ -4304,35 +4538,60 @@ jQuery.sap.declare("jquery.sap.mobile");
 
 
 (function( $ ) {
-	var FAKE_OS_PATTERN = /(?:\?|&)sap-ui-xx-fakeOS=([^&]+)/;
+	var FAKE_OS_PATTERN = /(?:\?|&)sap-ui-xx-fakeOS=([^&]+)/,
+		mFakeFonts = undefined;
+	$.sap.simulateMobileOnDesktop = false;
 
 	// OS overriding mechanism
-	if (jQuery.browser.webkit && !jQuery.support.touch) { // on non-touch webkit browsers we are interested in overriding
+	if ((jQuery.browser.webkit || (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) >= 10)) && !jQuery.support.touch) { // on non-touch webkit browsers and IE10 we are interested in overriding
 		var result = document.location.search.match(FAKE_OS_PATTERN);
 		var resultUA = result && result[1] || jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
 		if (resultUA) {
+			$.sap.simulateMobileOnDesktop = true;
 			var ua = { // for "ios"/"android"/"blackberry" we have defined fake user-agents; these will affect all other browser/platform detection mechanisms
 					ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					iphone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					ipad: "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206",
 					android: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
-					blackberry: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; de) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.296 Mobile Safari/534.11+"
+					android_phone: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
+					android_tablet: "Mozilla/5.0 (Linux; Android 4.1.2; Nexus 7 Build/JZ054K) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
+					blackberry: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/10.0.9.2372 Mobile Safari/537.10+",
+					winphone: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 920)"
 			}[resultUA];
 
-			if (ua) {
+			if (ua &&
+					(jQuery.browser.webkit && resultUA !== "winphone" || jQuery.browser.msie && resultUA === "winphone")) { // only for the working combinations
+				
+				mFakeFonts = {
+					ios: "'Helvetica Neue'",
+					android: "Roboto,'Droid Sans'",
+					blackberry: "'BBGlobal Sans','DejaVu Sans'",
+					winphone: "'Segoe WP', 'Segoe UI'"
+				};
+				
 				// code for modifying the real user-agent
 				if (jQuery.browser.safari) {
 					var __originalNavigator = window.navigator;
 					window.navigator = new Object();
 					window.navigator.__proto__ = __originalNavigator;
 					window.navigator.__defineGetter__('userAgent', function(){ return ua; });
-
-				} else { // Chrome - we have already verified we have a webkit browser
-					window.navigator.__defineGetter__('userAgent', function(){ return ua; });
+				} else { // Chrome, IE10
+					Object.defineProperty(navigator, "userAgent", {
+						get: function() {
+							return ua;
+						}
+					});
 				}
 
-				// all downstream checks will be fine with the faked user-agent. Now we also need to adjust the wrong upstream settings in jQuery:
-				jQuery.browser.msie = jQuery.browser.opera = jQuery.browser.mozilla = false;
-				jQuery.browser.webkit = true;
-				jQuery.browser.version = "534.46"; // this is not exactly true for all UAs, but there are much bigger shortcomings of this approach than a minor version of the browser, so giving the exact value is not worth the effort
+				if(jQuery.browser.webkit) {
+					// all downstream checks will be fine with the faked user-agent. 
+					// But now we also need to adjust the wrong upstream settings in jQuery:
+					jQuery.browser.msie = jQuery.browser.opera = jQuery.browser.mozilla = false;
+					jQuery.browser.webkit = true;
+					jQuery.browser.version = "534.46"; // this is not exactly true for all UAs, but there are much bigger shortcomings of this approach than a minor version of the browser, so giving the exact value is not worth the effort
+				} else {
+					// in IE10 with winphone emulation, jQuery.browser has already the correct information
+				}
 			}
 		}
 	}
@@ -4355,23 +4614,36 @@ jQuery.sap.declare("jquery.sap.mobile");
 			} else if (result[0].match(bbDevices)) {
 				return({os:"blackberry", version:result[4]});
 			} else {
-				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
+				// currently we only support iOS, Android, BlackBerry 10.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
 				return;
 			}
+			
+		} else if (userAgent.indexOf("(BB10;") > 0) { 
+			// BlackBery 10 has a different structure...
+			platform = /\sVersion\/([\d.]+)\s/;
+			result = userAgent.match(platform);
+			if (result){
+				return {os: "blackberry", version:result[1]};
+			} else {
+				return {os: "blackberry", version:10};
+			}
+			
 		} else {
 			// Windows phone has a different structure, so we need to check with another regExp.
 			platform = /Windows Phone (?:OS )?([\d.]*)/;
 			result = userAgent.match(platform);
 			if (result){
-				return({os: "winphone", version:result[1]});
+				return {os: "winphone", version:result[1]};
 			} else {
 				return;
 			}
 		}
 	}
 
-	var os = getOS() || {};
-	var $window = $(window);
+	var os = getOS() || {},
+		oHtml = window.document.documentElement,
+		iDocumentWidth = oHtml.clientWidth,
+		iDocumentHeight = oHtml.clientHeight;
 
 	if (os.os) {
 		var f = parseFloat(os.version);
@@ -4426,6 +4698,12 @@ jQuery.sap.declare("jquery.sap.mobile");
 		if (!$.os) $.os = {};
 	}
 
+	// if fakeOS is set, the first installed font of the list of fonts for the various platforms will win, but we should only use appropriate ones for the simulated platform
+	if (mFakeFonts) { // this is only defined if we are in a valid fakeOS situation
+		var sFont = mFakeFonts[$.os.os];
+		// this is only relevant for demo purposes in MVI theme. Disabling it for the moment.   $("head").append("<style>.sapUiBody{font-family:" + sFont + ",Helvetica,Arial !important;</style>");
+	}
+
 	// feature and state detection
 	$.extend( $.support, {
 		/**
@@ -4437,11 +4715,29 @@ jQuery.sap.declare("jquery.sap.mobile");
 	});
 
 	function isLandscape(){
-//		return (window.orientation === undefined) || window.orientation === 90 || window.orientation === -90; // landscape is assumed to be default and returned on desktop browsers
-		return $window.width() > $window.height();
+		var iWidth = oHtml.clientWidth,
+			iHeight = oHtml.clientHeight,
+			bKeyboardOpen = false;
+		if(jQuery.sap.touchEventMode === "ON"){
+			//if runs in real device, landscape/portrait detection is skipped when keyboard opens
+			//when keyboard opens, only height changes.
+			//we can't simply compare the width and height on window because when keyboard is open in android, it makes the window smaller which can turn a device from portrait to landscape, for example in Nexus 7
+			//because the height may get smaller than the width when keyboard opens.
+			if((iWidth === iDocumentWidth) && (iHeight !== iDocumentHeight)){
+				bKeyboardOpen = true;
+			}
+			//return window.orientation === undefined || window.orientation === 90 || window.orientation === -90;
+		}
+		
+		iDocumentWidth = iWidth;
+		iDocumentHeight = iHeight;
+		
+		//if keyboard opens, landscape value doesn't change. otherwise, compare width with height.
+		return bKeyboardOpen ? $.device.is.landscape : iWidth > iHeight;
 	}
 
-	var landscape = isLandscape();
+	var landscape = iDocumentWidth > iDocumentHeight;
+	var android_phone = (/(?=android)(?=.*mobile)/i.test(navigator.userAgent));
 	/**
 	 * @name jQuery.device
 	 * @namespace
@@ -4486,7 +4782,23 @@ jQuery.sap.declare("jquery.sap.mobile");
 		 * @type {boolean}
 		 * @public 
 		 */
-		ipad: /ipad/i.test(navigator.userAgent)
+		ipad: /ipad/i.test(navigator.userAgent),
+		/**
+		 * Whether the application runs on an Android phone
+		 * https://developers.google.com/chrome/mobile/docs/user-agent
+		 * Some device vendors however do not follow this rule
+		 * @type {boolean}
+		 * @public
+		 */
+		android_phone: android_phone,
+		/**
+		 * Whether the application runs on an Android tablet
+		 * https://developers.google.com/chrome/mobile/docs/user-agent
+		 * Some device vendors however do not follow this rule
+		 * @type {boolean}
+		 * @public
+		 */
+		android_tablet: (!!$.os.android && !android_phone)
 	},$.device.is);
 
 	$(window).bind("resize", function(){
@@ -4494,46 +4806,65 @@ jQuery.sap.declare("jquery.sap.mobile");
 		$.device.is.landscape = landscape;
 		$.device.is.portrait = !landscape;
 	});
-
+	
 	var tablet = (function(){
-		if(jQuery.os.ios){
-			return jQuery.device.is.ipad;
+		if($.os.ios){
+			return $.device.is.ipad;
 		}else{
 			//this is how android distinguishes between tablet and phone
 			//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
-			return (Math.min($window.width(), $window.height()) >= 600);
+			if(jQuery.sap.touchEventMode === "ON"){
+				//in real mobile device
+				return (Math.min(window.screen.width / window.devicePixelRatio, window.screen.height / window.devicePixelRatio) >= 600);
+			}else{
+				//in desktop browser
+				//return (Math.min($window.width(), $window.height()) >= 600);
+				return $.device.is.android_tablet;
+			}
 		}
 	}());
 
 	$.device.is = $.extend( /** @lends jQuery.device.is */ { 
 		/**
-		 * Whether the running device is a tablet. If the desktop browser runs with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile, this property will also be set according to the window size.
-		 * This property will be false when runs in desktop browser without touch support. 
-		 * This property will only be set once when the application starts up, and it won't be updated when the window resizes in a touch enabled desktop browser.
+		 * Whether the running device is a tablet.
+		 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile), 
+		 * this property will also be set according to the simulated platform.
+		 * This property will be false when runs in desktop browser.
 		 * @type {boolean}
 		 * @public
 		 */
-		tablet: tablet && (jQuery.sap.touchEventMode !== "OFF"),
+		tablet: ($.support.touch || $.sap.simulateMobileOnDesktop) && tablet,
 		/**
-		 * Whether the running device is a phone. If the desktop browser runs with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile, this property will also be set according to the window size.
-		 * This property will be false when runs in desktop browser without touch support. 
-		 * This property will only be set once when the application starts up, and it won't be updated when the window resizes in a touch enabled desktop browser.
+		 * Whether the running device is a phone.
+		 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile), 
+		 * this property will also be set according to the simulated platform.
+		 * This property will be false when runs in desktop browser.
 		 * @type {boolean}
 		 * @public
 		 */
-		phone: !tablet && (jQuery.sap.touchEventMode !== "OFF"),
+		phone: ($.support.touch || $.sap.simulateMobileOnDesktop) && !tablet,
 		/**
-		 * Whether the running device is a desktop browser without touch support.
+		 * Whether the running device is a desktop browser.
+		 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile), 
+		 * this property will be false.
 		 * @type {boolean}
 		 * @public
 		 */
-		desktop: (jQuery.sap.touchEventMode === "OFF")
+		desktop: !$.support.touch && !$.sap.simulateMobileOnDesktop
 	}, $.device.is);
+	
+	// add CSS class to root element to distinguish device classes
+	// "sap-phone" for small touch devices, "sap-tablet" for large touch devices, "sap-desktop" for non-touch devices
+	// TODO: move to central device API once that one is done; in the future also introduce device size classes and take care of desktop with touch, Surface, Win8 etc.
+	$("html").addClass("sap-" + ($.device.is.desktop ? "desktop" : ($.device.is.tablet ? "tablet" : "phone")));
 
 	var _bInitMobileTriggered = false;
 
 	/**
 	 * Does some basic modifications to the HTML page that make it more suitable for mobile apps.
+	 * Only the first call to this method is executed, subsequent calls are ignored. Note that this method is also called by the constructor of toplevel controls like sap.m.App, sap.m.SplitApp and sap.m.Shell.
+	 * Exception: if no homeIcon was set, subsequent calls have the chance to set it.
+	 * 
 	 * The "options" parameter configures what exactly should be done.
 	 *  
 	 * It can have the following properties:
@@ -4542,39 +4873,31 @@ jQuery.sap.declare("jquery.sap.mobile");
 	 * <li>statusBar: the iOS status bar color, "default", "black" or "black-translucent" (default: "default")</li>
 	 * <li>hideBrowser: whether the browser UI should be hidden as far as possible to make the app feel more native (default: true)</li>
 	 * <li>preventScroll: whether native scrolling should be disabled in order to prevent the "rubber-band" effect where the whole window is moved (default: true)</li>
+	 * <li>preventPhoneNumberDetection: whether Safari Mobile should be prevented from transforming any numbers that look like phone numbers into clickable links; this should be left as "true", otherwise it might break controls because Safari actually changes the DOM. This only affects all page content which is created after initMobile is called.</li>
 	 * <li>rootId: the ID of the root element that should be made fullscreen; only used when hideBrowser is set (default: the document.body)</li>
 	 * <li>useFullScreenHeight: a boolean that defines whether the height of the html root element should be set to 100%, which is required for other elements to cover the full height (default: true)</li>
-	 * <li>homeIcon: The icon to be displayed on the home screen of iOS devices after the user does "add to home screen" (default: no icon).
-	 *     This icon must be in PNG format. The property can either hold the URL of one single icon which is used for all devices (and possibly scaled, 
-	 *     which looks not perfect), or an object holding icon URLs for the different required sizes; one example is:
-	 *     <pre>
-	 *     {
-	 *        'phone':'phone-icon.png',
-	 *        'phone@2':'phone-retina.png',
-	 *        'tablet':'tablet-icon.png',
-	 *        'tablet@2':'tablet-retina.png'
-	 *     }
-	 *     </pre>
-	 *     The respective image sizes are 57/114 px for the phone and 72/144 px for the tablet. If an object is given but the required size is missing 
-	 *     from the object, the largest given URL will be used.</li>
-	 * <li>homeIconPrecomposed: whether the home icon already has some glare effect (otherwise iOS will add it) (default: false)</li>
+	 * <li>homeIcon: deprecated since 1.12, use jQuery.sap.setIcons instead.
 	 * </ul>
+	 * 
 	 * 
 	 * @param {object}  [options] configures what exactly should be done
 	 * @param {boolean} [options.viewport=true] whether to set the viewport in a way that disables zooming
 	 * @param {string}  [options.statusBar='default'] the iOS status bar color, "default", "black" or "black-translucent"
 	 * @param {boolean} [options.hideBrowser=true] whether the browser UI should be hidden as far as possible to make the app feel more native
 	 * @param {boolean} [options.preventScroll=true] whether native scrolling should be disabled in order to prevent the "rubber-band" effect where the whole window is moved
+	 * @param {boolean} [options.preventPhoneNumberDetection=true] whether Safari mobile should be prevented from transforming any numbers that look like phone numbers into clickable links
 	 * @param {string}  [options.rootId] the ID of the root element that should be made fullscreen; only used when hideBrowser is set. If not set, the body is used
 	 * @param {boolean} [options.useFullScreenHeight=true] whether the height of the html root element should be set to 100%, which is required for other elements to cover the full height 
-	 * @param {string}  [options.homeIcon=undefined] The icon to be displayed on the home screen of iOS devices after the user does "add to home screen".
-	 * @param {boolean} [options.homeIconPrecomposed=false] whether the home icon already has some glare effect (otherwise iOS will add it) 
+	 * @param {string}  [options.homeIcon=undefined] deprecated since 1.12, use jQuery.sap.setIcons instead.
+	 * @param {boolean} [options.homeIconPrecomposed=false] deprecated since 1.12, use jQuery.sap.setIcons instead. 
 	 * 
 	 * @name jQuery.sap.initMobile
 	 * @function
 	 * @public
 	 */
 	$.sap.initMobile = function(options) {
+		var $head = $("head");
+		
 		if (!_bInitMobileTriggered) { // only one initialization per HTML page
 			_bInitMobileTriggered = true;
 
@@ -4583,18 +4906,31 @@ jQuery.sap.declare("jquery.sap.mobile");
 				statusBar: "default",
 				hideBrowser: true,
 				preventScroll: true,
+				preventPhoneNumberDetection: true,
 				useFullScreenHeight: true,
 				homeIconPrecomposed: false
 			}, options);
-
+			
+			// en-/disable automatic link generation for phone numbers
+			if ($.os.ios && options.preventPhoneNumberDetection) {
+				$head.append($('<meta name="format-detection" content="telephone=no">')); // this only works for all DOM created afterwards
+				
+			} else if ($.browser.msie) {
+				$head.append($('<meta http-equiv="cleartype" content="on">'));
+				$head.append($('<meta name="msapplication-tap-highlight" content="no"/>'));
+			}
+			
 			$(function() {
-				var $head = $("head");
 
 				// initialize viewport
 				if (options.viewport) {
 					if ($.device.is.iphone && (Math.max(window.screen.height, window.screen.width) === 568)) {
 						// iPhone 5
 						$head.append($('<meta name="viewport" content="user-scalable=0, initial-scale=1.0">'));
+					} else if ($.os.android && $.os.fVersion < 3){
+						$head.append($('<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'));
+					} else if ($.os.winphone){
+						$head.append($('<meta name="viewport" content="width=320, user-scalable=no">'));
 					} else {
 						// all other devices
 						$head.append($('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'));
@@ -4602,6 +4938,7 @@ jQuery.sap.declare("jquery.sap.mobile");
 				}
 
 				if ($.os.ios) {
+
 					// enable fullscreen when possible
 					$head.append($('<meta name="apple-mobile-web-app-capable" content="yes">')); // since iOS 2.1
 
@@ -4611,26 +4948,6 @@ jQuery.sap.declare("jquery.sap.mobile");
 					// splash screen
 					//<link rel="apple-touch-startup-image" href="/startup.png">
 
-				} else if ($.browser.msie) {
-					$head.append($('<meta http-equiv="cleartype" content="on">'));
-				}
-
-				// Home Icon (also working in Android depending on version and other circumstances)
-				var icon = options.homeIcon;
-				if (icon) {
-					var precomposed = options.homeIconPrecomposed ? "-precomposed" : "";
-					if (typeof icon === "string") { // case 1: one home icon to rule them all
-						$head.append($('<link rel="apple-touch-icon' + precomposed + '" href="' + icon + '">'));
-
-					} else if (typeof icon === "object") { // case 2: a config object with optimized home icons for different devices
-						var getBestIcon = function(res) {
-							return icon[res] || icon['tablet@2'] || icon['phone@2'] || icon['phone'] || icon['tablet']; // fallback logic
-						};
-						var requiredSize = ($.device.is.ipad ? "tablet" : "phone") + ($.support.retina ?  "@2": "");
-						var size = ($.device.is.ipad ? 72 : 57) * ($.support.retina ?  2 : 1);
-						var sizes = (size === 57) ? '' : 'sizes="' + size + 'x' + size + '"';
-						$head.append($('<link rel="apple-touch-icon"' + precomposed + ' ' + sizes + ' href="' + getBestIcon(requiredSize) + '">'));
-					}
 				}
 
 				// hide browser address bar
@@ -4653,7 +4970,11 @@ jQuery.sap.declare("jquery.sap.mobile");
 				}
 
 				if (options.preventScroll) {
-					$(window).bind("touchmove", function(e){e.preventDefault();}); // this one prevents the rubber-band effect - and disables native scrolling
+					$(window).bind("touchmove", function sapInitMobileTouchMoveHandle(oEvent){
+						if (!oEvent.isDefaultPrevented()) {
+							oEvent.preventDefault();	// this one prevents the rubber-band effect - and disables native scrolling
+						}
+					});
 				}
 
 				if (options.useFullScreenHeight) {
@@ -4662,6 +4983,7 @@ jQuery.sap.declare("jquery.sap.mobile");
 					});
 				}
 			});
+
 
 			// platform depending checks to show mobile support message
 			$(function() {
@@ -4680,33 +5002,62 @@ jQuery.sap.declare("jquery.sap.mobile");
 						jQuery.os.os == "winphone") {
 
 					// check OS version
-					if ((jQuery.os.ios && jQuery.os.fVersion < 5) ||
-							(jQuery.os.android && jQuery.os.fVersion < 2.3) ||
-							(jQuery.os.blackberry && jQuery.os.fVersion < 7) ||
-							(jQuery.os.winphone) ||
-							(!jQuery.browser.webkit)) { 
+					if ((jQuery.os.ios && jQuery.os.fVersion < 5) ||              // iOS < 5.x
+							(jQuery.os.android && jQuery.os.fVersion < 2.3) ||    // Android < 2.3
+							(jQuery.os.blackberry && jQuery.os.fVersion < 10) ||  // BlackBerry < 10
+							(jQuery.os.winphone && jQuery.os.fVersion < 8) ||     // Windows Phone < 8
+							(!jQuery.os.winphone && !jQuery.browser.webkit) ||    // non-Webkit browsers on iOS/Android/BlackBerry
+							(jQuery.os.winphone && !jQuery.browser.msie)) {       // non-IE browsers on Windows Phone
 						bShowSupportMessage = true;
-						sSupportMessage= getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_DEVICE", [jQuery.os.os, jQuery.os.fVersion]);
+						sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_DEVICE", [jQuery.os.os, jQuery.os.fVersion]);
 					}
 
-					// check browser
+				// check desktop browser
 				} else {
 
-					// check if browser is webkit-based
-					if (!jQuery.browser.webkit){
+					// check if browser is something else than webkit-based or IE9+
+					if (!jQuery.browser.webkit && !(jQuery.browser.msie && jQuery.browser.fVersion >= 9)){
 						sPopupWidth = "auto";
 						bShowSupportMessage = true;
 						sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_BROWSER");
 
-					} else {
-						// show message only if no URL parameter is set
-						var result = window.location.search.match(FAKE_OS_PATTERN);
-						var resultUA = result && result[1] || jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
-						if (!resultUA || (resultUA !== "ios" && resultUA !== "android" && resultUA !== "blackberry")) {
-							sPopupWidth = "480px";
-							iTimeOut = 5000;
-							bShowSupportMessage = true;
-							sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_URL_PARAM");
+					} else { // webkit or IE9+
+						
+						// now it gets dirty: in sap_mvi only IE10 or webkit with fakeOS is supported, in sap_bluecrystal these browsers are all fully supported
+						// this should go into library metadata or so, but for now hardcode that
+						// and give the warning only for MVI (blacklist), not for unknown themes, because those might support desktop without fakeOS
+						
+						// so find out the theme - this ignores any configuration  (URL ... bootstrap ... config)
+						var oThemeMatch = document.location.search.match(/sap-ui-theme=([^&]+)/);
+						var sTheme = oThemeMatch ? oThemeMatch[1] : jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-theme");
+						sTheme = sTheme || (window["sap-ui-config"] ? window["sap-ui-config"].theme : null);
+						
+						if (sTheme !== "sap_mvi") { // sap_bluecrystal or any unknown theme
+							// IE9+ and webkit are (or could be) supported
+							
+						} else { // sap_mvi; only supported with fakeOS
+							// show message if no URL parameter is set
+							var result = window.location.search.match(FAKE_OS_PATTERN);
+							var resultUA = result && result[1] || jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
+							
+							if (!resultUA) { // desktop browser with no fakeOS being set
+								if (jQuery.browser.msie && jQuery.browser.fVersion >= 9) {
+									// IE9+ without fakeOS is supported now as regular desktop platform
+								} else {
+									sPopupWidth = "480px";
+									iTimeOut = 6000;
+									bShowSupportMessage = true;
+									sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_URL_PARAM");
+								}
+								
+								// fakeOS is set, desktop browser
+							} else if (jQuery.browser.webkit && resultUA === "winphone" ||
+									!jQuery.browser.webkit && resultUA !== "winphone") { // fakeOS set, but to a platform not supported in current browser
+								sPopupWidth = "480px";
+								iTimeOut = 7000;
+								bShowSupportMessage = true;
+								sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_URL_PARAM_COMBINATION");
+							}
 						}
 
 					}
@@ -4754,6 +5105,105 @@ jQuery.sap.declare("jquery.sap.mobile");
 			});
 
 		}
+		
+		if (options.homeIcon) {
+			var oIcons = options.homeIcon;
+			if (typeof oIcons === "string") {
+				oIcons = {phone:oIcons};
+			}
+			oIcons.precomposed = options.homeIconPrecomposed;
+			oIcons.favicon = options.homeIcon.icon;
+			oIcons.icon = undefined;
+			$.sap.setIcons(oIcons);
+		}
+	};
+	
+	
+	/**
+	 * Sets the bookmark icon for desktop browsers and the icon to be displayed on the home screen of iOS devices after the user does "add to home screen".
+	 * 
+	 * Only call this method once and call it early when the page is loading: browsers behave differently when the favicon is modified while the page is alive. 
+	 * Some update the displayed icon inside the browser but use an old icon for bookmarks.
+	 * When a favicon is given, any other existing favicon in the document will be removed.
+	 * When at least one home icon is given, all existing home icons will be removed and new home icon tags for all four resolutions will be created.
+	 * 
+	 * The home icons must be in PNG format and given in different sizes for iPad/iPhone with and without retina display. 
+	 * The favicon is used in the browser and for desktop shortcuts and should optimally be in ICO format: 
+	 * PNG does not seem to be supported by Internet Explorer and ICO files can contain different image sizes for different usage locations. E.g. a 16x16px version
+	 * is used inside browsers.
+	 * 
+	 * All icons are given in an an object holding icon URLs and other settings. The properties of this object are:
+	 * <ul>
+	 * <li>phone: a 57x57 pixel version for non-retina iPhones</li>
+	 * <li>tablet: a 72x72 pixel version for non-retina iPads</li>
+	 * <li>phone@2: a 114x114 pixel version for retina iPhones</li>
+	 * <li>tablet@2: a 144x144 pixel version for retina iPads</li>
+	 * <li>precomposed: whether the home icons already have some glare effect (otherwise iOS will add it) (default: false)</li>
+	 * <li>favicon: the ICO file to be used inside the browser and for desktop shortcuts</li>
+	 * </ul>
+	 * 
+	 * One example is:
+	 * <pre>
+	 * {
+	 *    'phone':'phone-icon_57x57.png',
+	 *    'phone@2':'phone-retina_117x117.png',
+	 *    'tablet':'tablet-icon_72x72.png',
+	 *    'tablet@2':'tablet-retina_144x144.png',
+	 *    'precomposed':true,
+	 *    'favicon':'desktop.ico'
+	 * }
+	 * </pre>
+	 * If one of the sizes is not given, the largest available alternative image will be used instead for this size.
+	 * On Android these icons may or may not be used by the device. Apparently chances can be improved by using icons with glare effect, so the "precomposed" property can be set to "true". Some Android devices may also use the favicon for bookmarks instead of the home icons.</li>
+	 */
+	$.sap.setIcons = function(oIcons) {
+		if (!oIcons || (typeof oIcons !== "object")) {
+			$.sap.log.warning("Call to jQuery.sap.setIcons() has been ignored because there were no icons given or the argument was not an object.");
+			return ;
+		}
+		
+		var $head = $("head"),
+			precomposed = oIcons.precomposed ? "-precomposed" : "",
+			getBestFallback = function(res) {
+				return oIcons[res] || oIcons['tablet@2'] || oIcons['phone@2'] || oIcons['phone'] || oIcons['tablet']; // fallback logic
+			},
+			mSizes = {
+				"phone": "",
+				"tablet": "72x72", 
+				"phone@2": "114x114",
+				"tablet@2": "144x144"
+			};
+		
+		// desktop icon
+		if (oIcons["favicon"]) {
+			// remove any other favicons
+			var $fav = $head.find("[rel^=shortcut]"); // cannot search for "shortcut icon"
+			$fav.each(function(){
+				if (this.rel === "shortcut icon") {
+					$(this).remove();
+				}
+			});
+			
+			// create favicon
+			$head.append($('<link rel="shortcut icon" href="' + oIcons["favicon"] + '" />'));
+		}
+		
+		
+		// mobile home screen icons
+		
+		if (getBestFallback("phone")) {
+			// if any home icon is given remove old ones
+			$head.find("[rel=apple-touch-icon]").remove();
+			$head.find("[rel=apple-touch-icon-precomposed]").remove();
+		}
+		
+		for (var platform in mSizes) {
+			oIcons[platform] = oIcons[platform] || getBestFallback(platform);
+			if (oIcons[platform]) {
+				var size = mSizes[platform];
+				$head.append($('<link rel="apple-touch-icon' + precomposed + '" ' + (size ? 'sizes="' + size + '"' : "") + ' href="' + oIcons[platform] + '" />'));
+			}
+		}
 	};
 
 })( jQuery );
@@ -4763,7 +5213,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.properties') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides access to Java-like properties files
@@ -4772,7 +5222,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.sjax') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /*
@@ -4983,7 +5433,7 @@ jQuery.sap.declare("jquery.sap.sjax", false);
 	 * currently in the list.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
@@ -5234,7 +5684,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.resources') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides access to Java-like resource bundles in properties file format
@@ -5253,7 +5703,7 @@ jQuery.sap.declare("jquery.sap.resources");
 	 *
 	 * Use {@link jQuery.sap.resources} to create an instance of jQuery.sap.util.ResourceBundle.
 	 * There you have to specify the URL to the base .properties file of a bundle
-     * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
+	 * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
 	 * a locale. The locale is defined as a string of the language and an optional country code
 	 * separated by underscore (e.g. "en_GB" or "fr"). If no locale is passed, the default
 	 * locale is "en" if the SAPUI5 framework is not available. Otherwise the default locale is taken from
@@ -5263,24 +5713,34 @@ jQuery.sap.declare("jquery.sap.resources");
 	 * for a given key will be returned.
 	 *
 	 * With the given locale, the ResourceBundle requests the locale-specific properties file
-	 * (e.g. "mybundle_fr_FR.properties").
-	 * If no file is found for the locale "fr_FR", the fall back is requested. The fall back is the
-	 * language code without any specific country code, in this case "fr".
-	 * The same is true if the getText() method did not find a string value for a given key.
-	 * If no language-specific file is found the English file, it is requested with locale "en".
-	 * If also the English file is not present, the file without language and country code is requested.
-	 * This is the file that is originally used as URL parameter.
+	 * (e.g. "mybundle_fr_FR.properties"). If no file is found for the requested locale or if the file
+	 * does not contain a text for the given key, a sequence of fall back locales is tried one by one. 
+	 * First, if the locale contains a region information (fr_FR), then the locale without the region is
+	 * tried (fr). If that also can't be found or doesn't contain the requested text, the english file 
+	 * is used (en - assuming that most development projects contain at least english texts).    
+	 * If that also fails, the file without locale (base URL of the bundle) is tried.
+	 * 
+	 * If none of the requested files can be found or none of them contains a text for the given key,
+	 * then the key itself is returned as text. 
 	 *
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
 	 */
+	
 	/**
-	 * Returns a locale-specific string value for the given key sKey.
+	 * Returns a locale-specific string value for the given key sKey. 
+	 * 
+	 * The text is searched in this resource bundle according to the fallback chain described in 
+	 * {@link jQuery.sap.util.ResourceBundle}. If no text could be found, the key itself is used as text.
+	 * 
+	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer 
+	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key). 
+	 * 
 	 * @param {string} sKey
 	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.
 	 * @return {string} The value belonging to the key, if found; otherwise the key itself.
@@ -5307,7 +5767,7 @@ jQuery.sap.declare("jquery.sap.resources");
 	var rlocale=/^((?:[A-Z]{2,3}(?:-[A-Z]{3}){0,3})|[A-Z]{4}|[A-Z]{5,8})(?:-([A-Z]{4}))?(?:-([A-Z]{2}|[0-9]{3}))?(-[0-9A-Z]{5,8}|(?:[0-9][0-9A-Z]{3}))*(?:-([0-9A-WYZ](?:-[0-9A-Z]{2,8})+))*(?:-(X(?:-[0-9A-Z]{1,8})+))?$/i;
 
 	/**
-	 * Resource bundles are stored according to the Java DEvelopment Kit conventions.
+	 * Resource bundles are stored according to the Java Development Kit conventions.
 	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi", "in" for "id" and "sh" for "sr").
 	 * Make sure to convert newer codes to older ones before creating file names.
 	 */
@@ -5333,7 +5793,16 @@ jQuery.sap.declare("jquery.sap.resources");
 		if ( typeof sLocale === 'string' && (m = rlocale.exec(sLocale.replace(/_/g, '-'))) ) {
 			var sLanguage = m[1].toLowerCase();
 			sLanguage = M_ISO639_NEW_TO_OLD[sLanguage] || sLanguage;
-			return sLanguage + (m[3] ? "_" + m[3].toUpperCase() + (m[4] ? "_" + m[4].slice(1).replace("-","_") : "") : "");
+			var sScript = m[2] ? m[2].toLowerCase() : undefined;
+			var sRegion = m[3] ? m[3].toUpperCase() : undefined;
+			if ( sLanguage === "zh" && !sRegion ) {
+				if ( sScript === "hans" ) {
+					sRegion = "CN"; 
+				} else if ( sScript === "hant" ) {
+					sRegion = "TW";
+				}
+			} 
+			return sLanguage + (sRegion ? "_" + sRegion + (m[4] ? "_" + m[4].slice(1).replace("-","_") : "") : "");
 		}
 	}
 	
@@ -5494,25 +5963,32 @@ jQuery.sap.declare("jquery.sap.resources");
 	 */
 	function load(oBundle, sLocale) {
 		var oUrl = oBundle.oUrlInfo; 
-		if(jQuery.inArray(sLocale, oBundle.aLocales) == -1){
-			var oHeader = null;
-			var sTempUrl;
-			switch (oUrl.ext) {
-				case '.hdbtextbundle':
-					sLocale = convertLocaleToBCP47(sLocale);
-					oHeader = {
-						"Accept-Language": sLocale
-					};
-					sTempUrl = oUrl.url;
-					//Alternative: add locale as query
-					//sTempUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : "");
-					break;
-				default:
-					sTempUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
-					break;
+		if( jQuery.inArray(sLocale, oBundle.aLocales) == -1 ){
+			var props;
+			if ( shouldRequest(sLocale) ) {
+				var oHeader = null;
+				var sTempUrl;
+				switch (oUrl.ext) {
+					case '.hdbtextbundle':
+						sLocale = convertLocaleToBCP47(sLocale);
+						oHeader = {
+							"Accept-Language": sLocale
+						};
+						sTempUrl = oUrl.url;
+						//Alternative: add locale as query
+						//sTempUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : "");
+						break;
+					default:
+						sTempUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
+						break;
+				}
+	
+				props = jQuery.sap.properties({url : sTempUrl, headers: oHeader});
+			} else {
+				props = {
+						getProperty : function() { return undefined; }
+				}
 			}
-
-			var props = jQuery.sap.properties({url : sTempUrl, headers: oHeader});
 			oBundle.aPropertyFiles.push(props);
 			oBundle.aLocales.push(sLocale);
 			return props;
@@ -5520,6 +5996,14 @@ jQuery.sap.declare("jquery.sap.resources");
 		return null;
 	}
 
+	function shouldRequest(sLocale) {
+		var aLanguages = window.sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getConfiguration().getSupportedLanguages();
+		if ( aLanguages && aLanguages.length > 0 ) {
+			return jQuery.inArray(sLocale, aLanguages) >= 0;
+		}
+		return true;
+	}
+	
 	/**
 	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
 	 * using the given URL and locale to determine what to load.
@@ -5545,7 +6029,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.script') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides miscellaneous utility functions that might be useful for any script
@@ -5638,12 +6122,12 @@ jQuery.sap.declare("jquery.sap.script", false);
 
 	// Javadoc for private inner class "UriParams" - this list of comments is intentional!
 	/**
-	 * @interface  Encapsulates all URI parameters of the current windows location (URL).
+	 * @interface	Encapsulates all URI parameters of the current windows location (URL).
 	 *
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -5715,16 +6199,16 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * Example for reading a single URI parameter (or the value of the first
 	 * occurrence of the URI parameter):
 	 * <pre>
-	 *  var sValue = jQuery.sap.getUriParameters().get("myUriParam");
+	 *	var sValue = jQuery.sap.getUriParameters().get("myUriParam");
 	 * </pre>
 	 *
 	 * Example for reading the values of the first of the URI parameter
 	 * (with multiple occurrences):
 	 * <pre>
-	 *  var aValues = jQuery.sap.getUriParameters().get("myUriParam", true);
-	 *  for(i in aValues){
+	 *	var aValues = jQuery.sap.getUriParameters().get("myUriParam", true);
+	 *	for(i in aValues){
 	 *	var sValue = aValues[i];
-	 *  }
+	 *	}
 	 * </pre>
 	 *
 	 * @public
@@ -5795,6 +6279,9 @@ jQuery.sap.declare("jquery.sap.script", false);
 			if (a.constructor != b.constructor) {
 				return false;
 			}
+			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
+				return jQuery.sap.isEqualNode(a,b);
+			}
 			if (a instanceof Date) {
 				return a.valueOf() == b.valueOf();
 			}
@@ -5814,14 +6301,50 @@ jQuery.sap.declare("jquery.sap.script", false);
 	};
 	
 	/**
+	 * Iterates over elements of the given object or array. 
+	 * 
+	 * Works similar to <code>jQuery.each</code>, but a numeric index is only used for 
+	 * instances of <code>Array</code>. For all other objects, including those with a numeric 
+	 * <code>length</code> property, the properties are iterated by name. 
+	 * 
+	 * The contract for the <code>fnCallback</code> is the same as for <code>jQuery.each</code>,
+	 * when it returns <code>false</code>, then the iteration stops (break).
+	 * 
+	 * @param {object|any[]} oObject object or array to enumerate the properties of
+	 * @param {function} fnCallback function to call for each property name
+	 * @return {object|any[]} the given <code>oObject</code> 
+	 * @since 1.11
+	 */
+	jQuery.sap.each = function(oObject, fnCallback) {
+		var isArray = jQuery.isArray(oObject),
+			length, i;
+
+		if ( isArray ) {
+			for (i=0,length=oObject.length; i < length; i++) {
+				if ( fnCallback.call(oObject[i], i, oObject[i]) === false ) {
+					break;
+				}
+			}
+		} else {
+			for ( i in oObject ) {
+				if ( fnCallback.call(oObject[i], i, oObject[i] ) === false ) {
+					break;
+				}
+			}
+		}
+
+		return oObject;
+	};
+	
+	/**
 	 * Substitute for <code>for(n in o)</code> loops which fixes the 'Don'tEnum' bug of IE8.
 	 * 
 	 * Iterates over all enumerable properties of the given object and calls the
 	 * given callback function for each of them. The assumed signature of the 
 	 * callback function is 
 	 * 
-	 *   fnCallback(name, value)
-	 *   
+	 *	 fnCallback(name, value)
+	 *	 
 	 * where name is the name of the property and value is its value.
 	 * 
 	 * When an object in IE8 overrides a property of Object.prototype
@@ -5833,55 +6356,538 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * (hasOwnProperty(name) is true) or when the property value is different 
 	 * from the value in the Object.prototype object.
 	 * 
-   * @param {object} oObject object to enumerate the properties of
-   * @param {function} fnCallback function to call for each property name
+	 * @param {object} oObject object to enumerate the properties of
+	 * @param {function} fnCallback function to call for each property name
 	 * @function
 	 * @since 1.7.1
 	 */
 	jQuery.sap.forIn = {toString:null}.propertyIsEnumerable("toString") ?
-	    // for browsers without the bug we use the straight forward implementation of a for in loop
-      function(oObject, fnCallback) {
-        for(var n in oObject) {
-          if ( fnCallback(n, oObject[n]) === false ) {
-            return;
-          }
-        }
-      } : 
-      // use a special implementation for IE8 
-      (function() {
-        var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
-            DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
-            oObjectPrototype = Object.prototype,
-            fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
-            
-        return function(oObject, fnCallback) {
-          var n,i;
-          
-          // standard for(in) loop
-          for(n in oObject) {
-            if ( fnCallback(n, oObject[n]) === false ) {
-              return;
-            }
-          }
-          // additionally check the known 'don't enum' names
-          for(var i=0; i<DONT_ENUM_KEYS_LENGTH; i++) {
-            n = DONT_ENUM_KEYS[i];
-            // assume an enumerable property if it is either an own property
-            // or if its value differes fro mthe value in the Object.prototype
-            if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
-              if ( fnCallback(n, oObject[n]) === false ) {
-                return;
-              }
-            }
-          }
-          // Note: this substitute implementation still fails in several regards
-          // - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
-          // - it fails when one of the don't enum properties by intention has been overridden in the 
-          //   prototype chain with a value identical to the value in Object.prototype
-          // - the don't enum properties are handled out of order. This is okay with the ECMAScript
-          //   spec but might be unexpected for some callers
-        }
-     	}());
+		// for browsers without the bug we use the straight forward implementation of a for in loop
+		function(oObject, fnCallback) {
+			for(var n in oObject) {
+				if ( fnCallback(n, oObject[n]) === false ) {
+					return;
+				}
+			}
+		} : 
+		// use a special implementation for IE8 
+		(function() {
+			var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
+					DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
+					oObjectPrototype = Object.prototype,
+					fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
+					
+			return function(oObject, fnCallback) {
+				var n,i;
+				
+				// standard for(in) loop
+				for(n in oObject) {
+					if ( fnCallback(n, oObject[n]) === false ) {
+						return;
+					}
+				}
+				// additionally check the known 'don't enum' names
+				for(var i=0; i<DONT_ENUM_KEYS_LENGTH; i++) {
+					n = DONT_ENUM_KEYS[i];
+					// assume an enumerable property if it is either an own property
+					// or if its value differes fro mthe value in the Object.prototype
+					if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
+						if ( fnCallback(n, oObject[n]) === false ) {
+							return;
+						}
+					}
+				}
+				// Note: this substitute implementation still fails in several regards
+				// - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
+				// - it fails when one of the don't enum properties by intention has been overridden in the 
+				//	 prototype chain with a value identical to the value in Object.prototype
+				// - the don't enum properties are handled out of order. This is okay with the ECMAScript
+				//	 spec but might be unexpected for some callers
+			}
+	 	}());
+		
+
+	/**
+	 * Calculate delta of old list and new list
+	 * This implements the algorithm described in "A Technique for Isolating Differences Between Files"
+	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268)
+	 * @public
+	 * @param {Array} aOld Old Array
+	 * @param {Array} aNew New Array
+	 * @param {function} [fnCompare] Function to compare list entries
+	 * @param {function} [fnKey] Function to generate a string from the list entry for optimized performance
+	 * @return {Array} List of changes
+	 */
+	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare, fnKey){
+		fnCompare = fnCompare || function(vValue1, vValue2) {
+			return vValue1 == vValue2;
+		}
+
+		var aOldRefs = [];
+		var aNewRefs = [];
+
+		//This code has better performance but needs a key for the entries
+		/*
+		var oNewSymbols = {};
+		var oOldSymbols = {};
+
+		//Pass 1: collect symbols for new array
+		for (var i = 0; i < aNew.length; i++) {
+			var sKey = fnKey(aNew[i]);
+			if (oNewSymbols[sKey] == null) {
+				oNewSymbols[sKey] = { rows: [], o: null };
+			}
+			oNewSymbols[sKey].rows.push(i);
+		}
+
+		//Pass 2: collect symbols for old array
+		for ( var i = 0; i < aOld.length; i++ ) {
+			var sKey = fnKey(aOld[i]);
+			if (oOldSymbols[sKey] == null) {
+				oOldSymbols[sKey] = { rows: [], n: null };
+			}
+			oOldSymbols[sKey].rows.push(i);
+		}
+
+		//Pass 3: Find matches for unique lines
+		for (var i in oNewSymbols) {
+			if (oNewSymbols[i].rows.length == 1 && oOldSymbols[i] != undefined && oOldSymbols[i].rows.length == 1) {
+				aNewRefs[oNewSymbols[i].rows[0]] = {
+					data: aNew[oNewSymbols[i].rows[0]],
+					row: oOldSymbols[i].rows[0]
+				};
+				aOldRefs[oOldSymbols[i].rows[0]] = {
+					data: aOld[oOldSymbols[i].rows[0]],
+					row: oNewSymbols[i].rows[0]
+				};
+			}
+		}*/
+		//Find references
+		for (var i = 0; i < aNew.length; i++) {
+			var oNewEntry = aNew[i];
+			var iFound = 0;
+			var iTempJ;
+			for (var j = 0; j < aOld.length; j++) {
+				if (fnCompare(oNewEntry,aOld[j])) {
+					iFound++;
+					iTempJ = j;
+					if (iFound > 1) {
+						break;
+					}
+				}
+			}
+			if (iFound == 1) {
+				aNewRefs[i] = {
+					data: aNew[i],
+					row: iTempJ
+				};
+				aOldRefs[iTempJ] = {
+					data: aOld[iTempJ],
+					row: i
+				};
+			}
+		}
+
+		//Pass 4: Find adjacent matches in ascending order
+		for (var i = 0; i < aNew.length - 1; i++) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i+1] &&
+				aNewRefs[i].row + 1 < aOld.length &&
+				!aOldRefs[aNewRefs[i].row + 1] &&
+				fnCompare(aNew[i+1], aOld[ aNewRefs[i].row + 1 ])) {
+
+				aNewRefs[i+1] = {
+					data: aNew[i+1],
+					row: aNewRefs[i].row + 1
+				};
+				aOldRefs[aNewRefs[i].row+1] = {
+					data: aOldRefs[aNew[i].row+1],
+					row: i + 1
+				};
+
+			}
+		}
+
+		//Pass 5: Find adjacent matches in descending order
+		for (var i = aNew.length - 1; i > 0; i--) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i-1] &&
+				aNewRefs[i].row > 0 &&
+				!aOldRefs[aNewRefs[i].row - 1] &&
+				fnCompare(aNew[i-1], aOld[aNewRefs[i].row - 1])) {
+
+				aNewRefs[i-1] = {
+					data: aNew[i-1],
+					row: aNewRefs[i].row - 1
+				};
+				aOldRefs[aNew[i].row-1] = {
+					data: aOldRefs[aNewRefs[i].row-1],
+					row: i - 1
+				};
+
+			}
+		}
+
+		//Pass 6: Generate diff data
+		var aDiff = [];
+
+		if (aNew.length == 0) {
+			//New list is empty, all items were deleted
+			for (var i = 0; i < aOld.length; i++) {
+				aDiff.push({
+					index: 0,
+					type: 'delete'
+				});
+			}
+		} else {
+			var iNewListIndex = 0;
+			if (!aOldRefs[0]) {
+				//Detect all deletions at the beginning of the old list
+				for (var i = 0; i < aOld.length && !aOldRefs[i]; i++) {
+					aDiff.push({
+						index: 0,
+						type: 'delete'
+					});
+					iNewListIndex = i + 1;
+				}
+			}
+
+			for (var i = 0; i < aNew.length; i++) {
+				if (!aNewRefs[i] || aNewRefs[i].row > iNewListIndex) {
+					//Entry doesn't exist in old list = insert
+					aDiff.push({
+						index: i,
+						type: 'insert'
+					});
+				} else {
+					iNewListIndex = aNewRefs[i].row + 1;
+					for (var j = aNewRefs[i].row + 1; j < aOld.length && (!aOldRefs[j] || aOldRefs[j].row < i); j++) {
+						aDiff.push({
+							index: i+1,
+							type: 'delete'
+						});
+						iNewListIndex = j + 1;
+					}
+				}
+			}
+		}
+
+		return aDiff;
+	};
+
+	/**
+	 * Parse simple JS objects.
+	 * 
+	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
+	 * the JSON specification as a format description, but a subset of the JavaScript language.
+	 * The main difference is, that keys in objects do not need to be quoted and strings can also
+	 * be defined using apostrophes instead of quotation marks.
+	 * 
+	 * The parser does not support functions, but only boolean, number, string, object and array.
+	 * 
+	 * @param {string} The string containing the JS objects
+	 * @throws an error, if the string does not contain a valid JS object
+	 * @returns {object} the JS object
+	 * 
+	 * @since 1.11
+	 */
+	jQuery.sap.parseJS = (function() {
+
+		var at, // The index of the current character
+		ch, // The current character
+		escapee = {
+			'"': '"',
+			'\'': '\'',
+			'\\': '\\',
+			'/': '/',
+			b: '\b',
+			f: '\f',
+			n: '\n',
+			r: '\r',
+			t: '\t'
+		},
+			text,
+
+			error = function(m) {
+
+				// Call error when something is wrong.
+				throw {
+					name: 'SyntaxError',
+					message: m,
+					at: at,
+					text: text
+				};
+			},
+
+			next = function(c) {
+
+				// If a c parameter is provided, verify that it matches the current character.
+				if (c && c !== ch) {
+					error("Expected '" + c + "' instead of '" + ch + "'");
+				}
+
+				// Get the next character. When there are no more characters,
+				// return the empty string.
+				ch = text.charAt(at);
+				at += 1;
+				return ch;
+			},
+
+			number = function() {
+
+				// Parse a number value.
+				var number, string = '';
+
+				if (ch === '-') {
+					string = '-';
+					next('-');
+				}
+				while (ch >= '0' && ch <= '9') {
+					string += ch;
+					next();
+				}
+				if (ch === '.') {
+					string += '.';
+					while (next() && ch >= '0' && ch <= '9') {
+						string += ch;
+					}
+				}
+				if (ch === 'e' || ch === 'E') {
+					string += ch;
+					next();
+					if (ch === '-' || ch === '+') {
+						string += ch;
+						next();
+					}
+					while (ch >= '0' && ch <= '9') {
+						string += ch;
+						next();
+					}
+				}
+				number = +string;
+				if (!isFinite(number)) {
+					error("Bad number");
+				} else {
+					return number;
+				}
+			},
+
+			string = function() {
+
+				// Parse a string value.
+				var hex, i, string = '', quote,
+					uffff;
+
+				// When parsing for string values, we must look for " and \ characters.
+				if (ch === '"' || ch === '\'') {
+					quote = ch;
+					while (next()) {
+						if (ch === quote) {
+							next();
+							return string;
+						}
+						if (ch === '\\') {
+							next();
+							if (ch === 'u') {
+								uffff = 0;
+								for (i = 0; i < 4; i += 1) {
+									hex = parseInt(next(), 16);
+									if (!isFinite(hex)) {
+										break;
+									}
+									uffff = uffff * 16 + hex;
+								}
+								string += String.fromCharCode(uffff);
+							} else if (typeof escapee[ch] === 'string') {
+								string += escapee[ch];
+							} else {
+								break;
+							}
+						} else {
+							string += ch;
+						}
+					}
+				}
+				error("Bad string");
+			},
+
+			name = function() {
+
+				// Parse a name value.
+				var name = '',
+					charcode,
+					allowed = function(ch) {
+						return ch === "_" ||
+							(ch >= "0" && ch <= "9") ||
+							(ch >= "a" && ch <= "z") ||
+							(ch >= "A" && ch <= "Z") 
+					};
+
+				if (allowed(ch)) {
+					name += ch;
+				} else {
+					error("Bad name");
+				}
+
+				while (next()) {
+					if (ch === ' ') {
+						next();
+						return name;
+					}
+					if (ch === ':') {
+						return name;
+					}
+					if (allowed(ch)) {
+						name += ch;
+					} else {
+						error("Bad name");
+					}
+				}
+				error("Bad name");
+			},
+
+			white = function() {
+
+				// Skip whitespace.
+				while (ch && ch <= ' ') {
+					next();
+				}
+			},
+
+			word = function() {
+
+				// true, false, or null.
+				switch (ch) {
+				case 't':
+					next('t');
+					next('r');
+					next('u');
+					next('e');
+					return true;
+				case 'f':
+					next('f');
+					next('a');
+					next('l');
+					next('s');
+					next('e');
+					return false;
+				case 'n':
+					next('n');
+					next('u');
+					next('l');
+					next('l');
+					return null;
+				}
+				error("Unexpected '" + ch + "'");
+			},
+
+			value, // Place holder for the value function.
+			array = function() {
+
+				// Parse an array value.
+				var array = [];
+
+				if (ch === '[') {
+					next('[');
+					white();
+					if (ch === ']') {
+						next(']');
+						return array; // empty array
+					}
+					while (ch) {
+						array.push(value());
+						white();
+						if (ch === ']') {
+							next(']');
+							return array;
+						}
+						next(',');
+						white();
+					}
+				}
+				error("Bad array");
+			},
+
+			object = function() {
+
+				// Parse an object value.
+				var key, object = {};
+
+				if (ch === '{') {
+					next('{');
+					white();
+					if (ch === '}') {
+						next('}');
+						return object; // empty object
+					}
+					while (ch) {
+						if (ch >= "0" && ch <= "9") {
+							key = number();
+						} else if (ch === '"' || ch === '\''){
+							key = string();
+						} else {
+							key = name();
+						}
+						white();
+						next(':');
+						if (Object.hasOwnProperty.call(object, key)) {
+							error('Duplicate key "' + key + '"');
+						}
+						object[key] = value();
+						white();
+						if (ch === '}') {
+							next('}');
+							return object;
+						}
+						next(',');
+						white();
+					}
+				}
+				error("Bad object");
+			};
+
+		value = function() {
+
+			// Parse a JS value. It could be an object, an array, a string, a number,
+			// or a word.
+			white();
+			switch (ch) {
+			case '{':
+				return object();
+			case '[':
+				return array();
+			case '"':
+			case '\'':
+				return string();
+			case '-':
+				return number();
+			default:
+				return ch >= '0' && ch <= '9' ? number() : word();
+			}
+		};
+
+		// Return the parse function. It will have access to all of the above
+		// functions and variables.
+		return function(source, start) {
+			var result;
+
+			text = source;
+			at = start || 0;
+			ch = ' ';
+			result = value();
+			
+			if ( isNaN(start) ) {
+				white();
+				if (ch) {
+					error("Syntax error");
+				}
+				return result;
+			} else {
+				return { result : result, at : at-1 };
+			}
+
+		};
+	}())
 	
 }());
 
@@ -5890,7 +6896,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.encoder') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides encoding functions for JavaScript.
@@ -6034,7 +7040,7 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 	/**
 	 * RegExp and escape function for URL escaping
 	 */
-	var rURL = /[\x00-\x29\x2b\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
+	var rURL = /[\x00-\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
 		mURLLookup = {};
 
 	var fURL = function(sChar) {
@@ -6339,7 +7345,9 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 			jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 			jQuery.sap.assert(window.html && window.html.sanitize, "Sanitizer should have been loaded");
 		}
-		return window.html.sanitize(sHTML, mOptions.uriRewriter, mOptions.tokenPolicy);
+		
+		var oTagPolicy = mOptions.tagPolicy || window.html.makeTagPolicy(mOptions.uriRewriter, mOptions.tokenPolicy);
+		return window.html.sanitizeWithPolicy(sHTML, oTagPolicy);
 	}
 	
 	/**
@@ -6354,7 +7362,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.strings') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides useful string operations not available in pure JavaScript.
@@ -6522,21 +7530,36 @@ jQuery.sap.declare("jquery.sap.strings", false);
      * @type {string}
      * @since 1.7.0
      * @public
-     * @SecPassthrough {0 1|return}
+     * @SecPassthrough {0|return}
      */
 	jQuery.sap.camelCase = function camelCase(sString) { 
 		return sString.replace( rCamelCase, function( sMatch, sChar ) {
 			return sChar.toUpperCase();
 		});
 	};
+	
+	var rEscapeRegExp = /[-[\]{}()*+?.,\\^$|#\s]/g;
 
+	/**
+	 * This function escapes the reserved letters in Regular Expression
+   * @param {string} sString string to escape
+   * @return The escaped string
+   * @type {string}
+   * @since 1.9.3
+   * @public
+   * @SecPassthrough {0|return}
+	 */
+	jQuery.sap.escapeRegExp = function escapeRegExp(sString) {
+		return sString.replace(rEscapeRegExp, "\\$&");
+	};
+	
 }());
 }; // end of jquery.sap.strings
 if ( !jQuery.sap.isDeclared('jquery.sap.xml') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides xml parsing and error checking functionality.
@@ -6603,6 +7626,34 @@ jQuery.sap.declare("jquery.sap.xml", false);
         }
         return sXMLString;
 	};
+	
+	jQuery.sap.isEqualNode = function(oNode1, oNode2) {
+		if (oNode1 === oNode2) return true;
+		if (!oNode1 || !oNode2) return false;
+		if (oNode1.isEqualNode) {
+			return oNode1.isEqualNode(oNode2)
+		}
+		if (oNode1.nodeType != oNode2.nodeType) return false;
+		if (oNode1.nodeValue != oNode2.nodeValue) return false;
+		if (oNode1.baseName != oNode2.baseName) return false;
+		if (oNode1.nodeName != oNode2.nodeName) return false;
+		if (oNode1.nameSpaceURI != oNode2.nameSpaceURI) return false;
+		if (oNode1.prefix != oNode2.prefix) return false;
+		if (oNode1.nodeType != 1) return true; //ELEMENT_NODE
+		if (oNode1.attributes.length != oNode2.attributes.length) return false;
+		for (var i = 0; i < oNode1.attributes.length; i++) {
+			if (!jQuery.sap.isEqualNode(oNode1.attributes[i], oNode2.attributes[i])) {
+				return false;
+			}
+		}
+		if (oNode1.childNodes.length != oNode2.childNodes.length) return false;
+		for (var i = 0; i < oNode1.childNodes.length; i++) {
+			if (!jQuery.sap.isEqualNode(oNode1.childNodes[i], oNode2.childNodes[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 
 	/**

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.SegmentedButtonRenderer");
@@ -40,6 +40,10 @@ sap.m.SegmentedButtonRenderer.render = function(rm, oControl){
 	}
 	rm.writeStyles();
 	rm.writeControlData(oControl);
+	var sTooltip = oControl.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
 	rm.write(">");
 	
 	for (var i = 0; i < aItemsLength; i++) {
@@ -54,19 +58,18 @@ sap.m.SegmentedButtonRenderer.render = function(rm, oControl){
 		if(!oItem.getEnabled()) {
 			rm.addClass("sapMSegBBtnDis");
 		}
-		rm.writeClasses();
 		var tooltip = oItem.getTooltip_AsString();
 		if (tooltip) {
 			rm.writeAttributeEscaped("title", tooltip);
 		}
+		rm.writeClasses();
 		rm.write('>');
 		if(oItem.getIcon() === '' && oItem.getText() !== '') {
 			rm.writeEscaped(oItem.getText(), false);
 		} else if (oItem.getIcon() !== '' && oItem.getText() === '') {
-
-		var oImage = oItem._getImage((oItem.getId() + "-img"), oItem.getIcon());
-		oImage.mProperties.height = "1.5em";
-		oImage.mProperties.width = "1.5em";
+			var oImage = oItem._getImage((oItem.getId() + "-img"), oItem.getIcon());
+			//oImage.mProperties.height = "1.5em";
+			//oImage.mProperties.width = "1.5em";
 			rm.renderControl(oImage);	
 
 		} else {

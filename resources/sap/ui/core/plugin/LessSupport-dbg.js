@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.plugin.LessSupport
@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.core.Core");
 	 *        feature - DO NOT USE IN PRODUCTIVE SCENARIOS!!
 	 *
 	 * @author Peter Muessig
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @private
 	 */
 	sap.ui.core.plugin.LessSupport = function() {
@@ -42,15 +42,21 @@ jQuery.sap.require("sap.ui.core.Core");
 		jQuery.sap.log.info("Starting LessSupport plugin.");
 		jQuery.sap.log.warning("  NOT FOR PRODUCTIVE USAGE! LessSupport is an experimental feature which might change in future!");
 
+		// get the URI parameters
+		var oUriParams = jQuery.sap.getUriParameters();
+		var sNoLess = oUriParams.get("sap-ui-xx-noless");
+		if (sNoLess) {
+			sNoLess = sNoLess.toLowerCase();
+		}
+
 		// LessSupport is disabled for the testrunner
-		if (window.top.JsUnit) {
-			jQuery.sap.log.info("  LessSupport has been deactivated for JSUnit Testrunner.");
+		if (sNoLess !== "false" && (window.top.JsUnit || (window.sap.ui.test && window.sap.ui.test.qunit))) {
+			jQuery.sap.log.info("  LessSupport has been deactivated for JSUnit Testrunner or QUnit.");
 			return;
 		}
 		
 		// check the URI parameters to disable LessSupport
-		var oUriParams = jQuery.sap.getUriParameters();
-		if (oUriParams.get("sap-ui-xx-noless")) {
+		if (sNoLess && sNoLess !== "false") {
 			jQuery.sap.log.info("  LessSupport has been deactivated by URL parameter.");
 			return;
 		} else {
@@ -69,16 +75,48 @@ jQuery.sap.require("sap.ui.core.Core");
 
 		// update the themes (only when LESS files are newer than the CSS files)
 		var that = this, bUseLess = false;
+		var aLibs = [];
 		jQuery("link[id^=sap-ui-theme-]").each(function() {
-			bUseLess = that.initLink(this) || bUseLess;
+			var _bUseLess = that.initLink(this);
+			bUseLess = _bUseLess || bUseLess;
+			if(_bUseLess){
+				aLibs.push(this.id.substr(13));
+			}
 		});
 		
 		// refresh less styles or remove notifier
 		this.refreshLess(bUseLess);
 		
 		// notify that the theme has been changed!
+		
+		var counter = 0;
+		
+		function checkThemeApplied(){
+			var ok = true;
+			var check;
+			for(var i=0; i<aLibs.length; i++){
+				check = sap.ui.core.ThemeCheck.checkStyle("less:"+aLibs[i], true);
+				if(check){
+					jQuery.sap.byId("sap-ui-theme-"+aLibs[i]).attr("sap-ui-ready", "true");
+				}
+				ok = ok && check;
+			}
+			
+			counter++;
+			if(counter > 100){
+				ok = true;
+				jQuery.sap.log.warning("LessSupport: Max theme check cycles reached.");
+			}
+			
+			if(ok){
+				jQuery.sap.delayedCall(0, oCore, "fireThemeChanged", [{theme: oCore.sTheme}]); 
+			}else{
+				jQuery.sap.delayedCall(100, null, checkThemeApplied); 
+			}
+		}
+		
 		if (bUseLess) {
-			jQuery.sap.delayedCall(500, oCore, "fireThemeChanged", [{theme: oCore.sTheme}]); 
+			jQuery.sap.delayedCall(100, null, checkThemeApplied); 
 		}
 		
 	};

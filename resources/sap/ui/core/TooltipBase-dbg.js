@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -116,7 +116,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -128,6 +127,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>openDuration</code>.
@@ -141,7 +141,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>openDuration</code>.
  *
@@ -153,6 +152,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setOpenDuration
  * @function
  */
+
 
 /**
  * Getter for property <code>closeDuration</code>.
@@ -166,7 +166,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>closeDuration</code>.
  *
@@ -178,6 +177,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setCloseDuration
  * @function
  */
+
 
 /**
  * Getter for property <code>myPosition</code>.
@@ -191,7 +191,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>myPosition</code>.
  *
@@ -203,6 +202,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setMyPosition
  * @function
  */
+
 
 /**
  * Getter for property <code>atPosition</code>.
@@ -216,7 +216,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>atPosition</code>.
  *
@@ -228,6 +227,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setAtPosition
  * @function
  */
+
 
 /**
  * Getter for property <code>offset</code>.
@@ -242,7 +242,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>offset</code>.
  *
@@ -254,6 +253,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setOffset
  * @function
  */
+
 
 /**
  * Getter for property <code>collision</code>.
@@ -267,7 +267,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>collision</code>.
  *
@@ -279,6 +278,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setCollision
  * @function
  */
+
 
 /**
  * Getter for property <code>openDelay</code>.
@@ -292,7 +292,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>openDelay</code>.
  *
@@ -304,6 +303,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setOpenDelay
  * @function
  */
+
 
 /**
  * Getter for property <code>closeDelay</code>.
@@ -317,7 +317,6 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>closeDelay</code>.
  *
@@ -329,6 +328,7 @@ sap.ui.core.Control.extend("sap.ui.core.TooltipBase", { metadata : {
  * @name sap.ui.core.TooltipBase#setCloseDelay
  * @function
  */
+
 
 // Start of sap/ui/core/TooltipBase.js
 jQuery.sap.require("sap.ui.core.Popup");
@@ -527,8 +527,14 @@ sap.ui.core.TooltipBase.prototype.closePopup = function() {
 	}
 	this.sCloseNowTimeout = null;
 	//jQuery.sap.log.debug("CLOSE POPUP");
+	oPopup.attachClosed(jQuery.proxy(this.handleClosed, this));
 	oPopup.close();
 	this.restoreStandardTooltips();
+};
+
+sap.ui.core.TooltipBase.prototype.handleClosed = function(){
+	this._getPopup().detachClosed(jQuery.proxy(this.handleClosed, this));
+	this.fireEvent(sap.ui.core.Popup.M_EVENTS.closed);
 };
 
 
@@ -643,7 +649,10 @@ sap.ui.core.TooltipBase.prototype._setParent = sap.ui.core.TooltipBase.prototype
  */
 sap.ui.core.TooltipBase.prototype.setParent = function(oParent, sAggregationName) {
 	// As there is a new parent, close popup.
-	this.closePopup();
+	var _oPopup = this._getPopup(); 
+	if (_oPopup && _oPopup.isOpen()) {
+		this.closePopup();
+	}
 	this._setParent.apply(this, arguments);
 };
 /**

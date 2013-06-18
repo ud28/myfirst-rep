@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base implementation for all model implementations
@@ -22,35 +22,49 @@ jQuery.sap.require("sap.ui.model.FormatException");
  * @extends sap.ui.model.Type
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
+ * @param {object} [oFormatOptions] options as provided by concrete subclasses
+ * @param {object} [oConstraints] constraints as supported by concrete subclasses
  * @public
+ * @name sap.ui.model.SimpleType
  */
-sap.ui.model.SimpleType = function(oFormatOptions, oConstraints) {
-	sap.ui.model.Type.apply(this, arguments);
-	this.setFormatOptions(oFormatOptions || {});
-	this.setConstraints(oConstraints || {});
-	this.sName = "SimpleType";
-};
+sap.ui.model.Type.extend("sap.ui.model.SimpleType", /** @lends sap.ui.model.SimpleType */ {
 
-// chain the prototypes
-sap.ui.model.SimpleType.prototype = jQuery.sap.newObject(sap.ui.model.Type.prototype);
+	constructor : function(oFormatOptions, oConstraints) {
+		sap.ui.model.Type.apply(this, arguments);
+		this.setFormatOptions(oFormatOptions || {});
+		this.setConstraints(oConstraints || {});
+		this.sName = "SimpleType";
+	},
 
-/*
- * Describe the sap.ui.model.SimpleType.
- * Resulting metadata can be obtained via sap.ui.model.SimpleType.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.SimpleType", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Type",
-  publicMethods : [
-    // methods
-    "setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
-  ]
-
+  metadata : {
+  	"abstract" : true,
+  	publicMethods : [
+	    "setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
+	  ]
+  }
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.SimpleType with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.SimpleType.extend
+ * @function
+ */
+
 
 /**
  * Format the given value in model representation to an output value in the given

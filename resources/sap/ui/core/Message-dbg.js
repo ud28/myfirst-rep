@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -114,7 +114,6 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -126,6 +125,7 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @name sap.ui.core.Message#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>timestamp</code>.
@@ -139,7 +139,6 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>timestamp</code>.
  *
@@ -151,6 +150,7 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @name sap.ui.core.Message#setTimestamp
  * @function
  */
+
 
 /**
  * Getter for property <code>icon</code>.
@@ -164,7 +164,6 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>icon</code>.
  *
@@ -176,6 +175,7 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @name sap.ui.core.Message#setIcon
  * @function
  */
+
 
 /**
  * Getter for property <code>level</code>.
@@ -189,7 +189,6 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>level</code>.
  *
@@ -201,6 +200,7 @@ sap.ui.core.Element.extend("sap.ui.core.Message", { metadata : {
  * @name sap.ui.core.Message#setLevel
  * @function
  */
+
 
 /**
  * Returns the icon's default URI depending on given size. There are default icons for messages available that can be used this way. If no parameter is given the size will be 16x16 per default. If larger icons are needed the parameter "32x32" might be given.
@@ -258,4 +258,67 @@ sap.ui.core.Message.prototype.getDefaultIcon = function(sSize) {
 	}
 
 	return sUrl;
+};
+
+/**
+ * See sap.ui.core.Message.compare
+ * @public
+ */
+sap.ui.core.Message.prototype.compareByType = function(oOther) {
+	sap.ui.core.Message.compareByType(this, oOther);
+};
+
+/**
+ * Compares a given message with <strong>this</strong> message. The types of
+ * {sap.ui.core.MessageType} is ordered from "Error" > "Warning" > "Success" >
+ * "Information" > "None".
+ * 
+ * @static
+ * @public
+ * @param {sap.ui.core.Message}
+ *            a message to compare with
+ * @return {sap.ui.core.int} returns <strong>0</strong> if both messages are at
+ *         the same level. <strong>-1</strong> if <strong>this</strong>
+ *         message has a lower level. <strong>1</strong> if <strong>this</strong>
+ *         message has a higher level.
+ */
+sap.ui.core.Message.compareByType = function(oMessage1, oMessage2) {
+	if (!oMessage1 && !oMessage2) {
+		return 0;
+	}
+	if (oMessage1 && !oMessage2) {
+		return 1;
+	}
+	if (!oMessage1 && oMessage2) {
+		return -1;
+	}
+
+	var sLvl1 = oMessage1.getLevel();
+	var sLvl2 = oMessage2.getLevel();
+	var t = sap.ui.core.MessageType;
+
+	if (sLvl1 === sLvl2) {
+		return 0;
+	}
+
+	switch (sLvl1) {
+	case t.Error:
+		return 1;
+
+	case t.Warning:
+		return sLvl2 === t.Error ? -1 : 1;
+
+	case t.Success:
+		return sLvl2 === t.Error || sLvl2 === t.Warning ? -1 : 1;
+
+	case t.Information:
+		return sLvl2 === t.None ? 1 : -1;
+
+	case t.None:
+		return -1;
+
+	default:
+		jQuery.sap.log.error("Comparison error", this);
+		return 0;
+	}
 };

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -36,14 +36,16 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getNavButtonText navButtonText} : string</li>
  * <li>{@link #getEnableScrolling enableScrolling} : boolean (default: true)</li>
  * <li>{@link #getIcon icon} : sap.ui.core.URI</li>
- * <li>{@link #getBackgroundDesign backgroundDesign} : sap.m.PageBackgroundDesign (default: sap.m.PageBackgroundDesign.Standard)</li></ul>
+ * <li>{@link #getBackgroundDesign backgroundDesign} : sap.m.PageBackgroundDesign (default: sap.m.PageBackgroundDesign.Standard)</li>
+ * <li>{@link #getNavButtonType navButtonType} : sap.m.ButtonType (default: sap.m.ButtonType.Back)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
  * <li>{@link #getContent content} : sap.ui.core.Control[]</li>
  * <li>{@link #getCustomHeader customHeader} : sap.m.Bar</li>
  * <li>{@link #getFooter footer} : sap.m.Bar</li>
- * <li>{@link #getSubHeader subHeader} : sap.m.Bar</li></ul>
+ * <li>{@link #getSubHeader subHeader} : sap.m.Bar</li>
+ * <li>{@link #getHeaderContent headerContent} : sap.ui.core.Control[]</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -63,7 +65,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -86,14 +88,17 @@ sap.ui.core.Control.extend("sap.m.Page", { metadata : {
 		"navButtonText" : {type : "string", group : "Misc", defaultValue : null},
 		"enableScrolling" : {type : "boolean", group : "Behavior", defaultValue : true},
 		"icon" : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-		"backgroundDesign" : {type : "sap.m.PageBackgroundDesign", group : "Appearance", defaultValue : sap.m.PageBackgroundDesign.Standard}
+		"backgroundDesign" : {type : "sap.m.PageBackgroundDesign", group : "Appearance", defaultValue : sap.m.PageBackgroundDesign.Standard},
+		"navButtonType" : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : sap.m.ButtonType.Back}
 	},
 	defaultAggregation : "content",
 	aggregations : {
     	"content" : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}, 
     	"customHeader" : {type : "sap.m.Bar", multiple : false}, 
     	"footer" : {type : "sap.m.Bar", multiple : false}, 
-    	"subHeader" : {type : "sap.m.Bar", multiple : false}
+    	"subHeader" : {type : "sap.m.Bar", multiple : false}, 
+    	"headerContent" : {type : "sap.ui.core.Control", multiple : true, singularName : "headerContent"}, 
+    	"internalHeader" : {type : "sap.m.Bar", multiple : false, visibility : "hidden"}
 	},
 	events : {
 		"navButtonTap" : {}
@@ -132,7 +137,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>title</code>.
  *
@@ -144,6 +148,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setTitle
  * @function
  */
+
 
 /**
  * Getter for property <code>showNavButton</code>.
@@ -157,7 +162,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>showNavButton</code>.
  *
@@ -169,6 +173,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setShowNavButton
  * @function
  */
+
 
 /**
  * Getter for property <code>showHeader</code>.
@@ -183,7 +188,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>showHeader</code>.
  *
@@ -195,6 +199,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setShowHeader
  * @function
  */
+
 
 /**
  * Getter for property <code>navButtonText</code>.
@@ -208,7 +213,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>navButtonText</code>.
  *
@@ -220,6 +224,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setNavButtonText
  * @function
  */
+
 
 /**
  * Getter for property <code>enableScrolling</code>.
@@ -237,7 +242,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>enableScrolling</code>.
  *
@@ -249,6 +253,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setEnableScrolling
  * @function
  */
+
 
 /**
  * Getter for property <code>icon</code>.
@@ -262,7 +267,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>icon</code>.
  *
@@ -274,6 +278,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setIcon
  * @function
  */
+
 
 /**
  * Getter for property <code>backgroundDesign</code>.
@@ -287,7 +292,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>backgroundDesign</code>.
  *
@@ -299,7 +303,35 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setBackgroundDesign
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>navButtonType</code>.
+ * This property is used to set the appearance of the NavButton. By default when showNavButton is set to true, a back button will be shown in iOS and an up button in other platforms. In case you want to show a normal button in the left header, you can set the value to "Default".
+ *
+ * Default value is <code>Back</code>
+ *
+ * @return {sap.m.ButtonType} the value of property <code>navButtonType</code>
+ * @public
+ * @since 1.12
+ * @name sap.m.Page#getNavButtonType
+ * @function
+ */
+
+/**
+ * Setter for property <code>navButtonType</code>.
+ *
+ * Default value is <code>Back</code> 
+ *
+ * @param {sap.m.ButtonType} oNavButtonType  new value for property <code>navButtonType</code>
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.12
+ * @name sap.m.Page#setNavButtonType
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>content</code>.<br/>
  * The content of this page
@@ -309,6 +341,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#getContent
  * @function
  */
+
 
 /**
  * Inserts a content into the aggregation named <code>content</code>.
@@ -326,7 +359,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Adds some content <code>oContent</code> 
  * to the aggregation named <code>content</code>.
@@ -339,7 +371,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Removes an content from the aggregation named <code>content</code>.
  *
@@ -350,7 +381,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>content</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -359,7 +389,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#removeAllContent
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>content</code> 
@@ -372,7 +401,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#indexOfContent
  * @function
  */
-
+	
 
 /**
  * Destroys all the content in the aggregation 
@@ -382,7 +411,8 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#destroyContent
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>customHeader</code>.<br/>
  * The (optional) custom header of this page.
@@ -395,6 +425,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>customHeader</code>.
  * @param oCustomHeader {sap.m.Bar}
@@ -403,7 +434,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setCustomHeader
  * @function
  */
-
+	
 
 /**
  * Destroys the customHeader in the aggregation 
@@ -413,7 +444,8 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#destroyCustomHeader
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>footer</code>.<br/>
  * The (optional) footer of this page. It is always located at the bottom of the page
@@ -424,6 +456,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>footer</code>.
  * @param oFooter {sap.m.Bar}
@@ -432,7 +465,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setFooter
  * @function
  */
-
+	
 
 /**
  * Destroys the footer in the aggregation 
@@ -442,7 +475,8 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#destroyFooter
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>subHeader</code>.<br/>
  * a subHeader will be rendered directly under the header
@@ -453,6 +487,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>subHeader</code>.
  * @param oSubHeader {sap.m.Bar}
@@ -461,7 +496,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#setSubHeader
  * @function
  */
-
+	
 
 /**
  * Destroys the subHeader in the aggregation 
@@ -471,6 +506,89 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#destroySubHeader
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>headerContent</code>.<br/>
+ * Controls to added to the right side of the page header. Usually an application would use Button controls and limit the number to one when the application needs to run on smartphones. There is no automatic overflow handling when the space is insufficient.
+ * When a customHeader is used, this aggregation will be ignored.
+ * 
+ * @return {sap.ui.core.Control[]}
+ * @public
+ * @name sap.m.Page#getHeaderContent
+ * @function
+ */
+
+
+/**
+ * Inserts a headerContent into the aggregation named <code>headerContent</code>.
+ *
+ * @param {sap.ui.core.Control}
+ *          oHeaderContent the headerContent to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the headerContent should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the headerContent is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the headerContent is inserted at 
+ *             the last position        
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Page#insertHeaderContent
+ * @function
+ */
+
+/**
+ * Adds some headerContent <code>oHeaderContent</code> 
+ * to the aggregation named <code>headerContent</code>.
+ *
+ * @param {sap.ui.core.Control}
+ *            oHeaderContent the headerContent to add; if empty, nothing is inserted
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Page#addHeaderContent
+ * @function
+ */
+
+/**
+ * Removes an headerContent from the aggregation named <code>headerContent</code>.
+ *
+ * @param {int | string | sap.ui.core.Control} vHeaderContent the headerContent to remove or its index or id
+ * @return {sap.ui.core.Control} the removed headerContent or null
+ * @public
+ * @name sap.m.Page#removeHeaderContent
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>headerContent</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.ui.core.Control[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.m.Page#removeAllHeaderContent
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>headerContent</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.ui.core.Control}
+ *            oHeaderContent the headerContent whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.m.Page#indexOfHeaderContent
+ * @function
+ */
+	
+
+/**
+ * Destroys all the headerContent in the aggregation 
+ * named <code>headerContent</code>.
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Page#destroyHeaderContent
+ * @function
+ */
+
 
 /**
  * this event is fired when Nav Button is tapped 
@@ -504,7 +622,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'navButtonTap' event of this <code>sap.m.Page</code>.<br/>
  *
@@ -520,7 +637,6 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
-
 /**
  * Fire event navButtonTap to attached listeners.
 
@@ -531,6 +647,7 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  */
 
+
 /**
  * Scrolls to the given position. Only available if enableScrolling is set to "true".
  *
@@ -538,12 +655,10 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @function
  * @param {int} 
  *         iY
- *         The vertical pixel position to scroll to.
- * Scrolling down happens with positive values.
+ *         The vertical pixel position to scroll to. Scrolling down happens with positive values.
  * @param {int} 
  *         iTime
- *         The duration of animated scrolling.
- * To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
+ *         The duration of animated scrolling. To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
 
  * @type sap.m.Page
  * @public
@@ -552,8 +667,11 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
 
 // Start of sap/m/Page.js
 sap.m.Page.prototype.init = function() {
+	jQuery.sap.require("sap.ui.core.theming.Parameters");
+	this._bIsPlatformDependent = sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true";
+	
 	this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	if (this.getNavButtonText() == ""){
+	if (this.getNavButtonText() == "" && this._bIsPlatformDependent){
 		this.setNavButtonText(this._rb.getText("PAGE_NAVBUTTON_TEXT"));
 	}
 };
@@ -575,7 +693,8 @@ sap.m.Page.prototype.onBeforeRendering = function() {
 			vertical: true,
 			zynga: false,
 			preventDefault: false,
-			nonTouchScrolling: true
+			nonTouchScrolling: "scrollbar",
+			scrollbarClass: "sapMScrollbar"
 		});
 	}
 };
@@ -602,46 +721,55 @@ sap.m.Page.prototype.exit = function() {
 		this._appIcon.destroy();
 		this._appIcon = null;
 	}
-	if (this._internalHeader){
-		this._internalHeader.destroy();
-		this._internalHeader = null;
-	}
 };
 
 sap.m.Page.prototype.setBackgroundDesign = function(sBgDesign) {
-	var bScrolling = this._hasScrolling();
 	var sBgDesignOld = this.getBackgroundDesign();
+
 	this.setProperty("backgroundDesign", sBgDesign, true);
-	if (bScrolling){
-		jQuery.sap.byId( this.getId() + "-scroll").removeClass('sapMPageBg'+ sBgDesignOld).addClass('sapMPageBg' + this.getBackgroundDesign());
-	} else {
-		jQuery.sap.byId( this.getId() + "-cont").removeClass('sapMPageBg'+ sBgDesignOld).addClass('sapMPageBg' + this.getBackgroundDesign());
-	}
+	jQuery.sap.byId(this.getId() + "-cont").removeClass("sapMPageBg" + sBgDesignOld).addClass("sapMPageBg" + this.getBackgroundDesign());
 	return this;
-}
+};
 
 sap.m.Page.prototype.setTitle = function(sTitle) {
+	var bWasNull = !this._headerTitle;
+	
 	this._headerTitle = this._headerTitle || new sap.m.Label(this.getId() +"-title", {text: sTitle});
 	this._headerTitle.setText(sTitle);
-	if(jQuery.os.ios){
-		this._updateHeaderContent(this._headerTitle, 'middle', 0);
-	} else {
-		this._titleIndex = this._titleIndex || 0;
-		this._updateHeaderContent(this._headerTitle, 'left', this._titleIndex);
+	
+	if(bWasNull){
+		if (this._bIsPlatformDependent){
+			if(jQuery.os.ios){
+				this._updateHeaderContent(this._headerTitle, 'middle', 0);
+			} else {
+				this._titleIndex = this._titleIndex || 0;
+				this._updateHeaderContent(this._headerTitle, 'left', this._titleIndex);
+			}
+		} else {
+			this._updateHeaderContent(this._headerTitle, 'middle', 0);
+		}
 	}
+	
 	this.setProperty("title", sTitle, true);
 	return this;
 };
 
 sap.m.Page.prototype.setShowNavButton = function (bShowNavBtn) {
+	var bOldValue = !!this.getShowNavButton();
+	if(bShowNavBtn === bOldValue){
+		return this;
+	}
+
 	this.setProperty("showNavButton", bShowNavBtn, true);
 	this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {tap: jQuery.proxy(this.fireNavButtonTap, this)});
-	if(jQuery.os.ios){
-		this._navBtn.setType(sap.m.ButtonType.Back);
-		this._navBtn.setText(this.getNavButtonText()); 
-	} else {
+	var sNavButtonType = this.getNavButtonType();
+	if(!jQuery.os.ios && sNavButtonType == sap.m.ButtonType.Back){
 		this._navBtn.setType(sap.m.ButtonType.Up);
+	} else {
+		this._navBtn.setType(sNavButtonType);
+		this._navBtn.setText(this.getNavButtonText()); 
 	}
+	
 	if (bShowNavBtn){
 		if (!jQuery.os.ios && this.getIcon()){
 			this._navBtn.setIcon(this.getIcon());	
@@ -661,9 +789,21 @@ sap.m.Page.prototype.setShowNavButton = function (bShowNavBtn) {
 	return this;
 };
 
+sap.m.Page.prototype.setNavButtonType = function (sNavButtonType) {
+	this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {tap: jQuery.proxy(this.fireNavButtonTap, this)});
+	if(!jQuery.os.ios && sNavButtonType == sap.m.ButtonType.Back){
+		// internal conversion from Back to Up for non-iOS platform
+		this._navBtn.setType(sap.m.ButtonType.Up);
+	} else {
+		this._navBtn.setType(sNavButtonType);
+	}
+	this.setProperty("navButtonType", sNavButtonType, true);
+	return this;
+};
+
 sap.m.Page.prototype.setNavButtonText = function (sText) {
 	this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {tap: jQuery.proxy(this.fireNavButtonTap, this)});
-	if (sText == ""){
+	if (sText == "" && this._bIsPlatformDependent){
 		sText = this._rb.getText("PAGE_NAVBUTTON_TEXT");
 	}
 	if(jQuery.os.ios){
@@ -674,22 +814,37 @@ sap.m.Page.prototype.setNavButtonText = function (sText) {
 };
 
 sap.m.Page.prototype.setIcon = function (sIconSrc) {
+	var sOldValue = this.getIcon();
+	if(sOldValue === sIconSrc){
+		return this;
+	}
+	
 	if (!jQuery.os.ios){
-		if (this.getShowNavButton()){
-			this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {tap: jQuery.proxy(this.fireNavButtonTap, this)});
-			this._navBtn.setIcon(sIconSrc);	
-			if (this._appIcon){
+		if(sIconSrc){
+			if (this.getShowNavButton()){
+				this._navBtn = this._navBtn || new sap.m.Button(this.getId() + "-navButton", {tap: jQuery.proxy(this.fireNavButtonTap, this)});
+				this._navBtn.setIcon(sIconSrc);	
+				if (this._appIcon){
+					this._updateHeaderContent(this._appIcon, 'left', -1);
+				}
+			} else {
+				this._appIcon = this._appIcon || new sap.m.Image(this.getId()+"-icon", {src: sIconSrc}).addStyleClass("sapMPageAppIcon");
+				this._appIcon.setSrc(sIconSrc);
+				if (this._navBtn){
+					this._updateHeaderContent(this._navBtn, 'left', -1);
+				}
+				this._updateHeaderContent(this._appIcon, 'left', 0);
+			}
+			this._titleIndex = 1;
+		}else{
+			//I can't remove the icon from button, so we need to do it later...
+			if(this._appIcon){
 				this._updateHeaderContent(this._appIcon, 'left', -1);
+				this._titleIndex = 0;
+				this._appIcon.destroy();
+				this._appIcon = null;
 			}
-		} else {
-			this._appIcon = this._appIcon || new sap.m.Image(this.getId()+"-icon", {src: sIconSrc});
-			this._appIcon.setSrc(sIconSrc);
-			if (this._navBtn){
-				this._updateHeaderContent(this._navBtn, 'left', -1);
-			}
-			this._updateHeaderContent(this._appIcon, 'left', 0);
 		}
-		this._titleIndex = 1;
 	}
 	this.setProperty("icon", sIconSrc, true);
 	return this;
@@ -703,35 +858,43 @@ sap.m.Page.prototype.setIcon = function (sIconSrc) {
  * @private 
  */
 sap.m.Page.prototype._updateHeaderContent = function (oContent, sContentPosition, iContentIndex){
-	if (this._internalHeader){
+	var oInternalHeader = this._getInternalHeader();
+
+	if (oInternalHeader){
 		switch (sContentPosition){
 		case 'left':
 			if (iContentIndex == -1){
-				this._internalHeader.removeContentLeft(oContent);
+				if(oInternalHeader.getContentLeft()){
+					oInternalHeader.removeContentLeft(oContent);
+				}
 			} else {
-				if (this._internalHeader.indexOfContentLeft(oContent)!= iContentIndex){
-					this._internalHeader.insertContentLeft(oContent, iContentIndex);
-					this._internalHeader.invalidate(); // workaround for bOutput problem
+				if (oInternalHeader.indexOfContentLeft(oContent)!= iContentIndex){
+					oInternalHeader.insertContentLeft(oContent, iContentIndex);
+					oInternalHeader.invalidate(); // workaround for bOutput problem
 				}
 			}
 			break;
 		case 'middle':
 			if (iContentIndex == -1){
-				this._internalHeader.removeContentMiddle(oContent);
+				if(oInternalHeader.getContentMiddle()){
+					oInternalHeader.removeContentMiddle(oContent);
+				}
 			} else {
-				if (this._internalHeader.indexOfContentMiddle(oContent)!= iContentIndex){
-					this._internalHeader.insertContentMiddle(oContent, iContentIndex);
-					this._internalHeader.invalidate();
+				if (oInternalHeader.indexOfContentMiddle(oContent)!= iContentIndex){
+					oInternalHeader.insertContentMiddle(oContent, iContentIndex);
+					oInternalHeader.invalidate();
 				}
 			}
 			break;
 		case 'right':
 			if (iContentIndex == -1){
-				this._internalHeader.removeContentRight(oContent);
+				if(oInternalHeader.getContentRight()){
+					oInternalHeader.removeContentRight(oContent);
+				}
 			} else {
-				if (this._internalHeader.indexOfContentRight(oContent)!= iContentIndex){
-					this._internalHeader.insertContentRight(oContent, iContentIndex);
-					this._internalHeader.invalidate();
+				if (oInternalHeader.indexOfContentRight(oContent)!= iContentIndex){
+					oInternalHeader.insertContentRight(oContent, iContentIndex);
+					oInternalHeader.invalidate();
 				}
 			}
 			break;
@@ -747,34 +910,39 @@ sap.m.Page.prototype._updateHeaderContent = function (oContent, sContentPosition
  */
 
 sap.m.Page.prototype._getInternalHeader= function() {
-	if (!this._internalHeader){
-		this._internalHeader = new sap.m.Bar(this.getId() + "-intHeader");
-		this._internalHeader.setParent(this, 'internalHeader', true);
-	}
-	if(jQuery.os.ios){
-		if (this.getShowNavButton() && this._navBtn){
-			this._updateHeaderContent(this._navBtn, 'left', 0);
-		}
-		if (this.getTitle() && this._headerTitle){
-			this._updateHeaderContent(this._headerTitle, 'middle', 0);
-		}
-	} else {
-		if (this.getShowNavButton() && this._navBtn){
-			this._updateHeaderContent(this._navBtn, 'left', 0);
-			this._titleIndex = 1;
+	var oInternalHeader = this.getAggregation("internalHeader");
+	if (!oInternalHeader){
+		this.setAggregation('internalHeader', new sap.m.Bar(this.getId() + "-intHeader"));
+		oInternalHeader = this.getAggregation("internalHeader");
+		oInternalHeader._context = 'header';
+		if(jQuery.os.ios){
+			if (this.getShowNavButton() && this._navBtn){
+				this._updateHeaderContent(this._navBtn, 'left', 0);
+			}
+			if (this.getTitle() && this._headerTitle){
+				this._updateHeaderContent(this._headerTitle, 'middle', 0);
+			}
 		} else {
-			if(this.getIcon() && this._appIcon){
-				this._updateHeaderContent(this._appIcon, 'left', 0);
+			if (this.getShowNavButton() && this._navBtn){
+				this._updateHeaderContent(this._navBtn, 'left', 0);
 				this._titleIndex = 1;
+			} else {
+				if(this.getIcon() && this._appIcon){
+					this._updateHeaderContent(this._appIcon, 'left', 0);
+					this._titleIndex = 1;
+				}
+			}
+			if (this.getTitle() && this._headerTitle){
+				if (this._bIsPlatformDependent){
+					this._titleIndex = this._titleIndex || 0;
+					this._updateHeaderContent(this._headerTitle, 'left', this._titleIndex);
+				} else {
+					this._updateHeaderContent(this._headerTitle, 'middle', 0);
+				}
 			}
 		}
-		if (this.getTitle() && this._headerTitle){
-			this._titleIndex = this._titleIndex || 0;
-			this._updateHeaderContent(this._headerTitle, 'left', this._titleIndex);
-		}
 	}
-	this._internalHeader._context = 'header';
-	return this._internalHeader;
+	return oInternalHeader;
 };
 
 /**
@@ -792,15 +960,51 @@ sap.m.Page.prototype._getAnyHeader = function() {
 	}
 };
 
+/**
+ * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+ *
+ * @private
+ */
+sap.m.Page.prototype.getScrollDelegate = function() {
+	return this._oScroller;
+};
 
 //*** API Methods ***
 
 sap.m.Page.prototype.scrollTo = function(y, time) {
-	if (this._oScroller && this.getDomRef()) { // only if rendered
+	if (this._oScroller){
 		this._oScroller.scrollTo(0, y, time);
-	} else {
-		this._oScroller._scrollX = 0;
-		this._oScroller._scrollY = y; // remember to apply later
 	}
 	return this;
+};
+
+
+//*** Methods forwarding the "headerContent" pseudo-aggregation calls ***
+
+sap.m.Page.prototype.getHeaderContent = function() {
+	return this._getInternalHeader().getContentRight();
+};
+
+sap.m.Page.prototype.indexOfHeaderContent = function(oControl) {
+	return this._getInternalHeader().indexOfContentRight(oControl);
+};
+
+sap.m.Page.prototype.insertHeaderContent = function(oControl, iIndex) {
+	return this._getInternalHeader().insertContentRight(oControl, iIndex);
+};
+
+sap.m.Page.prototype.addHeaderContent = function(oControl) {
+	return this._getInternalHeader().addContentRight(oControl);
+};
+
+sap.m.Page.prototype.removeHeaderContent = function(oControl) {
+	return this._getInternalHeader().removeContentRight(oControl);
+};
+
+sap.m.Page.prototype.removeAllHeaderContent = function() {
+	return this._getInternalHeader().removeAllContentRight();
+};
+
+sap.m.Page.prototype.destroyHeaderContent = function() {
+	return this._getInternalHeader().destroyContentRight();
 };

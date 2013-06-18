@@ -1,9 +1,11 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("jquery.sap.history", false);
+
+jQuery.sap.require("jquery.sap.strings");
 
 (function($, window){
 		//suffix of virtual hash 
@@ -240,6 +242,10 @@ jQuery.sap.declare("jquery.sap.history", false);
 	 */
 	$.sap.history.setDefaultHandler = function(fn){
 		defaultHandler = fn;
+	};
+	
+	$.sap.history.getDefaultHandler = function(){
+		return defaultHandler;
 	};
 	
 	
@@ -590,7 +596,7 @@ jQuery.sap.declare("jquery.sap.history", false);
 			//url with hash opened from bookmark
 			oParsedHash = parseHashToObject(sHash);
 			
-			if(!oParsedHash.bBookmarkable){
+			if(!oParsedHash || !oParsedHash.bBookmarkable){
 				if(jQuery.isFunction(defaultHandler)){
 					defaultHandler($.sap.history.NavType.Bookmark);
 				}
@@ -608,7 +614,7 @@ jQuery.sap.declare("jquery.sap.history", false);
 			iNewHashIndex = jQuery.inArray(sHash, hashHistory);
 			if(iNewHashIndex === 0){
 				oParsedHash = parseHashToObject(sHash);
-				if(!oParsedHash.bBookmarkable){
+				if(!oParsedHash || !oParsedHash.bBookmarkable){
 					if(jQuery.isFunction(defaultHandler)){
 						defaultHandler($.sap.history.NavType.Back);
 					}
@@ -628,7 +634,7 @@ jQuery.sap.declare("jquery.sap.history", false);
 					iStep = calcStepsToRealHistory(sHash, false);
 					window.history.go(iStep);
 				}else{
-					var sameFamilyRegex = new RegExp(escapeRegex(currentHash + skipSuffix) + "[0-9]*$");
+					var sameFamilyRegex = new RegExp(jQuery.sap.escapeRegExp(currentHash + skipSuffix) + "[0-9]*$");
 					if(sameFamilyRegex.test(sHash)){
 						//going forward
 						//search forward in history for the first non-virtual hash
@@ -718,14 +724,10 @@ jQuery.sap.declare("jquery.sap.history", false);
 			oReturn.bBookmarkable = aParts[aParts.length-1] === "0" ? false : true;
 			
 			return oReturn;
+		}else{
+			//here can be empty hash only with a skipable suffix
+			return null;
 		}
 	}
 	
-	/**
-	 * This function escapes the reserved letters in Regular Expression
-	 * @private
-	 */
-	function escapeRegex(sText){
-		return sText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-	}
 })(jQuery, this);

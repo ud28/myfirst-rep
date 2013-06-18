@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -63,10 +63,11 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  * @name sap.makit.ValueBubble
@@ -120,7 +121,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showCategoryText</code>.
  *
@@ -132,6 +132,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowCategoryText
  * @function
  */
+
 
 /**
  * Getter for property <code>showCategoryDisplayName</code>.
@@ -145,7 +146,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showCategoryDisplayName</code>.
  *
@@ -157,6 +157,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowCategoryDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>showValueDisplayName</code>.
@@ -170,7 +171,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showValueDisplayName</code>.
  *
@@ -182,6 +182,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowValueDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>showValueOnPieChart</code>.
@@ -195,7 +196,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showValueOnPieChart</code>.
  *
@@ -207,6 +207,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowValueOnPieChart
  * @function
  */
+
 
 /**
  * Getter for property <code>showLegendLabel</code>.
@@ -220,7 +221,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showLegendLabel</code>.
  *
@@ -232,6 +232,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowLegendLabel
  * @function
  */
+
 
 /**
  * Getter for property <code>showNullValue</code>.
@@ -245,7 +246,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showNullValue</code>.
  *
@@ -257,6 +257,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowNullValue
  * @function
  */
+
 
 /**
  * Getter for property <code>position</code>.
@@ -270,7 +271,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>position</code>.
  *
@@ -282,6 +282,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setPosition
  * @function
  */
+
 
 /**
  * Getter for property <code>style</code>.
@@ -295,7 +296,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>style</code>.
  *
@@ -307,6 +307,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setStyle
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -320,7 +321,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -332,6 +332,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setVisible
  * @function
  */
+
 
 // Start of sap/makit/ValueBubble.js
 /*!

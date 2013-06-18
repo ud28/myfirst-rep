@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.m.DialogRenderer");
 jQuery.sap.require("sap.m.BarRenderer");
@@ -21,57 +21,108 @@ sap.m.DialogRenderer = {};
  */
 sap.m.DialogRenderer.render = function(oRm, oControl) {
 	var oCore = sap.ui.getCore(),
+		sType = oControl.getType(),
+		oHeader = oControl._getHeader(),
+		bMessage = (sType === sap.m.DialogType.Message),
 		oLeftButton = oCore.byId(oControl.getLeftButton()),
 		oRightButton = oCore.byId(oControl.getRightButton());
+	
+	if(oHeader){
+		oHeader._context = "header";
+	}
 
 	// write the HTML into the render manager
 	oRm.write("<div");
 	oRm.writeControlData(oControl);
 	oRm.addClass("sapMDialog");
 	oRm.addClass("sapMDialog-CTX");
-	if(jQuery.device.is.iphone){
-		oRm.addClass("sapMDialogHidden sapMDialogIPhone");
+	oRm.addClass(sap.m.Dialog._mStateClasses[oControl.getState()]);
+	
+	if(!sap.m.Dialog._bOneDesign){
+		if(jQuery.os.ios && !oHeader){
+			oRm.addClass("sapMDialogNoHeader");
+		}
+		
+		if(bMessage){
+			oRm.addClass("sapMMessageDialog");
+			oRm.addClass("sapMCommonDialog");
+		}else{
+			if(jQuery.device.is.iphone){
+				oRm.addClass("sapMDialogHidden sapMDialogIPhone");
+			}
+		}
+	}else{
+		if(jQuery.device.is.phone){
+			oRm.addClass("sapMDialogPhone");
+		}
 	}
+	
 	oRm.writeClasses();
+	
+	var sTooltip = oControl.getTooltip_AsString();
+	if (sTooltip) {
+		oRm.writeAttributeEscaped("title", sTooltip);
+	}
+	
 	oRm.write(">");
 
-	if(jQuery.os.ios) {
-		oRm.renderControl(oControl._getHeader());
-	} else {
-		oRm.write("<header>");
-		oRm.write("<h1>");
-		if(oControl._iconImage){
-			oRm.renderControl(oControl._iconImage);
+	if(!sap.m.Dialog._bOneDesign){
+		if(jQuery.os.ios) {
+			if(bMessage){
+				if(oControl.getTitle()) {
+					oRm.write("<header class=\"sapMDialogTitle\">");
+					oRm.writeEscaped(oControl.getTitle());
+					oRm.write("</header>");
+				}
+			}else{
+				if(oHeader){
+					oRm.renderControl(oHeader);
+				}
+			}
+		} else {
+			if(oControl.getIcon() || oControl.getTitle()){
+				oRm.write("<header>");
+				oRm.write("<h1>");
+				if(oControl._iconImage){
+					oRm.renderControl(oControl._iconImage);
+				}
+				oRm.write("<span>");
+				oRm.renderControl(oControl._headerTitle);
+				oRm.write("</span>");
+				oRm.write("</h1>");
+				oRm.write("</header>");
+			}
 		}
-		oRm.write("<span>");
-		oRm.renderControl(oControl._headerTitle);
-//		oRm.writeEscaped(oControl.getTitle());
-		oRm.write("</span>");
-		oRm.write("</h1>");
-		oRm.write("</header>");
+	}else{
+		if(oHeader){
+			oRm.renderControl(oHeader);
+		}
 	}
 
 	oRm.write("<section id='" + oControl.getId() + "-cont'>");
-	oRm.write("<div id='" + oControl.getId() + "-scroll" +"' class='sapMDialogScroll'>")
+	oRm.write("<div id='" + oControl.getId() + "-scroll' class='sapMDialogScroll'>");
+	oRm.write("<div id='" + oControl.getId() + "-scrollCont' class='sapMDialogScrollCont'>");
 	var aContent = oControl.getContent();
 	for(var i = 0; i < aContent.length; i++) {
 		oRm.renderControl(aContent[i]);
 	}
 	oRm.write("</div>");
+	oRm.write("</div>");
 	oRm.write("</section>");
 	
-	if(!jQuery.os.ios) {
+	if(sap.m.Dialog._bOneDesign || !jQuery.os.ios || bMessage) {
+		
 		oRm.write("<footer class='sapMDialogActions'>");
 
 		// Render actions
 		if(oLeftButton){
 			oRm.write("<div class='sapMDialogAction'>");
-			oRm.renderControl(oLeftButton);
+			oRm.renderControl(oLeftButton.addStyleClass("sapMDialogBtn", true));
 			oRm.write("</div>");
 		}
 		if(oRightButton){
 			oRm.write("<div class='sapMDialogAction'>");
-			oRm.renderControl(oRightButton);
+			oRm.renderControl(oRightButton.addStyleClass("sapMDialogBtn", true));
 			oRm.write("</div>");
 		}
 		

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides base class sap.ui.core.Control for all controls
@@ -25,19 +25,18 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  * @abstract
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @name sap.ui.core.Control
  */
 sap.ui.core.Element.extend("sap.ui.core.Control", /* @lends sap.ui.core.Control */ {
 
 	metadata : {
+		stereotype : "control",
 		"abstract" : true,
-		publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getLayoutData", "setLayoutData"],
+		publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent"],
 		library: "sap.ui.core",
 		properties : {},
-		aggregations : {
-			layoutData : {name : "layoutData", type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"}
-		},
+		aggregations : {},
 		associations : {},
 		events : {}
 	},
@@ -478,22 +477,28 @@ sap.ui.core.Control.prototype.onselectstart = function (oBrowserEvent) {
  */
 
 /**
- * Function is called before the rendering of the control is started.<br/>
- * Override this hook as you please.
+ * Function is called before the rendering of the control is started.
+ *
+ * Applications must not call this hook method directly, it is called by the framework.
+ *
+ * Subclasses of Control should override this hook to implement any necessary actions before the rendering.
  *
  * @function
  * @name sap.ui.core.Control.prototype.onBeforeRendering
- * @public
+ * @protected
  */
 //sap.ui.core.Control.prototype.onBeforeRendering = function() {};
 
 /**
- * Function is called when the rendering of the control is completed. <br/>
- * Override this hook as you please.
+ * Function is called when the rendering of the control is completed.
+ *
+ * Applications must not call this hook method directly, it is called by the framework.
+ *
+ * Subclasses of Control should override this hook to implement any necessary actions after the rendering.
  *
  * @function
  * @name sap.ui.core.Control.prototype.onAfterRendering
- * @public
+ * @protected
  */
 //sap.ui.core.Control.prototype.onAfterRendering = function() {};
 
@@ -506,20 +511,3 @@ sap.ui.core.Control.prototype.getIdForLabel = function () {
 	return this.getId();
 };
 
-/**
- * Returns the {@link sap.ui.core.LayoutData} defining the layout constraints 
- * for this control when it is used inside a layout.
- *
- * @function
- * @name sap.ui.core.Control.prototype.getLayoutData
- * @public
- */
-
-/**
- * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints 
- * for this control when it is used inside a layout.
- *
- * @function
- * @name sap.ui.core.Control.prototype.setLayoutData
- * @public
- */

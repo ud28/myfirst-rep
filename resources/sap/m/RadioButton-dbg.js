@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -124,7 +124,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -136,6 +135,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>enabled</code>.
@@ -149,7 +149,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -161,6 +160,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setEnabled
  * @function
  */
+
 
 /**
  * Getter for property <code>selected</code>.
@@ -174,7 +174,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>selected</code>.
  *
@@ -186,6 +185,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setSelected
  * @function
  */
+
 
 /**
  * Getter for property <code>groupName</code>.
@@ -200,7 +200,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>groupName</code>.
  *
@@ -212,6 +211,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setGroupName
  * @function
  */
+
 
 /**
  * Getter for property <code>text</code>.
@@ -225,7 +225,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -237,6 +236,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>textDirection</code>.
@@ -250,7 +250,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>textDirection</code>.
  *
@@ -262,6 +261,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setTextDirection
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -275,7 +275,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -287,6 +286,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>activeHandling</code>.
@@ -301,7 +301,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>activeHandling</code>.
  *
@@ -314,8 +313,9 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
+
 /**
- * Event is triggered when the user makes a change on the radio button. 
+ * Event is triggered when the user makes a change on the radio button (selecting or unselecting it). 
  *
  * @name sap.m.RadioButton#select
  * @event
@@ -323,6 +323,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @param {sap.ui.base.EventProvider} oControlEvent.getSource
  * @param {object} oControlEvent.getParameters
 
+ * @param {boolean} oControlEvent.getParameters.selected Checks whether the RadioButton is active or not.
  * @public
  */
  
@@ -331,7 +332,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.m.RadioButton</code>.<br/> itself. 
  *  
- * Event is triggered when the user makes a change on the radio button. 
+ * Event is triggered when the user makes a change on the radio button (selecting or unselecting it). 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -345,7 +346,6 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @name sap.m.RadioButton#attachSelect
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'select' event of this <code>sap.m.RadioButton</code>.<br/>
@@ -362,16 +362,21 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Fire event select to attached listeners.
-
+ * 
+ * Expects following event parameters:
+ * <ul>
+ * <li>'selected' of type <code>boolean</code> Checks whether the RadioButton is active or not.</li>
+ * </ul>
+ *
  * @param {Map} [mArguments] the arguments to pass along with the event.
  * @return {sap.m.RadioButton} <code>this</code> to allow method chaining
  * @protected
  * @name sap.m.RadioButton#fireSelect
  * @function
  */
+
 
 /**
  * Method to set a RadioButton's state to active or inactive.
@@ -401,7 +406,7 @@ sap.m.RadioButton.prototype.ontap = function(oEvent) {
 	if (this.getEnabled()) {
 		if (!this.getSelected()) {
 			this.setSelected(true);
-			this.fireSelect({/* no parameters */});
+			this.fireSelect({selected:true});
 		}
 	}else{
 		// readOnly or disabled -> don't allow browser to switch RadioButton on
@@ -450,6 +455,9 @@ sap.m.RadioButton.prototype.setSelected = function(bSelected) {
 					// The SAPUI5 control is known by an ID without the "-RB" suffix
 					var oControl = sap.ui.getCore().getElementById(other.id.substr(0, other.id.length-3));
 					if (oControl instanceof sap.m.RadioButton && (oControl !== this)) {
+						if(oControl.getSelected()){
+							oControl.fireSelect({selected:false});
+						}
 						oControl.setSelected(false);
 					}
 				}

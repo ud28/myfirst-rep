@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a tree of controls for the testsuite
@@ -25,7 +25,7 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @class Control Tree used for the Debug Environment
  * @extends sap.ui.base.EventProvider
  * @author Martin Schaus, Frank Weigel
- * @version 1.8.4
+ * @version 1.12.1
  * @private
  */
 sap.ui.debug.ControlTree = function(oCore, oWindow, oParentDomRef, bRunsEmbedded) {

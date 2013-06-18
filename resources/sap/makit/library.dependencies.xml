@@ -1,110 +1,165 @@
 <?xml version="1.0" ?>
 <library name="sap.makit">
-  <module name="sap.makit.Axis" size="6836" compressedSize="680">
+  <module name="sap.makit.Axis" size="6753" compressedSize="680">
     <description>Provides control sap.makit.Axis.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.Category" size="5382" compressedSize="531">
+  </module>
+  <module name="sap.makit.Category" size="5308" compressedSize="533">
     <description>Provides control sap.makit.Category.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.CategoryAxis" size="4830" compressedSize="622">
+  </module>
+  <module name="sap.makit.CategoryAxis" size="5578" compressedSize="685">
     <description>Provides control sap.makit.CategoryAxis.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.makit.Axis"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.Chart" size="47228">
+  </module>
+  <module name="sap.makit.Chart" size="65677" compressedSize="19415">
     <description>Provides control sap.makit.Chart.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Control"/>
-      <module name="sap.makit.js.SybaseMA"/>
+      <module name="sap.makit.MakitLib"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
-      <module name="sap.makit.js.SybaseMA"/>
     </includes>
-  </module>  <module name="sap.makit.ChartRenderer" size="1023" compressedSize="494">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
+  </module>
+  <module name="sap.makit.ChartRenderer" size="1055" compressedSize="496">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
     <requires>
       <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.Column" size="5014" compressedSize="528">
+  </module>
+  <module name="sap.makit.Column" size="5032" compressedSize="530">
     <description>Provides control sap.makit.Column.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.Row" size="6606" compressedSize="1156">
+  </module>
+  <module name="sap.makit.CombinationChart" size="51179" compressedSize="17398">
+    <description>Provides control sap.makit.CombinationChart.</description>
+    <requires>
+      <module name="sap.makit.library"/>
+      <module name="sap.ui.core.Control"/>
+      <module name="sap.makit.MakitLib"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.makit.CombinationChartRenderer" size="1147" compressedSize="529">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.makit.Layer" size="26793" compressedSize="6653">
+    <description>Provides control sap.makit.Layer.</description>
+    <requires>
+      <module name="sap.makit.library"/>
+      <module name="sap.ui.core.Element"/>
+      <module name="sap.makit.MakitLib"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.makit.MakitLib" size="4459">
+    <description>Provides control sap.makit.MakitLib.</description>
+    <requires>
+      <module name="sap.makit.library"/>
+      <module name="sap.ui.core.Element"/>
+      <module name="sap.makit.js.SybaseMA"/>
+      <module name="sap.makit.localization.jQueryGlobalization"/>
+      <module name="sap.makit.localization.jQueryCoreLang"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+      <module name="sap.makit.js.MakitLib"/>
+      <module name="sap.makit.js.SybaseMA"/>
+    </includes>
+  </module>
+  <module name="sap.makit.Row" size="6562" compressedSize="1158">
     <description>Provides control sap.makit.Row.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.Series" size="5305" compressedSize="533">
+  </module>
+  <module name="sap.makit.Series" size="5231" compressedSize="535">
     <description>Provides control sap.makit.Series.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.Value" size="5765" compressedSize="529">
+  </module>
+  <module name="sap.makit.Value" size="5691" compressedSize="531">
     <description>Provides control sap.makit.Value.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.ValueAxis" size="4682" compressedSize="559">
+  </module>
+  <module name="sap.makit.ValueAxis" size="4767" compressedSize="561">
     <description>Provides control sap.makit.ValueAxis.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.makit.Axis"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.ValueBubble" size="11180" compressedSize="1531">
+  </module>
+  <module name="sap.makit.ValueBubble" size="11212" compressedSize="1533">
     <description>Provides control sap.makit.ValueBubble.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.makit.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.makit.library" size="7587" compressedSize="1443">
-    <description>Initialization Code and shared classes of library sap.makit (1.8.4)</description>
+  </module>
+  <module name="sap.makit.library" size="7748" compressedSize="1574">
+    <description>Initialization Code and shared classes of library sap.makit (1.12.1)</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.ui.core.Core"/>
       <module name="sap.ui.core.library"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
       <module name="sap.makit.ChartType"/>
@@ -113,4 +168,5 @@
       <module name="sap.makit.ValueBubblePosition"/>
       <module name="sap.makit.ValueBubbleStyle"/>
     </includes>
-  </module></library>
+  </module>
+</library>

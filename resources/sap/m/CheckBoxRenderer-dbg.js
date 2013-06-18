@@ -1,10 +1,11 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.CheckBoxRenderer");
+jQuery.sap.require("sap.ui.core.ValueStateSupport");
 
 /**
  * @class CheckBox renderer. 
@@ -33,13 +34,23 @@ sap.m.CheckBoxRenderer.render = function(oRm, oCheckBox){
 	// CheckBox wrapper
 	oRm.write("<div");
 	oRm.addClass("sapMCb");
+	if(bEnabled) {
+		oRm.addClass("sapMPointer");
+	}
 	oRm.writeControlData(oCheckBox); 
 	oRm.writeClasses();
+	
+	var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oCheckBox, oCheckBox.getTooltip_AsString());
+	if (sTooltip) {
+		oRm.writeAttributeEscaped("title", sTooltip);
+	}
+	
 	oRm.write(">");		// DIV element
 	
 	
 	// write the HTML into the render manager
-	oRm.write("<div");
+	oRm.write("<div id='");
+	oRm.write(oCheckBox.getId() + "-CbBg'");
 	
 	// CheckBox style class
 	oRm.addClass("sapMCbBg");
@@ -52,19 +63,21 @@ sap.m.CheckBoxRenderer.render = function(oRm, oCheckBox){
 	if (!oCheckBox.getActiveHandling()){
 		oRm.addClass("sapMCbActiveStateOff");
 	}
-	oRm.writeClasses();
 	oRm.writeAttribute("tabIndex", myTabIndex);
+	oRm.addClass("sapMCbMark"); // TODO: sapMCbMark is redundant, remove it and simplify CSS
+	
+	if (oCheckBox.getSelected()) {
+		oRm.addClass("sapMCbMarkChecked");
+	}
+	oRm.writeClasses();
+	
 	oRm.write(">");		// DIV element
 
 	oRm.write("<input type='CheckBox' tabindex='-1' id='");
 	oRm.write(oCheckBox.getId() + "-CB'");
-	oRm.write(" class='sapMCbMark");
 	
 	if (oCheckBox.getSelected()) {
-		oRm.write(" sapMCbMarkChecked'");
 		oRm.writeAttribute("checked", "checked");
-	} else {
-		oRm.write("' ");
 	}
 	
 	if (oCheckBox.getName()) {

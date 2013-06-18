@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -118,7 +118,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -130,6 +129,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -144,7 +144,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -156,6 +155,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>height</code>.
@@ -172,7 +172,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -184,6 +183,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#setHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>horizontal</code>.
@@ -197,7 +197,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>horizontal</code>.
  *
@@ -209,6 +208,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#setHorizontal
  * @function
  */
+
 
 /**
  * Getter for property <code>vertical</code>.
@@ -225,7 +225,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>vertical</code>.
  *
@@ -237,7 +236,8 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#setVertical
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>content</code>.<br/>
  * The content of the ScrollContainer.
@@ -247,6 +247,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#getContent
  * @function
  */
+
 
 /**
  * Inserts a content into the aggregation named <code>content</code>.
@@ -264,7 +265,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some content <code>oContent</code> 
  * to the aggregation named <code>content</code>.
@@ -277,7 +277,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an content from the aggregation named <code>content</code>.
  *
@@ -288,7 +287,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>content</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -297,7 +295,6 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#removeAllContent
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>content</code> 
@@ -310,7 +307,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#indexOfContent
  * @function
  */
-
+	
 
 /**
  * Destroys all the content in the aggregation 
@@ -320,6 +317,7 @@ sap.ui.core.Control.extend("sap.m.ScrollContainer", { metadata : {
  * @name sap.m.ScrollContainer#destroyContent
  * @function
  */
+
 
 /**
  * Scrolls to the given position.
@@ -378,7 +376,7 @@ sap.m.ScrollContainer.prototype.init = function() {
 		vertical: false,
 		zynga: false,
 		preventDefault: false,
-		nonTouchScrolling: true
+		nonTouchScrolling: "scrollbar"
 	});
 	// TODO: do the resize listening only when ScrollContainer becomes visible and unbind when getting visible
 };
@@ -402,7 +400,14 @@ sap.m.ScrollContainer.prototype.exit = function() {
 	}
 };
 
-
+/**
+ * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+ *
+ * @private
+ */
+sap.m.ScrollContainer.prototype.getScrollDelegate = function() {
+	return this._oScroller;
+};
 
 //*** API Methods ***
 

@@ -1,12 +1,16 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides class sap.ui.core.Configuration
 jQuery.sap.declare("sap.ui.core.Configuration");
 jQuery.sap.require("sap.ui.base.Object");
+jQuery.sap.require("sap.ui.core.Locale");
+jQuery.sap.require("sap.ui.thirdparty.URI");
+
+/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
 
 (function() {
 
@@ -49,7 +53,9 @@ jQuery.sap.require("sap.ui.base.Object");
 	 */
 	sap.ui.base.Object.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
-		constructor : function() {
+		constructor : function(oCore) {
+			
+			this._oCore = oCore;
 			
 			function detectLanguage() {
 				var match;
@@ -63,34 +69,39 @@ jQuery.sap.require("sap.ui.base.Object");
 				} 
 				return navigator.language || navigator.userLanguage || navigator.browserLanguage;
 			}
-			
+
 			// definition of supported settings
 			var M_SETTINGS = {
-					"theme"           : { type : "string",   defaultValue : "base" },
-					"language"        : { type : "string",   defaultValue : detectLanguage() },
-					"formatLocale"    : { type : "string",   defaultValue : null },
-					// "timezone"      : "UTC",
-					"accessibility"   : { type : "boolean",  defaultValue : true },
-					"animation"       : { type : "boolean",  defaultValue : true },
-					"rtl"             : { type : "boolean",  defaultValue : false },
-					"debug"           : { type : "boolean",  defaultValue : false },
-					"inspect"         : { type : "boolean",  defaultValue : false },
-					"originInfo"      : { type : "boolean",  defaultValue : false },
-					"noConflict"      : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"noDuplicateIds"  : { type : "boolean",  defaultValue : true },
-					"trace"           : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"modules"         : { type : "string[]", defaultValue : [],        noUrl:true },
-					"areas"           : { type : "string[]", defaultValue : null,      noUrl:true },
-					// "libs"			  : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
-					"onInit"          : { type : "code",     defaultValue : undefined, noUrl:true },
-					"uidPrefix"       : { type : "string",   defaultValue : "__",      noUrl:true },
-					"ignoreUrlParams" : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"weinreServer"    : { type : "string",   defaultValue : "",		   noUrl:true },
-					"weinreId"        : { type : "string",   defaultValue : "" },
-					"xx-loadAllMode"  : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"preload"         : { type : "string",   defaultValue : 'auto' },
-					"xx-test-mobile"  : { type : "boolean",  defaultValue : false },
-					"appCacheBuster"  : { type : "boolean",  defaultValue : false }
+					"theme"                 : { type : "string",   defaultValue : "base" },
+					"language"              : { type : "string",   defaultValue : detectLanguage() },
+					"formatLocale"          : { type : "string",   defaultValue : null },
+					// "timezone"              : "UTC",
+					"accessibility"         : { type : "boolean",  defaultValue : true },
+					"animation"             : { type : "boolean",  defaultValue : true },
+					"rtl"                   : { type : "boolean",  defaultValue : null },
+					"debug"                 : { type : "boolean",  defaultValue : false },
+					"inspect"               : { type : "boolean",  defaultValue : false },
+					"originInfo"            : { type : "boolean",  defaultValue : false },
+					"noConflict"            : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"noDuplicateIds"        : { type : "boolean",  defaultValue : true },
+					"trace"                 : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"modules"               : { type : "string[]", defaultValue : [],        noUrl:true },
+					"areas"                 : { type : "string[]", defaultValue : null,      noUrl:true },
+					// "libs"                  : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
+					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true },
+					"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
+					"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"weinreServer"          : { type : "string",   defaultValue : "",        noUrl:true },
+					"weinreId"              : { type : "string",   defaultValue : "" },
+					"preload"               : { type : "string",   defaultValue : 'auto' },
+					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
+					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
+					"xx-preloadLibCss"      : { type : "string[]", defaultValue : [] },
+					"xx-bindingSyntax"      : { type : "string",   defaultValue : "simple",  noUrl:true }, // simple|complex...
+					"xx-accessibilityMode"  : { type : "boolean",  defaultValue : false },
+					"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
+					"xx-bootTask"           : { type : "function", defaultValue : undefined, noUrl:true }
 			};
 
 			this.oFormatSettings = new sap.ui.core.Configuration.FormatSettings(this);
@@ -119,7 +130,13 @@ jQuery.sap.require("sap.ui.base.Object");
 					config[sName] = "" + sValue; // enforce string
 					break;
 				case "code":
-					config[sName] = typeof sValue === "function" ? sValue : "" + sValue;
+					config[sName] = typeof sValue === "function" ? sValue : String(sValue);
+					break;
+				case "function":
+					if ( typeof sValue !== "function" ) {
+						throw new Error("unsupported value");
+					}
+					config[sName] = sValue;
 					break;
 				case "string[]":
 					if ( jQuery.isArray(sValue) ) {
@@ -135,6 +152,26 @@ jQuery.sap.require("sap.ui.base.Object");
 				}
 			}
 
+			function validateThemeRoot(sThemeRoot) {
+				// might in future be checked against a whitelist - for now it is a hardcoded URL prefix
+				var rThemeRepository = /^\/sap\/public\/bc\/themes\//i,
+					oPage,
+					oThemeRoot,
+					sPath;
+				
+				try {
+					oPage = new URI().normalize();
+					oThemeRoot = new URI(sThemeRoot, window.location.href).normalize();
+					if ( oThemeRoot.hostname() === oPage.hostname() && rThemeRepository.test(oThemeRoot.path()) ) {
+						sPath = oThemeRoot.path();
+						return sPath + (sPath.slice(-1) === '/' ? '' : '/') + "UI5/";
+					}
+				} catch (e) {
+					// malformed URL are also not accepted 
+				}
+				jQuery.sap.log.error("Invalid Theme Root URL: URL must point into the central theme repository on the same server - setting ignored");
+			}
+			
 			// 1. collect the defaults
 			for (var n in M_SETTINGS ) {
 				config[n] = M_SETTINGS[n].defaultValue;
@@ -182,9 +219,9 @@ jQuery.sap.require("sap.ui.base.Object");
 				var oUriParams = jQuery.sap.getUriParameters();
 
 				// map SAP parameters (if later as sap-ui parameter set this wins)
-				if (oUriParams.mParams['sap-locale']) {
-					// map sap-locale to sap-ui-language and ignore sap-language
-					var sValue = oUriParams.get('sap-locale');
+				if (oUriParams.mParams['sap-locale'] || oUriParams.mParams['sap-language']) {
+					// map sap-locale or sap-language to sap-ui-language
+					var sValue = oUriParams.get('sap-locale') || oUriParams.get('sap-language');
 					if (sValue === "") {
 						//empty URL parameters set the parameter back to its system default
 						config['language'] = M_SETTINGS['language'].defaultValue;
@@ -198,9 +235,9 @@ jQuery.sap.require("sap.ui.base.Object");
 					// "" = false, "X", "x" = true
 					var sValue = oUriParams.get('sap-accessibility');
 					if (sValue === "X" || sValue === "x") {
-						setValue('accessibility', true);
+						setValue('xx-accessibilityMode', true);
 					} else {
-						setValue('accessibility', false);
+						setValue('xx-accessibilityMode', false);
 					}
 				}
 
@@ -220,19 +257,7 @@ jQuery.sap.require("sap.ui.base.Object");
 						// empty URL parameters set the parameter back to its system default
 						config['theme'] = M_SETTINGS['theme'].defaultValue;
 					} else {
-						// check if @ in theme - not allowed yet
-						var iIndex = sValue.indexOf("@");
-						if (iIndex >= 0) {
-							jQuery.sap.log.warning("@ not allowed in theme name (theme-root not supported!)");
-							if (iIndex == 0) {
-								config['theme'] = M_SETTINGS['theme'].defaultValue;
-							}else{
-								// use part before @ as theme
-								setValue('theme', sValue.slice(0, iIndex));
-							}
-						}else{
-							setValue('theme', sValue);
-						}
+						setValue('theme', sValue);
 					}
 				}
 
@@ -252,6 +277,40 @@ jQuery.sap.require("sap.ui.base.Object");
 				}
 			}
 
+		  // calculate RTL mode
+			this.derivedRTL = sap.ui.core.Locale._impliesRTL(config.language);
+			
+			// analyze theme parameter
+			var sTheme = config.theme;
+			var iIndex = sTheme.indexOf("@");
+			if (iIndex >= 0) {
+				var sThemeRoot = validateThemeRoot(sTheme.slice(iIndex+1));
+				if ( sThemeRoot ) {
+					config.theme = sTheme.slice(0, iIndex);
+					config.themeRoot = sThemeRoot;
+				} else {
+					// fallback to non-URL parameter (if not equal to sTheme)
+					config.theme = (oCfg.theme && oCfg.theme !== sTheme) ? oCfg.theme : "base";
+					iIndex = -1; // enable theme mapping below 
+				}
+			}
+			// resolve theme name alias, but only if no theme root was given 
+			if ( iIndex < 0 && config.theme === "sap_corbu" ) {
+				config.theme = "sap_goldreflection";
+			}
+			
+			var aLangs = config['xx-supportedLanguages'];
+			if ( aLangs.length === 0 || (aLangs.length === 1 && aLangs[0] === '*') ) {
+				aLangs = [];
+			} else if ( aLangs.length === 1 && aLangs[0] === 'default' ) {
+				aLangs = "ar,bg,ca,cs,da,de,el,en,es,et,fi,fr,hi,hr,hu,it,iw,ja,ko,lt,lv,nl,no,pl,pt,ro,ru,sh,sk,sl,sv,th,tr,uk,vi,zh_CN,zh_TW".split(/,/);
+				if ( aLangs.length === 1 && aLangs[0].slice(0,1) === '@' ) {
+					aLangs = [];
+				}
+			}
+			config['xx-supportedLanguages'] = aLangs; 
+			
+			// log  all non default value
 			for (var n in M_SETTINGS) {
 				if ( config[n] !== M_SETTINGS[n].defaultValue ) {
 					jQuery.sap.log.info("  " + n + " = " + config[n]);
@@ -289,8 +348,66 @@ jQuery.sap.require("sap.ui.base.Object");
 		},
 
 		/**
+		 * Sets a new language tag to be used from now on for language/region dependent 
+		 * functionality (e.g. formatting, data types, translated texts, ...). 
+		 * 
+		 * When the language has changed, the Core will fire its 
+		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
+		 * 
+		 * The framework <strong>does not</strong> guarantee that already created, language 
+		 * dependent objects will be updated by this call. It therefore remains best practice 
+		 * for applications to switch the language early, e.g. before any language dependent 
+		 * objects are created. Applications that need to support more dynamic changes of 
+		 * the language should listen to the <code>localizationChanged</code> event and adapt 
+		 * all language dependent objects that they use (e.g. by rebuilding their UI).
+		 * 
+		 * Currently, the framework notifies the following objects about a change of the
+		 * localization settings before it fires the <code>localizationChanged</code> event:
+		 * 
+		 * <ul>
+		 * <li>date and number data types that are used in property bindings or composite 
+		 *     bindings in existing Elements, Controls, UIAreas or Components</li>
+		 * <li>ResourceModels currently assigned to the Core, an UIArea, Component, 
+		 *     Element or Control</li>
+		 * <li>Elements or Controls that implement the <code>onLocalizationChanged</code> hook. 
+		 * </ul>
+		 * 
+		 * It furthermore derives the RTL mode from the new language, if no explicit RTL
+		 * mode has been set. If the RTL mode changes, the following additional actions will be taken:
+		 * 
+		 * <ul>
+		 * <li>the URLs of already loaded library theme files will be changed</li>
+		 * <li>the <code>dir</code> attribute of the page will be changed to reflect the new mode.</li> 
+		 * <li>all UIAreas will be invalidated (which results in a rendering of the whole UI5 UI)</li> 
+		 * </ul>
+		 * 
+		 * @param {string} sLanguage the new language as a BCP47 compliant language tag; case doesn't matter
+		 *   and underscores can be used instead of a dashes to separate components (compatibility with Java Locale Ids)
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * 
+		 * @experimental Since 1.11.1 - See method documentation for restrictions.
+		 * @public
+		 */
+		setLanguage : function (sLanguage) {
+			check(typeof sLanguage === "string" && sLanguage, "sLanguage must be a BCP47 language tag or Java Locale id or null"); // TODO delegate to Locale?
+			var bOldRTL = this.getRTL(),
+				mChanges;
+			
+			if ( sLanguage != this.language ) {
+				mChanges = this._collect();
+				this.language = mChanges.language = sLanguage;
+				this.derivedRTL = sap.ui.core.Locale._impliesRTL(sLanguage);
+				if ( bOldRTL != this.getRTL() ) {
+					mChanges.rtl = this.getRTL();
+				}
+				this._endCollect();
+			}
+			return this;
+		},
+
+		/**
 		 * Returns the active locale for the current session. 
-		 * The locale is derived from the {@link #getLanguage language} property.  
+		 * The locale is derived from the {@link #getLanguage language} property.
 		 * @return {sap.ui.core.Locale} the locale
 		 * @public
 		 */
@@ -299,8 +416,9 @@ jQuery.sap.require("sap.ui.base.Object");
 		},
 
 		/**
-		 * Returns the format locale string with language and region code. Falls back to language configuration,
-		 * in case it has not been explicitly defined.
+		 * Returns the format locale string with language and region code. Falls back to 
+		 * language configuration, in case it has not been explicitly defined.
+		 * 
 		 * @return {string} the format locale string with language and country code
 		 * @public
 		 */
@@ -308,6 +426,44 @@ jQuery.sap.require("sap.ui.base.Object");
 			return this.formatLocale || this.language;
 		},
 
+		/**
+		 * Sets a new formatLocale to be used from now on for retrieving locale
+		 * specific formatters. Modifying this setting does not have an impact on 
+		 * the retrieval of translated texts!
+		 * 
+		 * Can either be set to a concrete value (a BCP-47 or Java locale compliant 
+		 * language tag) or to <code>null</code>. When set to <code>null</code> (default 
+		 * value) then locale specific formatters are retrieved for the current language.
+		 * 
+		 * After changing the formatLocale, the framework tries  to update localization 
+		 * specific parts of the UI. See the documentation of {@link #setLanguage} for 
+		 * details and restrictions.
+		 * 
+		 * @param {string|null} sFormatLocale the new format locale as a BCP47 compliant language tag; 
+		 *   case doesn't matter and underscores can be used instead of a dashes to separate 
+		 *   components (compatibility with Java Locale Ids)
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * 
+		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
+		 */
+		setFormatLocale : function(sFormatLocale) {
+			check(sFormatLocale === null || typeof sFormatLocale === "string" && sFormatLocale, "sFormatLocale must be a BCP47 language tag or Java Locale id or null");
+			var mChanges;
+			if ( sFormatLocale != this.formatLocale ) {
+				mChanges = this._collect();
+				this.formatLocale = mChanges.formatLocale = sFormatLocale;
+				this._endCollect();
+			}
+			return this;
+		},
+
+		/**
+		 * @experimental 
+		 */
+		getSupportedLanguages : function() {
+			return this["xx-supportedLanguages"];
+		},
+		
 		/**
 		 * Returns whether the accessibility mode is used or not
 		 * @return {boolean} whether the accessibility mode is used or not
@@ -327,12 +483,45 @@ jQuery.sap.require("sap.ui.base.Object");
 		},
 
 		/**
-		 * Returns whether the page uses the RTL text direction
+		 * Returns whether the page uses the RTL text direction.
+		 * 
+		 * If no mode has been explicitly set (neither true nor false),
+		 * the mode is derived from the current language setting.
+		 * 
 		 * @return {boolean} whether the page uses the RTL text direction
 		 * @public
 		 */
 		getRTL : function () {
-			return this.rtl;
+			// if rtl has not been set (still null), return the rtl mode derived from the language 
+			return this.rtl === null ? this.derivedRTL : this.rtl;
+		},
+
+		/**
+		 * Sets the character orientation mode to be used from now on.
+		 * 
+		 * Can either be set to a concrete value (true meaning right-to-left,
+		 * false meaning left-to-right) or to <code>null</code> which means that 
+		 * the character orientation mode should be derived from the current 
+		 * language (incl. region) setting.
+		 * 
+		 * After changing the character orientation mode, the framework tries  
+		 * to update localization specific parts of the UI. See the documentation of 
+		 * {@link #setLanguage} for details and restrictions.
+		 * 
+		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * 
+		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
+		 */
+		setRTL : function(bRTL) {
+			check(bRTL === null || typeof bRTL === "boolean", "bRTL must be null or a boolean");
+			var mChanges;
+			if ( bRTL != this.rtl ) {
+				mChanges = this._collect();
+				this.rtl = mChanges.rtl = this.getRTL();
+				this._endCollect();
+			}
+			return this;
 		},
 
 		/**
@@ -438,6 +627,21 @@ jQuery.sap.require("sap.ui.base.Object");
 		 */
 		getFormatSettings : function() {
 			return this.oFormatSettings;
+		},
+
+		_collect : function() {
+			var mChanges = this.mChanges || (this.mChanges = { __count : 0});
+			mChanges.__count++;
+			return mChanges;
+		},
+		
+		_endCollect : function() {
+			var mChanges = this.mChanges;
+			if ( mChanges && (--mChanges.__count) === 0 ) {
+				delete mChanges.__count;
+				this._oCore && this._oCore.fireLocalizationChanged(mChanges);
+				delete this.mChanges;
+			}
 		}
 
 	});
@@ -527,11 +731,17 @@ jQuery.sap.require("sap.ui.base.Object");
 		},
 
 		_set : function(sKey, oValue) {
+			var oOldValue = this.mSettings[sKey];
 			if ( oValue != null ) {
 				this.mSettings[sKey] = oValue;
 			} else {
 				delete this.mSettings[sKey];
-			} 
+			}
+			if ( (oOldValue == null != oValue == null) || !jQuery.sap.equal(oOldValue, oValue) ) {
+				var mChanges = this.oConfiguration._collect();
+				mChanges[sKey] = oValue;
+				this.oConfiguration._endCollect();
+			}
 		},
 
 		/**
@@ -551,6 +761,10 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * 
 		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
 		 *  
+		 * After changing the date pattern, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -579,6 +793,10 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * 
 		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
 		 *  
+		 * After changing the time pattern, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -608,6 +826,10 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * 
 		 * See class {@link sap.ui.core.format.NumberFormat} for details about the symbols.
 		 *  
+		 * After changing the number symbol, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sStyle must be one of decimal, group, plusSign, minusSign.
 		 * @param {string} sSymbol will be used to represent the given symbol type
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -640,15 +862,21 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * This method modifies the date patterns for 'short' and 'medium' style with the corresponding ABAP 
 		 * format. When called with a null or undefined format id, any previously applied format will be removed.
 		 * 
+		 * After changing the legacy date format, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyDateFormat : function(sFormatId) {
 			check(!sFormatId || M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6'] or empty");
-			this.sLegacyDateFormat = sFormatId = sFormatId || "";
+			var mChanges = this.oConfiguration._collect();
+			this.sLegacyDateFormat = mChanges.legacyTimeFormat = sFormatId = sFormatId || "";
 			this.setDatePattern("short", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
 			this.setDatePattern("medium", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
+			this.oConfiguration._endCollect();
 			return this;
 		},
 
@@ -668,16 +896,22 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * formats and sets the day period texts to "AM"/"PM" or "am"/"pm" respectively. When called 
 		 * with a null or undefined format id, any previously applied format will be removed.
 		 * 
+		 * After changing the legacy time format, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sFormatId id of the ABAP time format (one of '0','1','2','3','4')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyTimeFormat : function(sFormatId) {
 			check(!sFormatId || M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
-			this.sLegacyTimeFormat = sFormatId = sFormatId || "";
+			var mChanges = this.oConfiguration._collect();
+			this.sLegacyTimeFormat = mChanges.legacyTimeFormat = sFormatId = sFormatId || "";
 			this.setTimePattern("short", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].pattern);
 			this.setTimePattern("medium", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].pattern);
 			this._setDayPeriods("abbreviated", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].dayPeriods);
+			this.oConfiguration._endCollect();
 			return this;
 		},
 
@@ -696,6 +930,10 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * This method will modify the 'group' and 'decimal' symbols. When called with a null 
 		 * or undefined format id, any previously applied format will be removed.
 		 * 
+		 * After changing the legacy number format, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sFormatId id of the ABAP number format set (one of ' ','X','Y')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
@@ -703,9 +941,11 @@ jQuery.sap.require("sap.ui.base.Object");
 		setLegacyNumberFormat : function(sFormatId) {
 			sFormatId = sFormatId ? sFormatId.toUpperCase() : "";
 			check(!sFormatId || M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
-			this.sLegacyNumberFormat = sFormatId;
+			var mChanges = this.oConfiguration._collect();
+			this.sLegacyNumberFormat = mChanges.legacyNumberFormat = sFormatId;
 			this.setNumberSymbol("group", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].groupingSeparator);
 			this.setNumberSymbol("decimal", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].decimalSeparator);
+			this.oConfiguration._endCollect();
 		},
 
 		/*

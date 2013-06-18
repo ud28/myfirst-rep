@@ -1,5 +1,7 @@
+.theming
 Chart.css
 library-RTL.css
+library-complete.less
 library-parameters-RTL.json
 library-parameters.json
 library.css

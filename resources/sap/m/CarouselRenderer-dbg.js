@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
  
 jQuery.sap.declare("sap.m.CarouselRenderer");
@@ -39,6 +39,12 @@ sap.m.CarouselRenderer.render = function(rm, oCarousel){
 	rm.addClass("sapMCrsl");
 	// add all classes (also custom classes) to carousel tag
 	rm.writeClasses();
+	
+	var sTooltip = oCarousel.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
+	
 	rm.write(">");
 	
 	//visual indicator
@@ -48,7 +54,7 @@ sap.m.CarouselRenderer.render = function(rm, oCarousel){
 	
 	//prepare the div which will contain the pages
 	if(!oCarousel._oSwipeView) {
-		rm.write("<div id='" + oCarousel._getContentId() + "' class='sapMCrslCont'></div>");
+		rm.write("<div id="); rm.writeEscaped(oCarousel._getContentId()); rm.write(" class='sapMCrslCont'></div>");
 	}
 	
 	//visual indicator
@@ -67,7 +73,12 @@ sap.m.CarouselRenderer.render = function(rm, oCarousel){
  * @private
  */
 sap.m.CarouselRenderer._renderPageIndicator = function(rm, oCarousel){
-	rm.write("<ul id='" + oCarousel._getNavId() + "' class='sapMCrslIndLst'>");
+	rm.write("<ul id="); + rm.writeEscaped(oCarousel._getNavId());
+	if (!oCarousel.getShowPageIndicator()) {
+		rm.addStyle("display","none");
+		rm.writeStyles();
+	};
+	rm.write(" class='sapMCrslIndLst'>");
 	this.renderPageIndicatorDots(rm, oCarousel);
 	rm.write("</ul>");
 };
@@ -80,11 +91,13 @@ sap.m.CarouselRenderer._renderPageIndicator = function(rm, oCarousel){
  * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
  */
 sap.m.CarouselRenderer.renderPageIndicatorDots = function(rm, oCarousel){
-	rm.write("<div id='" + oCarousel._getPrevBtnId() + "' class='sapMCrslIndLstBt'/>");
-	var dotCount = oCarousel.getPages().length;
-	for(var i= 0; i< dotCount; i ++) {
-		rm.write("<li id='" + oCarousel._getNavId() + "-dot" + i + "' class='sapMCrslIndLstIt'></li>");
+	if(oCarousel.getShowPageIndicator()) {
+		rm.write("<div id="); rm.writeEscaped(oCarousel._getPrevBtnId()); rm.write(" class='sapMCrslIndLstBt'/>"); 
+		var dotCount = oCarousel.getPages().length;
+		for(var i= 0; i< dotCount; i ++) {
+			rm.write("<li id="); rm.writeEscaped(oCarousel._getNavId()); rm.write("-dot" + i + " class='sapMCrslIndLstIt'></li>");
+		}
+		rm.write("<div id="); rm.writeEscaped(oCarousel._getNextBtnId()); rm.write(" class='sapMCrslIndLstBt'/>"); 
 	}
-	rm.write("<div id='" + oCarousel._getNextBtnId() + "' class='sapMCrslIndLstBt'/>");
 };
 

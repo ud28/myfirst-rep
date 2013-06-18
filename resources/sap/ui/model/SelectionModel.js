@@ -1,11 +1,9 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
-jQuery.sap.declare("sap.ui.model.SelectionModel");jQuery.sap.require("sap.ui.base.EventProvider");
-sap.ui.model.SelectionModel=function(s){sap.ui.base.EventProvider.apply(this);this.iSelectionMode=s||sap.ui.model.SelectionModel.SINGLE_SELECTION;this.aSelectedIndices=[];this.iLeadIndex=-1;this.fnSort=function(a,b){return a-b};this.fnSortReverse=function(a,b){return b-a}};
-sap.ui.model.SelectionModel.prototype=jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);sap.ui.base.Object.defineClass("sap.ui.model.SelectionModel",{baseType:"sap.ui.base.EventProvider"});sap.ui.model.SelectionModel.SINGLE_SELECTION=0;sap.ui.model.SelectionModel.MULTI_SELECTION=1;
+jQuery.sap.declare("sap.ui.model.SelectionModel");jQuery.sap.require("sap.ui.base.EventProvider");sap.ui.base.EventProvider.extend("sap.ui.model.SelectionModel",{constructor:function(s){sap.ui.base.EventProvider.apply(this);this.iSelectionMode=s||sap.ui.model.SelectionModel.SINGLE_SELECTION;this.aSelectedIndices=[];this.iLeadIndex=-1;this.fnSort=function(a,b){return a-b};this.fnSortReverse=function(a,b){return b-a}}});sap.ui.model.SelectionModel.SINGLE_SELECTION=0;sap.ui.model.SelectionModel.MULTI_SELECTION=1;
 sap.ui.model.SelectionModel.prototype.getSelectionMode=function(){return this.iSelectionMode};
 sap.ui.model.SelectionModel.prototype.setSelectionMode=function(s){this.iSelectionMode=s||sap.ui.model.SelectionModel.SINGLE_SELECTION};
 sap.ui.model.SelectionModel.prototype.isSelectedIndex=function(i){return jQuery.inArray(i,this.aSelectedIndices)!==-1};

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.debug.Highlighter");jQuery.sap.require("jquery.sap.dom");jQuery.sap.require("jquery.sap.script");
 sap.ui.debug.Highlighter=function(i,f,c,b){this.sId=i||jQuery.sap.uid();this.bFilled=(f==true);this.sColor=c||'blue';if(isNaN(b)){this.iBorderWidth=2}else if(b<=0){this.iBorderWidth=0}else{this.iBorderWidth=b}};

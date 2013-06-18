@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the XML model implementation of a list binding
@@ -15,25 +15,20 @@ jQuery.sap.require("sap.ui.model.TreeBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.xml.XMLTreeBinding
+ * @extends sap.ui.model.TreeBinding
  */
-sap.ui.model.xml.XMLTreeBinding = function(oModel, sPath, oContext){
-	sap.ui.model.TreeBinding.apply(this, arguments);
-	if (!this.oContext) {
-		this.oContext = "";
+sap.ui.model.TreeBinding.extend("sap.ui.model.xml.XMLTreeBinding", /** @lends sap.ui.model.xml.XMLTreeBinding */ { 
+	
+	constructor : function(oModel, sPath, oContext){
+		sap.ui.model.TreeBinding.apply(this, arguments);
+		if (!this.oContext) {
+			this.oContext = "";
+		}
+		this.filterInfo = {};
+		this.filterInfo.aFilteredContexts = [];
+		this.filterInfo.oParentContext = {};
 	}
-	this.filterInfo = {};
-	this.filterInfo.aFilteredContexts = [];
-	this.filterInfo.oParentContext = {};
-};
-sap.ui.model.xml.XMLTreeBinding.prototype = jQuery.sap.newObject(sap.ui.model.TreeBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.xml.XMLTreeBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.TreeBinding",
-  publicMethods : [
-	// methods
-  ]
 
 });
 
@@ -121,7 +116,8 @@ sap.ui.model.xml.XMLTreeBinding.prototype.filter = function(aFilters){
 		// start with binding path root
 		this.filterRecursive(oRootContext);
 	}
-	this._fireChange();
+	this._fireChange({reason: "filter"});
+	// TODO remove this if the filter event is removed
 	this._fireFilter({filters: aFilters});
 };
 

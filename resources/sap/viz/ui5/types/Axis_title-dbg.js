@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: false)</li>
- * <li>{@link #getText text} : string</li>
+ * <li>{@link #getText text} : string (default: 'null')</li>
  * <li>{@link #getApplyAxislineColor applyAxislineColor} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
@@ -57,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -74,8 +74,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : false},
-		"text" : {type : "string", group : "", defaultValue : null},
-		"applyAxislineColor" : {type : "boolean", group : "", defaultValue : false}
+		"text" : {type : "string", group : "", defaultValue : 'null'},
+		"applyAxislineColor" : {type : "boolean", group : "", defaultValue : false, deprecated: true}
 	}
 }});
 
@@ -109,7 +109,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -122,11 +121,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @function
  */
 
+
 /**
  * Getter for property <code>text</code>.
  * Set text of axis title.
  *
- * Default value is empty/<code>undefined</code>
+ * Default value is <code>null</code>
  *
  * @return {string} the value of property <code>text</code>
  * @public
@@ -134,11 +134,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
- * Default value is empty/<code>undefined</code> 
+ * Default value is <code>null</code> 
  *
  * @param {string} sText  new value for property <code>text</code>
  * @return {sap.viz.ui5.types.Axis_title} <code>this</code> to allow method chaining
@@ -146,6 +145,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @name sap.viz.ui5.types.Axis_title#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>applyAxislineColor</code>.
@@ -155,10 +155,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  *
  * @return {boolean} the value of property <code>applyAxislineColor</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_title#getApplyAxislineColor
  * @function
  */
-
 
 /**
  * Setter for property <code>applyAxislineColor</code>.
@@ -168,8 +169,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @param {boolean} bApplyAxislineColor  new value for property <code>applyAxislineColor</code>
  * @return {sap.viz.ui5.types.Axis_title} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_title#setApplyAxislineColor
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Axis_title.js

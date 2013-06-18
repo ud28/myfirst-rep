@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
@@ -130,7 +130,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		sTagName = this.prop("tagName");
 		sType = this.prop("type");
 
-		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password"))
+		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password" || sType == "search"))
 				|| sTagName == "TEXTAREA" )) {
 
 			var oDomRef = this.get(0);
@@ -594,7 +594,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 
 
 	/*!
-	 * The following functions are taken from jQuery UI 1.8.17
+	 * The following functions are taken from jQuery UI 1.8.17 but modified
 	 *
 	 * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
 	 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -653,6 +653,8 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		 * http://jquery.org/license
 		 *
 		 * http://docs.jquery.com/UI
+		 *
+		 * But since visible is modified, focusable is different too the jQuery UI version too.
 		 */
 		jQuery.extend( jQuery.expr[ ":" ], {
 			/**
@@ -662,6 +664,22 @@ jQuery.sap.declare("jquery.sap.dom", false);
 			 * as it is semantically the same thing and intended to do exactly the same.
 			 */
 			focusable: function( element ) {
+				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
+			}
+		});
+	}
+
+	if (!jQuery.expr[":"].sapFocusable) {
+		/*!
+		 * Do not use jQuery UI focusable because this might be overwritten if jQuery UI is loaded
+		 */
+		jQuery.extend( jQuery.expr[ ":" ], {
+			/**
+			 * This defines the jQuery ":sapFocusable" selector; If already present, nothing is
+			 * done here, so we will not overwrite any previous implementation.
+			 * If jQuery UI is loaded later on, this implementation here will NOT be overwritten by.
+			 */
+			sapFocusable: function( element ) {
 				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
 			}
 		});

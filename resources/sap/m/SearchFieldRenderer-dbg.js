@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.SearchFieldRenderer");
@@ -40,14 +40,24 @@ sap.m.SearchFieldRenderer.render = function(oRenderManager, oSF){
 			rm.addClass("sapMSFA4"); // specific Android 4.0* rendering
 		}
 	}
+	if (!oSF.getEnabled()){
+		rm.addClass("sapMSFDisabled");
+	}
 	rm.writeClasses();
+	var sTooltip = oSF.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
 	rm.write(">");
 
 	// 1. magnifier icon
 	if (bShowMagnifier) { rm.write('<div class="sapMSFMG"></div>'); }
 	
-	// 2. Input type="search"
-	rm.write('<input type="search"');
+	// 2. Input type="search". 
+	//    Enclose input into a <form> to show a correct keyboard
+	//    method="post" to prevent unneeded "?" at the end of URL
+	rm.write('<form method="post" action="javascript:void(0);">');
+	rm.write('<input type="search" autocorrect="off"');
 	rm.writeAttribute("id", oSF.getId() + "-I");
 
 	rm.addClass("sapMSFI");
@@ -69,16 +79,20 @@ sap.m.SearchFieldRenderer.render = function(oRenderManager, oSF){
 	if (oSF.getValue()) { rm.writeAttributeEscaped("value", oSF.getValue()); }
 	if (oSF.getWidth()) { rm.writeAttribute("style", "width:" + oSF.getWidth() + ";"); }
 
-	rm.write(">");
+	rm.write("></form>");
 
-	
 	// 3. Reset button (transparent, lies over "X" of input, reacts on touch correctly)
-	rm.write("<div");
-	rm.writeAttribute("id", oSF.getId() + "-reset");
-	rm.addClass("sapMSFR");
-	rm.writeClasses();
-	rm.write("></div>");
-
+	// in sap_bluecrystal: x is placed on the reset button
+	if (oSF.getEnabled()) {
+		rm.write("<div");
+		rm.writeAttribute("id", oSF.getId() + "-reset");
+		rm.addClass("sapMSFR");
+		if(oSF.getValue()){
+			rm.addClass("sapMSFVal");
+		}
+		rm.writeClasses();
+		rm.write("></div>");
+	}
 	rm.write("</div>");
 
 };

@@ -2270,7 +2270,10 @@
     // 4,5,6 - hours, minutes, seconds
     // 7     - optional milliseconds
     // 8     - everything else (presumably offset information)
-    var parseDateTimeRE = /^(-?\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(.*)$/;
+    
+	// ##### BEGIN: MODIFIED BY SAP
+    var parseDateTimeRE = /^(-?\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d+))?(.*)$/;
+	// ##### END: MODIFIED BY SAP
 
     var parseDateTimeMaybeOffset = function (value, withOffset) {
         /// <summary>Parses a string into a DateTime value.</summary>
@@ -2312,7 +2315,9 @@
         // Pre-parse other time components and offset them if necessary.
         var hours = parseInt10(parts[4]);
         var minutes = parseInt10(parts[5]);
-        var seconds = parseInt10(parts[6]);
+    	// ##### BEGIN: MODIFIED BY SAP
+        var seconds = parseInt10(parts[6]) || 0;
+    	// ##### END: MODIFIED BY SAP
         if (offset !== "Z") {
             // The offset is reversed to get back the UTC date, which is
             // what the API will eventually have.
@@ -4768,7 +4773,10 @@
             /// <param name="response">Response object.</param>
             /// <param name="context">Operation context.</param>
 
-            if (response && assigned(response.body) && response.headers["Content-Type"]) {
+        	// ##### BEGIN: MODIFIED BY SAP
+        	// added response.body check and removed assigned(response.body) call...for the case that if body is empty string...don't process any response body data
+            if (response && response.body && response.headers["Content-Type"]) {
+            // ##### END: MODIFIED BY SAP
                 dispatchHandler("read", response, context);
             }
         },

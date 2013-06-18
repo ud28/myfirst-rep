@@ -4,7 +4,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.test.TestEnv') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a bridge between the SAPUI5 runtime and the SAPUI5 Eclipse Tooling.
@@ -13,7 +13,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.test.ControlTree') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a control tree to be used in the Eclipse preview editor
@@ -23,7 +23,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.strings') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides useful string operations not available in pure JavaScript.
@@ -191,14 +191,29 @@ jQuery.sap.declare("jquery.sap.strings", false);
      * @type {string}
      * @since 1.7.0
      * @public
-     * @SecPassthrough {0 1|return}
+     * @SecPassthrough {0|return}
      */
 	jQuery.sap.camelCase = function camelCase(sString) { 
 		return sString.replace( rCamelCase, function( sMatch, sChar ) {
 			return sChar.toUpperCase();
 		});
 	};
+	
+	var rEscapeRegExp = /[-[\]{}()*+?.,\\^$|#\s]/g;
 
+	/**
+	 * This function escapes the reserved letters in Regular Expression
+   * @param {string} sString string to escape
+   * @return The escaped string
+   * @type {string}
+   * @since 1.9.3
+   * @public
+   * @SecPassthrough {0|return}
+	 */
+	jQuery.sap.escapeRegExp = function escapeRegExp(sString) {
+		return sString.replace(rEscapeRegExp, "\\$&");
+	};
+	
 }());
 }; // end of jquery.sap.strings
 
@@ -213,7 +228,7 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  *
  * @class Control Tree used for the Test Environment
  * @author SAPUI5 Designtime
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @param {sap.ui.core.Core}
  *            oCore the core instance to use for analysis
@@ -342,7 +357,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.debug.Highlighter') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a helper that can highlight a given control
@@ -437,7 +452,7 @@ sap.ui.debug.Highlighter.prototype.hide = function() {
  * @class Central Class for the Test Environment
  *
  * @author SAPUI5 Designtime
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @private
  */

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.data.Dataset");
  * @extends sap.viz.ui5.data.Dataset
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -96,7 +96,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-	
+
 /**
  * Getter for aggregation <code>dimensions</code>.<br/>
  * List of definitions of all dimensions in this dataset
@@ -106,6 +106,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#getDimensions
  * @function
  */
+
 
 /**
  * Inserts a dimension into the aggregation named <code>dimensions</code>.
@@ -123,7 +124,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Adds some dimension <code>oDimension</code> 
  * to the aggregation named <code>dimensions</code>.
@@ -136,7 +136,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes an dimension from the aggregation named <code>dimensions</code>.
  *
@@ -147,7 +146,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>dimensions</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -156,7 +154,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#removeAllDimensions
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.viz.ui5.data.DimensionDefinition</code> in the aggregation named <code>dimensions</code> 
@@ -169,7 +166,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#indexOfDimension
  * @function
  */
-
+	
 
 /**
  * Destroys all the dimensions in the aggregation 
@@ -179,7 +176,8 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#destroyDimensions
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>measures</code>.<br/>
  * list of definitions of all measures in this dataset
@@ -189,6 +187,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#getMeasures
  * @function
  */
+
 
 /**
  * Inserts a measure into the aggregation named <code>measures</code>.
@@ -206,7 +205,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Adds some measure <code>oMeasure</code> 
  * to the aggregation named <code>measures</code>.
@@ -219,7 +217,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes an measure from the aggregation named <code>measures</code>.
  *
@@ -230,7 +227,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>measures</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -239,7 +235,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#removeAllMeasures
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.viz.ui5.data.MeasureDefinition</code> in the aggregation named <code>measures</code> 
@@ -252,7 +247,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#indexOfMeasure
  * @function
  */
-
+	
 
 /**
  * Destroys all the measures in the aggregation 
@@ -262,16 +257,21 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#destroyMeasures
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>data</code>.<br/>
- * Data containing dimensions and measures
+ * Data containing dimensions and measures.
+ * 
+ * <b>Note:</b> This aggregation can only be bound against a model, it cannot be managed
+ * programmatically using the aggregation mutator methods like addData.
  * 
  * @return {sap.ui.core.Element[]}
  * @public
  * @name sap.viz.ui5.data.FlattenedDataset#getData
  * @function
  */
+
 
 /**
  * Inserts a data into the aggregation named <code>data</code>.
@@ -289,7 +289,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Adds some data <code>oData</code> 
  * to the aggregation named <code>data</code>.
@@ -302,7 +301,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes an data from the aggregation named <code>data</code>.
  *
@@ -313,7 +311,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>data</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -322,7 +319,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#removeAllData
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Element</code> in the aggregation named <code>data</code> 
@@ -335,7 +331,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#indexOfData
  * @function
  */
-
+	
 
 /**
  * Destroys all the data in the aggregation 
@@ -345,6 +341,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#destroyData
  * @function
  */
+
 
 /**
  * Binder for aggregation <code>data</code>.
@@ -359,7 +356,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Unbinder for aggregation <code>data</code>.
  *
@@ -369,51 +365,37 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
+
 // Start of sap/viz/ui5/data/FlattenedDataset.js
+// enable calling 'bindAggregation("data")' without a factory
+sap.viz.ui5.data.FlattenedDataset.getMetadata().getAllAggregations()["data"]._doesNotRequireFactory = true;
+
 sap.viz.ui5.data.FlattenedDataset.prototype.init = function() {
 };
 
-sap.viz.ui5.data.FlattenedDataset.prototype.bindAggregation = function(sName, oBindingInfo) {
-	// TODO the whole implementation has been copied from sap.ui.table.Table. Find a way to share it.
-	// only purpose is to add a factory as the core implementation otherwise complains
-	
-	// special handling for the rows aggregation
-	if (sName === "data") {
-		// old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
-		if (typeof oBindingInfo == "string") {
-			oBindingInfo = {
-				path: arguments[1],
-				template: arguments[2],
-				sorter: arguments[3], 
-				filters: arguments[4]
-			};
-			// ensure old Table API compatibility (sName, sPath, [oSorter], [aFilters])
-			if (oBindingInfo.template instanceof sap.ui.model.Sorter ||
-				jQuery.isArray(oBindingInfo.sorter) && 
-					oBindingInfo.sorter.length > 0 && 
-					oBindingInfo.sorter[0] instanceof sap.ui.model.Filter) {
-				oBindingInfo.filters = oBindingInfo.sorter;
-				oBindingInfo.sorter = oBindingInfo.template;
-			} 
-		}
-		// the rows aggregation has neither a template nor a factory function!
-		oBindingInfo.template = undefined;
-		oBindingInfo.factory = function() {};
-		// call the real bindAggregation method
-		return sap.ui.core.Element.prototype.bindAggregation.call(this, sName, oBindingInfo);
-	}
-	// call the real bindAggregation method
-	return sap.ui.core.Element.prototype.bindAggregation.apply(this, arguments);
+sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
+	this.invalidate();
 };
 
-sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
+// override standard aggregation methods for 'data' and report an error when they are used
+jQuery.each("add destroy get indexOf insert remove removeAll".split(" "), function(i,sMethod) {
+	var sMessage = "FlattenedDataset manages the 'data' aggregation only via data binding. The method '" + sMethod + "Data' therefore cannot be used programmatically!";
+	sap.viz.ui5.data.FlattenedDataset.prototype[sMethod + "Data"] = function() {
+		jQuery.sap.log.error(sMessage);
+	};
+});
 
+sap.viz.ui5.data.FlattenedDataset.prototype._createVIZCrosstab = function() {
+	
 	var oBinding = this.getBinding("data"),
 			aContexts = oBinding && oBinding.getContexts(0, oBinding.getLength());
 
-	// if there is no data, then there is no crosstab. Charts will render "no data" then. 
+	// if there is no data, then there must be no crosstab. Charts will render "no data" then. 
 	if ( !aContexts || aContexts.length === 0 ) {
-		delete this._oVIZCrosstab;
+		if ( this._oVIZCrosstab ) {
+			delete this._oVIZCrosstab;
+			this.invalidate();
+		}
 		return;
 	}
 	
@@ -422,48 +404,46 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 			aMeasures=[],
 			data=[];
 
-	// transform dimension definitions to a format more suitable for our transformation
+	// transform dimension definitions into a format more suitable for our transformation
 	jQuery.each(this.getDimensions(), function(i,oColumn) {
 	  if ( oColumn.getAxis() === 1 ) {
-	  	aAxis1.push(oColumn);
+	  	aAxis1.push({def: oColumn, adapter : oColumn._getAdapter()});
 	  } else if ( oColumn.getAxis() === 2 ) {
-	  	aAxis2.push(oColumn);
+	  	aAxis2.push({def: oColumn, adapter : oColumn._getAdapter()});
 	  } else {
-	  	throw new Error();
-	  	aMeasures.push(oColumn);
-	  	data.push([]);
+	  	throw new Error("currently, only axis 1 and 2 are supported");
 	  }	
 	});
 
 	// create empty data array for each measure
 	jQuery.each(this.getMeasures(), function(i,oColumn) {
-  	aMeasures.push(oColumn);
+  	aMeasures.push({def: oColumn, adapter : oColumn._getAdapter()});
   	data.push([]);
 	});
 
-	// extracts the value for one dimension based on the given set of dimension components
-	function get(oContext, aColumns) {
-		if ( aColumns.length === 0 ) 
-			return null;
+	function getAxisIndex(aAxisDef, aAxisValues, oContext) {
+		var l=aAxisDef.length,
+			aValues,i;
 		
-		var r=[];
-	  for(var i=0; i<aColumns.length; i++) {
-	  	r.push(oContext.getProperty(aColumns[i].getBindingInfo("value").path));
-	  }
-	  return r;
-	}
-
-	function findOrAdd(aData, oData) {
-		if ( !oData ) {
+		if ( l === 0 ) {
 			return 0;
 		}
-		for(var i=0; i<aData.length; i++) {
-			if ( jQuery.sap.equal(aData[i], oData) ) {
+		
+		// extracts the key value for one dimension based on the given set of dimension components
+		aValues=[];
+	  for(i=0; i<l; i++) {
+	  	aValues.push(aAxisDef[i].adapter(oContext));
+	  }
+
+	  // search the key value in the list of already known values
+	  for(i=0,l=aAxisValues.length; i<l; i++) {
+			if ( jQuery.sap.equal(aAxisValues[i], aValues) ) {
 				return i;
 			}
 		}
-		aData.push(oData);
-		return aData.length-1;
+	  // if not found, add it
+	  aAxisValues.push(aValues);
+		return aAxisValues.length-1;
 	}
 	
 	var aAxis1DataSet=[];
@@ -471,22 +451,48 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 	
 	// analyze data 
 	jQuery.each(aContexts, function(iIndex, oContext) {
-		var iAxis1Index = findOrAdd(aAxis1DataSet, get(oContext, aAxis1));
-		var iAxis2Index = findOrAdd(aAxis2DataSet, get(oContext, aAxis2));
+		var iAxis1Index = getAxisIndex(aAxis1, aAxis1DataSet, oContext);
+		var iAxis2Index = getAxisIndex(aAxis2, aAxis2DataSet, oContext);
 		for(var i=0; i<aMeasures.length; i++) {
-			var value = oContext.getProperty(aMeasures[i].getBindingInfo("value").path);
-			(data[i][iAxis2Index] = (data[i][iAxis2Index] || []))[iAxis1Index] = value;
+			var value = aMeasures[i].adapter(oContext);
+			//If both aa1 and aa2 is empty, viz dataset should be created correctly and only with measure values.
+			if(aAxis1.length === 0 && aAxis2.length === 0){
+			  if(data[i][0] === undefined){
+			    data[i][0] = [];
+			  }
+			  data[i][0].push(value);
+			}else{
+			  (data[i][iAxis2Index] = (data[i][iAxis2Index] || []))[iAxis1Index] = value;
+			}
 		}
 	});
 	
-	// start creating the dataset
-	var dataset = {
-			analysisAxis : [],
-			measureValuesGroup : []
-	};
+	// fill any gaps
+	var iLengthAxis1 = aAxis1DataSet.length;
+	var iLengthAxis2 = Math.max(aAxis2DataSet.length,1);
+	for(var i=0; i<aMeasures.length; i++) {
+		for(var j=0; j<iLengthAxis2; j++) {
+			// first ensure that a data array exists for each value of axis2 
+			var d = data[i][j];
+			if ( !d ) {
+				d = data[i][j] = [];
+			}
+			// then ensure that each array has the length of axis1 
+			if ( d.length < iLengthAxis1 ) {
+				d[iLengthAxis1-1] = undefined;
+			}
+		}
+	}
 	
+	// start creating the dataset
+	//If no dimension or no measure definition, viz dataset should also no 'analysisAxis' or 'measureValuesGroup'.
+	var dataset = { };
+	  
 	// convert data for axis1
 	if ( aAxis1.length > 0 ) {
+	  if(dataset.analysisAxis === undefined){
+	    dataset.analysisAxis = [];
+	  }
 		var axis = { index : 1, data : [] };
 		// process component by component for the axis1 dimension 
 		for(var i=0; i<aAxis1.length; i++) {
@@ -497,17 +503,20 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 			}
 			// create an axis component from the collected data and the specified label
 			axis.data.push({
-				name : aAxis1[i].getName(),
+				name : aAxis1[i].def.getName(),
 				values : values
 			});
 		}
 		// add axis to dataset
 		dataset.analysisAxis.push(axis);
 	}
-	
+  	
 	// do the same for axis2
 	// TODO generalize to N axes, will reduce code as well. But maybe throw error above for more than two axes (limit of crosstab?)
 	if ( aAxis2.length > 0 ) {
+	  if(dataset.analysisAxis === undefined){
+      dataset.analysisAxis = [];
+    }
 		var axis = { index : 2, data : [] };
 		for(var i=0; i<aAxis2.length; i++) {
 			var values=[];
@@ -515,7 +524,7 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 				values[j] = aAxis2DataSet[j][i];
 			}
 			axis.data.push({
-				name : aAxis2[i].getName(),
+				name : aAxis2[i].def.getName(),
 				values : values
 			});
 		}
@@ -523,25 +532,60 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 	}
 
 	// now that the dimension lengths are known, transform measures to crosstable   
-	for(var i=0; i<aMeasures.length; i++) {
-		if ( !dataset.measureValuesGroup[aMeasures[i].getGroup()-1] ) {
-			dataset.measureValuesGroup[aMeasures[i].getGroup()-1] = { index: aMeasures[i].getGroup(), data: []};
-		}
-		dataset.measureValuesGroup[aMeasures[i].getGroup()-1].data.push({
-			name: aMeasures[i].getName(),
-			values: data[i]
-		})
+	if(aMeasures.length > 0){
+	  dataset.measureValuesGroup = [];
+	
+  	for(var i=0; i<aMeasures.length; i++) {
+  	  if ( !dataset.measureValuesGroup[aMeasures[i].def.getGroup()-1] ) {
+        dataset.measureValuesGroup[aMeasures[i].def.getGroup()-1] = { index: aMeasures[i].def.getGroup(), data: []};
+      }
+      dataset.measureValuesGroup[aMeasures[i].def.getGroup()-1].data.push({
+        name: aMeasures[i].def.getName(),
+        values: data[i]
+      });
+  	}
+  
+  	//Viz don't handle mg array with undefined.
+  	for(var i = 0, len = dataset.measureValuesGroup.length; i < len; i++){
+  	  if(dataset.measureValuesGroup[i] === undefined){
+  	    throw new Error("Measure Group " + (i + 1) + " is missing.");
+  	    break;
+  	  }
+  	}
 	}
 	
 	// finally create the VIZ crosstab from the transformed data 
 	this._oVIZCrosstab = new sap.viz.data.CrosstableDataset();
 	this._oVIZCrosstab.setData(dataset);
-	
-	// invalidate will make the chart re-render with the new dataset
-  this.invalidate();
-
+	if(this._defaultSelectionInfo){
+	  this._oVIZCrosstab.info(this._defaultSelectionInfo);
+	}
 };
 
 sap.viz.ui5.data.FlattenedDataset.prototype.getVIZDataset = function() {
+  if ( !this._oVIZCrosstab && sap.viz.__svg_support ) {
+  	this._createVIZCrosstab();
+  }
 	return this._oVIZCrosstab || null;
+};
+
+sap.viz.ui5.data.FlattenedDataset.prototype.invalidate = function(oOther) {
+	if ( this._oVIZCrosstab ) {
+		delete this._oVIZCrosstab;
+	}
+	sap.ui.core.Element.prototype.invalidate.apply(this, arguments);
+};
+
+/**
+ * Set chart's default selection.
+ * 
+ * @param {object[]} Array of default selection info 
+ * 
+ * @public
+ */
+sap.viz.ui5.data.FlattenedDataset.prototype.setDefaultSelection = function(selectionInfos) {
+  this._defaultSelectionInfo = {
+    'type' : 'defaultSelection',
+    'value' : selectionInfos
+  };
 };

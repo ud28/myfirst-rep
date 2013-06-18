@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides miscellaneous utility functions that might be useful for any script
@@ -94,12 +94,12 @@ jQuery.sap.declare("jquery.sap.script", false);
 
 	// Javadoc for private inner class "UriParams" - this list of comments is intentional!
 	/**
-	 * @interface  Encapsulates all URI parameters of the current windows location (URL).
+	 * @interface	Encapsulates all URI parameters of the current windows location (URL).
 	 *
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -171,16 +171,16 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * Example for reading a single URI parameter (or the value of the first
 	 * occurrence of the URI parameter):
 	 * <pre>
-	 *  var sValue = jQuery.sap.getUriParameters().get("myUriParam");
+	 *	var sValue = jQuery.sap.getUriParameters().get("myUriParam");
 	 * </pre>
 	 *
 	 * Example for reading the values of the first of the URI parameter
 	 * (with multiple occurrences):
 	 * <pre>
-	 *  var aValues = jQuery.sap.getUriParameters().get("myUriParam", true);
-	 *  for(i in aValues){
+	 *	var aValues = jQuery.sap.getUriParameters().get("myUriParam", true);
+	 *	for(i in aValues){
 	 *	var sValue = aValues[i];
-	 *  }
+	 *	}
 	 * </pre>
 	 *
 	 * @public
@@ -251,6 +251,9 @@ jQuery.sap.declare("jquery.sap.script", false);
 			if (a.constructor != b.constructor) {
 				return false;
 			}
+			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
+				return jQuery.sap.isEqualNode(a,b);
+			}
 			if (a instanceof Date) {
 				return a.valueOf() == b.valueOf();
 			}
@@ -270,14 +273,50 @@ jQuery.sap.declare("jquery.sap.script", false);
 	};
 	
 	/**
+	 * Iterates over elements of the given object or array. 
+	 * 
+	 * Works similar to <code>jQuery.each</code>, but a numeric index is only used for 
+	 * instances of <code>Array</code>. For all other objects, including those with a numeric 
+	 * <code>length</code> property, the properties are iterated by name. 
+	 * 
+	 * The contract for the <code>fnCallback</code> is the same as for <code>jQuery.each</code>,
+	 * when it returns <code>false</code>, then the iteration stops (break).
+	 * 
+	 * @param {object|any[]} oObject object or array to enumerate the properties of
+	 * @param {function} fnCallback function to call for each property name
+	 * @return {object|any[]} the given <code>oObject</code> 
+	 * @since 1.11
+	 */
+	jQuery.sap.each = function(oObject, fnCallback) {
+		var isArray = jQuery.isArray(oObject),
+			length, i;
+
+		if ( isArray ) {
+			for (i=0,length=oObject.length; i < length; i++) {
+				if ( fnCallback.call(oObject[i], i, oObject[i]) === false ) {
+					break;
+				}
+			}
+		} else {
+			for ( i in oObject ) {
+				if ( fnCallback.call(oObject[i], i, oObject[i] ) === false ) {
+					break;
+				}
+			}
+		}
+
+		return oObject;
+	};
+	
+	/**
 	 * Substitute for <code>for(n in o)</code> loops which fixes the 'Don'tEnum' bug of IE8.
 	 * 
 	 * Iterates over all enumerable properties of the given object and calls the
 	 * given callback function for each of them. The assumed signature of the 
 	 * callback function is 
 	 * 
-	 *   fnCallback(name, value)
-	 *   
+	 *	 fnCallback(name, value)
+	 *	 
 	 * where name is the name of the property and value is its value.
 	 * 
 	 * When an object in IE8 overrides a property of Object.prototype
@@ -289,54 +328,537 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * (hasOwnProperty(name) is true) or when the property value is different 
 	 * from the value in the Object.prototype object.
 	 * 
-   * @param {object} oObject object to enumerate the properties of
-   * @param {function} fnCallback function to call for each property name
+	 * @param {object} oObject object to enumerate the properties of
+	 * @param {function} fnCallback function to call for each property name
 	 * @function
 	 * @since 1.7.1
 	 */
 	jQuery.sap.forIn = {toString:null}.propertyIsEnumerable("toString") ?
-	    // for browsers without the bug we use the straight forward implementation of a for in loop
-      function(oObject, fnCallback) {
-        for(var n in oObject) {
-          if ( fnCallback(n, oObject[n]) === false ) {
-            return;
-          }
-        }
-      } : 
-      // use a special implementation for IE8 
-      (function() {
-        var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
-            DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
-            oObjectPrototype = Object.prototype,
-            fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
-            
-        return function(oObject, fnCallback) {
-          var n,i;
-          
-          // standard for(in) loop
-          for(n in oObject) {
-            if ( fnCallback(n, oObject[n]) === false ) {
-              return;
-            }
-          }
-          // additionally check the known 'don't enum' names
-          for(var i=0; i<DONT_ENUM_KEYS_LENGTH; i++) {
-            n = DONT_ENUM_KEYS[i];
-            // assume an enumerable property if it is either an own property
-            // or if its value differes fro mthe value in the Object.prototype
-            if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
-              if ( fnCallback(n, oObject[n]) === false ) {
-                return;
-              }
-            }
-          }
-          // Note: this substitute implementation still fails in several regards
-          // - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
-          // - it fails when one of the don't enum properties by intention has been overridden in the 
-          //   prototype chain with a value identical to the value in Object.prototype
-          // - the don't enum properties are handled out of order. This is okay with the ECMAScript
-          //   spec but might be unexpected for some callers
-        }
-     	}());
+		// for browsers without the bug we use the straight forward implementation of a for in loop
+		function(oObject, fnCallback) {
+			for(var n in oObject) {
+				if ( fnCallback(n, oObject[n]) === false ) {
+					return;
+				}
+			}
+		} : 
+		// use a special implementation for IE8 
+		(function() {
+			var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
+					DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
+					oObjectPrototype = Object.prototype,
+					fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
+					
+			return function(oObject, fnCallback) {
+				var n,i;
+				
+				// standard for(in) loop
+				for(n in oObject) {
+					if ( fnCallback(n, oObject[n]) === false ) {
+						return;
+					}
+				}
+				// additionally check the known 'don't enum' names
+				for(var i=0; i<DONT_ENUM_KEYS_LENGTH; i++) {
+					n = DONT_ENUM_KEYS[i];
+					// assume an enumerable property if it is either an own property
+					// or if its value differes fro mthe value in the Object.prototype
+					if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
+						if ( fnCallback(n, oObject[n]) === false ) {
+							return;
+						}
+					}
+				}
+				// Note: this substitute implementation still fails in several regards
+				// - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
+				// - it fails when one of the don't enum properties by intention has been overridden in the 
+				//	 prototype chain with a value identical to the value in Object.prototype
+				// - the don't enum properties are handled out of order. This is okay with the ECMAScript
+				//	 spec but might be unexpected for some callers
+			}
+	 	}());
+		
+
+	/**
+	 * Calculate delta of old list and new list
+	 * This implements the algorithm described in "A Technique for Isolating Differences Between Files"
+	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268)
+	 * @public
+	 * @param {Array} aOld Old Array
+	 * @param {Array} aNew New Array
+	 * @param {function} [fnCompare] Function to compare list entries
+	 * @param {function} [fnKey] Function to generate a string from the list entry for optimized performance
+	 * @return {Array} List of changes
+	 */
+	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare, fnKey){
+		fnCompare = fnCompare || function(vValue1, vValue2) {
+			return vValue1 == vValue2;
+		}
+
+		var aOldRefs = [];
+		var aNewRefs = [];
+
+		//This code has better performance but needs a key for the entries
+		/*
+		var oNewSymbols = {};
+		var oOldSymbols = {};
+
+		//Pass 1: collect symbols for new array
+		for (var i = 0; i < aNew.length; i++) {
+			var sKey = fnKey(aNew[i]);
+			if (oNewSymbols[sKey] == null) {
+				oNewSymbols[sKey] = { rows: [], o: null };
+			}
+			oNewSymbols[sKey].rows.push(i);
+		}
+
+		//Pass 2: collect symbols for old array
+		for ( var i = 0; i < aOld.length; i++ ) {
+			var sKey = fnKey(aOld[i]);
+			if (oOldSymbols[sKey] == null) {
+				oOldSymbols[sKey] = { rows: [], n: null };
+			}
+			oOldSymbols[sKey].rows.push(i);
+		}
+
+		//Pass 3: Find matches for unique lines
+		for (var i in oNewSymbols) {
+			if (oNewSymbols[i].rows.length == 1 && oOldSymbols[i] != undefined && oOldSymbols[i].rows.length == 1) {
+				aNewRefs[oNewSymbols[i].rows[0]] = {
+					data: aNew[oNewSymbols[i].rows[0]],
+					row: oOldSymbols[i].rows[0]
+				};
+				aOldRefs[oOldSymbols[i].rows[0]] = {
+					data: aOld[oOldSymbols[i].rows[0]],
+					row: oNewSymbols[i].rows[0]
+				};
+			}
+		}*/
+		//Find references
+		for (var i = 0; i < aNew.length; i++) {
+			var oNewEntry = aNew[i];
+			var iFound = 0;
+			var iTempJ;
+			for (var j = 0; j < aOld.length; j++) {
+				if (fnCompare(oNewEntry,aOld[j])) {
+					iFound++;
+					iTempJ = j;
+					if (iFound > 1) {
+						break;
+					}
+				}
+			}
+			if (iFound == 1) {
+				aNewRefs[i] = {
+					data: aNew[i],
+					row: iTempJ
+				};
+				aOldRefs[iTempJ] = {
+					data: aOld[iTempJ],
+					row: i
+				};
+			}
+		}
+
+		//Pass 4: Find adjacent matches in ascending order
+		for (var i = 0; i < aNew.length - 1; i++) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i+1] &&
+				aNewRefs[i].row + 1 < aOld.length &&
+				!aOldRefs[aNewRefs[i].row + 1] &&
+				fnCompare(aNew[i+1], aOld[ aNewRefs[i].row + 1 ])) {
+
+				aNewRefs[i+1] = {
+					data: aNew[i+1],
+					row: aNewRefs[i].row + 1
+				};
+				aOldRefs[aNewRefs[i].row+1] = {
+					data: aOldRefs[aNew[i].row+1],
+					row: i + 1
+				};
+
+			}
+		}
+
+		//Pass 5: Find adjacent matches in descending order
+		for (var i = aNew.length - 1; i > 0; i--) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i-1] &&
+				aNewRefs[i].row > 0 &&
+				!aOldRefs[aNewRefs[i].row - 1] &&
+				fnCompare(aNew[i-1], aOld[aNewRefs[i].row - 1])) {
+
+				aNewRefs[i-1] = {
+					data: aNew[i-1],
+					row: aNewRefs[i].row - 1
+				};
+				aOldRefs[aNew[i].row-1] = {
+					data: aOldRefs[aNewRefs[i].row-1],
+					row: i - 1
+				};
+
+			}
+		}
+
+		//Pass 6: Generate diff data
+		var aDiff = [];
+
+		if (aNew.length == 0) {
+			//New list is empty, all items were deleted
+			for (var i = 0; i < aOld.length; i++) {
+				aDiff.push({
+					index: 0,
+					type: 'delete'
+				});
+			}
+		} else {
+			var iNewListIndex = 0;
+			if (!aOldRefs[0]) {
+				//Detect all deletions at the beginning of the old list
+				for (var i = 0; i < aOld.length && !aOldRefs[i]; i++) {
+					aDiff.push({
+						index: 0,
+						type: 'delete'
+					});
+					iNewListIndex = i + 1;
+				}
+			}
+
+			for (var i = 0; i < aNew.length; i++) {
+				if (!aNewRefs[i] || aNewRefs[i].row > iNewListIndex) {
+					//Entry doesn't exist in old list = insert
+					aDiff.push({
+						index: i,
+						type: 'insert'
+					});
+				} else {
+					iNewListIndex = aNewRefs[i].row + 1;
+					for (var j = aNewRefs[i].row + 1; j < aOld.length && (!aOldRefs[j] || aOldRefs[j].row < i); j++) {
+						aDiff.push({
+							index: i+1,
+							type: 'delete'
+						});
+						iNewListIndex = j + 1;
+					}
+				}
+			}
+		}
+
+		return aDiff;
+	};
+
+	/**
+	 * Parse simple JS objects.
+	 * 
+	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
+	 * the JSON specification as a format description, but a subset of the JavaScript language.
+	 * The main difference is, that keys in objects do not need to be quoted and strings can also
+	 * be defined using apostrophes instead of quotation marks.
+	 * 
+	 * The parser does not support functions, but only boolean, number, string, object and array.
+	 * 
+	 * @param {string} The string containing the JS objects
+	 * @throws an error, if the string does not contain a valid JS object
+	 * @returns {object} the JS object
+	 * 
+	 * @since 1.11
+	 */
+	jQuery.sap.parseJS = (function() {
+
+		var at, // The index of the current character
+		ch, // The current character
+		escapee = {
+			'"': '"',
+			'\'': '\'',
+			'\\': '\\',
+			'/': '/',
+			b: '\b',
+			f: '\f',
+			n: '\n',
+			r: '\r',
+			t: '\t'
+		},
+			text,
+
+			error = function(m) {
+
+				// Call error when something is wrong.
+				throw {
+					name: 'SyntaxError',
+					message: m,
+					at: at,
+					text: text
+				};
+			},
+
+			next = function(c) {
+
+				// If a c parameter is provided, verify that it matches the current character.
+				if (c && c !== ch) {
+					error("Expected '" + c + "' instead of '" + ch + "'");
+				}
+
+				// Get the next character. When there are no more characters,
+				// return the empty string.
+				ch = text.charAt(at);
+				at += 1;
+				return ch;
+			},
+
+			number = function() {
+
+				// Parse a number value.
+				var number, string = '';
+
+				if (ch === '-') {
+					string = '-';
+					next('-');
+				}
+				while (ch >= '0' && ch <= '9') {
+					string += ch;
+					next();
+				}
+				if (ch === '.') {
+					string += '.';
+					while (next() && ch >= '0' && ch <= '9') {
+						string += ch;
+					}
+				}
+				if (ch === 'e' || ch === 'E') {
+					string += ch;
+					next();
+					if (ch === '-' || ch === '+') {
+						string += ch;
+						next();
+					}
+					while (ch >= '0' && ch <= '9') {
+						string += ch;
+						next();
+					}
+				}
+				number = +string;
+				if (!isFinite(number)) {
+					error("Bad number");
+				} else {
+					return number;
+				}
+			},
+
+			string = function() {
+
+				// Parse a string value.
+				var hex, i, string = '', quote,
+					uffff;
+
+				// When parsing for string values, we must look for " and \ characters.
+				if (ch === '"' || ch === '\'') {
+					quote = ch;
+					while (next()) {
+						if (ch === quote) {
+							next();
+							return string;
+						}
+						if (ch === '\\') {
+							next();
+							if (ch === 'u') {
+								uffff = 0;
+								for (i = 0; i < 4; i += 1) {
+									hex = parseInt(next(), 16);
+									if (!isFinite(hex)) {
+										break;
+									}
+									uffff = uffff * 16 + hex;
+								}
+								string += String.fromCharCode(uffff);
+							} else if (typeof escapee[ch] === 'string') {
+								string += escapee[ch];
+							} else {
+								break;
+							}
+						} else {
+							string += ch;
+						}
+					}
+				}
+				error("Bad string");
+			},
+
+			name = function() {
+
+				// Parse a name value.
+				var name = '',
+					charcode,
+					allowed = function(ch) {
+						return ch === "_" ||
+							(ch >= "0" && ch <= "9") ||
+							(ch >= "a" && ch <= "z") ||
+							(ch >= "A" && ch <= "Z") 
+					};
+
+				if (allowed(ch)) {
+					name += ch;
+				} else {
+					error("Bad name");
+				}
+
+				while (next()) {
+					if (ch === ' ') {
+						next();
+						return name;
+					}
+					if (ch === ':') {
+						return name;
+					}
+					if (allowed(ch)) {
+						name += ch;
+					} else {
+						error("Bad name");
+					}
+				}
+				error("Bad name");
+			},
+
+			white = function() {
+
+				// Skip whitespace.
+				while (ch && ch <= ' ') {
+					next();
+				}
+			},
+
+			word = function() {
+
+				// true, false, or null.
+				switch (ch) {
+				case 't':
+					next('t');
+					next('r');
+					next('u');
+					next('e');
+					return true;
+				case 'f':
+					next('f');
+					next('a');
+					next('l');
+					next('s');
+					next('e');
+					return false;
+				case 'n':
+					next('n');
+					next('u');
+					next('l');
+					next('l');
+					return null;
+				}
+				error("Unexpected '" + ch + "'");
+			},
+
+			value, // Place holder for the value function.
+			array = function() {
+
+				// Parse an array value.
+				var array = [];
+
+				if (ch === '[') {
+					next('[');
+					white();
+					if (ch === ']') {
+						next(']');
+						return array; // empty array
+					}
+					while (ch) {
+						array.push(value());
+						white();
+						if (ch === ']') {
+							next(']');
+							return array;
+						}
+						next(',');
+						white();
+					}
+				}
+				error("Bad array");
+			},
+
+			object = function() {
+
+				// Parse an object value.
+				var key, object = {};
+
+				if (ch === '{') {
+					next('{');
+					white();
+					if (ch === '}') {
+						next('}');
+						return object; // empty object
+					}
+					while (ch) {
+						if (ch >= "0" && ch <= "9") {
+							key = number();
+						} else if (ch === '"' || ch === '\''){
+							key = string();
+						} else {
+							key = name();
+						}
+						white();
+						next(':');
+						if (Object.hasOwnProperty.call(object, key)) {
+							error('Duplicate key "' + key + '"');
+						}
+						object[key] = value();
+						white();
+						if (ch === '}') {
+							next('}');
+							return object;
+						}
+						next(',');
+						white();
+					}
+				}
+				error("Bad object");
+			};
+
+		value = function() {
+
+			// Parse a JS value. It could be an object, an array, a string, a number,
+			// or a word.
+			white();
+			switch (ch) {
+			case '{':
+				return object();
+			case '[':
+				return array();
+			case '"':
+			case '\'':
+				return string();
+			case '-':
+				return number();
+			default:
+				return ch >= '0' && ch <= '9' ? number() : word();
+			}
+		};
+
+		// Return the parse function. It will have access to all of the above
+		// functions and variables.
+		return function(source, start) {
+			var result;
+
+			text = source;
+			at = start || 0;
+			ch = ' ';
+			result = value();
+			
+			if ( isNaN(start) ) {
+				white();
+				if (ch) {
+					error("Syntax error");
+				}
+				return result;
+			} else {
+				return { result : result, at : at-1 };
+			}
+
+		};
+	}())
 	
 }());

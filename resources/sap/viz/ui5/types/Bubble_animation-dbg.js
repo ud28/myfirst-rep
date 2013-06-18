@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,7 +31,8 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
- * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -56,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -73,7 +74,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
 	library : "sap.viz",
 	properties : {
 		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
-		"dataUpdating" : {type : "boolean", group : "", defaultValue : true}
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -97,7 +99,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
 
 /**
  * Getter for property <code>dataLoading</code>.
- * enable/disable data loading animation of bubble/scatter.
+ * Set enable/disable data loading animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -106,7 +108,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @name sap.viz.ui5.types.Bubble_animation#getDataLoading
  * @function
  */
-
 
 /**
  * Setter for property <code>dataLoading</code>.
@@ -120,9 +121,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @function
  */
 
+
 /**
  * Getter for property <code>dataUpdating</code>.
- * enable/disable data updating animation of bubble/scatter.
+ * Set enable/disable data updating animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -131,7 +133,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @name sap.viz.ui5.types.Bubble_animation#getDataUpdating
  * @function
  */
-
 
 /**
  * Setter for property <code>dataUpdating</code>.
@@ -144,5 +145,31 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @name sap.viz.ui5.types.Bubble_animation#setDataUpdating
  * @function
  */
+
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Bubble_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Bubble_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble_animation#setResizing
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Bubble_animation.js

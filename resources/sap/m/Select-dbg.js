@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -30,12 +30,14 @@ jQuery.sap.require("sap.ui.core.Control");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getName name} : string (default: "")</li>
+ * <li>{@link #getName name} : string</li>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getEnabled enabled} : boolean (default: true)</li>
- * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: "auto")</li>
- * <li>{@link #getMaxWidth maxWidth} : sap.ui.core.CSSSize (default: "100%")</li>
- * <li>{@link #getTitle title} : string (default: "")</li></ul>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: 'auto')</li>
+ * <li>{@link #getMaxWidth maxWidth} : sap.ui.core.CSSSize (default: '100%')</li>
+ * <li>{@link #getTitle title} : string</li>
+ * <li>{@link #getSelectedKey selectedKey} : string</li>
+ * <li>{@link #getSelectedItemId selectedItemId} : string</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -60,7 +62,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -73,13 +75,16 @@ sap.ui.core.Control.extend("sap.m.Select", { metadata : {
 	// ---- control specific ----
 	library : "sap.m",
 	properties : {
-		"name" : {type : "string", group : "Misc", defaultValue : ""},
+		"name" : {type : "string", group : "Misc", defaultValue : null},
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"enabled" : {type : "boolean", group : "Behavior", defaultValue : true},
-		"width" : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "auto"},
-		"maxWidth" : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"},
-		"title" : {type : "string", group : "Misc", defaultValue : ""}
+		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
+		"maxWidth" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+		"title" : {type : "string", group : "Misc", defaultValue : null},
+		"selectedKey" : {type : "string", group : "Data", defaultValue : null},
+		"selectedItemId" : {type : "string", group : "Misc", defaultValue : null}
 	},
+	defaultAggregation : "items",
 	aggregations : {
     	"items" : {type : "sap.ui.core.Item", multiple : true, singularName : "item"}
 	},
@@ -115,7 +120,7 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * Getter for property <code>name</code>.
  * The name to be used in the HTML code (e.g. for HTML forms that send data to the server via submit).
  *
- * Default value is <code>""</code>
+ * Default value is empty/<code>undefined</code>
  *
  * @return {string} the value of property <code>name</code>
  * @public
@@ -123,11 +128,10 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
- * Default value is <code>""</code> 
+ * Default value is empty/<code>undefined</code> 
  *
  * @param {string} sName  new value for property <code>name</code>
  * @return {sap.m.Select} <code>this</code> to allow method chaining
@@ -135,6 +139,7 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#setName
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -148,7 +153,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -160,6 +164,7 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>enabled</code>.
@@ -173,7 +178,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -186,11 +190,12 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
+
 /**
  * Getter for property <code>width</code>.
  * Defines the width of the select control. This value can be provided in %, em, px… and all possible CSS measures.
  *
- * Default value is <code>"auto"</code>
+ * Default value is <code>auto</code>
  *
  * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
  * @public
@@ -198,11 +203,10 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
- * Default value is <code>"auto"</code> 
+ * Default value is <code>auto</code> 
  *
  * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
  * @return {sap.m.Select} <code>this</code> to allow method chaining
@@ -211,11 +215,12 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
+
 /**
  * Getter for property <code>maxWidth</code>.
  * Defines the maximum width of the select control. This value can be provided in %, em, px… and all possible CSS measures.
  *
- * Default value is <code>"100%"</code>
+ * Default value is <code>100%</code>
  *
  * @return {sap.ui.core.CSSSize} the value of property <code>maxWidth</code>
  * @public
@@ -223,11 +228,10 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Setter for property <code>maxWidth</code>.
  *
- * Default value is <code>"100%"</code> 
+ * Default value is <code>100%</code> 
  *
  * @param {sap.ui.core.CSSSize} sMaxWidth  new value for property <code>maxWidth</code>
  * @return {sap.m.Select} <code>this</code> to allow method chaining
@@ -236,11 +240,12 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
+
 /**
  * Getter for property <code>title</code>.
- * Represents advisory information for the element, such as would be appropriate for a tooltip.
+ * The text to be displayed as tooltip and as title of the Select popup on iPad. This overrides the value of the "tooltip" property. If only the "tooltop" property is set, the Select popup on iPad will not have a title.
  *
- * Default value is <code>""</code>
+ * Default value is empty/<code>undefined</code>
  *
  * @return {string} the value of property <code>title</code>
  * @public
@@ -248,11 +253,10 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Setter for property <code>title</code>.
  *
- * Default value is <code>""</code> 
+ * Default value is empty/<code>undefined</code> 
  *
  * @param {string} sTitle  new value for property <code>title</code>
  * @return {sap.m.Select} <code>this</code> to allow method chaining
@@ -260,7 +264,67 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#setTitle
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>selectedKey</code>.
+ * Key of the selected item.
+ * 
+ * If the key has no corresponding aggregated item, no changes will apply.
+ * If duplicate keys exists the first item matching the key is used.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>selectedKey</code>
+ * @public
+ * @since 1.11
+ * @name sap.m.Select#getSelectedKey
+ * @function
+ */
+
+/**
+ * Setter for property <code>selectedKey</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sSelectedKey  new value for property <code>selectedKey</code>
+ * @return {sap.m.Select} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.11
+ * @name sap.m.Select#setSelectedKey
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>selectedItemId</code>.
+ * Id of the selected item.
+ * 
+ * If the id has no corresponding aggregated item, no changes will apply.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>selectedItemId</code>
+ * @public
+ * @since 1.12
+ * @name sap.m.Select#getSelectedItemId
+ * @function
+ */
+
+/**
+ * Setter for property <code>selectedItemId</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sSelectedItemId  new value for property <code>selectedItemId</code>
+ * @return {sap.m.Select} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.12
+ * @name sap.m.Select#setSelectedItemId
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>items</code>.<br/>
  * Items of the Item control.
@@ -270,6 +334,7 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#getItems
  * @function
  */
+
 
 /**
  * Inserts a item into the aggregation named <code>items</code>.
@@ -287,7 +352,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Adds some item <code>oItem</code> 
  * to the aggregation named <code>items</code>.
@@ -300,7 +364,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Removes an item from the aggregation named <code>items</code>.
  *
@@ -311,7 +374,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>items</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -320,7 +382,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#removeAllItems
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Item</code> in the aggregation named <code>items</code> 
@@ -333,7 +394,7 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#indexOfItem
  * @function
  */
-
+	
 
 /**
  * Destroys all the items in the aggregation 
@@ -344,6 +405,7 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
+
 /**
  * The selected item.
  *
@@ -352,7 +414,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#getSelectedItem
  * @function
  */
-
 
 /**
  * The selected item.
@@ -366,6 +427,8 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
+
+	
 /**
  * This event will be triggered when the user changes the selected item. 
  *
@@ -399,7 +462,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'change' event of this <code>sap.m.Select</code>.<br/>
  *
@@ -414,7 +476,6 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @name sap.m.Select#detachChange
  * @function
  */
-
 
 /**
  * Fire event change to attached listeners.
@@ -431,41 +492,95 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  * @function
  */
 
+
 // Start of sap/m/Select.js
-sap.m.Select.prototype._sNoData = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECT_NO_DATA");
+jQuery.sap.require("sap.ui.core.theming.Parameters");
+jQuery.sap.require("sap.ui.core.EnabledPropagator");
+sap.ui.core.EnabledPropagator.apply(sap.m.Select.prototype, [true]);
 
 /* =========================================================== */
 /*                   begin: lifecycle methods                  */
 /* =========================================================== */
 
 /**
+ * Initialization hook for the Select.
+ *
+ * @private
+ */
+sap.m.Select.prototype.init = function() {
+	if (this._bUseCustomSelect) {
+		jQuery.sap.require("sap.m.CustomSelect");
+		sap.m.Select.prototype.init = null;
+	}
+};
+
+/**
  * Required adaptations before rendering.
  *
  * @private
- * @param {jQuery.EventObject} oEvent The event object
  */
-sap.m.Select.prototype.onBeforeRendering = function(oEvent) {
+sap.m.Select.prototype.onBeforeRendering = function() {
+
+	/*
+	 *	functional dependencies:
+	 *
+	 *	selectedKey  -> selectedItem, selectedItemId
+	 *	selectedItem -> selectedItemId, selectedKey
+	 *
+	 *	items        -> selectedItem, selectedItemId, selectedKey
+	 */
+
 	var aItems = this.getItems(),
-		sSelectedItemId = this.getAssociation("selectedItem");
+		oItem = this.getSelectedItem(),
+		sKey = this.getSelectedKey();
 
 	if (aItems.length) {
 
-		//	if there is no selected item
-		if (sSelectedItemId === null) {
+		if (sKey !== (oItem && oItem.getKey())) {
 
-			//  select the first item and suppress re-rendering
-			this.setAssociation("selectedItem", aItems[0].getId(), true);
-		} else {
-			if (!this._isSelectedItemAggregate(aItems, sSelectedItemId)) {
-				jQuery.sap.log.warning("sap.m.Select.prototype.onBeforeRendering(): the selected item is not a valid item aggregation on " + this);
+			oItem = sap.m.Select._getItemByKey(aItems, "" + sKey);
+
+			// if the "selectedKey" has no corresponding aggregated item, no changes will apply
+			if (!oItem) {
+
+				// if the key does not have a default value
+				if (sKey !== "") {
+					jQuery.sap.log.warning('Warning: the key "' + sKey + '" has no corresponding aggregated item on ', this);
+				} else {
+					this._setDefaultSelectedItem(aItems[0]);
+				}
+			} else {
+
+				/*
+				 * Update and synchronize "selectedItem" association and
+				 * "selectedKey" property.
+				 * Re-rendering is not needed.
+				 */
+				this.setAssociation("selectedItem", oItem, true);
+				this.setProperty("selectedItemId", oItem.getId(), true);
 			}
+		} else if (aItems.indexOf(oItem) === -1) {	// validate if the selected item is aggregated
+			jQuery.sap.log.warning('Warning: the sap.ui.core.Item instance or sap.ui.core.Item id is not a valid aggregation on', this);
 		}
-	} else {
-		jQuery.sap.log.warning("sap.m.Select.prototype.onBeforeRendering(): the select does not contain any item on " + this);
+	} else {	// if the select control does not contain any item
+
+		/*
+		 * Update "selectedItem" association, "selectedItemId"
+		 * and "selectedKey" properties by setting its defaults values.
+		 * Re-rendering is not needed.
+		 */
+		this.setAssociation("selectedItem", null, true);
+		this.setProperty("selectedItemId", "", true);
+		this.setProperty("selectedKey", "", true);
+
+		jQuery.sap.log.info("Info: the select control does not contain any item on", this);
 	}
 
-	if (this._$SltNative instanceof jQuery && this._$SltNative.length) {
-		this._$SltNative.unbind("change.select", this._handleChange);
+	this._unbindChangeEvent();
+
+	// custom select
+	if (this._bUseCustomSelect) {
+		this._onBeforeRenderingCustom();
 	}
 };
 
@@ -473,38 +588,43 @@ sap.m.Select.prototype.onBeforeRendering = function(oEvent) {
  * Required adaptations after rendering.
  *
  * @private
- * @param {jQuery.EventObject} oEvent The event object
  */
 sap.m.Select.prototype.onAfterRendering = function() {
+	var oLabelComputedStyle;
 
 	// jQuery DOM reference to the select control root
-	this._$SltCont = this.$();
+	this._$SelectCont = this.$();
 
 	// jQuery DOM reference to the native select using inside the control
-	this._$SltNative = this._$SltCont.children("select");
+	this._$Select = this._$SelectCont.children("select");
 
 	// jQuery DOM collection with all select options
-	this._$SltOptions = this._$SltNative.children("option");
+	this._$SelectOptions = this._$Select.children("option");
 
 	// jQuery DOM reference with the selected option
-	this._$SeletedItem = this._$SltOptions.filter(":selected");
+	this._$SeletedOption = this._$SelectOptions.filter(":selected");
 
-	// jQuery DOM reference to the span using to show the text from the current selected item
-	this._$SltText = this._$SltCont.children("span.sapMSltText");
+	// jQuery DOM reference to the label used to show the text of the current selected item
+	this._$SelectLabel = this._$SelectCont.children(".sapMSltLabel");
 
-	if (this._$SltNative.length) {
+	// register a listener to the select change event
+	this._$Select.on("change.sapMSelect", jQuery.proxy(this._handleChangeEvent, this));
 
-		// register a listener to the select change event
-		this._$SltNative.bind("change.select", jQuery.proxy(this._handleChange, this));
+	oLabelComputedStyle = window.getComputedStyle(this._$SelectLabel[0], null);
 
-		this._$SltNative.css("font", this._$SltText.css("font"));
+	this._$Select[0].style.font = oLabelComputedStyle.font;
+	this._$Select[0].style.padding = oLabelComputedStyle.padding;
+	this._$Select[0].style.border = oLabelComputedStyle.border;
 
-		if (this.getWidth() === "auto") {
-			this._$SltCont.width(this._$SltNative.width() + parseFloat(this._$SltText.css("padding-right"), 10) + parseFloat(this._$SltText.css("padding-left"), 10));
-		}
+	this._$Select.width("100%");
+
+	// makes the control visible
+	this._$SelectCont.css("visibility", "");
+
+	// custom select
+	if (this._bUseCustomSelect) {
+		this._onAfterRenderingCustom();
 	}
-
-	this._$SltNative.width("100%");
 };
 
 /* =========================================================== */
@@ -524,49 +644,70 @@ sap.m.Select.prototype.onAfterRendering = function() {
  */
 sap.m.Select.prototype.ontouchstart = function(oEvent) {
 
-	//	for control who need to know if they should handle events from the select control
+	// for control who need to know if they should handle events from the select control
 	oEvent.originalEvent._sapui_handledByControl = true;
-	
+
 	// add active state
-	this._$SltCont.addClass("sapMSltPressed");
+	this._$SelectCont.addClass("sapMSltPressed");
+};
+
+/**
+ * Handle the touch move event on the select.
+ *
+ * @param {jQuery.EventObject} oEvent The event object
+ * @private
+ */
+sap.m.Select.prototype.ontouchmove = function(oEvent) {
+	if (this._bUseCustomSelect) {
+		this._ontouchmoveCustom(oEvent);
+	}
 };
 
 /**
  * Handle the touch end event on the select.
  *
- * @param {jQuery.EventObject} oEvent The event object
  * @private
  */
 sap.m.Select.prototype.ontouchend = function() {
 
 	// remove active state
-	this._$SltCont.removeClass("sapMSltPressed");
+	this._$SelectCont.removeClass("sapMSltPressed");
 };
 
 /**
  * Handle the change event on the select.
  *
- * @param {jQuery.EventObject} oEvent The event object
  * @private
  */
-sap.m.Select.prototype._handleChange = function() {
-	var $NewSeletedItem = this._$SltOptions.filter(":selected"),
-		sItemId	= $NewSeletedItem.attr("id"),
-		oItem = sap.ui.getCore().byId(sItemId);
+sap.m.Select.prototype._handleChangeEvent = function() {
+	var $NewSeletedOption = this._$SelectOptions.filter(":selected"),
+		sItemId = $NewSeletedOption.attr("id"),
+		oItem = sap.ui.getCore().byId(sItemId),
+		oSelectedItem = this.getSelectedItem();
 
-	// remove the old attribute selected
-	this._$SeletedItem.removeAttr("selected");	//  for screen readers
+	if (!oSelectedItem || oSelectedItem.getId() === sItemId) {
+		return;
+	}
 
-	// add the new attribute selected
-	$NewSeletedItem.attr("selected", "selected");	//  for screen readers
+	// remove the old selected attribute
+	this._$SeletedOption.removeAttr("selected");
+
+	// add the new selected attribute
+	$NewSeletedOption.attr("selected", "selected");
 
 	// update the selected item
-	this._$SeletedItem = $NewSeletedItem;
+	this._$SeletedOption = $NewSeletedOption;
 
-	// update the association
+	/*
+	 * Update and synchronize "selectedItem" association "setSelectedItemId"
+	 * and "selectedKey" properties.
+	 * Re-rendering is not needed.
+	 */
 	this.setAssociation("selectedItem", sItemId, true);
+	this.setProperty("selectedItemId", sItemId, true);
+	this.setProperty("selectedKey", sap.ui.getCore().byId(sItemId).getKey(), true);
 
-	this._$SltText.text(oItem.getText());
+	this._$SelectLabel.text(oItem.getText());
 
 	this.fireChange({ selectedItem : oItem });
 };
@@ -577,40 +718,149 @@ sap.m.Select.prototype._handleChange = function() {
 
 
 /* =========================================================== */
-/*                      begin: internal methods                */
+/*             begin: internal methods and properties          */
 /* =========================================================== */
 
-sap.m.Select.prototype._isSelectedItemAggregate = function(aItems, sSelectedItemId) {
-	var i;
+sap.m.Select.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	for (i = 0; i < aItems.length; i++) {
-		if (sSelectedItemId === aItems[i].getId()) {
-			return true;
-		}
+sap.m.Select.prototype._sNoData = sap.m.Select.prototype._oRb.getText("SELECT_NO_DATA");
+
+sap.m.Select.prototype._bUseCustomSelect = (jQuery.os.android && jQuery.os.fVersion === 2.3) || !sap.ui.core.theming.Parameters.get("sapMPlatformDependent");
+
+sap.m.Select.prototype._sLang = sap.ui.getCore().getConfiguration().getLanguage().split("-")[0];
+
+sap.m.Select.prototype._unbindChangeEvent = function() {
+	if (this._$Select) {
+		this._$Select.off("change.sapMSelect", this._handleChangeEvent);
 	}
-
-	return false;
 };
 
-/* =========================================================== */
-/*                      end: internal methods                  */
-/* =========================================================== */
+sap.m.Select._getItemByKey = function(aItems, sKey) {
+	for (var i = 0; i < aItems.length; i++) {
+		if (aItems[i].getKey() === sKey) {
+			return aItems[i];
+		}
+	}
+};
+
+/**
+ * Update and synchronize "selectedItem" association, "selectedItemId"
+ * and "selectedKey" properties, by selecting the first item.
+ *
+ * @param {sap.ui.core.Item} [oItem]
+ * @private
+ */
+sap.m.Select.prototype._setDefaultSelectedItem = function(oItem) {
+	var oItem = oItem || this.getItems()[0];
+
+	if (oItem) {
+
+		// Re-rendering is not needed
+		this.setAssociation("selectedItem", oItem.getId(), true);
+		this.setProperty("selectedItemId", oItem.getId(), true);
+		this.setProperty("selectedKey", oItem.getKey(), true);
+	}
+};
+
+/* ========================================================== */
+/*              end: internal methods and properties          */
+/* ========================================================== */
 
 
 /* =========================================================== */
 /*                   begin: API method                         */
 /* =========================================================== */
 
+/**
+ * Setter for association <code>selectedItem</code>.
+ *
+ * @param {string | sap.ui.core.Item | null} vSelectedItem new value for association <code>selectedItem</code>
+ *    Id of an sap.ui.core.Item which becomes the new target of this <code>selectedItem</code> association.
+ *    Alternatively, an sap.ui.core.Item instance may be given.
+ * @return {sap.m.Select} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Select#setSelectedItem
+ * @function
+ */
+sap.m.Select.prototype.setSelectedItem = function(vItem) {
+
+	if (typeof vItem === "string") {
+		vItem = sap.ui.getCore().byId(vItem);
+	}
+
+	if (!(vItem instanceof sap.ui.core.Item) && vItem !== null) {
+		jQuery.sap.log.warning('Warning: "vItem" needs to be an instance of sap.ui.core.Item, a valid sap.ui.core.Item id, or null on', this);
+		return this;
+	}
+
+	/*
+	 * Update and synchronize "selectedItem" association,
+	 * "selectedKey" and "selectedItemId" properties.
+	 * Re-rendering is needed.
+	 */
+	this.setAssociation("selectedItem", vItem || null);
+	this.setProperty("selectedItemId", vItem ? vItem.getId() : "");
+	this.setProperty("selectedKey", vItem ? vItem.getKey() : "");
+	return this;
+};
+
+/**
+ * Setter for property <code>selectedItemId</code>.
+ *
+ * Default value is an empty string <code>""</code> or <code>undefined</code>
+ *
+ * @param {string | sap.ui.core.Item | undefined} sSelectedItemId new value for property <code>selectedItemId</code>
+ * @return {sap.m.Select} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.12
+ * @name sap.m.Select#setSelectedItemId
+ * @function
+ */
+sap.m.Select.prototype.setSelectedItemId = function(sItem) {
+	var oItem = sap.ui.getCore().byId(sItem);
+
+	if (!(oItem instanceof sap.ui.core.Item) && sItem !== "" && sItem !== undefined) {
+		jQuery.sap.log.warning('Warning: "sItem" must be a string id of an sap.ui.core.Item instance, an empty string or undefined on', this);
+		return this;
+	}
+
+	/*
+	 * Update and synchronize "selectedItem" association,
+	 * "selectedKey" and "selectedItemId" properties.
+	 * Re-rendering is needed.
+	 */
+	this.setAssociation("selectedItem", oItem || null);
+	this.setProperty("selectedItemId", sItem || "");
+	this.setProperty("selectedKey", oItem ? oItem.getKey() : "");
+	return this;
+};
+
+/**
+ * Setter for property <code>selectedKey</code>.
+ *
+ * Default value is an empty string <code>""</code> or <code>undefined</code>
+ *
+ * @param {string} sSelectedKey new value for property <code>selectedKey</code>
+ * @return {sap.m.Select} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.11
+ * @name sap.m.Select#setSelectedKey
+ * @function
+ */
+sap.m.Select.prototype.setSelectedKey = function(sKey) {
+
+	/*
+	 * Note: the "selectedItem" association and "selectedItemId" property
+	 * need to be updated in onBeforeRendering(), because when this method
+	 * is called, the aggregation "items" may be outdated.
+	 */
+	return this.setProperty("selectedKey", sKey);	// update "selectedKey" property, re-rendering is needed
+};
+
 sap.m.Select.prototype.getSelectedItem = function() {
 	var sSelectedItemId = this.getAssociation("selectedItem");
 
 	return (sSelectedItemId === null) ? null : sap.ui.getCore().byId(sSelectedItemId);
-};
-
-sap.m.Select.prototype.removeAllItems = function() {
-	this.setAssociation("selectedItem", null, false);
-
-	return this.removeAllAggregation("items", false);
 };
 
 sap.m.Select.prototype.removeItem = function(vItem) {
@@ -619,17 +869,19 @@ sap.m.Select.prototype.removeItem = function(vItem) {
 	}
 
 	if (!(vItem instanceof sap.ui.core.Item)) {
-		jQuery.sap.log.error('sap.m.Select.prototype.removeItem(): vItem must be a sap.ui.core.Item object or a valid item id on ' + this);
-		return;
+		jQuery.sap.log.warning('Warning: "vItem" must be a sap.ui.core.Item object or a valid item id on', this);
+		return null;
 	}
 
-	// if the item is selected
-	if (vItem.getId() === this.getAssociation("selectedItem")) {
-		this.setAssociation("selectedItem", null, false);
+	// remove the select item
+	vItem = this.removeAggregation("items", vItem);
+
+	// if the removed item is selected
+	if (vItem && vItem.getId() === this.getAssociation("selectedItem")) {
+		this._setDefaultSelectedItem();
 	}
 
-	// remove the item from the select
-	return this.removeAggregation("items", vItem, false);
+	return vItem;
 };
 
 /* =========================================================== */

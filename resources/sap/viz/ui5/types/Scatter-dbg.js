@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,13 +31,14 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getColorPalette colorPalette} : string[] (default: ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4'])</li>
- * <li>{@link #getShapePalette shapePalette} : string[] (default: ['circle','square','diamond','triangle-up','triangle-down','triangle-left','triangle-right','cross','intersection'])</li>
+ * <li>{@link #getShapePalette shapePalette} : string[] (default: ['circle','square','diamond','triangleUp','triangleDown','triangleLeft','triangleRight','cross','intersection'])</li>
  * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Scatter_drawingEffect (default: sap.viz.ui5.types.Scatter_drawingEffect.normal)</li>
  * <li>{@link #getMarkerSize markerSize} : int (default: 10)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Scatter_tooltip</li>
+ * <li>{@link #getAxisTooltip axisTooltip} : sap.viz.ui5.types.Scatter_axisTooltip</li>
+ * <li>{@link #getHoverline hoverline} : sap.viz.ui5.types.Scatter_hoverline</li>
  * <li>{@link #getAnimation animation} : sap.viz.ui5.types.Scatter_animation</li></ul>
  * </li>
  * <li>Associations
@@ -60,7 +61,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -77,12 +78,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
 	library : "sap.viz",
 	properties : {
 		"colorPalette" : {type : "string[]", group : "", defaultValue : ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4']},
-		"shapePalette" : {type : "string[]", group : "", defaultValue : ['circle','square','diamond','triangle-up','triangle-down','triangle-left','triangle-right','cross','intersection']},
+		"shapePalette" : {type : "string[]", group : "", defaultValue : ['circle','square','diamond','triangleUp','triangleDown','triangleLeft','triangleRight','cross','intersection']},
 		"drawingEffect" : {type : "sap.viz.ui5.types.Scatter_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Scatter_drawingEffect.normal},
 		"markerSize" : {type : "int", group : "", defaultValue : 10}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Scatter_tooltip", multiple : false}, 
+    	"axisTooltip" : {type : "sap.viz.ui5.types.Scatter_axisTooltip", multiple : false}, 
+    	"hoverline" : {type : "sap.viz.ui5.types.Scatter_hoverline", multiple : false}, 
     	"animation" : {type : "sap.viz.ui5.types.Scatter_animation", multiple : false}
 	}
 }});
@@ -117,7 +119,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>colorPalette</code>.
  *
@@ -130,11 +131,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
+
 /**
  * Getter for property <code>shapePalette</code>.
  * Set marker shape of bubble.
  *
- * Default value is <code>circle,square,diamond,triangle-up,triangle-down,triangle-left,triangle-right,cross,intersection</code>
+ * Default value is <code>circle,square,diamond,triangleUp,triangleDown,triangleLeft,triangleRight,cross,intersection</code>
  *
  * @return {string[]} the value of property <code>shapePalette</code>
  * @public
@@ -142,11 +144,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>shapePalette</code>.
  *
- * Default value is <code>circle,square,diamond,triangle-up,triangle-down,triangle-left,triangle-right,cross,intersection</code> 
+ * Default value is <code>circle,square,diamond,triangleUp,triangleDown,triangleLeft,triangleRight,cross,intersection</code> 
  *
  * @param {string[]} aShapePalette  new value for property <code>shapePalette</code>
  * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
@@ -154,6 +155,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setShapePalette
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -167,7 +169,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -179,6 +180,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setDrawingEffect
  * @function
  */
+
 
 /**
  * Getter for property <code>markerSize</code>.
@@ -192,7 +194,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>markerSize</code>.
  *
@@ -204,36 +205,70 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setMarkerSize
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>toolTip</code>.<br/>
+ * Getter for aggregation <code>axisTooltip</code>.<br/>
  * Set tooltip related properties.
  * 
- * @return {sap.viz.ui5.types.Scatter_tooltip}
+ * @return {sap.viz.ui5.types.Scatter_axisTooltip}
  * @public
- * @name sap.viz.ui5.types.Scatter#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Scatter_tooltip}
- * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Scatter#setToolTip
+ * @name sap.viz.ui5.types.Scatter#getAxisTooltip
  * @function
  */
 
 
 /**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
+ * Setter for the aggregated <code>axisTooltip</code>.
+ * @param oAxisTooltip {sap.viz.ui5.types.Scatter_axisTooltip}
  * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Scatter#destroyToolTip
+ * @name sap.viz.ui5.types.Scatter#setAxisTooltip
  * @function
  */
 	
+
+/**
+ * Destroys the axisTooltip in the aggregation 
+ * named <code>axisTooltip</code>.
+ * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter#destroyAxisTooltip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>hoverline</code>.<br/>
+ * Settings for hoverline properties.
+ * 
+ * @return {sap.viz.ui5.types.Scatter_hoverline}
+ * @public
+ * @name sap.viz.ui5.types.Scatter#getHoverline
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>hoverline</code>.
+ * @param oHoverline {sap.viz.ui5.types.Scatter_hoverline}
+ * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter#setHoverline
+ * @function
+ */
+	
+
+/**
+ * Destroys the hoverline in the aggregation 
+ * named <code>hoverline</code>.
+ * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter#destroyHoverline
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Set animation of bubble/scatter.
@@ -244,6 +279,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Scatter_animation}
@@ -252,7 +288,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -263,9 +299,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Scatter.js
-sap.viz.ui5.types.Scatter.prototype.getToolTip = function() {
-  return this._getOrCreate("toolTip");
+sap.viz.ui5.types.Scatter.prototype.getAxisTooltip = function() {
+  return this._getOrCreate("axisTooltip");
+}
+sap.viz.ui5.types.Scatter.prototype.getHoverline = function() {
+  return this._getOrCreate("hoverline");
 }
 sap.viz.ui5.types.Scatter.prototype.getAnimation = function() {
   return this._getOrCreate("animation");

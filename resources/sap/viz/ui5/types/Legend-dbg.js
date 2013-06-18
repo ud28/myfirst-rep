@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -29,17 +29,11 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * The supported settings are:
  * <ul>
  * <li>Properties
- * <ul>
- * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getIsHierarchical isHierarchical} : boolean (default: false)</li>
- * <li>{@link #getPosition position} : sap.viz.ui5.types.Legend_position (default: sap.viz.ui5.types.Legend_position.right)</li>
- * <li>{@link #getType type} : sap.viz.ui5.types.Legend_type (default: sap.viz.ui5.types.Legend_type.ColorLegend)</li>
- * <li>{@link #getAlignment alignment} : sap.viz.ui5.types.Legend_alignment (default: sap.viz.ui5.types.Legend_alignment.start)</li>
- * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Legend_drawingEffect (default: sap.viz.ui5.types.Legend_drawingEffect.normal)</li></ul>
+ * <ul></ul>
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Legend_title</li></ul>
+ * <li>{@link #getLayout layout} : sap.viz.ui5.types.Legend_layout</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -61,7 +55,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -76,16 +70,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend", { metadat
 
 	// ---- control specific ----
 	library : "sap.viz",
-	properties : {
-		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"isHierarchical" : {type : "boolean", group : "", defaultValue : false},
-		"position" : {type : "sap.viz.ui5.types.Legend_position", group : "", defaultValue : sap.viz.ui5.types.Legend_position.right},
-		"type" : {type : "sap.viz.ui5.types.Legend_type", group : "", defaultValue : sap.viz.ui5.types.Legend_type.ColorLegend},
-		"alignment" : {type : "sap.viz.ui5.types.Legend_alignment", group : "", defaultValue : sap.viz.ui5.types.Legend_alignment.start},
-		"drawingEffect" : {type : "sap.viz.ui5.types.Legend_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Legend_drawingEffect.normal}
-	},
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Legend_title", multiple : false}
+    	"layout" : {type : "sap.viz.ui5.types.Legend_layout", multiple : false}
 	}
 }});
 
@@ -108,185 +94,37 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend", { metadat
 
 
 /**
- * Getter for property <code>visible</code>.
- * Set visibility of legend.
- *
- * Default value is <code>true</code>
- *
- * @return {boolean} the value of property <code>visible</code>
+ * Getter for aggregation <code>layout</code>.<br/>
+ * Settings for layout of legend area.
+ * 
+ * @return {sap.viz.ui5.types.Legend_layout}
  * @public
- * @name sap.viz.ui5.types.Legend#getVisible
+ * @name sap.viz.ui5.types.Legend#getLayout
  * @function
  */
 
 
 /**
- * Setter for property <code>visible</code>.
- *
- * Default value is <code>true</code> 
- *
- * @param {boolean} bVisible  new value for property <code>visible</code>
+ * Setter for the aggregated <code>layout</code>.
+ * @param oLayout {sap.viz.ui5.types.Legend_layout}
  * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Legend#setVisible
- * @function
- */
-
-/**
- * Getter for property <code>isHierarchical</code>.
- * Set hierarchy legend. Supported only when legend is located in the right of chart.
- *
- * Default value is <code>false</code>
- *
- * @return {boolean} the value of property <code>isHierarchical</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getIsHierarchical
- * @function
- */
-
-
-/**
- * Setter for property <code>isHierarchical</code>.
- *
- * Default value is <code>false</code> 
- *
- * @param {boolean} bIsHierarchical  new value for property <code>isHierarchical</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setIsHierarchical
- * @function
- */
-
-/**
- * Getter for property <code>position</code>.
- * Set legend position. Only support legend is located in the right side.
- *
- * Default value is <code>right</code>
- *
- * @return {sap.viz.ui5.types.Legend_position} the value of property <code>position</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getPosition
- * @function
- */
-
-
-/**
- * Setter for property <code>position</code>.
- *
- * Default value is <code>right</code> 
- *
- * @param {sap.viz.ui5.types.Legend_position} oPosition  new value for property <code>position</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setPosition
- * @function
- */
-
-/**
- * Getter for property <code>type</code>.
- * Set legend type of Bubble chart. Non-bubble chart is not supported.
- *
- * Default value is <code>ColorLegend</code>
- *
- * @return {sap.viz.ui5.types.Legend_type} the value of property <code>type</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getType
- * @function
- */
-
-
-/**
- * Setter for property <code>type</code>.
- *
- * Default value is <code>ColorLegend</code> 
- *
- * @param {sap.viz.ui5.types.Legend_type} oType  new value for property <code>type</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setType
- * @function
- */
-
-/**
- * Getter for property <code>alignment</code>.
- * Set alignment of legend.
- *
- * Default value is <code>start</code>
- *
- * @return {sap.viz.ui5.types.Legend_alignment} the value of property <code>alignment</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getAlignment
- * @function
- */
-
-
-/**
- * Setter for property <code>alignment</code>.
- *
- * Default value is <code>start</code> 
- *
- * @param {sap.viz.ui5.types.Legend_alignment} oAlignment  new value for property <code>alignment</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setAlignment
- * @function
- */
-
-/**
- * Getter for property <code>drawingEffect</code>.
- * Set drawing effect of legend.
- *
- * Default value is <code>normal</code>
- *
- * @return {sap.viz.ui5.types.Legend_drawingEffect} the value of property <code>drawingEffect</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getDrawingEffect
- * @function
- */
-
-
-/**
- * Setter for property <code>drawingEffect</code>.
- *
- * Default value is <code>normal</code> 
- *
- * @param {sap.viz.ui5.types.Legend_drawingEffect} oDrawingEffect  new value for property <code>drawingEffect</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setDrawingEffect
+ * @name sap.viz.ui5.types.Legend#setLayout
  * @function
  */
 	
-/**
- * Getter for aggregation <code>title</code>.<br/>
- * Settings for legend title.
- * 
- * @return {sap.viz.ui5.types.Legend_title}
- * @public
- * @name sap.viz.ui5.types.Legend#getTitle
- * @function
- */
 
 /**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Legend_title}
+ * Destroys the layout in the aggregation 
+ * named <code>layout</code>.
  * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Legend#setTitle
+ * @name sap.viz.ui5.types.Legend#destroyLayout
  * @function
  */
 
-
-/**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#destroyTitle
- * @function
- */
 
 // Start of sap/viz/ui5/types/Legend.js
-sap.viz.ui5.types.Legend.prototype.getTitle = function() {
-  return this._getOrCreate("title");
+sap.viz.ui5.types.Legend.prototype.getLayout = function() {
+  return this._getOrCreate("layout");
 }

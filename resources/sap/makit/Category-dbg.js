@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -57,12 +57,11 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Category
  */
 sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
@@ -108,7 +107,6 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>column</code>.
  *
@@ -120,6 +118,7 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @name sap.makit.Category#setColumn
  * @function
  */
+
 
 /**
  * Getter for property <code>displayName</code>.
@@ -133,7 +132,6 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayName</code>.
  *
@@ -145,6 +143,7 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @name sap.makit.Category#setDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>format</code>.
@@ -162,7 +161,6 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>format</code>.
  *
@@ -174,6 +172,7 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @name sap.makit.Category#setFormat
  * @function
  */
+
 
 // Start of sap/makit/Category.js
 /*!

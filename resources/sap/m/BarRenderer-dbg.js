@@ -1,19 +1,16 @@
-
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.BarRenderer");
 
 /**
- * @class Bar renderer. 
+ * @class Bar renderer.
  * @static
  */
-sap.m.BarRenderer = {
-};
-
+sap.m.BarRenderer = {};
 
 /**
  * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -23,6 +20,7 @@ sap.m.BarRenderer = {
  */
 sap.m.BarRenderer.render = function(rm, oControl) { 
 	var i = 0;
+
 	switch (oControl._context) {
 	case 'header':
 		//render header element 
@@ -40,8 +38,19 @@ sap.m.BarRenderer.render = function(rm, oControl) {
 	}
 	rm.writeControlData(oControl);
 	rm.addClass("sapMBar");
+
+	if (oControl.getTranslucent() && (jQuery.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
+		rm.addClass("sapMBarTranslucent");
+	}
+
 	rm.addClass("sapMBar-CTX");
-	rm.writeClasses(); 
+	rm.writeClasses();
+	
+	var sTooltip = oControl.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
+	
 	rm.write(">"); 
 
 	//middle content area 

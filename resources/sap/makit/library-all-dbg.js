@@ -4,7 +4,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.ChartRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.makit.ChartRenderer");
@@ -37,11 +37,49 @@ sap.makit.ChartRenderer.render = function(oRm, oControl){
 };
 
 }; // end of sap.makit.ChartRenderer
+if ( !jQuery.sap.isDeclared('sap.makit.CombinationChartRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+ 
+ jQuery.sap.declare("sap.makit.CombinationChartRenderer");
+
+/**
+ * @class CombinationChart renderer. 
+ * @static
+ */
+sap.makit.CombinationChartRenderer = {
+};
+
+
+/**
+ * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+ * 
+ * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+ * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+ */
+sap.makit.CombinationChartRenderer.render = function(oRm, oControl){ 
+	 // write the HTML into the render manager
+	 // write the HTML into the render manager
+	 oRm.write("<div id=\"sap-ui-dummy-" + oControl.getId() + "\" style=\"display:none\">");
+	 oRm.write("<div");
+	 oRm.writeControlData(oControl);
+	 oRm.writeAttribute("data-sap-ui-preserve", oControl.getId());
+	 oRm.addClass("sapMakitChart");
+	 oRm.writeClasses();
+	 oRm.write(">"); // div element
+	 oRm.write("</div>");
+	 oRm.write("</div>");
+};
+
+}; // end of sap.makit.CombinationChartRenderer
 if ( !jQuery.sap.isDeclared('sap.makit.library') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -50,7 +88,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.library') ) {
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.makit (1.8.4)
+ * Initialization Code and shared classes of library sap.makit (1.12.1)
  */
 jQuery.sap.declare("sap.makit.library");
 jQuery.sap.require('sap.ui.core.Core'); // unlisted dependency retained
@@ -81,25 +119,28 @@ sap.ui.getCore().initLibrary({
   ],
   interfaces: [],
   controls: [
-    "sap.makit.Chart"
+    "sap.makit.Chart",
+    "sap.makit.CombinationChart"
   ],
   elements: [
     "sap.makit.Axis",
     "sap.makit.Category",
     "sap.makit.CategoryAxis",
     "sap.makit.Column",
+    "sap.makit.Layer",
+    "sap.makit.MakitLib",
     "sap.makit.Row",
     "sap.makit.Series",
     "sap.makit.Value",
     "sap.makit.ValueAxis",
     "sap.makit.ValueBubble"
   ],
-  version: "1.8.4"});
+  version: "1.12.1"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -113,11 +154,10 @@ jQuery.sap.declare("sap.makit.ChartType");
 /**
  * @class Enumeration for chart type
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  */
 sap.makit.ChartType = {
   
@@ -167,14 +207,26 @@ sap.makit.ChartType = {
      * 100% stacked column chart 
      * @public
      */
-    HundredPercentStackedColumn : "HundredPercentStackedColumn"
+    HundredPercentStackedColumn : "HundredPercentStackedColumn",
+
+    /**
+     * Waterfall Column chart 
+     * @public
+     */
+    WaterfallColumn : "WaterfallColumn",
+
+    /**
+     * Waterfall Bar chart 
+     * @public
+     */
+    WaterfallBar : "WaterfallBar"
 
   };
   
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -188,7 +240,7 @@ jQuery.sap.declare("sap.makit.LegendPosition");
 /**
  * @class Enumeration for legend position.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @experimental Since version 1.8. 
@@ -231,7 +283,7 @@ sap.makit.LegendPosition = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -245,11 +297,10 @@ jQuery.sap.declare("sap.makit.SortOrder");
 /**
  * @class Enumeration for sort order
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  */
 sap.makit.SortOrder = {
   
@@ -282,7 +333,7 @@ sap.makit.SortOrder = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -296,9 +347,10 @@ jQuery.sap.declare("sap.makit.ValueBubblePosition");
 /**
  * @class Position for Value Bubble only applies to Pie/Donut Chart.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  */
@@ -321,7 +373,7 @@ sap.makit.ValueBubblePosition = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -335,9 +387,10 @@ jQuery.sap.declare("sap.makit.ValueBubbleStyle");
 /**
  * @class Enumeration for Value Bubble's positioning style. This applies all chart types except Pie/Donut/HBar chart.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  */
@@ -369,7 +422,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.Axis') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -402,7 +455,7 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * <li>{@link #getShowLabel showLabel} : boolean (default: true)</li>
  * <li>{@link #getShowPrimaryLine showPrimaryLine} : boolean (default: true)</li>
  * <li>{@link #getShowGrid showGrid} : boolean (default: false)</li>
- * <li>{@link #getThickness thickness} : float (default: 0.5)</li>
+ * <li>{@link #getThickness thickness} : float (default: 1)</li>
  * <li>{@link #getColor color} : string (default: 'gray')</li></ul>
  * </li>
  * <li>Aggregations
@@ -428,12 +481,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Axis
  */
 sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
@@ -446,7 +498,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
 		"showLabel" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"showPrimaryLine" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"showGrid" : {type : "boolean", group : "Appearance", defaultValue : false},
-		"thickness" : {type : "float", group : "Appearance", defaultValue : 0.5},
+		"thickness" : {type : "float", group : "Appearance", defaultValue : 1},
 		"color" : {type : "string", group : "Appearance", defaultValue : 'gray'}
 	}
 }});
@@ -481,7 +533,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showLabel</code>.
  *
@@ -493,6 +544,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setShowLabel
  * @function
  */
+
 
 /**
  * Getter for property <code>showPrimaryLine</code>.
@@ -506,7 +558,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showPrimaryLine</code>.
  *
@@ -518,6 +569,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setShowPrimaryLine
  * @function
  */
+
 
 /**
  * Getter for property <code>showGrid</code>.
@@ -531,7 +583,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showGrid</code>.
  *
@@ -544,11 +595,12 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>thickness</code>.
  * The line thickness of the primary line
  *
- * Default value is <code>0.5</code>
+ * Default value is <code>1</code>
  *
  * @return {float} the value of property <code>thickness</code>
  * @public
@@ -556,11 +608,10 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>thickness</code>.
  *
- * Default value is <code>0.5</code> 
+ * Default value is <code>1</code> 
  *
  * @param {float} fThickness  new value for property <code>thickness</code>
  * @return {sap.makit.Axis} <code>this</code> to allow method chaining
@@ -568,6 +619,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setThickness
  * @function
  */
+
 
 /**
  * Getter for property <code>color</code>.
@@ -584,7 +636,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>color</code>.
  *
@@ -597,6 +648,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
+
 // Start of sap/makit/Axis.js
 /*!
  * @copyright@
@@ -606,7 +658,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.Category') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -663,12 +715,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Category
  */
 sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
@@ -714,7 +765,6 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>column</code>.
  *
@@ -726,6 +776,7 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @name sap.makit.Category#setColumn
  * @function
  */
+
 
 /**
  * Getter for property <code>displayName</code>.
@@ -739,7 +790,6 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayName</code>.
  *
@@ -751,6 +801,7 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @name sap.makit.Category#setDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>format</code>.
@@ -768,7 +819,6 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>format</code>.
  *
@@ -781,6 +831,7 @@ sap.ui.core.Element.extend("sap.makit.Category", { metadata : {
  * @function
  */
 
+
 // Start of sap/makit/Category.js
 /*!
  * @copyright@
@@ -791,7 +842,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.CategoryAxis') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -821,7 +872,8 @@ jQuery.sap.declare("sap.makit.CategoryAxis");
  * <li>Properties
  * <ul>
  * <li>{@link #getSortOrder sortOrder} : sap.makit.SortOrder (default: sap.makit.SortOrder.None)</li>
- * <li>{@link #getDisplayLastLabel displayLastLabel} : boolean (default: false)</li></ul>
+ * <li>{@link #getDisplayLastLabel displayLastLabel} : boolean (default: false)</li>
+ * <li>{@link #getDisplayAll displayAll} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -846,12 +898,11 @@ jQuery.sap.declare("sap.makit.CategoryAxis");
  * @extends sap.makit.Axis
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.CategoryAxis
  */
 sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
@@ -862,7 +913,8 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
 	library : "sap.makit",
 	properties : {
 		"sortOrder" : {type : "sap.makit.SortOrder", group : "Misc", defaultValue : sap.makit.SortOrder.None},
-		"displayLastLabel" : {type : "boolean", group : "Misc", defaultValue : false}
+		"displayLastLabel" : {type : "boolean", group : "Misc", defaultValue : false},
+		"displayAll" : {type : "boolean", group : "Misc", defaultValue : true}
 	}
 }});
 
@@ -896,7 +948,6 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>sortOrder</code>.
  *
@@ -908,6 +959,7 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @name sap.makit.CategoryAxis#setSortOrder
  * @function
  */
+
 
 /**
  * Getter for property <code>displayLastLabel</code>.
@@ -921,7 +973,6 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayLastLabel</code>.
  *
@@ -934,6 +985,32 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @function
  */
 
+
+/**
+ * Getter for property <code>displayAll</code>.
+ * Specify whether to display all the category values when there are multiple category data regions.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>displayAll</code>
+ * @public
+ * @name sap.makit.CategoryAxis#getDisplayAll
+ * @function
+ */
+
+/**
+ * Setter for property <code>displayAll</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bDisplayAll  new value for property <code>displayAll</code>
+ * @return {sap.makit.CategoryAxis} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CategoryAxis#setDisplayAll
+ * @function
+ */
+
+
 // Start of sap/makit/CategoryAxis.js
 /*!
  * @copyright@
@@ -945,11 +1022,2157 @@ sap.makit.CategoryAxis.prototype.init = function(){
 };
 
 }; // end of sap.makit.CategoryAxis
+if ( !jQuery.sap.isDeclared('sap.makit.Chart') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.makit.Chart.
+jQuery.sap.declare("sap.makit.Chart");
+
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+
+
+/**
+ * Constructor for a new Chart.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
+ * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '100%')</li>
+ * <li>{@link #getType type} : sap.makit.ChartType (default: sap.makit.ChartType.Column)</li>
+ * <li>{@link #getCategoryAxis categoryAxis} : object</li>
+ * <li>{@link #getValueAxis valueAxis} : object</li>
+ * <li>{@link #getValueBubble valueBubble} : object</li>
+ * <li>{@link #getShowRangeSelector showRangeSelector} : boolean (default: true)</li>
+ * <li>{@link #getShowTableView showTableView} : boolean (default: false)</li>
+ * <li>{@link #getLegendPosition legendPosition} : sap.makit.LegendPosition</li>
+ * <li>{@link #getLineThickness lineThickness} : float (default: 1)</li>
+ * <li>{@link #getShowTableValue showTableValue} : boolean (default: true)</li>
+ * <li>{@link #getMaxSliceCount maxSliceCount} : int (default: 12)</li>
+ * <li>{@link #getPrimaryColorPalette primaryColorPalette} : any</li>
+ * <li>{@link #getShowTotalValue showTotalValue} : boolean (default: false)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getRows rows} : sap.makit.Row[]</li>
+ * <li>{@link #getColumns columns} : sap.makit.Column[]</li>
+ * <li>{@link #getSeries series} : sap.makit.Series</li>
+ * <li>{@link #getValues values} : sap.makit.Value[]</li>
+ * <li>{@link #getCategoryRegions categoryRegions} : sap.makit.Category[]</li>
+ * <li>{@link #getCategory category} : sap.makit.Category</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.makit.Chart#event:doubletap doubletap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.makit.Chart#event:tap tap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.makit.Chart#event:init init} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * The Chart control.
+ * @extends sap.ui.core.Control
+ *
+ * @author SAP AG 
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.8
+ * @name sap.makit.Chart
+ */
+sap.ui.core.Control.extend("sap.makit.Chart", { metadata : {
+
+	// ---- object ----
+	publicMethods : [
+		// methods
+		"getSelectedCategory", "getSelectedSeries", "getNumberOfCategories", "getSelectedCategoryGroup"
+	],
+
+	// ---- control specific ----
+	library : "sap.makit",
+	properties : {
+		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+		"type" : {type : "sap.makit.ChartType", group : "Appearance", defaultValue : sap.makit.ChartType.Column},
+		"categoryAxis" : {type : "object", group : "Misc", defaultValue : null},
+		"valueAxis" : {type : "object", group : "Misc", defaultValue : null},
+		"valueBubble" : {type : "object", group : "Misc", defaultValue : null},
+		"showRangeSelector" : {type : "boolean", group : "Appearance", defaultValue : true},
+		"showTableView" : {type : "boolean", group : "Misc", defaultValue : false},
+		"legendPosition" : {type : "sap.makit.LegendPosition", group : "Misc", defaultValue : null},
+		"lineThickness" : {type : "float", group : "Misc", defaultValue : 1},
+		"showTableValue" : {type : "boolean", group : "Misc", defaultValue : true},
+		"maxSliceCount" : {type : "int", group : "Misc", defaultValue : 12},
+		"primaryColorPalette" : {type : "any", group : "Misc", defaultValue : null},
+		"showTotalValue" : {type : "boolean", group : "Misc", defaultValue : false}
+	},
+	aggregations : {
+    	"rows" : {type : "sap.makit.Row", multiple : true, singularName : "row", bindable : "bindable"}, 
+    	"columns" : {type : "sap.makit.Column", multiple : true, singularName : "column", bindable : "bindable"}, 
+    	"series" : {type : "sap.makit.Series", multiple : false}, 
+    	"values" : {type : "sap.makit.Value", multiple : true, singularName : "value"}, 
+    	"categoryRegions" : {type : "sap.makit.Category", multiple : true, singularName : "categoryRegion"}, 
+    	"category" : {type : "sap.makit.Category", multiple : false, deprecated: true}
+	},
+	events : {
+		"doubletap" : {}, 
+		"tap" : {}, 
+		"init" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.makit.Chart with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.makit.Chart.extend
+ * @function
+ */
+
+sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap','init':'init'};
+
+
+/**
+ * Getter for property <code>width</code>.
+ * The width of the Chart
+ *
+ * Default value is <code>100%</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
+ * @public
+ * @name sap.makit.Chart#getWidth
+ * @function
+ */
+
+/**
+ * Setter for property <code>width</code>.
+ *
+ * Default value is <code>100%</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setWidth
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>height</code>.
+ * The height of the Chart
+ *
+ * Default value is <code>100%</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>height</code>
+ * @public
+ * @name sap.makit.Chart#getHeight
+ * @function
+ */
+
+/**
+ * Setter for property <code>height</code>.
+ *
+ * Default value is <code>100%</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sHeight  new value for property <code>height</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setHeight
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>type</code>.
+ * Chart type
+ *
+ * Default value is <code>Column</code>
+ *
+ * @return {sap.makit.ChartType} the value of property <code>type</code>
+ * @public
+ * @name sap.makit.Chart#getType
+ * @function
+ */
+
+/**
+ * Setter for property <code>type</code>.
+ *
+ * Default value is <code>Column</code> 
+ *
+ * @param {sap.makit.ChartType} oType  new value for property <code>type</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setType
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>categoryAxis</code>.
+ * Category Axis property of the Chart. Accepts only an instance of CategoryAxis element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>categoryAxis</code>
+ * @public
+ * @name sap.makit.Chart#getCategoryAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>categoryAxis</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oCategoryAxis  new value for property <code>categoryAxis</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setCategoryAxis
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>valueAxis</code>.
+ * Value Axis property of the Chart. Accept only an instance of ValueAxis element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>valueAxis</code>
+ * @public
+ * @name sap.makit.Chart#getValueAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>valueAxis</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oValueAxis  new value for property <code>valueAxis</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setValueAxis
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>valueBubble</code>.
+ * Value Bubble property of the Chart. Accept only an instance of ValueBubble element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>valueBubble</code>
+ * @public
+ * @name sap.makit.Chart#getValueBubble
+ * @function
+ */
+
+/**
+ * Setter for property <code>valueBubble</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oValueBubble  new value for property <code>valueBubble</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setValueBubble
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showRangeSelector</code>.
+ * Specify whether the range selector should be visible.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showRangeSelector</code>
+ * @public
+ * @name sap.makit.Chart#getShowRangeSelector
+ * @function
+ */
+
+/**
+ * Setter for property <code>showRangeSelector</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowRangeSelector  new value for property <code>showRangeSelector</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setShowRangeSelector
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showTableView</code>.
+ * Toggle to display table view
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>showTableView</code>
+ * @public
+ * @name sap.makit.Chart#getShowTableView
+ * @function
+ */
+
+/**
+ * Setter for property <code>showTableView</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bShowTableView  new value for property <code>showTableView</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setShowTableView
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>legendPosition</code>.
+ * Legend position all chart types except Bar chart.
+ * Default position for Pie/Donut chart is Left. All other chart's default position is None. Note: the default legend position is set when the chart type is set first time, subsequent change to the chart type will keep using initial legend position unless it is changed explicitly by user.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {sap.makit.LegendPosition} the value of property <code>legendPosition</code>
+ * @public
+ * @name sap.makit.Chart#getLegendPosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>legendPosition</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {sap.makit.LegendPosition} oLegendPosition  new value for property <code>legendPosition</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setLegendPosition
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>lineThickness</code>.
+ * Specify the line thickness of the line graph. Only applies to Line chart type.
+ *
+ * Default value is <code>1</code>
+ *
+ * @return {float} the value of property <code>lineThickness</code>
+ * @public
+ * @name sap.makit.Chart#getLineThickness
+ * @function
+ */
+
+/**
+ * Setter for property <code>lineThickness</code>.
+ *
+ * Default value is <code>1</code> 
+ *
+ * @param {float} fLineThickness  new value for property <code>lineThickness</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setLineThickness
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showTableValue</code>.
+ * Toggle to display the table value on a Bar chart. Only applies to Bar chart.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showTableValue</code>
+ * @public
+ * @name sap.makit.Chart#getShowTableValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>showTableValue</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowTableValue  new value for property <code>showTableValue</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setShowTableValue
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>maxSliceCount</code>.
+ * Set the maximum number of slices in a Pie/Donut chart. If exceeding the specified value, the rest will be categorised into a single slice. Only applies to Pie/Donut.
+ *
+ * Default value is <code>12</code>
+ *
+ * @return {int} the value of property <code>maxSliceCount</code>
+ * @public
+ * @name sap.makit.Chart#getMaxSliceCount
+ * @function
+ */
+
+/**
+ * Setter for property <code>maxSliceCount</code>.
+ *
+ * Default value is <code>12</code> 
+ *
+ * @param {int} iMaxSliceCount  new value for property <code>maxSliceCount</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setMaxSliceCount
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>primaryColorPalette</code>.
+ * Allow a chart’s color palette to be modified without affecting the other charts’ in the same screen. If not set, the chart will use the default color palette defined in the theme.
+ * Accept an array of color in string format or hex format. e.g.
+ * 0xff0000
+ * "red"
+ * "rgb(255,0,0)"
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {any} the value of property <code>primaryColorPalette</code>
+ * @public
+ * @name sap.makit.Chart#getPrimaryColorPalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>primaryColorPalette</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {any} oPrimaryColorPalette  new value for property <code>primaryColorPalette</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setPrimaryColorPalette
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showTotalValue</code>.
+ * Specify whether to show the sum of the value for Waterfall/Waterfall Bar chart. Only applies to Waterfall/WaterfallBar chart.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>showTotalValue</code>
+ * @public
+ * @name sap.makit.Chart#getShowTotalValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>showTotalValue</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bShowTotalValue  new value for property <code>showTotalValue</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setShowTotalValue
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>rows</code>.<br/>
+ * The data rows of the chart. User should bind these to their data source
+ * 
+ * @return {sap.makit.Row[]}
+ * @public
+ * @name sap.makit.Chart#getRows
+ * @function
+ */
+
+
+/**
+ * Inserts a row into the aggregation named <code>rows</code>.
+ *
+ * @param {sap.makit.Row}
+ *          oRow the row to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the row should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the row is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the row is inserted at 
+ *             the last position        
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#insertRow
+ * @function
+ */
+
+/**
+ * Adds some row <code>oRow</code> 
+ * to the aggregation named <code>rows</code>.
+ *
+ * @param {sap.makit.Row}
+ *            oRow the row to add; if empty, nothing is inserted
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#addRow
+ * @function
+ */
+
+/**
+ * Removes an row from the aggregation named <code>rows</code>.
+ *
+ * @param {int | string | sap.makit.Row} vRow the row to remove or its index or id
+ * @return {sap.makit.Row} the removed row or null
+ * @public
+ * @name sap.makit.Chart#removeRow
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>rows</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Row[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Chart#removeAllRows
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Row</code> in the aggregation named <code>rows</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Row}
+ *            oRow the row whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Chart#indexOfRow
+ * @function
+ */
+	
+
+/**
+ * Destroys all the rows in the aggregation 
+ * named <code>rows</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#destroyRows
+ * @function
+ */
+
+
+/**
+ * Binder for aggregation <code>rows</code>.
+ *
+ * @param {string} sPath path to a list in the model 
+ * @param {sap.ui.core.Element} oTemplate the control template for this aggregation
+ * @param {sap.ui.model.Sorter} oSorter the initial sort order (optional)
+ * @param {array} aFilters the predefined filters for this aggregation (optional)
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#bindRows
+ * @function
+ */
+
+/**
+ * Unbinder for aggregation <code>rows</code>.
+ *
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#unbindRows
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>columns</code>.<br/>
+ * The data column map of the chart.
+ * 
+ * @return {sap.makit.Column[]}
+ * @public
+ * @name sap.makit.Chart#getColumns
+ * @function
+ */
+
+
+/**
+ * Inserts a column into the aggregation named <code>columns</code>.
+ *
+ * @param {sap.makit.Column}
+ *          oColumn the column to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the column should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the column is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the column is inserted at 
+ *             the last position        
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#insertColumn
+ * @function
+ */
+
+/**
+ * Adds some column <code>oColumn</code> 
+ * to the aggregation named <code>columns</code>.
+ *
+ * @param {sap.makit.Column}
+ *            oColumn the column to add; if empty, nothing is inserted
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#addColumn
+ * @function
+ */
+
+/**
+ * Removes an column from the aggregation named <code>columns</code>.
+ *
+ * @param {int | string | sap.makit.Column} vColumn the column to remove or its index or id
+ * @return {sap.makit.Column} the removed column or null
+ * @public
+ * @name sap.makit.Chart#removeColumn
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>columns</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Column[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Chart#removeAllColumns
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Column</code> in the aggregation named <code>columns</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Column}
+ *            oColumn the column whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Chart#indexOfColumn
+ * @function
+ */
+	
+
+/**
+ * Destroys all the columns in the aggregation 
+ * named <code>columns</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#destroyColumns
+ * @function
+ */
+
+
+/**
+ * Binder for aggregation <code>columns</code>.
+ *
+ * @param {string} sPath path to a list in the model 
+ * @param {sap.ui.core.Element} oTemplate the control template for this aggregation
+ * @param {sap.ui.model.Sorter} oSorter the initial sort order (optional)
+ * @param {array} aFilters the predefined filters for this aggregation (optional)
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#bindColumns
+ * @function
+ */
+
+/**
+ * Unbinder for aggregation <code>columns</code>.
+ *
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#unbindColumns
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>series</code>.<br/>
+ * Data region property of the chart's Series
+ * 
+ * @return {sap.makit.Series}
+ * @public
+ * @name sap.makit.Chart#getSeries
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>series</code>.
+ * @param oSeries {sap.makit.Series}
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setSeries
+ * @function
+ */
+	
+
+/**
+ * Destroys the series in the aggregation 
+ * named <code>series</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#destroySeries
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>values</code>.<br/>
+ * Data region property of the chart's Values
+ * 
+ * @return {sap.makit.Value[]}
+ * @public
+ * @name sap.makit.Chart#getValues
+ * @function
+ */
+
+
+/**
+ * Inserts a value into the aggregation named <code>values</code>.
+ *
+ * @param {sap.makit.Value}
+ *          oValue the value to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the value should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the value is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the value is inserted at 
+ *             the last position        
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#insertValue
+ * @function
+ */
+
+/**
+ * Adds some value <code>oValue</code> 
+ * to the aggregation named <code>values</code>.
+ *
+ * @param {sap.makit.Value}
+ *            oValue the value to add; if empty, nothing is inserted
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#addValue
+ * @function
+ */
+
+/**
+ * Removes an value from the aggregation named <code>values</code>.
+ *
+ * @param {int | string | sap.makit.Value} vValue the value to remove or its index or id
+ * @return {sap.makit.Value} the removed value or null
+ * @public
+ * @name sap.makit.Chart#removeValue
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>values</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Value[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Chart#removeAllValues
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Value</code> in the aggregation named <code>values</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Value}
+ *            oValue the value whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Chart#indexOfValue
+ * @function
+ */
+	
+
+/**
+ * Destroys all the values in the aggregation 
+ * named <code>values</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#destroyValues
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>categoryRegions</code>.<br/>
+ * Data region property of the chart's Categories
+ * 
+ * @return {sap.makit.Category[]}
+ * @public
+ * @name sap.makit.Chart#getCategoryRegions
+ * @function
+ */
+
+
+/**
+ * Inserts a categoryRegion into the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {sap.makit.Category}
+ *          oCategoryRegion the categoryRegion to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the categoryRegion should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the categoryRegion is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the categoryRegion is inserted at 
+ *             the last position        
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#insertCategoryRegion
+ * @function
+ */
+
+/**
+ * Adds some categoryRegion <code>oCategoryRegion</code> 
+ * to the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {sap.makit.Category}
+ *            oCategoryRegion the categoryRegion to add; if empty, nothing is inserted
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#addCategoryRegion
+ * @function
+ */
+
+/**
+ * Removes an categoryRegion from the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {int | string | sap.makit.Category} vCategoryRegion the categoryRegion to remove or its index or id
+ * @return {sap.makit.Category} the removed categoryRegion or null
+ * @public
+ * @name sap.makit.Chart#removeCategoryRegion
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>categoryRegions</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Category[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Chart#removeAllCategoryRegions
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Category</code> in the aggregation named <code>categoryRegions</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Category}
+ *            oCategoryRegion the categoryRegion whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Chart#indexOfCategoryRegion
+ * @function
+ */
+	
+
+/**
+ * Destroys all the categoryRegions in the aggregation 
+ * named <code>categoryRegions</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#destroyCategoryRegions
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>category</code>.<br/>
+ * Data region property of the chart's Category
+ * 
+ * @return {sap.makit.Category}
+ * @public
+ * @deprecated Since version 7.30.0. 
+ * This aggregation is deprecated, please use categoryRegions aggregation instead.
+ * @name sap.makit.Chart#getCategory
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>category</code>.
+ * @param oCategory {sap.makit.Category}
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 7.30.0. 
+ * This aggregation is deprecated, please use categoryRegions aggregation instead.
+ * @name sap.makit.Chart#setCategory
+ * @function
+ */
+	
+
+/**
+ * Destroys the category in the aggregation 
+ * named <code>category</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 7.30.0. 
+ * This aggregation is deprecated, please use categoryRegions aggregation instead.
+ * @name sap.makit.Chart#destroyCategory
+ * @function
+ */
+
+
+/**
+ * Double tap event on chart 
+ *
+ * @name sap.makit.Chart#doubletap
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'doubletap' event of this <code>sap.makit.Chart</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.makit.Chart</code>.<br/> itself. 
+ *  
+ * Double tap event on chart 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.makit.Chart</code>.<br/> itself.
+ *
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#attachDoubletap
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'doubletap' event of this <code>sap.makit.Chart</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#detachDoubletap
+ * @function
+ */
+
+/**
+ * Fire event doubletap to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.makit.Chart#fireDoubletap
+ * @function
+ */
+
+
+/**
+ * Single tap event on the chart 
+ *
+ * @name sap.makit.Chart#tap
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'tap' event of this <code>sap.makit.Chart</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.makit.Chart</code>.<br/> itself. 
+ *  
+ * Single tap event on the chart 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.makit.Chart</code>.<br/> itself.
+ *
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#attachTap
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'tap' event of this <code>sap.makit.Chart</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#detachTap
+ * @function
+ */
+
+/**
+ * Fire event tap to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.makit.Chart#fireTap
+ * @function
+ */
+
+
+/**
+ * init event 
+ *
+ * @name sap.makit.Chart#init
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'init' event of this <code>sap.makit.Chart</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.makit.Chart</code>.<br/> itself. 
+ *  
+ * init event 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.makit.Chart</code>.<br/> itself.
+ *
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#attachInit
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'init' event of this <code>sap.makit.Chart</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#detachInit
+ * @function
+ */
+
+/**
+ * Fire event init to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.makit.Chart#fireInit
+ * @function
+ */
+
+
+/**
+ * Get the value of the currently highlighted category
+ *
+ * @name sap.makit.Chart.prototype.getSelectedCategory
+ * @function
+
+ * @type string
+ * @public
+ */
+
+
+/**
+ * Get the value of the currently highlighted series
+ *
+ * @name sap.makit.Chart.prototype.getSelectedSeries
+ * @function
+
+ * @type string
+ * @public
+ */
+
+
+/**
+ * Get the number of distinct category values
+ *
+ * @name sap.makit.Chart.prototype.getNumberOfCategories
+ * @function
+
+ * @type int
+ * @public
+ */
+
+
+/**
+ * Return an array of categories value that is currently selected.
+ *
+ * @name sap.makit.Chart.prototype.getSelectedCategoryGroup
+ * @function
+
+ * @type object
+ * @public
+ */
+
+
+// Start of sap/makit/Chart.js
+/*!
+ * @copyright@
+ */
+
+jQuery.sap.require('sap.makit.MakitLib'); // unlisted dependency retained
+
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.init = function() {
+	//Private variable
+	this._makitChart = null;
+	this._parentCurrentHeight = 0;
+	this._selectedCatIdx = 0;
+	this._chartTypeDefined = false;
+	this._legendPosDefined = false;
+	
+	this._datarows = []; //This is the placeholder for the Chart's data row it's a 1-to-1 mapping to rows aggregation.
+	this._styleClasses = []; //workaround for custom classes
+
+	this.setCategoryAxis(new sap.makit.CategoryAxis());
+	this.setValueAxis(new sap.makit.ValueAxis());
+	this.setValueBubble(new sap.makit.ValueBubble());
+	this.setPrimaryColorPalette(null);
+	
+	
+	if(this.getType() === sap.makit.ChartType.Pie || this.getType() === sap.makit.ChartType.Donut) {
+		this.setLegendPosition(sap.makit.LegendPosition.Left);	
+	}
+	else {
+		this.setLegendPosition(sap.makit.LegendPosition.None);
+	}
+	
+	this.attachEvent("_change", this._onPropertyChanged);
+	sap.ui.getCore().attachThemeChanged(this._applyCSS, this);
+};
+
+/**
+ * Attempt to preserve the chart's DOM reference before re-rendering it
+ * @override
+ */
+sap.makit.Chart.prototype.onBeforeRendering = function(oEvent) {
+	this.fireEvent("_beforeRendering", this);
+	if(this.getDomRef() && !sap.ui.core.RenderManager.isPreservedContent(this.getDomRef())){
+		sap.ui.core.RenderManager.preserveContent(this.getDomRef(), /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
+	}
+};
+
+/**
+ * Once the place holder is rendered, we will create the MAKit chart object or 
+ * retrieve the preserved chart DOM reference if exists.
+ * @override
+ */
+sap.makit.Chart.prototype.onAfterRendering = function(oEvent) {
+	this.fireEvent("_afterRendering", this);
+	var $placeholder = jQuery(jQuery.sap.domById("sap-ui-dummy-" + this.getId()));
+	var $oldContent = sap.ui.core.RenderManager.findPreservedContent(this.getId());
+	var $newContent = null;
+	
+	if ($oldContent.size() == 0) {
+		this.fireEvent("_createMAKitObject", this);
+		this._createChartObject();
+		$newContent = new jQuery(this.getDomRef());
+		$placeholder.replaceWith($newContent);
+		var parent = this.getParent();
+		var parentId = parent.getId();
+		var parentDom = jQuery.sap.domById(parentId);
+		this._parentCurrentHeight = parentDom.offsetHeight;
+		sap.ui.core.ResizeHandler.register(parentDom, jQuery.proxy(this._onResize, this));
+	} else if ( $oldContent.size() > 0 ) {
+		this.fireEvent("_restoreMAKitObject", this);
+		// replace dummy with old content
+		$placeholder.replaceWith($oldContent);
+	} else {
+		$placeholder.remove();
+	}
+	
+	if($newContent) {
+		this._makitChart.showRangeSelectorView(this.getShowRangeSelector());
+		this._makitChart.showTableView(this.getShowTableView());
+		this._makitChart.setGraphLineWidth(this.getLineThickness());
+		this._makitChart.showTableValue(this.getShowTableValue());
+		this._makitChart.setMaxPies(this.getMaxSliceCount());
+		this._makitChart.setPalette(this.getPrimaryColorPalette());
+		this._makitChart.setProperty("ShowTotal", this.getShowTotalValue());
+	}
+	
+	this._setDataTable();
+};
+
+
+/** 
+ * WORKAROUND: MAKit chart current behavior overwrite the div's css class when it's created
+ *				So we need to intercept addition of custom style classes before
+ *				this._makitChart is created.
+ * @override
+ */
+sap.makit.Chart.prototype.addStyleClass = function(sStyleClass, bSuppressRerendering) {
+	 //If it's already in the control, then it is in the _styleClasses array
+	if (this._styleClasses.indexOf(sStyleClass) === -1) {
+		this._styleClasses.push(sStyleClass);
+	}
+
+	if(this._makitChart) {
+		sap.ui.core.Control.prototype.addStyleClass.call(this, sStyleClass, bSuppressRerendering);
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeStyleClass = function(sStyleClass, bSuppressRerendering) {
+	var idx = this._styleClasses.indexOf(sStyleClass);
+	if (idx > -1) {
+		this._styleClasses.splice(idx, 1);
+	}
+
+	if(this._makitChart) {
+		sap.ui.core.Control.prototype.removeStyleClass.call(this, sStyleClass, bSuppressRerendering);
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.bindAggregation = function(sName, oBindingInfo) {
+	// special handling for the rows aggregation
+	if (sName === "rows") {
+		// old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
+		if (typeof oBindingInfo == "string") {
+			oBindingInfo = {
+				path: arguments[1],
+				template: arguments[2],
+				sorter: arguments[3], 
+				filters: arguments[4]
+			};
+		}
+		// the rows aggregation has neither a template nor a factory function!
+		oBindingInfo.template = undefined;
+		oBindingInfo.factory = function() {};
+		// call the real bindAggregation method
+		return sap.ui.core.Element.prototype.bindAggregation.call(this, sName, oBindingInfo); 
+	}
+	// call the real bindAggregation method
+	return sap.ui.core.Element.prototype.bindAggregation.apply(this, arguments);
+};
+
+/** 
+ * User should not use these API programmatically.
+ * @override
+ */
+sap.makit.Chart.prototype.addRow = function(oRow){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.insertRow = function(oRow, iIndex){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeRow = function(vRow){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeAllRows = function(){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.destroyRows = function(vRow){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.updateRows = function(){
+	this.fireEvent("_startUpdateRows", this);
+	this._createRows();
+	if (this._makitChart) {
+		this._setDataTable();
+	}
+	this.fireEvent("_endUpdateRows", this);
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setValueBubble = function(oValueBubble){
+	if (oValueBubble instanceof sap.makit.ValueBubble) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "valueBubble", oValueBubble, false);
+		oValueBubble.attachEvent("_change", this._onValueBubbleChanged, this);
+		if (this._makitChart) {
+			var valueBubbleObj = oValueBubble.toObject();
+			this._makitChart.setValueBubbleStyle(valueBubbleObj);
+			if (this._makitChart.isValueBubbleVisible() != valueBubbleObj.visible) {
+				this._makitChart.showValueBubble(valueBubbleObj.visible);
+			}
+		}
+	}
+	else {
+		throw new Error("valueBubble property must be of type sap.makit.ValueBubble");
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setCategory = function(oCategory){
+	//sap.ui.core.Element.prototype.setAggregation.call(this, "category", oCategory, false);
+	//oCategory.attachEvent("_change", {type: "category"}, this._onDataRegionPropChanged, this);
+	var categories = this.getCategoryRegions();
+	if (categories.length > 0){
+		this.removeCategoryRegion(0);
+	}
+	this.insertCategoryRegion(oCategory, 0);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.getCategory = function(oCategory){
+	var categories = this.getCategoryRegions();
+	return categories[0];
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.destroyCategory = function(){
+	this.removeCategoryRegion(0);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.addCategoryRegion= function(oCategory){
+	sap.ui.core.Element.prototype.addAggregation.call(this, "categoryRegions", oCategory, false);
+	oCategory.attachEvent("_change", {type: "categories"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.insertCategoryRegion= function(oCategory, iIndex){
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "categoryRegions", oCategory, iIndex, false);
+	oCategory.attachEvent("_change", {type: "categories"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeCategoryRegion= function(oCategory){
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "categoryRegions", oCategory, false);
+	if(removedObj != null) {
+		oCategory.detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeAllCategoryRegions = function(){
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "categoryRegions", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObjs;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.addValue= function(oValue){
+	sap.ui.core.Element.prototype.addAggregation.call(this, "values", oValue, false);
+	oValue.attachEvent("_change", {type: "values"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.insertValue= function(oValue, iIndex){
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "values", oValue, iIndex, false);
+	oValue.attachEvent("_change", {type: "values"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeValue= function(oValue){
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "values", oValue, false);
+	if(removedObj != null) {
+		removedObj.detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeAllValues = function(){
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "values", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObjs;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setSeries = function(oSeries){
+	sap.ui.core.Element.prototype.setAggregation.call(this, "series", oSeries, false);
+	oSeries.attachEvent("_change", {type: "series"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setValueAxis = function (oValueAxis){
+	if (oValueAxis instanceof sap.makit.ValueAxis) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "valueAxis", oValueAxis, false);
+		oValueAxis.attachEvent("_change", { axis:"values" }, this._onAxisPropChanged, this);
+	}
+	else {
+		throw new Error("valueAxis property must be of type sap.makit.ValueAxis");
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setCategoryAxis = function (oCategoryAxis){
+	if (oCategoryAxis instanceof sap.makit.CategoryAxis) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "categoryAxis", oCategoryAxis, false);
+		oCategoryAxis.attachEvent("_change", { axis:"category" }, this._onAxisPropChanged, this);
+	}
+	else {
+		throw new Error("categoryAxis property must be of type sap.makit.CategoryAxis");
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setPrimaryColorPalette = function(oColorPalette) {
+	if (oColorPalette == null || (oColorPalette instanceof Array && oColorPalette.length > 0)) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "primaryColorPalette", oColorPalette, false);
+		if (this._makitChart) {
+			this._makitChart.setPalette(oColorPalette);
+		}
+	}
+	else {
+		throw new Error("primaryColorPalette property must be an array");
+	}
+	return this;
+};
+
+
+/*=================================================================================
+ *== PRIVATE METHODS
+ *=================================================================================
+ **/
+
+/**
+ * Set the Chart's height. Canvas does not support % height, 
+ * so it need to have an absolute height
+ * 
+ * @return true, if the height is using % value, false otherwise
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._setRealHeight = function(height){
+	var elem = this.getDomRef();
+	var prevHeight = elem.style.height;
+	var newHeight = "0px";
+	if(height.indexOf("%") > -1) {
+		var domref = this.getDomRef();
+		var parentDom = domref.offsetParent;
+		if (!parentDom) {
+			var parent = this.getParent();
+			var parentId = parent.getId();
+			var parentDom = jQuery.sap.domById(parentId);
+		}
+		
+		var intHeight = parseInt(height, 10);
+		var realHeight = Math.ceil(parentDom.offsetHeight * (intHeight / 100));
+		newHeight = realHeight + "px";
+	}
+	else {
+		newHeight = height;
+	}
+	
+	if (prevHeight != newHeight){
+		elem.style.height = newHeight;
+	}
+};
+
+/**
+ * We will construct the row aggregation in this function
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._createRows = function() {
+	this.fireEvent("_startCreateRows", this);
+	var oTemplate = new sap.makit.Row(this.getId() + "-dummyrows");
+	var aCols = this.getColumns();
+	for (var i = 0, l = aCols.length; i < l; i++) {
+		var oColTemplate = aCols[i];
+		if (oColTemplate) {
+			var name = aCols[i].getName();
+			var oClone = oColTemplate.clone("col" + i);
+			oClone.data("sap-ui-colindex", i);
+			oTemplate.addAggregation("cells",oClone);
+		}
+	}
+	this.fireEvent("_endColumn", this);
+	this.destroyAggregation("rows");
+	this.fireEvent("_endDestroyRows", this);
+	var aContexts = undefined;
+	var oBinding = this.getBinding("rows");
+	if (oBinding) {
+		aContexts = oBinding.getContexts();
+	}
+	var totalRows = oBinding.getLength();
+	this._datarows = [];
+	this.fireEvent("_endPrepareRows", this);
+	for (var i = 0; i < totalRows; i++) {
+		if (aContexts && aContexts[i]) {
+			var oClone = oTemplate.clone("row" + i);
+			oClone.setBindingContext(aContexts[i]);
+			this.addAggregation("rows", oClone);
+			this._datarows.push(oClone._datarow);
+		}
+	}
+	this.fireEvent("_endCreateRows", this);
+	// destroy the template
+	oTemplate.destroy();
+};
+
+/**
+ * Create and initialize the MAKit $MA.Chart object
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._createChartObject = function (){
+	var elem = this.getDomRef();
+	jQuery.sap.assert(elem, "Chart's DomRef is not ready");
+	
+	elem.style.width = this.getWidth();
+	this._setRealHeight(this.getHeight());
+
+	this._makitChart = new window.$MA.Chart(this.getId(), true);
+	var that = this;
+	
+	this._makitChart.bind("initialized", function() {
+		that._makitChart.showToolBar(false);
+		that._setMakitChartProperties();
+	});
+	
+	this._makitChart.bind("beforerender", function() {
+		that.fireEvent("_makitBeforeRender", that);
+	});
+	
+	this._makitChart.bind("renderstart", function() {
+		that.fireEvent("_makitRenderStart", that);
+	});
+	
+	this._makitChart.bind("renderend", function() {
+		that.fireEvent("_makitRenderEnd", that);
+	});
+	
+	this._makitChart.bind("animationend", function() {
+		that.fireEvent("_makitAnimationEnd", that);
+	});
+
+	var syntax = this._getChartSyntax();
+
+	this._makitChart.create(syntax);
+
+	this._makitChart.bind("tap", function() {
+		that._selectedCatIdx = that._makitChart.getSelectedCategoryIndex();
+		that.fireTap({/* no parameters */});
+	});
+	this._makitChart.bind("doubletap", function() {
+		that.fireEvent("doubletap", that);
+	});
+	this._makitChart.bind("longpress", function() {
+		that._selectedCatIdx = that._makitChart.getSelectedCategoryIndex();
+		that.fireEvent("longpress", that);
+	});
+
+	//workaround for overwritten classes
+	var len = this._styleClasses.length;
+	for (var i = 0; i < len; i++ ){
+		this.addStyleClass(this._styleClasses[i]);
+	}
+	
+	this._applyCSS();
+};
+
+/**
+ * This function is used to apply the Makit properties that will be reset when changing chart type. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._setMakitChartProperties = function() {
+	if (!this._makitChart) {
+		return;
+	}
+	this._makitChart.setLegend(this.getLegendPosition().toLowerCase());
+	
+	// We should only apply this if the chart's data has been initialised at least once
+	if(this._dataInitialized){
+		this._makitChart.showTableView(this.getShowTableView());
+		this._makitChart.showRangeSelectorView(this.getShowRangeSelector());
+		this._makitChart.setGraphLineWidth(this.getLineThickness());
+		this._makitChart.showTableValue(this.getShowTableValue());
+		this._makitChart.setPalette(this.getPrimaryColorPalette());
+		this._makitChart.setProperty("ShowTotal", this.getShowTotalValue());
+	}
+
+	var valueBubble = this.getValueBubble();
+	if (valueBubble) {
+		var valueBubbleObj = valueBubble.toObject();
+		this._makitChart.setValueBubbleStyle(valueBubbleObj);
+		if (this._makitChart.isValueBubbleVisible() != valueBubbleObj.visible) {
+			this._makitChart.showValueBubble(valueBubbleObj.visible);
+		}
+	}
+};
+
+/**
+ * Generate the MAKit chart metadata syntax based on the sap.makit.Chart properties.
+ * To be used to create the MAKit chart.
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._getChartSyntax = function() {
+	var categoryAxisObj = this.getCategoryAxis();
+	var categoryObjs = this.getCategoryRegions();
+	var catLen = categoryObjs.length;
+	if (catLen > 0){
+		var i;
+		var categorySyntax = "<Categories";
+		if(categoryAxisObj) { 
+			if(categoryAxisObj.getDisplayAll()) {
+				categorySyntax += ' display="' + categoryAxisObj.getDisplayAll() + '"';
+			}
+		}
+		categorySyntax += ">";
+		var displayNames = "";
+		for (i = catLen - 1; i >= 0; i--) {
+			var temp = categoryObjs[i].getDisplayName();
+			if(temp && temp.length > 0 ){
+				displayNames += temp + " | ";
+			}
+		}
+		displayNames = displayNames.substr(0, displayNames.length - 3);
+		
+		for (i = 0; i < catLen; i++){
+			var categoryObj = categoryObjs[i];
+			categorySyntax += '<Category column="' + categoryObj.getColumn() + '"';
+			if (categoryObj.getFormat()) {
+					categorySyntax += ' format="' + categoryObj.getFormat() + '"';
+			}
+			if (i == 0) {
+				categorySyntax += ' displayname="' + displayNames + '"';
+			}
+			if(categoryAxisObj) {
+				categorySyntax += ' showprimaryline="'+ categoryAxisObj.getShowPrimaryLine() +'"';
+				categorySyntax += ' showgrid="'+ categoryAxisObj.getShowGrid() +'"';
+				categorySyntax += ' showlabel="'+ categoryAxisObj.getShowLabel() +'"';
+				categorySyntax += ' thickness="'+ categoryAxisObj.getThickness() +'"';
+				categorySyntax += ' color="'+ categoryAxisObj.getColor() +'"';
+				categorySyntax += ' sortorder="'+ categoryAxisObj.getSortOrder().toLowerCase() +'"';
+				categorySyntax += ' displaylastlabel="'+ categoryAxisObj.getDisplayLastLabel() +'"';
+			}
+			categorySyntax += ' />';
+		}
+		categorySyntax += "</Categories>";
+	}
+	else {
+		throw new Error("Chart '"+ this.getId() +"' needs at least one Category data region");
+	}
+
+	var seriesObj = this.getSeries();
+	var seriesSyntax = '';
+	if (seriesObj) {
+		seriesSyntax = '<Series Column="' + seriesObj.getColumn() + '"';
+		if (seriesObj.getFormat()) {
+			seriesSyntax += ' format="' + seriesObj.getFormat() + '"';
+		}
+		if (seriesObj.getDisplayName()) {
+			seriesSyntax += ' displayname="' + seriesObj.getDisplayName() + '"';
+		}
+		seriesSyntax += '/>';
+	}
+
+	var valueAxisObj = this.getValueAxis();
+	var valuesSyntax = '<Values>';
+	if(valueAxisObj) {
+		valuesSyntax = '<Values';
+		valuesSyntax += ' showprimaryline="'+ valueAxisObj.getShowPrimaryLine() +'"';
+		valuesSyntax += ' showgrid="'+ valueAxisObj.getShowGrid() +'"';
+		valuesSyntax += ' showlabel="'+ valueAxisObj.getShowLabel() +'"';
+		valuesSyntax += ' thickness="'+ valueAxisObj.getThickness() +'"';
+		valuesSyntax += ' color="'+ valueAxisObj.getColor() +'"';
+		if(valueAxisObj.getMin() !== "") {
+			valuesSyntax += ' min="'+ valueAxisObj.getMin() +'"';
+		}
+		if(valueAxisObj.getMax() !== "") {
+			valuesSyntax += ' max="'+ valueAxisObj.getMax() +'"';
+		}
+		valuesSyntax += '>';
+	}
+
+	var valuesObj = this.getValues();
+	var length = valuesObj.length;
+	if (length == 0) {
+		throw new Error("Chart '"+ this.getId() +"' needs at least one Value data region");
+	}
+	var valueObj;
+	for (var i = 0; i < length; i++) {
+		valueObj = valuesObj[i];
+		valuesSyntax += '<Value Expression="' + valueObj.getExpression() + '"';
+		if (valueObj.getFormat()) {
+			valuesSyntax += ' format="' + valueObj.getFormat() + '"';
+		}
+		if (valueObj.getDisplayName()) {
+			valuesSyntax += ' displayname="' + valueObj.getDisplayName() + '"';
+		}
+		valuesSyntax += '/>';
+	}
+	valuesSyntax += '</Values>';
+
+	var type = this.getType().toLowerCase();
+	var pieStyle = null;
+	if (type === "donut" || type === "pie"){
+		pieStyle = type; // it's the pieStyle that can be pie or donut
+		type = "pie"; // in MAKit the chart's type is always pie for Pie/Donut chart
+	}
+	var chartSyntax = '<Chart ChartType="' + type + '"';
+	if(pieStyle !== null) {
+		chartSyntax += ' PieStyle="' + pieStyle + '"';
+	}
+	chartSyntax += ' >';
+
+	chartSyntax += categorySyntax;
+	if (seriesObj) {
+		chartSyntax += seriesSyntax;
+	}
+	chartSyntax += valuesSyntax;
+	chartSyntax += '</Chart>';
+
+	return chartSyntax;
+};
+
+/**
+ * Update the data table of MAKit chart. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._setDataTable = function() {
+	//Use delayed call to prevent setDataTable to be called too fast and too many times in a short period.
+	this._setDataTableTimer = this._setDataTableTimer || jQuery.sap.delayedCall(150, this, function(){
+		jQuery.sap.assert(this._makitChart, "_makitChart is not initialized");
+		if(this._datarows && this._datarows.length > 0){
+			this.fireEvent("_createDataTable", this);
+			var data = this._datarows;
+			var dataTable = new window.$MA.DataTable();
+			var columns = this.getColumns();
+			var colLen = columns.length;
+			if (colLen == 0) {
+				columns = this.getRows()[0].getCells();
+				colLen = columns.length;
+			}
+			for (var i = 0; i < colLen; i++){
+				dataTable.addColumn(columns[i].getName(), columns[i].getType());
+			}
+
+			dataTable.addRows(data);
+			this.fireEvent("_beforeSetDataTable", this);
+			this._makitChart.setDataTable(dataTable);
+			this._dataInitialized = true;
+		}
+		this._setDataTableTimer = undefined;
+	});
+};
+
+
+/** 
+ * Read and parse the css classes in the document and apply those style to the MAKit Chart 
+ * 
+ * @private
+ */
+sap.makit.Chart.prototype._applyCSS = function(oEvent) {
+	if (this._makitChart){
+		this._makitChart.applyCSS();
+	}
+};
+
+
+/*===================================================================================
+ *=	PRIVATE EVENT HANDLERS
+ *===================================================================================
+ **/
+
+/**
+ * Handler for onresize event. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._onResize = function(oEvent) {
+	var parent = this.getParent();
+	var parentId = parent.getId();
+	var parentDom = jQuery.sap.domById(parentId);
+	var parentDomCurHeight = parentDom.offsetHeight;
+	var parentDomCurWidth = parentDom.offsetWidth;
+	
+	if (this._parentCurrentHeight != parentDomCurHeight && parentDomCurHeight > 0 ) {
+		this._setRealHeight(this.getHeight());
+		this._parentCurrentHeight = parentDom.offsetHeight;
+	}
+	if(this._makitChart != null && parentDomCurHeight > 0 && parentDomCurWidth > 0) {
+		this._makitChart.refresh();
+	}
+};
+
+/**
+ * Handler for Chart's direct properties change. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._onPropertyChanged = function(oEvent){
+	var name = oEvent.mParameters["name"];
+	var newVal = oEvent.mParameters["newValue"];
+	
+	if (name === "type" && !this._chartTypeDefined) {
+		this._chartTypeDefined = true;
+		if(!this._legendPosDefined){
+			if(newVal === sap.makit.ChartType.Pie || newVal === sap.makit.ChartType.Donut) {
+				this.setLegendPosition(sap.makit.LegendPosition.Left);	
+			}
+			else {
+				this.setLegendPosition(sap.makit.LegendPosition.None);
+			}
+		}
+	}
+	else if (name === "legendPosition" && !this._legendPosDefined) {
+		this._legendPosDefined = true;
+	}
+	
+	if(this._makitChart){
+		if (name === "type") {
+			var type = newVal.toLowerCase();
+			var pieStyle = null;
+			this._makitChart.setProperty("ChartType", type);
+			if (type === "donut" || type === "pie"){
+				pieStyle = type; // it's the pieStyle that can be pie or donut
+				type = "pie"; // in MAKit the chart's type is always pie for Pie/Donut chart
+				this._makitChart.setProperty("PieStyle", pieStyle);
+			}
+		} else if (name === "showRangeSelector") {
+			this._makitChart.showRangeSelectorView(newVal);
+		}
+		else if (name === "showTableView") {
+			this._makitChart.showTableView(newVal);
+		}
+		else if (name === "legendPosition") {
+			this._makitChart.setLegend(newVal.toLowerCase());
+		}
+		else if(name === "width") {
+			this.getDomRef().style.width = this.getWidth();
+		}
+		else if(name === "height") {
+			this._setRealHeight(newVal);
+		}
+		else if(name === "lineThickness") {
+			this._makitChart.setGraphLineWidth(newVal);
+		}
+		else if(name === "maxSliceCount") {
+			this._makitChart.setMaxPies(newVal);
+		}
+		else if(name === "showTableValue") {
+			this._makitChart.showTableValue(newVal);
+		}
+		else if(name === "primaryColorPalette") {
+			this._makitChart.setPalette(newVal);
+		}
+		else if(name === "showTotalValue") {
+			this._makitChart.setProperty("ShowTotal", newVal);
+		}
+		
+		this._makitChart.setSelectedCategoryIndex(this._selectedCatIdx);
+		this._makitChart.refresh();
+	}
+};
+
+/**
+ * Handler for Category, Value and Series data region property change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._onDataRegionPropChanged = function(oEvent, oData){
+	jQuery.sap.assert(oData, "oData is expected to be set in _onDataRegionPropChanged");
+	if (!this._makitChart) {
+		return;
+	}
+	var oParams = oEvent.mParameters;
+	if (oData["type"] == "values") {
+		var valObj = oEvent.oSource;
+		var idx = this.indexOfValue(valObj);
+		if(idx > -1){
+			this._makitChart.setProperty(oData["type"] + "["+idx+"]." + oParams["name"], oParams["newValue"]);
+		}
+	}
+	else if (oData["type"] == "categories") {
+		var catObj = oEvent.oSource;
+		var idx = this.indexOfCategoryRegion(catObj);
+		var propName = oParams["name"];
+		if(idx > -1){
+			if(propName == "displayName") {
+				var cats = this.getCategoryRegions();
+				var i, value = "", len = cats.length;
+				for(i = 0; i < len; i ++){
+					value += cats[i].getDisplayName();
+					if (i != len -1) {
+						value +=  " | ";
+					}
+				}
+				this._makitChart.setProperty("category." + propName, oParams["newValue"]);
+			}
+			else {
+				this._makitChart.setProperty(oData["type"] + "["+idx+"]." + propName, oParams["newValue"]);
+			}
+		}
+	} else {
+		this._makitChart.setProperty(oData["type"] + "." + oParams["name"], oParams["newValue"]);
+	}
+};
+
+/**
+ * Handler for CategoryAxis and ValueAxis change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._onAxisPropChanged = function(oEvent, oData){
+	jQuery.sap.assert(oData, "oData is expected to be set in _onAxisPropChanged");
+	if (!this._makitChart) {
+		return;
+	}
+	var oParams = oEvent.mParameters;
+	var sName =  oParams["name"].toLowerCase();
+	var value =  oParams["newValue"];
+	// Sortorder in makit only accepts lowercase value
+	var axis = oData["axis"];
+	if (sName === "sortorder") {
+		value = value.toLowerCase();
+	}
+	else if (sName === "displayall") {
+		axis = "categories";
+		sName = "display";
+		if(!value){
+			value = "";
+		}
+	}
+	
+	this._makitChart.setProperty(axis + "." + sName, value);
+	if (sName === "sortorder") {
+		this._setDataTable();
+	}
+	
+};
+
+/**
+ * Handler for ValueBubble properties change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Chart.prototype._onValueBubbleChanged = function (oEvent){
+	if (!this._makitChart) {
+		return;
+	}
+	var valueBubbleObj = this.getValueBubble().toObject();
+	this._makitChart.setValueBubbleStyle(valueBubbleObj);
+	if (this._makitChart.isValueBubbleVisible() != valueBubbleObj.visible) {
+		this._makitChart.showValueBubble(valueBubbleObj.visible);
+	}
+	this._makitChart.refresh();
+};
+
+/*=================================================================================
+ *== PUBLIC METHODS
+ *=================================================================================
+ **/
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.Chart.prototype.getSelectedCategory = function() {
+	var selectedCategory = undefined;
+	if (this._makitChart){
+		selectedCategory = this._makitChart.getSelectedCategory();
+	}
+	return selectedCategory;
+};
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.Chart.prototype.getSelectedSeries = function() {
+	var selectedSeries = undefined;
+	if (this._makitChart){
+		selectedSeries = this._makitChart.getSelectedSeries();
+	}
+	return selectedSeries;
+};
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.Chart.prototype.getNumberOfCategories = function() {
+	var numOfCat = undefined;
+	if (this._makitChart){
+		numOfCat = this._makitChart.getNumberOfCategories();
+	}
+	return numOfCat;
+};
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.Chart.prototype.getSelectedCategoryGroup = function() {
+	var selectedCategoryGroup = undefined;
+	if (this._makitChart){
+		selectedCategoryGroup = this._makitChart.getSelectedCategoryGroup();
+	}
+	return selectedCategoryGroup;
+};
+}; // end of sap.makit.Chart
 if ( !jQuery.sap.isDeclared('sap.makit.Column') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1006,10 +3229,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
+ * @since 1.8
  * @name sap.makit.Column
  */
 sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
@@ -1055,7 +3279,6 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
@@ -1067,6 +3290,7 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @name sap.makit.Column#setName
  * @function
  */
+
 
 /**
  * Getter for property <code>value</code>.
@@ -1080,7 +3304,6 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>value</code>.
  *
@@ -1092,6 +3315,7 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @name sap.makit.Column#setValue
  * @function
  */
+
 
 /**
  * Getter for property <code>type</code>.
@@ -1108,7 +3332,6 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>type</code>.
  *
@@ -1121,17 +3344,2522 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
+
 // Start of sap/makit/Column.js
 /*!
  * @copyright@
  */
 
 }; // end of sap.makit.Column
+if ( !jQuery.sap.isDeclared('sap.makit.CombinationChart') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.makit.CombinationChart.
+jQuery.sap.declare("sap.makit.CombinationChart");
+
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+
+
+/**
+ * Constructor for a new CombinationChart.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
+ * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '100%')</li>
+ * <li>{@link #getCategoryAxis categoryAxis} : object</li>
+ * <li>{@link #getPrimaryValueAxis primaryValueAxis} : object</li>
+ * <li>{@link #getSecondaryValueAxis secondaryValueAxis} : object</li>
+ * <li>{@link #getValueBubble valueBubble} : object</li>
+ * <li>{@link #getShowRangeSelector showRangeSelector} : boolean (default: true)</li>
+ * <li>{@link #getLegendPosition legendPosition} : sap.makit.LegendPosition (default: sap.makit.LegendPosition.Left)</li>
+ * <li>{@link #getPrimaryColorPalette primaryColorPalette} : any</li>
+ * <li>{@link #getSecondaryColorPalette secondaryColorPalette} : any</li>
+ * <li>{@link #getShowTableValue showTableValue} : boolean (default: true)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getCategoryRegions categoryRegions} : sap.makit.Category[]</li>
+ * <li>{@link #getLayers layers} : sap.makit.Layer[]</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.makit.CombinationChart#event:doubletap doubletap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.makit.CombinationChart#event:tap tap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * The CombinationChart control.
+ * @extends sap.ui.core.Control
+ *
+ * @author SAP AG 
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.12
+ * @name sap.makit.CombinationChart
+ */
+sap.ui.core.Control.extend("sap.makit.CombinationChart", { metadata : {
+
+	// ---- object ----
+	publicMethods : [
+		// methods
+		"getSelectedCategory", "getNumberOfCategories", "getSelectedCategoryGroup"
+	],
+
+	// ---- control specific ----
+	library : "sap.makit",
+	properties : {
+		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+		"categoryAxis" : {type : "object", group : "Misc", defaultValue : null},
+		"primaryValueAxis" : {type : "object", group : "Misc", defaultValue : null},
+		"secondaryValueAxis" : {type : "object", group : "Misc", defaultValue : null},
+		"valueBubble" : {type : "object", group : "Misc", defaultValue : null},
+		"showRangeSelector" : {type : "boolean", group : "Appearance", defaultValue : true},
+		"legendPosition" : {type : "sap.makit.LegendPosition", group : "Misc", defaultValue : sap.makit.LegendPosition.Left},
+		"primaryColorPalette" : {type : "any", group : "Misc", defaultValue : null},
+		"secondaryColorPalette" : {type : "any", group : "Misc", defaultValue : null},
+		"showTableValue" : {type : "boolean", group : "Misc", defaultValue : true}
+	},
+	aggregations : {
+    	"categoryRegions" : {type : "sap.makit.Category", multiple : true, singularName : "categoryRegion"}, 
+    	"layers" : {type : "sap.makit.Layer", multiple : true, singularName : "layer"}
+	},
+	events : {
+		"doubletap" : {}, 
+		"tap" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.makit.CombinationChart with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.makit.CombinationChart.extend
+ * @function
+ */
+
+sap.makit.CombinationChart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
+
+
+/**
+ * Getter for property <code>width</code>.
+ * The width of the Chart
+ *
+ * Default value is <code>100%</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
+ * @public
+ * @name sap.makit.CombinationChart#getWidth
+ * @function
+ */
+
+/**
+ * Setter for property <code>width</code>.
+ *
+ * Default value is <code>100%</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setWidth
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>height</code>.
+ * The height of the Chart
+ *
+ * Default value is <code>100%</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>height</code>
+ * @public
+ * @name sap.makit.CombinationChart#getHeight
+ * @function
+ */
+
+/**
+ * Setter for property <code>height</code>.
+ *
+ * Default value is <code>100%</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sHeight  new value for property <code>height</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setHeight
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>categoryAxis</code>.
+ * Category Axis property of the Chart. Accepts only an instance of CategoryAxis element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>categoryAxis</code>
+ * @public
+ * @name sap.makit.CombinationChart#getCategoryAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>categoryAxis</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oCategoryAxis  new value for property <code>categoryAxis</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setCategoryAxis
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>primaryValueAxis</code>.
+ * Property of the Combination Chart's primary Value Axis. Accept only an instance of ValueAxis element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>primaryValueAxis</code>
+ * @public
+ * @name sap.makit.CombinationChart#getPrimaryValueAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>primaryValueAxis</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oPrimaryValueAxis  new value for property <code>primaryValueAxis</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setPrimaryValueAxis
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>secondaryValueAxis</code>.
+ * Property of the Combination Chart's secondary Value Axis. Accept only an instance of ValueAxis element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>secondaryValueAxis</code>
+ * @public
+ * @name sap.makit.CombinationChart#getSecondaryValueAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>secondaryValueAxis</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oSecondaryValueAxis  new value for property <code>secondaryValueAxis</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setSecondaryValueAxis
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>valueBubble</code>.
+ * Value Bubble property of the Chart. Accept only an instance of ValueBubble element.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {object} the value of property <code>valueBubble</code>
+ * @public
+ * @name sap.makit.CombinationChart#getValueBubble
+ * @function
+ */
+
+/**
+ * Setter for property <code>valueBubble</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {object} oValueBubble  new value for property <code>valueBubble</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setValueBubble
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showRangeSelector</code>.
+ * Specify whether the range selector should be visible.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showRangeSelector</code>
+ * @public
+ * @name sap.makit.CombinationChart#getShowRangeSelector
+ * @function
+ */
+
+/**
+ * Setter for property <code>showRangeSelector</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowRangeSelector  new value for property <code>showRangeSelector</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setShowRangeSelector
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>legendPosition</code>.
+ * Legend position for Pie /Donut chart only.
+ *
+ * Default value is <code>Left</code>
+ *
+ * @return {sap.makit.LegendPosition} the value of property <code>legendPosition</code>
+ * @public
+ * @name sap.makit.CombinationChart#getLegendPosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>legendPosition</code>.
+ *
+ * Default value is <code>Left</code> 
+ *
+ * @param {sap.makit.LegendPosition} oLegendPosition  new value for property <code>legendPosition</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setLegendPosition
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>primaryColorPalette</code>.
+ * Allow a combination chart’s primary axis color palette to be modified without affecting other charts in the same screen. If not set, the chart will use the default color palette defined in the theme.
+ * Accept an array of color in string format or hex format. e.g.
+ * 0xff0000
+ * "red"
+ * "rgb(255,0,0)"
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {any} the value of property <code>primaryColorPalette</code>
+ * @public
+ * @name sap.makit.CombinationChart#getPrimaryColorPalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>primaryColorPalette</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {any} oPrimaryColorPalette  new value for property <code>primaryColorPalette</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setPrimaryColorPalette
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>secondaryColorPalette</code>.
+ * Allow a combination chart’s secondary axis color palette to be modified without affecting other charts in the same screen. If not set, the chart will use the default color palette defined in the theme.
+ * Accept an array of color in string format or hex format. e.g.
+ * 0xff0000
+ * "red"
+ * "rgb(255,0,0)"
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {any} the value of property <code>secondaryColorPalette</code>
+ * @public
+ * @name sap.makit.CombinationChart#getSecondaryColorPalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>secondaryColorPalette</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {any} oSecondaryColorPalette  new value for property <code>secondaryColorPalette</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setSecondaryColorPalette
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showTableValue</code>.
+ * Toggle to display the table value on a Bar chart. Only applies to Bar chart.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showTableValue</code>
+ * @public
+ * @name sap.makit.CombinationChart#getShowTableValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>showTableValue</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowTableValue  new value for property <code>showTableValue</code>
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#setShowTableValue
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>categoryRegions</code>.<br/>
+ * Data region property of the chart's Categories
+ * 
+ * @return {sap.makit.Category[]}
+ * @public
+ * @name sap.makit.CombinationChart#getCategoryRegions
+ * @function
+ */
+
+
+/**
+ * Inserts a categoryRegion into the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {sap.makit.Category}
+ *          oCategoryRegion the categoryRegion to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the categoryRegion should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the categoryRegion is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the categoryRegion is inserted at 
+ *             the last position        
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#insertCategoryRegion
+ * @function
+ */
+
+/**
+ * Adds some categoryRegion <code>oCategoryRegion</code> 
+ * to the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {sap.makit.Category}
+ *            oCategoryRegion the categoryRegion to add; if empty, nothing is inserted
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#addCategoryRegion
+ * @function
+ */
+
+/**
+ * Removes an categoryRegion from the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {int | string | sap.makit.Category} vCategoryRegion the categoryRegion to remove or its index or id
+ * @return {sap.makit.Category} the removed categoryRegion or null
+ * @public
+ * @name sap.makit.CombinationChart#removeCategoryRegion
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>categoryRegions</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Category[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.CombinationChart#removeAllCategoryRegions
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Category</code> in the aggregation named <code>categoryRegions</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Category}
+ *            oCategoryRegion the categoryRegion whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.CombinationChart#indexOfCategoryRegion
+ * @function
+ */
+	
+
+/**
+ * Destroys all the categoryRegions in the aggregation 
+ * named <code>categoryRegions</code>.
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#destroyCategoryRegions
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>layers</code>.<br/>
+ * The collection of charts
+ * 
+ * @return {sap.makit.Layer[]}
+ * @public
+ * @name sap.makit.CombinationChart#getLayers
+ * @function
+ */
+
+
+/**
+ * Inserts a layer into the aggregation named <code>layers</code>.
+ *
+ * @param {sap.makit.Layer}
+ *          oLayer the layer to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the layer should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the layer is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the layer is inserted at 
+ *             the last position        
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#insertLayer
+ * @function
+ */
+
+/**
+ * Adds some layer <code>oLayer</code> 
+ * to the aggregation named <code>layers</code>.
+ *
+ * @param {sap.makit.Layer}
+ *            oLayer the layer to add; if empty, nothing is inserted
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#addLayer
+ * @function
+ */
+
+/**
+ * Removes an layer from the aggregation named <code>layers</code>.
+ *
+ * @param {int | string | sap.makit.Layer} vLayer the layer to remove or its index or id
+ * @return {sap.makit.Layer} the removed layer or null
+ * @public
+ * @name sap.makit.CombinationChart#removeLayer
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>layers</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Layer[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.CombinationChart#removeAllLayers
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Layer</code> in the aggregation named <code>layers</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Layer}
+ *            oLayer the layer whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.CombinationChart#indexOfLayer
+ * @function
+ */
+	
+
+/**
+ * Destroys all the layers in the aggregation 
+ * named <code>layers</code>.
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#destroyLayers
+ * @function
+ */
+
+
+/**
+ * Double tap event on chart 
+ *
+ * @name sap.makit.CombinationChart#doubletap
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'doubletap' event of this <code>sap.makit.CombinationChart</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.makit.CombinationChart</code>.<br/> itself. 
+ *  
+ * Double tap event on chart 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.makit.CombinationChart</code>.<br/> itself.
+ *
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#attachDoubletap
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'doubletap' event of this <code>sap.makit.CombinationChart</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#detachDoubletap
+ * @function
+ */
+
+/**
+ * Fire event doubletap to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.makit.CombinationChart#fireDoubletap
+ * @function
+ */
+
+
+/**
+ * Single tap event on the chart 
+ *
+ * @name sap.makit.CombinationChart#tap
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'tap' event of this <code>sap.makit.CombinationChart</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.makit.CombinationChart</code>.<br/> itself. 
+ *  
+ * Single tap event on the chart 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.makit.CombinationChart</code>.<br/> itself.
+ *
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#attachTap
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'tap' event of this <code>sap.makit.CombinationChart</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CombinationChart#detachTap
+ * @function
+ */
+
+/**
+ * Fire event tap to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.makit.CombinationChart} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.makit.CombinationChart#fireTap
+ * @function
+ */
+
+
+/**
+ * Get the value of the currently highlighted category
+ *
+ * @name sap.makit.CombinationChart.prototype.getSelectedCategory
+ * @function
+
+ * @type string
+ * @public
+ */
+
+
+/**
+ * Get the number of distinct category values
+ *
+ * @name sap.makit.CombinationChart.prototype.getNumberOfCategories
+ * @function
+
+ * @type int
+ * @public
+ */
+
+
+/**
+ * Return an array of categories value that is currently selected.
+ *
+ * @name sap.makit.CombinationChart.prototype.getSelectedCategoryGroup
+ * @function
+
+ * @type object
+ * @public
+ */
+
+
+// Start of sap/makit/CombinationChart.js
+/*!
+ * @copyright@
+ */
+
+//jQuery.sap.require("sap.makit.js.SybaseMA");
+//jQuery.sap.declare("sap.makit.js.SybaseMA");
+jQuery.sap.require('sap.makit.MakitLib'); // unlisted dependency retained
+
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.init = function() {
+	//Private variable
+	this._makitChart = null;
+	
+	this._parentCurrentHeight = 0;
+	this._selectedCatIdx = 0;
+	
+	this._datarows = []; //This is the placeholder for the Chart's data row it's a 1-to-1 mapping to rows aggregation.
+	this._styleClasses = []; //workaround for custom classes
+
+	this.setCategoryAxis(new sap.makit.CategoryAxis());
+	this.setPrimaryValueAxis(new sap.makit.ValueAxis());
+	this.setSecondaryValueAxis(new sap.makit.ValueAxis());
+	this.setValueBubble(new sap.makit.ValueBubble());
+	
+	this.attachEvent("_change", this._onPropertyChanged);
+	sap.ui.getCore().attachThemeChanged(this._applyCSS, this);
+};
+
+/**
+ * Attempt to preserve the chart's DOM reference before re-rendering it
+ * @override
+ */
+sap.makit.CombinationChart.prototype.onBeforeRendering = function(oEvent) {
+	this.fireEvent("_beforeRendering", this);
+	if(this.getDomRef() && !sap.ui.core.RenderManager.isPreservedContent(this.getDomRef())){
+		sap.ui.core.RenderManager.preserveContent(this.getDomRef(), /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
+	}
+};
+
+/**
+ * Once the place holder is rendered, we will create the MAKit chart object or 
+ * retrieve the preserved chart DOM reference if exists.
+ * @override
+ */
+sap.makit.CombinationChart.prototype.onAfterRendering = function(oEvent) {
+	this.fireEvent("_afterRendering", this);
+	var $placeholder = jQuery(jQuery.sap.domById("sap-ui-dummy-" + this.getId()));
+	var $oldContent = sap.ui.core.RenderManager.findPreservedContent(this.getId());
+	var $newContent = null;
+	if (this.getLayers().length > 0) {
+		if ($oldContent.size() == 0) {
+			this.fireEvent("_createMAKitObject", this);
+			$newContent = new jQuery(this.getDomRef());
+			$placeholder.replaceWith($newContent);
+			this._createChartObject();
+			var parent = this.getParent();
+			var parentId = parent.getId();
+			var parentDom = jQuery.sap.domById(parentId);
+			this._parentCurrentHeight = parentDom.offsetHeight;
+			sap.ui.core.ResizeHandler.register(parentDom, jQuery.proxy(this._onResize, this));
+		} else if ( $oldContent.size() > 0 ) {
+			this.fireEvent("_restoreMAKitObject", this);
+			// replace dummy with old content
+			$placeholder.replaceWith($oldContent);
+		}
+		
+		if($newContent) {
+			//this._makitChart.showRangeSelectorView(this.getShowRangeSelector());
+			this._makitChart.setPalette(this.getPrimaryColorPalette(), "primaryaxis");
+			this._makitChart.setPalette(this.getSecondaryColorPalette(), "secondaryaxis");
+			//this._makitChart.showTableValue(this.getShowTableValue());
+			this._setDataTable();
+		}
+	}
+};
+
+/** 
+ * WORKAROUND: MAKit chart current behavior overwrite the div's css class when it's created
+ *				So we need to intercept addition of custom style classes before
+ *				this._makitChart is created.
+ * @override
+ */
+sap.makit.CombinationChart.prototype.addStyleClass = function(sStyleClass, bSuppressRerendering) {
+	 //If it's already in the control, then it is in the _styleClasses array
+	if (this._styleClasses.indexOf(sStyleClass) === -1) {
+		this._styleClasses.push(sStyleClass);
+	}
+
+	if(this._makitChart) {
+		sap.ui.core.Control.prototype.addStyleClass.call(this, sStyleClass, bSuppressRerendering);
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.removeStyleClass = function(sStyleClass, bSuppressRerendering) {
+	var idx = this._styleClasses.indexOf(sStyleClass);
+	if (idx > -1) {
+		this._styleClasses.splice(idx, 1);
+	}
+
+	if(this._makitChart) {
+		sap.ui.core.Control.prototype.removeStyleClass.call(this, sStyleClass, bSuppressRerendering);
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.addLayer= function(oLayer){
+	if(this._makitChart) {
+		throw new Error("Cannot add layer once the chart has been rendered");
+	}
+	this._checkLayer(oLayer);
+	
+	sap.ui.core.Element.prototype.addAggregation.call(this, "layers", oLayer, false);
+	oLayer.attachEvent("rowsUpdated", this._setDataTable, this);
+	oLayer.attachEvent("dataRegionChanged", this._onDataRegionPropChanged, this);
+	oLayer.attachEvent("_change", this._onLayerPropertyChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.insertLayer= function(oLayer, iIndex){
+	if(this._makitChart) {
+		throw new Error("Cannot add layer once the chart has been rendered");
+	}
+	this._checkLayer(oLayer);
+	
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "layers", oLayer, iIndex, false);
+	oLayer.attachEvent("rowsUpdated", this._setDataTable, this);
+	oLayer.attachEvent("dataRegionChanged", this._onDataRegionPropChanged, this);
+	oLayer.attachEvent("_change", this._onLayerPropertyChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.removeLayer = function(oLayer){
+	if(this._makitChart) {
+		throw new Error("Cannot remove layer once the chart has been rendered");
+	}
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "layers", oLayer, false);
+	if(removedObj != null) {
+		removedObj.detachEvent("rowsUpdated", this._setDataTable, this);
+		removedObj.detachEvent("dataRegionChanged", this._onDataRegionPropChanged, this);
+		removedObj.detachEvent("_change", this._onLayerPropertyChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.removeAllLayers = function(){
+	if(this._makitChart) {
+		throw new Error("Cannot remove layers once the chart has been rendered");
+	}
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "layers", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("rowsUpdated", this._setDataTable, this);
+		removedObjs[i].detachEvent("dataRegionChanged", this._onDataRegionPropChanged, this);
+		removedObjs[i].detachEvent("_change", this._onLayerPropertyChanged, this);
+	}
+	return removedObjs;
+};
+
+sap.makit.CombinationChart.prototype._checkLayer= function(oLayer){
+	var layers = this.getLayers();
+	var layersCount = layers.length;
+	var i;
+	if(oLayer.getType() == sap.makit.ChartType.Line){
+		for (i = 0; i < layersCount; i++) {
+			if (layers[i].getType() == sap.makit.ChartType.Bar){
+				oLayer.setLineType("verticalline");
+				break;
+			}
+			else {
+				oLayer.setLineType("line");
+			}
+		}
+	}
+	else {
+		for (i = 0; i < layersCount; i++) {
+			if (layers[i].getType() != sap.makit.ChartType.Line){
+				throw new Error("Cannot combine 2 different non-line chart type");
+			}
+		}
+		
+		for (i = 0; i < layersCount; i++) {
+			if (layers[i].getType() == sap.makit.ChartType.Line){
+				if (oLayer.getType() == sap.makit.ChartType.Bar){
+					layers[i].setLineType("verticalline");
+				}
+				else {
+					layers[i].setLineType("line");
+				}
+			}
+		}
+	}
+}
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.setValueBubble = function(oValueBubble){
+	if (oValueBubble instanceof sap.makit.ValueBubble) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "valueBubble", oValueBubble, false);
+		oValueBubble.attachEvent("_change", this._onValueBubbleChanged, this);
+		if (this._makitChart) {
+			var valueBubbleObj = oValueBubble.toObject();
+			this._makitChart.setValueBubbleStyle(valueBubbleObj);
+			if (this._makitChart.isValueBubbleVisible() != valueBubbleObj.visible) {
+				this._makitChart.showValueBubble(valueBubbleObj.visible);
+			}
+		}
+	}
+	else {
+		throw new Error("valueBubble property must be of type sap.makit.ValueBubble");
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.addCategoryRegion= function(oCategory){
+	sap.ui.core.Element.prototype.addAggregation.call(this, "categoryRegions", oCategory, false);
+	oCategory.attachEvent("_change", {type: "categories"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.insertCategoryRegion= function(oCategory, iIndex){
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "categoryRegions", oCategory, iIndex, false);
+	oCategory.attachEvent("_change", {type: "categories"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.removeCategoryRegion= function(oCategory){
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "categoryRegions", oCategory, false);
+	if(removedObj != null) {
+		oCategory.detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.removeAllCategoryRegions = function(){
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "categoryRegions", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObjs;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.setPrimaryValueAxis = function (oValueAxis){
+	if (oValueAxis instanceof sap.makit.ValueAxis) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "primaryValueAxis", oValueAxis, false);
+		oValueAxis.attachEvent("_change", { axis:"values", secondaryAxis: false }, this._onAxisPropChanged, this);
+	}
+	else {
+		throw new Error("primaryValueAxis property must be of type sap.makit.ValueAxis");
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.setSecondaryValueAxis = function (oValueAxis){
+	if (oValueAxis instanceof sap.makit.ValueAxis) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "secondaryValueAxis", oValueAxis, false);
+		oValueAxis.attachEvent("_change", { axis:"values", secondaryAxis: true }, this._onAxisPropChanged, this);
+	}
+	else {
+		throw new Error("secondaryValueAxis property must be of type sap.makit.ValueAxis");
+	}
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.setCategoryAxis = function (oCategoryAxis){
+	if (oCategoryAxis instanceof sap.makit.CategoryAxis) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "categoryAxis", oCategoryAxis, false);
+		oCategoryAxis.attachEvent("_change", { axis:"category" }, this._onAxisPropChanged, this);
+	}
+	else {
+		throw new Error("categoryAxis property must be of type sap.makit.CategoryAxis");
+	}
+	return this;
+};
+
+/*=================================================================================
+ *== PRIVATE METHODS
+ *=================================================================================
+ **/
+
+/**
+ * Set the Chart's height. Canvas does not support % height, 
+ * so it need to have an absolute height
+ * 
+ * @return true, if the height is using % value, false otherwise
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._setRealHeight = function(height){
+	var elem = this.getDomRef();
+	var prevHeight = elem.style.height;
+	var newHeight = "0px";
+	if(height.indexOf("%") > -1) {
+		var parent = this.getParent();
+		var parentId = parent.getId();
+		var parentDom = jQuery.sap.domById(parentId);
+		var intHeight = parseInt(height, 10);
+		var realHeight = Math.ceil(parentDom.offsetHeight * (intHeight / 100));
+		newHeight = realHeight + "px";
+	}
+	else {
+		newHeight = height;
+	}
+	
+	if (prevHeight != newHeight){
+		elem.style.height = newHeight;
+	}
+};
+
+/**
+ * Create and initialize the MAKit $MA.Chart object
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._createChartObject = function (){
+	var elem = this.getDomRef();
+	jQuery.sap.assert(elem, "Chart's DomRef is not ready");
+	
+	elem.style.width = this.getWidth();
+	this._setRealHeight(this.getHeight());
+
+	this._makitChart = new window.$MA.Chart(this.getId(), true);
+	var that = this;
+	this._makitChart.bind("initialized", function() {
+		that._makitChart.showToolBar(false);
+		that._setMakitChartProperties();
+	});
+	
+	this._makitChart.bind("beforerender", function() {
+		that.fireEvent("_makitBeforeRender", that);
+	});
+	
+	this._makitChart.bind("renderstart", function() {
+		that.fireEvent("_makitRenderStart", that);
+	});
+	
+	this._makitChart.bind("renderend", function() {
+		that.fireEvent("_makitRenderEnd", that);
+	});
+	
+	this._makitChart.bind("animationend", function() {
+		that.fireEvent("_makitAnimationEnd", that);
+	});
+
+	var syntax = this._getChartSyntax();
+	
+	this._makitChart.create(syntax);
+	this._makitChart.bind("tap", function() {
+		that._selectedCatIdx = that._makitChart.getSelectedCategoryIndex();
+		that.fireTap({});
+	});
+	this._makitChart.bind("doubletap", function() {
+		that.fireEvent("doubletap", that);
+	});
+	this._makitChart.bind("longpress", function() {
+		that._selectedCatIdx = that._makitChart.getSelectedCategoryIndex();
+		that.fireEvent("longpress", that);
+	});
+
+	//workaround for overwritten classes
+	var len = this._styleClasses.length;
+	for (var i = 0; i < len; i++ ){
+		this.addStyleClass(this._styleClasses[i]);
+	}
+	
+	this._applyCSS();
+};
+
+/**
+ * This function is used to apply the Makit properties that will be reset when changing chart type. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._setMakitChartProperties = function() {
+	if (!this._makitChart) {
+		return;
+	}
+	this._makitChart.setLegend(this.getLegendPosition().toLowerCase());
+	// We should only apply this if the chart's data has been initialised at least once
+	//if(this._dataInitialized){
+		this._makitChart.setPalette(this.getPrimaryColorPalette(), "primaryaxis");
+		this._makitChart.setPalette(this.getSecondaryColorPalette(), "secondaryaxis");
+		this._makitChart.showRangeSelectorView(this.getShowRangeSelector());
+		this._makitChart.showTableValue(this.getShowTableValue());
+	//}
+
+	var valueBubble = this.getValueBubble();
+	if (valueBubble) {
+		var valueBubbleObj = valueBubble.toObject();
+		this._makitChart.setValueBubbleStyle(valueBubbleObj);
+		if (this._makitChart.isValueBubbleVisible() != valueBubbleObj.visible) {
+			this._makitChart.showValueBubble(valueBubbleObj.visible);
+		}
+	}
+	
+	var layersArr = this.getLayers();
+	var len = layersArr.length;
+	for(var i = 0; i < len; i++) {
+		var layer = layersArr[i];
+		if(layer.getType() == sap.makit.ChartType.Line) {
+			this._makitChart.setGraphLineWidth(layer.getLineThickness(), layer.getId());
+		}
+		
+		var pcp = layer.getPrimaryColorPalette();
+		if (pcp) {
+			this._makitChart.setPalette(pcp, layer.getId());
+		}
+		this._makitChart.setProperty(layer.getId() + ".values.SecondaryAxis", layer.getDrawOnSecondaryAxis());
+	}
+};
+
+/**
+ * Generate the MAKit chart metadata syntax based on the sap.makit.Chart properties.
+ * To be used to create the MAKit chart.
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._getChartSyntax = function() {
+	var categoryAxisObj = this.getCategoryAxis();
+	var categoryObjs = this.getCategoryRegions();
+	var catLen = categoryObjs.length;
+	if (catLen > 0){
+		var i;
+		var categorySyntax = "<Categories";
+		if(categoryAxisObj) { 
+			if(categoryAxisObj.getDisplayAll()) {
+				categorySyntax += ' display="' + categoryAxisObj.getDisplayAll() + '"';
+			}
+		}
+		categorySyntax += ">";
+		var displayNames = "";
+		for (i = catLen - 1; i >= 0; i--) {
+			var temp = categoryObjs[i].getDisplayName();
+			if(temp && temp.length > 0 ){
+				displayNames += temp + " | ";
+			}
+		}
+		displayNames = displayNames.substr(0, displayNames.length - 3);
+		
+		for (i = 0; i < catLen; i++){
+			var categoryObj = categoryObjs[i];
+			categorySyntax += '<Category column="' + categoryObj.getColumn() + '"';
+			if (categoryObj.getFormat()) {
+					categorySyntax += ' format="' + categoryObj.getFormat() + '"';
+			}
+			if (i == 0) {
+				categorySyntax += ' displayname="' + displayNames + '"';
+			}
+			if(categoryAxisObj) {
+				categorySyntax += ' showprimaryline="'+ categoryAxisObj.getShowPrimaryLine() +'"';
+				categorySyntax += ' showgrid="'+ categoryAxisObj.getShowGrid() +'"';
+				categorySyntax += ' showlabel="'+ categoryAxisObj.getShowLabel() +'"';
+				categorySyntax += ' thickness="'+ categoryAxisObj.getThickness() +'"';
+				categorySyntax += ' color="'+ categoryAxisObj.getColor() +'"';
+				categorySyntax += ' sortorder="'+ categoryAxisObj.getSortOrder().toLowerCase() +'"';
+				categorySyntax += ' displaylastlabel="'+ categoryAxisObj.getDisplayLastLabel() +'"';
+			}
+			categorySyntax += ' />';
+		}
+		categorySyntax += "</Categories>";
+	}
+	else {
+		throw new Error("CombinationChart '"+ this.getId() +"' needs at least one Category data region");
+	}
+	
+	var layersArr = this.getLayers();
+	var len = layersArr.length;
+	var layersSyntax = "";
+	
+	for(var i = 0; i < len; i++) {
+		var layer = layersArr[i];
+		layersSyntax += layer.getSyntax(this.getPrimaryValueAxis(), this.getSecondaryValueAxis() );
+	}
+	
+	var overlayGroupSyntax = '<OverlayGroup>';
+	overlayGroupSyntax += categorySyntax;
+	overlayGroupSyntax += layersSyntax;
+	overlayGroupSyntax += '</OverlayGroup>';
+
+	return overlayGroupSyntax;
+};
+
+/**
+ * Update the data table of MAKit chart. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._setDataTable = function() {
+	//Use delayed call to prevent setDataTable to be called too fast and too many times in a short period.
+	if(this._makitChart){
+		this._setDataTableTimer = this._setDataTableTimer || jQuery.sap.delayedCall(150, this, function(){
+			jQuery.sap.assert(this._makitChart, "_makitChart is not initialized");
+			this.fireEvent("_createDataTable", this);
+			var layersArr = this.getLayers();
+			var len = layersArr.length;
+			
+			this.fireEvent("_beforeSetDataTable", this);
+			for(var i = 0; i < len; i++) {
+				var layer = layersArr[i];
+				//layersSyntax += layer.getSyntax();
+				this._makitChart.setDataTable(layer.getDataTable(), layer.getId());
+			}
+			
+			//this._makitChart.setDataTable(dataTable);
+			this._dataInitialize = true;
+	
+			this._setDataTableTimer = undefined;
+		});
+	}
+};
+
+
+/** 
+ * Read and parse the css classes in the document and apply those style to the MAKit Chart 
+ * 
+ * @private
+ */
+sap.makit.CombinationChart.prototype._applyCSS = function(oEvent) {
+	if (this._makitChart){
+		this._makitChart.applyCSS();
+	}
+};
+
+/** 
+ * Retrieve selected series value of the layer 
+ * 
+ * @private
+ */
+sap.makit.CombinationChart.prototype._getSelectedSeries = function(oLayer) {
+	var index = this.indexOfLayer(oLayer);
+	if (index >= 0 && this._makitChart){
+		return this._makitChart.getSelectedSeries(oLayer.getId());
+	}
+};
+
+/*===================================================================================
+ *=	PRIVATE EVENT HANDLERS
+ *===================================================================================
+ **/
+
+/**
+ * Handler for onresize event. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._onResize = function(oEvent) {
+	var parent = this.getParent();
+	var parentId = parent.getId();
+	var parentDom = jQuery.sap.domById(parentId);
+	var parentDomCurHeight = parentDom.offsetHeight;
+	var parentDomCurWidth = parentDom.offsetWidth;
+	
+	if (this._parentCurrentHeight != parentDomCurHeight && parentDomCurHeight > 0 ) {
+		this._setRealHeight(this.getHeight());
+		this._parentCurrentHeight = parentDom.offsetHeight;
+	}
+	if(this._makitChart != null && parentDomCurHeight > 0 && parentDomCurWidth > 0) {
+		this._makitChart.refresh();
+	}
+};
+
+/**
+ * Handler for properties change. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._onPropertyChanged = function(oEvent){
+	if (!this._makitChart) {
+		return;
+	}
+	var name = oEvent.mParameters["name"];
+	var newVal = oEvent.mParameters["newValue"];
+	if(this._makitChart){
+		if (name === "showRangeSelector") {
+			this._makitChart.showRangeSelectorView(newVal);
+		}
+		else if (name === "legendPosition") {
+			this._makitChart.setLegend(newVal.toLowerCase());
+		}
+		else if(name === "width") {
+			this.getDomRef().style.width = this.getWidth();
+		}
+		else if(name === "height") {
+			this._setRealHeight(newVal);
+		}
+		else if(name === "showTableValue") {
+			this._makitChart.showTableValue(newVal);
+		}
+		else if (name === "primaryColorPalette") {
+			this._makitChart.setPalette(newVal, "primaryaxis");
+		}
+		else if (name === "secondaryColorPalette") {
+			this._makitChart.setPalette(newVal, "secondaryaxis");
+		}
+		
+		this._makitChart.setSelectedCategoryIndex(this._selectedCatIdx);
+		this._makitChart.refresh();
+	}
+}
+
+/**
+ * Handler for Layer's properties change. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._onLayerPropertyChanged = function(oEvent){
+	if (!this._makitChart) {
+		return;
+	}
+	var name = oEvent.mParameters["name"];
+	var newVal = oEvent.mParameters["newValue"];
+	var oldVal = oEvent.mParameters["oldValue"];
+	if(this._makitChart){
+		if (name === "type") {
+			var layer = oEvent.getSource();
+			var index = this.indexOfLayer(layer);
+			
+			var layers = this.getLayers();
+			var layersCount = layers.length;
+			
+			var i;
+			//If the new chart type is not Line we need to check and make sure it does not conflict
+			if (newVal != sap.makit.ChartType.Line) {
+				//First check for conflict type
+				for (i = 0; i < layersCount; i++) {
+					var chartType = layers[i].getType();
+					if(index != i && chartType != sap.makit.ChartType.Line) {
+						layer.setType(oldVal); //set it back to old value;
+						throw new Error("CombinationChart : " + newVal + " chart type cannot be combine with " + chartType + " chart type"); 
+					}
+				}
+			}
+			//We need to find what is the major chart type to determine which orientation the line should be
+			// 	(i.e. vertical line or horizontal line)
+			
+			var mainChartType = newVal;
+			//If the mainChartType is Line, find out what type of chart 
+			// is the main type (i.e. or Vertical or Horizontal)
+			if (mainChartType == sap.makit.ChartType.Line) {
+				for (i = 0; i < layersCount; i++) {
+					if(layers[i].getType() != sap.makit.ChartType.Line) {
+						mainChartType = layers[i].getType();
+						break;
+					}
+				}
+			}
+			
+			//Determine which type of line it should be
+			var lineType = "line";
+			if(mainChartType == sap.makit.ChartType.Bar) {
+				lineType = "verticalline";
+			}
+			
+			var type = newVal;
+			if(newVal == sap.makit.ChartType.Line) {
+				type = lineType;
+			}
+			
+			this._makitChart.setProperty(layer.getId() + ".ChartType", type);
+
+			//Set the rest of the Line chart layers to the correct type (vertical or not), if required.
+			for (i = 0; i < layersCount; i++) {
+				if(layers[i].getType() == sap.makit.ChartType.Line && layers[i].getLineType() != lineType && layer != layers[i]) {
+					layers[i].setLineType(lineType);
+					this._makitChart.setProperty(layers[i].getId() + ".ChartType", lineType);
+				}
+			}
+		}
+		else if (name === "lineThickness") {
+			this._makitChart.setGraphLineWidth(newVal, oEvent.getSource().getId());
+		}
+		else if (name === "primaryColorPalette") {
+			this._makitChart.setPalette(newVal, oEvent.getSource().getId());
+		}
+		else if(name === "drawOnSecondaryAxis") {
+			this._makitChart.setProperty(oEvent.getSource().getId() + ".values.SecondaryAxis", newVal);
+		}
+		this._makitChart.setSelectedCategoryIndex(this._selectedCatIdx);
+		this._makitChart.refresh();
+	}
+}
+
+/**
+ * Handler for Category, Value and Series data region property change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._onDataRegionPropChanged = function(oEvent, oData){
+	jQuery.sap.assert(oData, "oData is expected to be set in _onDataRegionPropChanged");
+	if (!this._makitChart) {
+		return;
+	}
+	
+	var oParams = oEvent.mParameters;
+	if (oParams["type"] == "values") {
+		var id = oEvent.getSource().getId();
+		var idx = oParams["index"];
+		if(idx > -1){
+			this._makitChart.setProperty(id + "." + oParams["type"] + "["+idx+"]." + oParams["name"], oParams["newValue"]);
+		}
+	}
+	else if (oParams["type"] == "series") {
+		var id = oEvent.getSource().getId();
+		var idx = oParams["index"];
+		this._makitChart.setProperty(id + "." + oParams["type"] + "["+idx+"]." + oParams["name"], oParams["newValue"]);
+	}
+	else {
+		this._makitChart.setProperty(oData["type"] + "." + oParams["name"], oParams["newValue"]);
+	}
+};
+
+/**
+ * Handler for CategoryAxis and ValueAxis change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._onAxisPropChanged = function(oEvent, oData){
+	jQuery.sap.assert(oData, "oData is expected to be set in _onAxisPropChanged");
+	if (!this._makitChart) {
+		return;
+	}
+	var oParams = oEvent.mParameters;
+	var sName =  oParams["name"].toLowerCase();
+	var value =  oParams["newValue"];
+	// Sortorder in makit only accepts lowercase value 
+	if (sName === "sortorder") {
+		value = value.toLowerCase();
+	}
+	if(oData["axis"] == "values"){
+		var whichAxis = "primaryaxis";
+		if (oData["secondaryAxis"]) {
+			whichAxis = "secondaryaxis"
+		}
+		this._makitChart.setProperty(whichAxis + "." + oData["axis"] + "." + sName, value);
+	}
+	else {
+		var axis = oData["axis"];
+		if (sName === "displayall") {
+			axis = "categories";
+			sName = "display";
+			if(!value){
+				value = "";
+			}
+		}
+		this._makitChart.setProperty(axis + "." + sName, value);
+	}
+	
+	this._makitChart.refresh();
+	
+	if (sName === "sortorder" || sName == "display") {
+		this._setDataTable();
+	}
+	
+};
+
+/**
+ * Handler for ValueBubble properties change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.CombinationChart.prototype._onValueBubbleChanged = function (oEvent){
+	if (!this._makitChart) {
+		return;
+	}
+	var valueBubbleObj = this.getValueBubble().toObject();
+	this._makitChart.setValueBubbleStyle(valueBubbleObj);
+	if (this._makitChart.isValueBubbleVisible() != valueBubbleObj.visible) {
+		this._makitChart.showValueBubble(valueBubbleObj.visible);
+	}
+	this._makitChart.refresh();
+};
+
+/*=================================================================================
+ *== PUBLIC METHODS
+ *=================================================================================
+ **/
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.CombinationChart.prototype.getSelectedCategory = function() {
+	var selectedCategory = undefined;
+	if (this._makitChart){
+		selectedCategory = this._makitChart.getSelectedCategory();
+	}
+	return selectedCategory;
+};
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.CombinationChart.prototype.getNumberOfCategories = function() {
+	var numOfCat = undefined;
+	if (this._makitChart){
+		numOfCat = this._makitChart.getNumberOfCategories();
+	}
+	return numOfCat;
+};
+
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.CombinationChart.prototype.getSelectedCategoryGroup = function() {
+	var selectedCategoryGroup = undefined;
+	if (this._makitChart){
+		selectedCategoryGroup = this._makitChart.getSelectedCategoryGroup();
+	}
+	return selectedCategoryGroup;
+};
+}; // end of sap.makit.CombinationChart
+if ( !jQuery.sap.isDeclared('sap.makit.Layer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.makit.Layer.
+jQuery.sap.declare("sap.makit.Layer");
+
+jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
+
+
+/**
+ * Constructor for a new Layer.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getType type} : sap.makit.ChartType (default: sap.makit.ChartType.Column)</li>
+ * <li>{@link #getLineThickness lineThickness} : float (default: 1)</li>
+ * <li>{@link #getPrimaryColorPalette primaryColorPalette} : any</li>
+ * <li>{@link #getDrawOnSecondaryAxis drawOnSecondaryAxis} : boolean (default: false)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getRows rows} : sap.makit.Row[]</li>
+ * <li>{@link #getColumns columns} : sap.makit.Column[]</li>
+ * <li>{@link #getSeries series} : sap.makit.Series</li>
+ * <li>{@link #getValues values} : sap.makit.Value[]</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.ui.core.Element#constructor sap.ui.core.Element}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Layer represent a chart in the CombinationChart
+ * @extends sap.ui.core.Element
+ *
+ * @author SAP AG 
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.12
+ * @name sap.makit.Layer
+ */
+sap.ui.core.Element.extend("sap.makit.Layer", { metadata : {
+
+	// ---- object ----
+	publicMethods : [
+		// methods
+		"getSelectedSeries"
+	],
+
+	// ---- control specific ----
+	library : "sap.makit",
+	properties : {
+		"type" : {type : "sap.makit.ChartType", group : "Appearance", defaultValue : sap.makit.ChartType.Column},
+		"lineThickness" : {type : "float", group : "Appearance", defaultValue : 1},
+		"primaryColorPalette" : {type : "any", group : "Misc", defaultValue : null},
+		"drawOnSecondaryAxis" : {type : "boolean", group : "Misc", defaultValue : false}
+	},
+	aggregations : {
+    	"rows" : {type : "sap.makit.Row", multiple : true, singularName : "row", bindable : "bindable"}, 
+    	"columns" : {type : "sap.makit.Column", multiple : true, singularName : "column", bindable : "bindable"}, 
+    	"series" : {type : "sap.makit.Series", multiple : false}, 
+    	"values" : {type : "sap.makit.Value", multiple : true, singularName : "value"}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.makit.Layer with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.makit.Layer.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>type</code>.
+ * Chart type
+ *
+ * Default value is <code>Column</code>
+ *
+ * @return {sap.makit.ChartType} the value of property <code>type</code>
+ * @public
+ * @name sap.makit.Layer#getType
+ * @function
+ */
+
+/**
+ * Setter for property <code>type</code>.
+ *
+ * Default value is <code>Column</code> 
+ *
+ * @param {sap.makit.ChartType} oType  new value for property <code>type</code>
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#setType
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>lineThickness</code>.
+ * Specify the line thickness of the line graph. Only applies to Line chart type.
+ *
+ * Default value is <code>1</code>
+ *
+ * @return {float} the value of property <code>lineThickness</code>
+ * @public
+ * @name sap.makit.Layer#getLineThickness
+ * @function
+ */
+
+/**
+ * Setter for property <code>lineThickness</code>.
+ *
+ * Default value is <code>1</code> 
+ *
+ * @param {float} fLineThickness  new value for property <code>lineThickness</code>
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#setLineThickness
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>primaryColorPalette</code>.
+ * Allow a layer’s primary axis color palette to be modified without affecting other charts in the same screen. If not set, the chart will use the default color palette defined in the theme. This property will take precedence over other CombinationChart's color palette properties.
+ * Accept an array of color in string format or hex format. e.g.
+ * 0xff0000
+ * "red"
+ * "rgb(255,0,0)"
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {any} the value of property <code>primaryColorPalette</code>
+ * @public
+ * @name sap.makit.Layer#getPrimaryColorPalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>primaryColorPalette</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {any} oPrimaryColorPalette  new value for property <code>primaryColorPalette</code>
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#setPrimaryColorPalette
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>drawOnSecondaryAxis</code>.
+ * Specifiy whether this layer should be drawn on the secondary axis.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>drawOnSecondaryAxis</code>
+ * @public
+ * @name sap.makit.Layer#getDrawOnSecondaryAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>drawOnSecondaryAxis</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bDrawOnSecondaryAxis  new value for property <code>drawOnSecondaryAxis</code>
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#setDrawOnSecondaryAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>rows</code>.<br/>
+ * The data rows of the chart. User should bind these to their data source
+ * 
+ * @return {sap.makit.Row[]}
+ * @public
+ * @name sap.makit.Layer#getRows
+ * @function
+ */
+
+
+/**
+ * Inserts a row into the aggregation named <code>rows</code>.
+ *
+ * @param {sap.makit.Row}
+ *          oRow the row to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the row should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the row is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the row is inserted at 
+ *             the last position        
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#insertRow
+ * @function
+ */
+
+/**
+ * Adds some row <code>oRow</code> 
+ * to the aggregation named <code>rows</code>.
+ *
+ * @param {sap.makit.Row}
+ *            oRow the row to add; if empty, nothing is inserted
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#addRow
+ * @function
+ */
+
+/**
+ * Removes an row from the aggregation named <code>rows</code>.
+ *
+ * @param {int | string | sap.makit.Row} vRow the row to remove or its index or id
+ * @return {sap.makit.Row} the removed row or null
+ * @public
+ * @name sap.makit.Layer#removeRow
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>rows</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Row[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Layer#removeAllRows
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Row</code> in the aggregation named <code>rows</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Row}
+ *            oRow the row whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Layer#indexOfRow
+ * @function
+ */
+	
+
+/**
+ * Destroys all the rows in the aggregation 
+ * named <code>rows</code>.
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#destroyRows
+ * @function
+ */
+
+
+/**
+ * Binder for aggregation <code>rows</code>.
+ *
+ * @param {string} sPath path to a list in the model 
+ * @param {sap.ui.core.Element} oTemplate the control template for this aggregation
+ * @param {sap.ui.model.Sorter} oSorter the initial sort order (optional)
+ * @param {array} aFilters the predefined filters for this aggregation (optional)
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#bindRows
+ * @function
+ */
+
+/**
+ * Unbinder for aggregation <code>rows</code>.
+ *
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#unbindRows
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>columns</code>.<br/>
+ * The data column map of the chart.
+ * 
+ * @return {sap.makit.Column[]}
+ * @public
+ * @name sap.makit.Layer#getColumns
+ * @function
+ */
+
+
+/**
+ * Inserts a column into the aggregation named <code>columns</code>.
+ *
+ * @param {sap.makit.Column}
+ *          oColumn the column to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the column should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the column is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the column is inserted at 
+ *             the last position        
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#insertColumn
+ * @function
+ */
+
+/**
+ * Adds some column <code>oColumn</code> 
+ * to the aggregation named <code>columns</code>.
+ *
+ * @param {sap.makit.Column}
+ *            oColumn the column to add; if empty, nothing is inserted
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#addColumn
+ * @function
+ */
+
+/**
+ * Removes an column from the aggregation named <code>columns</code>.
+ *
+ * @param {int | string | sap.makit.Column} vColumn the column to remove or its index or id
+ * @return {sap.makit.Column} the removed column or null
+ * @public
+ * @name sap.makit.Layer#removeColumn
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>columns</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Column[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Layer#removeAllColumns
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Column</code> in the aggregation named <code>columns</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Column}
+ *            oColumn the column whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Layer#indexOfColumn
+ * @function
+ */
+	
+
+/**
+ * Destroys all the columns in the aggregation 
+ * named <code>columns</code>.
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#destroyColumns
+ * @function
+ */
+
+
+/**
+ * Binder for aggregation <code>columns</code>.
+ *
+ * @param {string} sPath path to a list in the model 
+ * @param {sap.ui.core.Element} oTemplate the control template for this aggregation
+ * @param {sap.ui.model.Sorter} oSorter the initial sort order (optional)
+ * @param {array} aFilters the predefined filters for this aggregation (optional)
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#bindColumns
+ * @function
+ */
+
+/**
+ * Unbinder for aggregation <code>columns</code>.
+ *
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#unbindColumns
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>series</code>.<br/>
+ * Data region property of the chart's Series
+ * 
+ * @return {sap.makit.Series}
+ * @public
+ * @name sap.makit.Layer#getSeries
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>series</code>.
+ * @param oSeries {sap.makit.Series}
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#setSeries
+ * @function
+ */
+	
+
+/**
+ * Destroys the series in the aggregation 
+ * named <code>series</code>.
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#destroySeries
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>values</code>.<br/>
+ * Data region property of the chart's Values
+ * 
+ * @return {sap.makit.Value[]}
+ * @public
+ * @name sap.makit.Layer#getValues
+ * @function
+ */
+
+
+/**
+ * Inserts a value into the aggregation named <code>values</code>.
+ *
+ * @param {sap.makit.Value}
+ *          oValue the value to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the value should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the value is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the value is inserted at 
+ *             the last position        
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#insertValue
+ * @function
+ */
+
+/**
+ * Adds some value <code>oValue</code> 
+ * to the aggregation named <code>values</code>.
+ *
+ * @param {sap.makit.Value}
+ *            oValue the value to add; if empty, nothing is inserted
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#addValue
+ * @function
+ */
+
+/**
+ * Removes an value from the aggregation named <code>values</code>.
+ *
+ * @param {int | string | sap.makit.Value} vValue the value to remove or its index or id
+ * @return {sap.makit.Value} the removed value or null
+ * @public
+ * @name sap.makit.Layer#removeValue
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>values</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Value[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Layer#removeAllValues
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Value</code> in the aggregation named <code>values</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Value}
+ *            oValue the value whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Layer#indexOfValue
+ * @function
+ */
+	
+
+/**
+ * Destroys all the values in the aggregation 
+ * named <code>values</code>.
+ * @return {sap.makit.Layer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Layer#destroyValues
+ * @function
+ */
+
+
+/**
+ * Get the value of the currently highlighted series
+ *
+ * @name sap.makit.Layer.prototype.getSelectedSeries
+ * @function
+
+ * @type string
+ * @public
+ */
+
+
+// Start of sap/makit/Layer.js
+/*!
+* @copyright@
+ */
+jQuery.sap.require('sap.makit.MakitLib'); // unlisted dependency retained
+
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.init = function() {
+	this._datarows = [];
+	this._lineType = null;
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.addValue= function(oValue){
+	sap.ui.core.Element.prototype.addAggregation.call(this, "values", oValue, false);
+	oValue.attachEvent("_change", {type: "values"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.insertValue= function(oValue, iIndex){
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "values", oValue, iIndex, false);
+	oValue.attachEvent("_change", {type: "values"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeValue= function(oValue){
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "values", oValue, false);
+	if(removedObj != null) {
+		removedObj.detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeAllValues = function(){
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "values", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObjs;
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.setSeries = function(oSeries){
+	sap.ui.core.Element.prototype.setAggregation.call(this, "series", oSeries, false);
+	oSeries.attachEvent("_change", {type: "series"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.bindAggregation = function(sName, oBindingInfo) {
+	// special handling for the rows aggregation
+	if (sName === "rows") {
+		// old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
+		if (typeof oBindingInfo == "string") {
+			oBindingInfo = {
+				path: arguments[1],
+				template: arguments[2],
+				sorter: arguments[3], 
+				filters: arguments[4]
+			};
+		}
+		// the rows aggregation has neither a template nor a factory function!
+		oBindingInfo.template = undefined;
+		oBindingInfo.factory = function() {};
+		// call the real bindAggregation method
+		return sap.ui.core.Element.prototype.bindAggregation.call(this, sName, oBindingInfo); 
+	}
+	// call the real bindAggregation method
+	return sap.ui.core.Element.prototype.bindAggregation.apply(this, arguments);
+};
+
+/** 
+ * User should not use these API programmatically.
+ * @override
+ */
+sap.makit.Layer.prototype.addRow = function(oRow){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.insertRow = function(oRow, iIndex){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.removeRow = function(vRow){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.removeAllRows = function(){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.destroyRows = function(vRow){
+	jQuery.sap.log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!");
+};
+
+/**
+ * @override
+ */
+sap.makit.Layer.prototype.updateRows = function(){
+	this.fireEvent("_startUpdateRows", this);
+	this._createRows();
+	this.fireEvent("rowsUpdated");
+	this.fireEvent("_endUpdateRows", this);
+};
+
+/**
+ * @override
+ */
+sap.makit.CombinationChart.prototype.setType = function(oType){
+	if(oType == sap.makit.ChartType.Pie || oType == sap.makit.ChartType.Donut || oType == sap.makit.ChartType.Bubble){
+		throw new Error("Combination Chart does not support " + oType + " chart type");
+		return;
+	} else {
+		sap.ui.core.Element.prototype.setProperty.call(this, "type", oType, false);
+	}
+	return this;
+};
+
+/*=================================================================================
+ *== PRIVATE METHODS
+ *=================================================================================
+ **/
+
+/**
+ * Handler for Value and Series data region property change 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Layer.prototype._onDataRegionPropChanged = function(oEvent, oData){
+	jQuery.sap.assert(oData, "oData is expected to be set in _onDataRegionPropChanged");
+	var oParams = oEvent.mParameters;
+	oParams["type"] = oData["type"];
+	if (oData["type"] == "values") {
+		var valObj = oEvent.oSource;
+		var idx = this.indexOfValue(valObj);
+		oParams["index"] = idx;
+	}
+	this.fireEvent("dataRegionChanged", oParams)
+};
+
+/**
+ * We will construct the row aggregation in this function
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Layer.prototype._createRows = function() {
+	var oTemplate = new sap.makit.Row(this.getId() + "-dummyrows");
+	var aCols = this.getColumns();
+	for (var i = 0, l = aCols.length; i < l; i++) {
+		var oColTemplate = aCols[i];
+		if (oColTemplate) {
+			var name = aCols[i].getName();
+			var oClone = oColTemplate.clone("col" + i);
+			oClone.data("sap-ui-colindex", i);
+			oTemplate.addAggregation("cells",oClone);
+		}
+	}
+
+	this.destroyAggregation("rows");
+	var aContexts = undefined;
+	var oBinding = this.getBinding("rows");
+	if (oBinding) {
+		aContexts = oBinding.getContexts();
+	}
+	var totalRows = oBinding.getLength();
+	this._datarows = [];
+	for (var i = 0; i < totalRows; i++) {
+		if (aContexts && aContexts[i]) {
+			var oClone = oTemplate.clone("row" + i);
+			oClone.setBindingContext(aContexts[i]);
+			this.addAggregation("rows", oClone);
+			this._datarows.push(oClone._datarow);
+		}
+	}
+
+	// destroy the template
+	oTemplate.destroy();
+};
+
+/**
+ * Set the line type, verticaline or line.
+ * 
+ * @internal
+ * */
+sap.makit.Layer.prototype.setLineType = function(sLineType) {
+	this._lineType = sLineType;
+};
+
+/**
+ * return the line type
+ * 
+ * @internal
+ */
+sap.makit.Layer.prototype.getLineType = function() {
+	return this._lineType;
+};
+
+/**
+ * Generate the MAKit chart metadata syntax based on the sap.makit.Chart properties.
+ * To be used to create the MAKit chart.
+ * Should only be accessed by CombinationChart
+ * @internal
+ * 
+ * */
+sap.makit.Layer.prototype.getSyntax = function(primaryValueAxisObj, secondaryValueAxisObj) {
+	var seriesObj = this.getSeries();
+	var seriesSyntax = '';
+	if (seriesObj) {
+		seriesSyntax = '<Series Column="' + seriesObj.getColumn() + '"';
+		if (seriesObj.getFormat()) {
+			seriesSyntax += ' format="' + seriesObj.getFormat() + '"';
+		}
+		if (seriesObj.getDisplayName()) {
+			seriesSyntax += ' displayname="' + seriesObj.getDisplayName() + '"';
+		}
+		seriesSyntax += '/>';
+	}
+
+	var drawOnSecondaryAxis = this.getDrawOnSecondaryAxis();
+	var valuesSyntax = '<Values>';
+	var valueAxisObj = drawOnSecondaryAxis? secondaryValueAxisObj : primaryValueAxisObj;
+	if(valueAxisObj) {
+		valuesSyntax = '<Values';
+		if (drawOnSecondaryAxis) {
+			valuesSyntax += ' SecondaryAxis="'+ drawOnSecondaryAxis +'"';
+		}
+		valuesSyntax += ' showprimaryline="'+ valueAxisObj.getShowPrimaryLine() +'"';
+		valuesSyntax += ' showgrid="'+ valueAxisObj.getShowGrid() +'"';
+		valuesSyntax += ' showlabel="'+ valueAxisObj.getShowLabel() +'"';
+		valuesSyntax += ' thickness="'+ valueAxisObj.getThickness() +'"';
+		valuesSyntax += ' color="'+ valueAxisObj.getColor() +'"';
+		if(valueAxisObj.getMin() !== "") {
+			valuesSyntax += ' min="'+ valueAxisObj.getMin() +'"';
+		}
+		if(valueAxisObj.getMax() !== "") {
+			valuesSyntax += ' max="'+ valueAxisObj.getMax() +'"';
+		}
+		valuesSyntax += '>';
+	}
+
+	var valuesObj = this.getValues();
+	var length = valuesObj.length;
+	if (length == 0) {
+		throw new Error("Chart '"+ this.getId() +"' needs at least one Value data region");
+	}
+	var valueObj;
+	for (var i = 0; i < length; i++) {
+		valueObj = valuesObj[i];
+		valuesSyntax += '<Value Expression="' + valueObj.getExpression() + '"';
+		if (valueObj.getFormat()) {
+			valuesSyntax += ' format="' + valueObj.getFormat() + '"';
+		}
+		if (valueObj.getDisplayName()) {
+			valuesSyntax += ' displayname="' + valueObj.getDisplayName() + '"';
+		}
+		valuesSyntax += '/>';
+	}
+	valuesSyntax += '</Values>';
+
+	var type = this.getType().toLowerCase();
+	var lineType = this.getLineType();
+	var pieStyle = null;
+	if (type === "donut" || type === "pie"){
+		pieStyle = type; // it's the pieStyle that can be pie or donut
+		type = "pie"; // in MAKit the chart's type is always pie for Pie/Donut chart
+	}
+	else if (type === "line" && lineType){
+		type = lineType;
+	}
+	var chartSyntax = '<Layer Name="' + this.getId() + '" ChartType="' + type + '"';
+	if(pieStyle !== null) {
+		chartSyntax += ' PieStyle="' + pieStyle + '"';
+	}
+	chartSyntax += ' >';
+
+	if (seriesObj) {
+		chartSyntax += seriesSyntax;
+	}
+	chartSyntax += valuesSyntax;
+	chartSyntax += '</Layer>';
+
+	return chartSyntax;
+};
+
+/*=================================================================================
+ *== PUBLIC METHODS
+ *=================================================================================
+ **/
+
+/**
+ * Update the data table of MAKit chart. 
+ * 
+ * @private
+ * 
+ * */
+sap.makit.Layer.prototype.getDataTable = function() {
+	if(this._datarows && this._datarows.length > 0){
+		var data = this._datarows;
+		var dataTable = new window.$MA.DataTable();
+		var columns = this.getColumns();
+		var colLen = columns.length;
+		if (colLen == 0) {
+			columns = this.getRows()[0].getCells();
+			colLen = columns.length;
+		}
+		for (var i = 0; i < colLen; i++){
+			dataTable.addColumn(columns[i].getName(), columns[i].getType());
+		}
+
+		dataTable.addRows(data);
+		return dataTable;
+	}
+	
+	return null;
+};
+
+sap.makit.Layer.prototype.getSelectedSeries = function(){
+	var parent = this.getParent();
+	if( parent ) {
+		return parent._getSelectedSeries(this);
+	}
+};
+
+
+}; // end of sap.makit.Layer
 if ( !jQuery.sap.isDeclared('sap.makit.Row') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1186,12 +5914,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Row
  */
 sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
@@ -1222,7 +5949,7 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @function
  */
 
-	
+
 /**
  * Getter for aggregation <code>cells</code>.<br/>
  * Representing the cells of the row. User should not add individual cells. The cells will be added automatically via Column mapping.
@@ -1232,6 +5959,7 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @name sap.makit.Row#getCells
  * @function
  */
+
 
 /**
  * Inserts a cell into the aggregation named <code>cells</code>.
@@ -1249,7 +5977,6 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some cell <code>oCell</code> 
  * to the aggregation named <code>cells</code>.
@@ -1262,7 +5989,6 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an cell from the aggregation named <code>cells</code>.
  *
@@ -1273,7 +5999,6 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>cells</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -1282,7 +6007,6 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @name sap.makit.Row#removeAllCells
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.makit.Column</code> in the aggregation named <code>cells</code> 
@@ -1295,7 +6019,7 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @name sap.makit.Row#indexOfCell
  * @function
  */
-
+	
 
 /**
  * Destroys all the cells in the aggregation 
@@ -1305,6 +6029,7 @@ sap.ui.core.Element.extend("sap.makit.Row", { metadata : {
  * @name sap.makit.Row#destroyCells
  * @function
  */
+
 
 // Start of sap/makit/Row.js
 /*!
@@ -1348,7 +6073,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.Series') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1405,12 +6130,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Series
  */
 sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
@@ -1456,7 +6180,6 @@ sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>column</code>.
  *
@@ -1468,6 +6191,7 @@ sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
  * @name sap.makit.Series#setColumn
  * @function
  */
+
 
 /**
  * Getter for property <code>displayName</code>.
@@ -1481,7 +6205,6 @@ sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayName</code>.
  *
@@ -1493,6 +6216,7 @@ sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
  * @name sap.makit.Series#setDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>format</code>.
@@ -1510,7 +6234,6 @@ sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>format</code>.
  *
@@ -1523,6 +6246,7 @@ sap.ui.core.Element.extend("sap.makit.Series", { metadata : {
  * @function
  */
 
+
 // Start of sap/makit/Series.js
 /*!
  * @copyright@
@@ -1533,7 +6257,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.Value') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1590,12 +6314,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Value
  */
 sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
@@ -1643,7 +6366,6 @@ sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>expression</code>.
  *
@@ -1655,6 +6377,7 @@ sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
  * @name sap.makit.Value#setExpression
  * @function
  */
+
 
 /**
  * Getter for property <code>displayName</code>.
@@ -1668,7 +6391,6 @@ sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayName</code>.
  *
@@ -1680,6 +6402,7 @@ sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
  * @name sap.makit.Value#setDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>format</code>.
@@ -1697,7 +6420,6 @@ sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>format</code>.
  *
@@ -1710,6 +6432,7 @@ sap.ui.core.Element.extend("sap.makit.Value", { metadata : {
  * @function
  */
 
+
 // Start of sap/makit/Value.js
 /*!
  * @copyright@
@@ -1720,7 +6443,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.ValueAxis') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1775,10 +6498,11 @@ jQuery.sap.declare("sap.makit.ValueAxis");
  * @extends sap.makit.Axis
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  * @name sap.makit.ValueAxis
@@ -1815,7 +6539,7 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
 
 /**
  * Getter for property <code>min</code>.
- * Highest displayed value on the Value Axis (this value will be automatically adjusted to nearest major tick value depending on the value's range)
+ * Highest displayed value on the Value Axis (this value will be automatically adjusted to nearest major tick value depending on the value's range). Set to empty string to switch back to automatic calculation.
  *
  * Default value is empty/<code>undefined</code>
  *
@@ -1824,7 +6548,6 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @name sap.makit.ValueAxis#getMin
  * @function
  */
-
 
 /**
  * Setter for property <code>min</code>.
@@ -1838,6 +6561,7 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>max</code>.
  * Highest displayed value on the Value Axis (this value will be automatically adjusted to nearest major tick value depending on the value's range)
@@ -1850,7 +6574,6 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>max</code>.
  *
@@ -1862,6 +6585,7 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @name sap.makit.ValueAxis#setMax
  * @function
  */
+
 
 // Start of sap/makit/ValueAxis.js
 /*!
@@ -1878,7 +6602,7 @@ if ( !jQuery.sap.isDeclared('sap.makit.ValueBubble') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1941,10 +6665,11 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  * @name sap.makit.ValueBubble
@@ -1998,7 +6723,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showCategoryText</code>.
  *
@@ -2010,6 +6734,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowCategoryText
  * @function
  */
+
 
 /**
  * Getter for property <code>showCategoryDisplayName</code>.
@@ -2023,7 +6748,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showCategoryDisplayName</code>.
  *
@@ -2035,6 +6759,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowCategoryDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>showValueDisplayName</code>.
@@ -2048,7 +6773,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showValueDisplayName</code>.
  *
@@ -2060,6 +6784,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowValueDisplayName
  * @function
  */
+
 
 /**
  * Getter for property <code>showValueOnPieChart</code>.
@@ -2073,7 +6798,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showValueOnPieChart</code>.
  *
@@ -2085,6 +6809,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowValueOnPieChart
  * @function
  */
+
 
 /**
  * Getter for property <code>showLegendLabel</code>.
@@ -2098,7 +6823,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showLegendLabel</code>.
  *
@@ -2110,6 +6834,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowLegendLabel
  * @function
  */
+
 
 /**
  * Getter for property <code>showNullValue</code>.
@@ -2123,7 +6848,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showNullValue</code>.
  *
@@ -2135,6 +6859,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setShowNullValue
  * @function
  */
+
 
 /**
  * Getter for property <code>position</code>.
@@ -2148,7 +6873,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>position</code>.
  *
@@ -2160,6 +6884,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setPosition
  * @function
  */
+
 
 /**
  * Getter for property <code>style</code>.
@@ -2173,7 +6898,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>style</code>.
  *
@@ -2185,6 +6909,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setStyle
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -2198,7 +6923,6 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -2210,6 +6934,7 @@ sap.ui.core.Element.extend("sap.makit.ValueBubble", { metadata : {
  * @name sap.makit.ValueBubble#setVisible
  * @function
  */
+
 
 // Start of sap/makit/ValueBubble.js
 /*!

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides the history handler sap.ui.core.History
@@ -22,7 +22,7 @@ jQuery.sap.require("sap.ui.base.Object");
  *
  * @extends sap.ui.base.Object
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @name sap.ui.core.History
  * @private

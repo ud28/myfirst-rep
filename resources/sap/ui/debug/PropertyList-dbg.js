@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a (modifiable) list of properties for a given control
@@ -20,7 +20,7 @@ jQuery.sap.require("sap.ui.core.Core");
  *
  * @extends sap.ui.base.EventProvider
  * @author Martin Schaus
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @param {sap.ui.core.Core}
  *            oCore the core instance to use for analysis

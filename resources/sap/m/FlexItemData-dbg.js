@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ jQuery.sap.require("sap.ui.core.LayoutData");
  * @extends sap.ui.core.LayoutData
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -74,7 +74,7 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
 		"alignSelf" : {type : "sap.m.FlexAlignSelf", group : "Misc", defaultValue : sap.m.FlexAlignSelf.Auto},
 		"order" : {type : "int", group : "Misc", defaultValue : 0},
 		"growFactor" : {type : "float", group : "Misc", defaultValue : 0},
-		"styleClass" : {type : "string", group : "Misc", defaultValue : ''}
+		"styleClass" : {type : "string", group : "Misc", defaultValue : '', deprecated: true}
 	}
 }});
 
@@ -98,7 +98,7 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
 
 /**
  * Getter for property <code>alignSelf</code>.
- * Determines cross-axis alignment of individual element
+ * Determines cross-axis alignment of individual element (not currently supported in Internet Explorer)
  *
  * Default value is <code>Auto</code>
  *
@@ -107,7 +107,6 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @name sap.m.FlexItemData#getAlignSelf
  * @function
  */
-
 
 /**
  * Setter for property <code>alignSelf</code>.
@@ -121,6 +120,7 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>order</code>.
  * Determines the display order of flex items independent of their source code order.
@@ -132,7 +132,6 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @name sap.m.FlexItemData#getOrder
  * @function
  */
-
 
 /**
  * Setter for property <code>order</code>.
@@ -146,6 +145,7 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>growFactor</code>.
  * Determines the flexibility of the flex item when allocatable space is remaining.
@@ -157,7 +157,6 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @name sap.m.FlexItemData#getGrowFactor
  * @function
  */
-
 
 /**
  * Setter for property <code>growFactor</code>.
@@ -171,6 +170,7 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>styleClass</code>.
  * The style class will be applied to the flex item and can be used for CSS selectors
@@ -179,10 +179,11 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  *
  * @return {string} the value of property <code>styleClass</code>
  * @public
+ * @deprecated Since version 1.11.2. 
+ * Generic addStyleClass method is available on the control
  * @name sap.m.FlexItemData#getStyleClass
  * @function
  */
-
 
 /**
  * Setter for property <code>styleClass</code>.
@@ -192,15 +193,15 @@ sap.ui.core.LayoutData.extend("sap.m.FlexItemData", { metadata : {
  * @param {string} sStyleClass  new value for property <code>styleClass</code>
  * @return {sap.m.FlexItemData} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.11.2. 
+ * Generic addStyleClass method is available on the control
  * @name sap.m.FlexItemData#setStyleClass
  * @function
  */
 
-// Start of sap/m/FlexItemData.js
-jQuery.sap.require("sap.ui.core.EnabledPropagator");
-jQuery.sap.require("sap.m.FlexBoxStylingHelper");
 
-sap.ui.core.EnabledPropagator.apply(sap.m.FlexItemData.prototype, [true]);
+// Start of sap/m/FlexItemData.js
+jQuery.sap.require("sap.m.FlexBoxStylingHelper");
 
 sap.m.FlexItemData.prototype.setAlignSelf = function(sValue) {
 	this.setProperty("alignSelf", sValue, true);
@@ -233,5 +234,3 @@ sap.m.FlexItemData.prototype.setGrowFactor = function(sValue) {
 	sap.m.FlexBoxStylingHelper.setStyle(null, this, "flex-basis", sValue);
 	return this;
 };*/
-
-//TODO Implement a setter for the class property

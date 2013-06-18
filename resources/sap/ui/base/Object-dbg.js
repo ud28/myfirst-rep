@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -23,7 +23,7 @@ jQuery.sap.require("sap.ui.base.Metadata");
  * @class Base class for all SAPUI5 Objects
  * @abstract
  * @author Malte Wedel
- * @version 1.8.4
+ * @version 1.12.1
  * @public
  * @name sap.ui.base.Object
  */

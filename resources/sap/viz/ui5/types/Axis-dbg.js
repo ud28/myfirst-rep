@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getIsIndependentMode isIndependentMode} : boolean (default: false)</li>
+ * <li>{@link #getIsPercentMode isPercentMode} : boolean (default: false)</li>
  * <li>{@link #getLineSize lineSize} : string (default: '1')</li>
  * <li>{@link #getColor color} : string (default: '#6c6c6c')</li>
  * <li>{@link #getType type} : sap.viz.ui5.types.Axis_type (default: sap.viz.ui5.types.Axis_type.value)</li>
@@ -42,7 +43,9 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Axis_title</li>
  * <li>{@link #getGridline gridline} : sap.viz.ui5.types.Axis_gridline</li>
  * <li>{@link #getAxisline axisline} : sap.viz.ui5.types.Axis_axisline</li>
- * <li>{@link #getLabel label} : sap.viz.ui5.types.Axis_label</li></ul>
+ * <li>{@link #getLabel label} : sap.viz.ui5.types.Axis_label</li>
+ * <li>{@link #getScale scale} : sap.viz.ui5.types.Axis_scale</li>
+ * <li>{@link #getLayoutInfo layoutInfo} : sap.viz.ui5.types.Axis_layoutInfo</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -64,7 +67,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -80,18 +83,21 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"isIndependentMode" : {type : "boolean", group : "", defaultValue : false},
+		"isIndependentMode" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"isPercentMode" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
 		"lineSize" : {type : "string", group : "", defaultValue : '1'},
 		"color" : {type : "string", group : "", defaultValue : '#6c6c6c'},
-		"type" : {type : "sap.viz.ui5.types.Axis_type", group : "", defaultValue : sap.viz.ui5.types.Axis_type.value},
+		"type" : {type : "sap.viz.ui5.types.Axis_type", group : "", defaultValue : sap.viz.ui5.types.Axis_type.value, deprecated: true},
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"position" : {type : "sap.viz.ui5.types.Axis_position", group : "", defaultValue : sap.viz.ui5.types.Axis_position.bottom}
+		"position" : {type : "sap.viz.ui5.types.Axis_position", group : "", defaultValue : sap.viz.ui5.types.Axis_position.bottom, deprecated: true}
 	},
 	aggregations : {
     	"title" : {type : "sap.viz.ui5.types.Axis_title", multiple : false}, 
     	"gridline" : {type : "sap.viz.ui5.types.Axis_gridline", multiple : false}, 
     	"axisline" : {type : "sap.viz.ui5.types.Axis_axisline", multiple : false}, 
-    	"label" : {type : "sap.viz.ui5.types.Axis_label", multiple : false}
+    	"label" : {type : "sap.viz.ui5.types.Axis_label", multiple : false}, 
+    	"scale" : {type : "sap.viz.ui5.types.Axis_scale", multiple : false, deprecated: true}, 
+    	"layoutInfo" : {type : "sap.viz.ui5.types.Axis_layoutInfo", multiple : false, deprecated: true}
 	}
 }});
 
@@ -121,10 +127,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  *
  * @return {boolean} the value of property <code>isIndependentMode</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#getIsIndependentMode
  * @function
  */
-
 
 /**
  * Setter for property <code>isIndependentMode</code>.
@@ -134,9 +141,41 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @param {boolean} bIsIndependentMode  new value for property <code>isIndependentMode</code>
  * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#setIsIndependentMode
  * @function
  */
+
+
+/**
+ * Getter for property <code>isPercentMode</code>.
+ * Show the label 0.1 as 10
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isPercentMode</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#getIsPercentMode
+ * @function
+ */
+
+/**
+ * Setter for property <code>isPercentMode</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsPercentMode  new value for property <code>isPercentMode</code>
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#setIsPercentMode
+ * @function
+ */
+
 
 /**
  * Getter for property <code>lineSize</code>.
@@ -150,7 +189,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>lineSize</code>.
  *
@@ -162,6 +200,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setLineSize
  * @function
  */
+
 
 /**
  * Getter for property <code>color</code>.
@@ -175,7 +214,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>color</code>.
  *
@@ -188,6 +226,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>type</code>.
  * Set type of axis.
@@ -196,10 +235,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  *
  * @return {sap.viz.ui5.types.Axis_type} the value of property <code>type</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#getType
  * @function
  */
-
 
 /**
  * Setter for property <code>type</code>.
@@ -209,9 +249,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @param {sap.viz.ui5.types.Axis_type} oType  new value for property <code>type</code>
  * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#setType
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -225,7 +268,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -238,6 +280,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>position</code>.
  * Set position of axis.
@@ -246,10 +289,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  *
  * @return {sap.viz.ui5.types.Axis_position} the value of property <code>position</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#getPosition
  * @function
  */
-
 
 /**
  * Setter for property <code>position</code>.
@@ -259,10 +303,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @param {sap.viz.ui5.types.Axis_position} oPosition  new value for property <code>position</code>
  * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#setPosition
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Settings for axis title.
@@ -273,6 +320,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Axis_title}
@@ -281,7 +329,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -291,7 +339,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyTitle
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>gridline</code>.<br/>
  * Settings for axis gridline.
@@ -302,6 +351,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>gridline</code>.
  * @param oGridline {sap.viz.ui5.types.Axis_gridline}
@@ -310,7 +360,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setGridline
  * @function
  */
-
+	
 
 /**
  * Destroys the gridline in the aggregation 
@@ -320,7 +370,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyGridline
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>axisline</code>.<br/>
  * Settings for axisline.
@@ -331,6 +382,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>axisline</code>.
  * @param oAxisline {sap.viz.ui5.types.Axis_axisline}
@@ -339,7 +391,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setAxisline
  * @function
  */
-
+	
 
 /**
  * Destroys the axisline in the aggregation 
@@ -349,7 +401,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyAxisline
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>label</code>.<br/>
  * Settings for axis label.
@@ -360,6 +413,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>label</code>.
  * @param oLabel {sap.viz.ui5.types.Axis_label}
@@ -368,7 +422,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setLabel
  * @function
  */
-
+	
 
 /**
  * Destroys the label in the aggregation 
@@ -378,6 +432,81 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyLabel
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>scale</code>.<br/>
+ * Set scale for value axis. this property just work on value type axis.
+ * 
+ * @return {sap.viz.ui5.types.Axis_scale}
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#getScale
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>scale</code>.
+ * @param oScale {sap.viz.ui5.types.Axis_scale}
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#setScale
+ * @function
+ */
+	
+
+/**
+ * Destroys the scale in the aggregation 
+ * named <code>scale</code>.
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#destroyScale
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>layoutInfo</code>.<br/>
+ * Settings layoutInfo for category axis. this property just work on category type axis
+ * 
+ * @return {sap.viz.ui5.types.Axis_layoutInfo}
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#getLayoutInfo
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>layoutInfo</code>.
+ * @param oLayoutInfo {sap.viz.ui5.types.Axis_layoutInfo}
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#setLayoutInfo
+ * @function
+ */
+	
+
+/**
+ * Destroys the layoutInfo in the aggregation 
+ * named <code>layoutInfo</code>.
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#destroyLayoutInfo
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Axis.js
 sap.viz.ui5.types.Axis.prototype.getTitle = function() {
@@ -391,4 +520,10 @@ sap.viz.ui5.types.Axis.prototype.getAxisline = function() {
 }
 sap.viz.ui5.types.Axis.prototype.getLabel = function() {
   return this._getOrCreate("label");
+}
+sap.viz.ui5.types.Axis.prototype.getScale = function() {
+  return this._getOrCreate("scale");
+}
+sap.viz.ui5.types.Axis.prototype.getLayoutInfo = function() {
+  return this._getOrCreate("layoutInfo");
 }

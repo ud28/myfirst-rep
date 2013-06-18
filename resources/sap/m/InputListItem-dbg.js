@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ jQuery.sap.require("sap.m.ListItemBase");
  * @extends sap.m.ListItemBase
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -107,7 +107,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>label</code>.
  *
@@ -119,7 +118,8 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @name sap.m.InputListItem#setLabel
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>content</code>.<br/>
  * Content controls can be added
@@ -129,6 +129,7 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @name sap.m.InputListItem#getContent
  * @function
  */
+
 
 /**
  * Inserts a content into the aggregation named <code>content</code>.
@@ -146,7 +147,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some content <code>oContent</code> 
  * to the aggregation named <code>content</code>.
@@ -159,7 +159,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an content from the aggregation named <code>content</code>.
  *
@@ -170,7 +169,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>content</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -179,7 +177,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @name sap.m.InputListItem#removeAllContent
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>content</code> 
@@ -192,7 +189,7 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @name sap.m.InputListItem#indexOfContent
  * @function
  */
-
+	
 
 /**
  * Destroys all the content in the aggregation 
@@ -202,6 +199,7 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @name sap.m.InputListItem#destroyContent
  * @function
  */
+
 
 /**
  * Binder for aggregation <code>content</code>.
@@ -216,7 +214,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Unbinder for aggregation <code>content</code>.
  *
@@ -225,5 +222,6 @@ sap.m.ListItemBase.extend("sap.m.InputListItem", { metadata : {
  * @name sap.m.InputListItem#unbindContent
  * @function
  */
+
 
 // Start of sap/m/InputListItem.js

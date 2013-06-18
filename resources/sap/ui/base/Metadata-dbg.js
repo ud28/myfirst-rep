@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.Metadata
@@ -16,7 +16,7 @@ jQuery.sap.require("jquery.sap.script");
  *
  * @class Metadata for a class.
  * @author Frank Weigel
- * @version 1.8.4
+ * @version 1.12.1
  * @since 0.8.6
  * @public
  */
@@ -84,7 +84,8 @@ sap.ui.base.Metadata.prototype.applySettings = function(oClassInfo) {
 
 	this._bAbstract = !!oStaticInfo["abstract"];
 	this._bFinal = !!oStaticInfo["final"];
-
+	this._sStereotype = oStaticInfo.stereotype || (this._oParent ? this._oParent._sStereotype : "object");
+	
 	// handle interfaces
 	this._aInterfaces = jQuery.sap.unique(oStaticInfo.interfaces || []);
 
@@ -123,6 +124,14 @@ sap.ui.base.Metadata.prototype.afterApplySettings = function() {
 		this._aAllPublicMethods = this._aPublicMethods;
 	}
 
+};
+
+/**
+ * Stereotype of the described class. 
+ * @experimental might be enhanced to a set of stereotypes
+ */
+sap.ui.base.Metadata.prototype.getStereotype = function() {
+	return this._sStereotype;
 };
 
 /**
@@ -210,6 +219,11 @@ sap.ui.base.Metadata.prototype.isInstanceOf = function(sInterface) {
 	}
 
 	return false;
+};
+
+
+sap.ui.base.Metadata.prototype.isAbstract = function() {
+	return this._bAbstract;
 };
 
 sap.ui.base.Metadata.prototype.isFinal = function() {

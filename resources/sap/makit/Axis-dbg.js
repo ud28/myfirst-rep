@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * <li>{@link #getShowLabel showLabel} : boolean (default: true)</li>
  * <li>{@link #getShowPrimaryLine showPrimaryLine} : boolean (default: true)</li>
  * <li>{@link #getShowGrid showGrid} : boolean (default: false)</li>
- * <li>{@link #getThickness thickness} : float (default: 0.5)</li>
+ * <li>{@link #getThickness thickness} : float (default: 1)</li>
  * <li>{@link #getColor color} : string (default: 'gray')</li></ul>
  * </li>
  * <li>Aggregations
@@ -59,12 +59,11 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Axis
  */
 sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
@@ -77,7 +76,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
 		"showLabel" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"showPrimaryLine" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"showGrid" : {type : "boolean", group : "Appearance", defaultValue : false},
-		"thickness" : {type : "float", group : "Appearance", defaultValue : 0.5},
+		"thickness" : {type : "float", group : "Appearance", defaultValue : 1},
 		"color" : {type : "string", group : "Appearance", defaultValue : 'gray'}
 	}
 }});
@@ -112,7 +111,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showLabel</code>.
  *
@@ -124,6 +122,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setShowLabel
  * @function
  */
+
 
 /**
  * Getter for property <code>showPrimaryLine</code>.
@@ -137,7 +136,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showPrimaryLine</code>.
  *
@@ -149,6 +147,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setShowPrimaryLine
  * @function
  */
+
 
 /**
  * Getter for property <code>showGrid</code>.
@@ -162,7 +161,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>showGrid</code>.
  *
@@ -175,11 +173,12 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>thickness</code>.
  * The line thickness of the primary line
  *
- * Default value is <code>0.5</code>
+ * Default value is <code>1</code>
  *
  * @return {float} the value of property <code>thickness</code>
  * @public
@@ -187,11 +186,10 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>thickness</code>.
  *
- * Default value is <code>0.5</code> 
+ * Default value is <code>1</code> 
  *
  * @param {float} fThickness  new value for property <code>thickness</code>
  * @return {sap.makit.Axis} <code>this</code> to allow method chaining
@@ -199,6 +197,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setThickness
  * @function
  */
+
 
 /**
  * Getter for property <code>color</code>.
@@ -215,7 +214,6 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>color</code>.
  *
@@ -227,6 +225,7 @@ sap.ui.core.Element.extend("sap.makit.Axis", { metadata : {
  * @name sap.makit.Axis#setColor
  * @function
  */
+
 
 // Start of sap/makit/Axis.js
 /*!

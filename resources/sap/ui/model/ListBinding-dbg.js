@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides an abstraction for list bindings
@@ -22,28 +22,45 @@ jQuery.sap.require("sap.ui.model.Filter");
  * @param {Object} oContext
  * @abstract
  * @public
+ * @name sap.ui.model.ListBinding
  */
-sap.ui.model.ListBinding = function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
-	sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
-	this.oSorter = oSorter;
-	this.aFilters = aFilters;
-};
-sap.ui.model.ListBinding.prototype = jQuery.sap.newObject(sap.ui.model.Binding.prototype);
+sap.ui.model.Binding.extend("sap.ui.model.ListBinding", /** @lends sap.ui.model.ListBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
+		sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
+		this.oSorter = oSorter;
+		this.aFilters = aFilters;
+		this.bUseExtendedChangeDetection = false;
+	},
+	
+  metadata : {
+		"abstract" : true,
 
-/*
- * Describe the sap.ui.model.ListBinding.
- * Resulting metadata can be obtained via sap.ui.model.ListBinding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.ListBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Binding",
-  publicMethods : [
-	// methods
-	"getContexts", "sort", "attachSort", "detachSort", "filter", "attachFilter", "detachFilter", "getDistinctValues"
-  ]
-
+		publicMethods : [
+		  // methods
+		  "getContexts", "sort", "attachSort", "detachSort", "filter", "attachFilter", "detachFilter", "getDistinctValues", "isGrouped"
+	  ]
+  }
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.ListBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.ListBinding.extend
+ * @function
+ */
+
 
 // the 'abstract methods' to be implemented by child classes
 /**
@@ -51,7 +68,7 @@ sap.ui.base.Object.defineClass("sap.ui.model.ListBinding", {
  *
  * @function
  * @name sap.ui.model.ListBinding.prototype.getContexts
- * @return {Array} the array of contexts for each row of the bound list
+ * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
  *
  * @public
  */
@@ -61,7 +78,8 @@ sap.ui.base.Object.defineClass("sap.ui.model.ListBinding", {
  *
  * @function
  * @name sap.ui.model.ListBinding.prototype.filter
- * @param {Array} aFilters Array of sap.ui.model.Filter objects
+ * @param {object[]} aFilters Array of filter objects
+ * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining 
  *
  * @public
  */
@@ -72,7 +90,7 @@ sap.ui.base.Object.defineClass("sap.ui.model.ListBinding", {
  * @function
  * @name sap.ui.model.ListBinding.prototype.sort
  * @param {sap.ui.model.Sorter} oSorter the Sorter object which defines the sort order
- *
+ * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining 
  * @public
  */
 
@@ -80,7 +98,7 @@ sap.ui.base.Object.defineClass("sap.ui.model.ListBinding", {
 /**
  * Returns list of distinct values for the given relative binding path
  *
- * @param {String} sPath the relative binding path
+ * @param {string} sPath the relative binding path
  * @return {Array} the array of distinct values.
  *
  * @public
@@ -95,6 +113,7 @@ sap.ui.model.ListBinding.prototype.getDistinctValues = function(sPath) {
  * @param {function} fnFunction The function to call, when the event occurs.
  * @param {object} [oListener] object on which to call the given function.
  * @protected
+ * @deprecated use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
  */
 sap.ui.model.ListBinding.prototype.attachSort = function(fnFunction, oListener) {
 	this.attachEvent("_sort", fnFunction, oListener);
@@ -105,6 +124,7 @@ sap.ui.model.ListBinding.prototype.attachSort = function(fnFunction, oListener) 
  * @param {function} fnFunction The function to call, when the event occurs.
  * @param {object} [oListener] object on which to call the given function.
  * @protected
+ * @deprecated use the change event.
  */
 sap.ui.model.ListBinding.prototype.detachSort = function(fnFunction, oListener) {
 	this.detachEvent("_sort", fnFunction, oListener);
@@ -114,6 +134,7 @@ sap.ui.model.ListBinding.prototype.detachSort = function(fnFunction, oListener) 
  * Fire event _change to attached listeners.
  * @param {Map} [mArguments] the arguments to pass along with the event.
  * @private
+ * @deprecated use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
  */
 sap.ui.model.ListBinding.prototype._fireSort = function(mArguments) {
 	this.fireEvent("_sort", mArguments);
@@ -124,6 +145,7 @@ sap.ui.model.ListBinding.prototype._fireSort = function(mArguments) {
  * @param {function} fnFunction The function to call, when the event occurs.
  * @param {object} [oListener] object on which to call the given function.
  * @protected
+ * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
  */
 sap.ui.model.ListBinding.prototype.attachFilter = function(fnFunction, oListener) {
 	this.attachEvent("_filter", fnFunction, oListener);
@@ -134,16 +156,38 @@ sap.ui.model.ListBinding.prototype.attachFilter = function(fnFunction, oListener
  * @param {function} fnFunction The function to call, when the event occurs.
  * @param {object} [oListener] object on which to call the given function.
  * @protected
+ * @deprecated use the change event.
  */
 sap.ui.model.ListBinding.prototype.detachFilter = function(fnFunction, oListener) {
 	this.detachEvent("_filter", fnFunction, oListener);
 };
 
 /**
+ * Checks if grouping is enabled for the binding<br/>
+ * @public
+ */
+sap.ui.model.ListBinding.prototype.isGrouped = function() {
+	return this.oSorter && !!this.oSorter.fnGroup;
+};
+
+/**
  * Fire event _filter to attached listeners.
  * @param {Map} [mArguments] the arguments to pass along with the event.
  * @private
+ * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
  */
 sap.ui.model.ListBinding.prototype._fireFilter = function(mArguments) {
 	this.fireEvent("_filter", mArguments);
+};
+
+
+/**
+ * Enable extended change detection
+ * @private
+ */
+sap.ui.model.ListBinding.prototype.enableExtendedChangeDetection = function( ) {
+	this.bUseExtendedChangeDetection  = true;
+	if (this.update) {
+		this.update();
+	}
 };

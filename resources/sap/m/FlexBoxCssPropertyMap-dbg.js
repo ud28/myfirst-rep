@@ -1,8 +1,9 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
+jQuery.sap.declare("sap.m.FlexBoxCssPropertyMap");
 
 sap.m.FlexBoxCssPropertyMap = {
 	'spec0907': {
@@ -89,6 +90,91 @@ sap.m.FlexBoxCssPropertyMap = {
 			},
 			'stretch': {
 				'box-align': 'stretch'
+			}
+		},
+		'align-self': null,
+		'align-content': null
+	},
+	'specie10': {
+		'display': {
+			'flex': {
+				'display': 'flexbox'
+			},
+			'inline-flex': {
+				'display': 'inline-flexbox'
+			}
+		},
+		'flex-direction': {
+			'row': {
+				'flex-direction': 'row'
+			},
+			'row-reverse': {
+				'flex-direction': 'row-reverse'
+			},
+			'column': {
+				'flex-direction': 'column'
+			},
+			'column-reverse': {
+				'flex-direction': 'column-reverse'
+			}
+		},
+		'flex-wrap': {
+			'no-wrap': {
+				'flex-wrap': 'none'
+			},
+			'wrap': {
+				'box-lines': 'multiple'
+			},
+			'wrap-reverse': null
+		},
+		'flex-flow': null,
+		'order': {
+			'<number>': {
+				'flex-order': '<integer>'
+			}
+		},
+		'flex-grow':{
+			'<number>': {
+				'flex': '<number>'
+			}
+		},
+		'flex-shrink': null,
+		'flex-basis': null,
+		'flex': {
+			'[flex-grow] | [flex-shrink] | [flex-basis]': {
+				'flex': '[flex-grow] | [flex-shrink] | [flex-basis]'
+			}
+		},
+		'justify-content': {
+			'flex-start': {
+				'flex-pack': 'start'
+			},
+			'flex-end': {
+				'flex-pack': 'end'
+			},
+			'center': {
+				'flex-pack': 'center'
+			},
+			'space-between': {
+				'flex-pack': 'justify'
+			},
+			'space-around': null
+		},
+		'align-items': {
+			'flex-start': {
+				'flex-align': 'start'
+			},
+			'flex-end':{
+				'flex-align': 'end'
+			},
+			'center': {
+				'flex-align': 'center'
+			},
+			'baseline': {
+				'flex-align': 'baseline'
+			},
+			'stretch': {
+				'flex-align': 'stretch'
 			}
 		},
 		'align-self': null,

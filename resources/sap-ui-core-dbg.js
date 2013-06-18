@@ -9578,7 +9578,7 @@ if ( !$.curCSS ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -9674,7 +9674,7 @@ if ( !$.curCSS ) {
 			tag: oTag,
 			url: sUrl,
 			resourceRoot: sResourceRoot
-		}
+		};
 	})();
 
 	/**
@@ -9683,14 +9683,14 @@ if ( !$.curCSS ) {
 	 */
 	(function() {
 		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
-			var bRestart = false,
-				sRestartUrl = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
+			window["sap-ui-bRestart"] = false;
+			window["sap-ui-sRestartUrl"] = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
 
 			// function to replace the bootstrap tag with a newly created script tag to enable
 			// restarting the core from a different server
 			function restartCore() {
 				var oScript = _oBootstrap.tag,
-					sScript = "<script src=\"" + sRestartUrl + "\"";
+					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
 						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue + "\"";
@@ -9698,16 +9698,28 @@ if ( !$.curCSS ) {
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
+				
+				// clean up cachebuster stuff
+				jQuery("#sap-ui-bootstrap-cachebusted").remove();
+				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
+				
 				document.write(sScript);
-				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + sRestartUrl);
+				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + window["sap-ui-sRestartUrl"]);
 				oRestart.name = "Restart";
+				
+				// clean up
+				delete window["sap-ui-bRestart"];
+				delete window["sap-ui-sRestartUrl"];
+				
 				throw oRestart;
 			};
 
-			// debugger stops here. if you want to restart from a different server you can adapt the URL
-			// here and set bRestart to true.
+			// debugger stops here. To restart UI5 from somewhere else (default: localhost), set:
+			//    window["sap-ui-bRestart"] = true
+			// If you want to restart from a different server than localhost, you can adapt the URL, e.g.: 
+			//    window["sap-ui-sRestartUrl"] = "http://someserver:8080/sapui5/resources/sap-ui-core.js"
 			debugger;
-			if (bRestart) {
+			if (window["sap-ui-bRestart"]) {
 				restartCore();
 			}
 		}
@@ -9821,7 +9833,7 @@ if ( !$.curCSS ) {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP AG.
 	 *
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @namespace
 	 * @public
 	 * @static
@@ -10927,7 +10939,9 @@ if ( !$.curCSS ) {
 				// execute the script in the window context
 				mod.state = 'executing';
 				_execStack.push(sModuleName);
-				if (_window.execScript && (!mod.data || mod.data.length < MAX_EXEC_SCRIPT_LENGTH) ) { 
+				if ( typeof mod.data === "function" ) {
+					mod.data.apply(window);
+				} else if (_window.execScript && (!mod.data || mod.data.length < MAX_EXEC_SCRIPT_LENGTH) ) { 
 					try {
 						mod.data && _window.execScript(mod.data); // execScript fails if data is empty
 					} catch (e) {
@@ -10951,6 +10965,11 @@ if ( !$.curCSS ) {
 				mod.state = 'failed';
 				mod.error = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 				mod.data = undefined;
+				if ( window["sap-ui-debug"] && (oCfgData["xx-showloaderrors"] || /sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search)) ) {
+					jQuery.sap.log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
+					jQuery.sap.includeScript(mod.url);
+					return;
+				}
 			}
 		}
 	}
@@ -11015,6 +11034,9 @@ if ( !$.curCSS ) {
 	jQuery.sap.registerPreloadedModules = function(oData, bAsync, oSyncPoint) {
 		if ( _verbose ) {
 			jQuery.sap.log.debug(sLogPrefix + "adding preloaded modules from '" + oData.url + "'");
+		}
+		if ( oData.name ) {
+			mPreloadModules[oData.name] = true;
 		}
 		jQuery.each(oData.modules, function(sName,sContent) {
 			if ( !mModules[sName] ) {
@@ -11088,6 +11110,13 @@ if ( !$.curCSS ) {
 		if (sId) {
 			oLink.id = sId;
 		}
+		
+		oLink.onload = function(){
+			jQuery(oLink).attr("sap-ui-ready", "true");
+		}
+		oLink.onerror = function(){
+			jQuery(oLink).attr("sap-ui-ready", "false");
+		}
 
 		// check for existence of the link
 		var oOld, bReplace;
@@ -11141,21 +11170,140 @@ if ( !$.curCSS ) {
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added
 
+	/**
+	 * Holds information about the browser's capabilities and quirks.
+	 * This object is provided and documented by jQuery. 
+	 * But it is extended by SAPUI5 with detection for features not covered by jQuery. This documentation ONLY covers the detection properties added by UI5.
+	 * For the standard detection properties, please refer to the jQuery documentation.
+	 * 
+	 * These properties added by UI5 are only available temporarily until jQuery adds feature detection on their own.
+	 * 
+	 * @name jQuery.support
+	 * @namespace
+	 * @since 1.12
+	 * @public
+	 */
+	
 	if (!jQuery.support) {
 		jQuery.support = {};
 	}
+	
+	jQuery.extend(jQuery.support, {touch: "ontouchend" in document}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+
+	var aPrefixes = ["Webkit", "ms", "Moz"];
+	var oStyle = document.documentElement.style;
+	
+	var preserveOrTestCssPropWithPrefixes = function(detectionName, propName) {
+		if (jQuery.support[detectionName] === undefined) {
+			
+			if (oStyle[propName] !== undefined) { // without vendor prefix
+				jQuery.support[detectionName] = true;
+				return;
+				
+			} else { // try vendor prefixes
+				propName = propName.charAt(0).toUpperCase() + propName.slice(1);
+				for (var i in aPrefixes) {
+					if (oStyle[aPrefixes[i]+propName] !== undefined) {
+						jQuery.support[detectionName] = true;
+						return;
+					}
+				}
+			}
+			jQuery.support[detectionName] = false;
+		}
+	};
 
 	/**
-	 * jQuery.support.flexBoxLayout is true if the current browser supports the CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * Whether the current browser supports (2D) CSS transforms
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransforms
 	 */
-	if (jQuery.support.flexBoxLayout === undefined) {
-		jQuery.support.flexBoxLayout =
-			((document.documentElement.style.MozBoxFlex !== undefined) ||
-				(document.documentElement.style.WebkitBoxFlex !== undefined) ||
-				(document.documentElement.style.MsBoxFlex !== undefined) ||
-				(document.documentElement.style.BoxFlex !== undefined));
+	preserveOrTestCssPropWithPrefixes("cssTransforms", "transform");
+
+	/**
+	 * Whether the current browser supports 3D CSS transforms
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransforms3d
+	 */
+	preserveOrTestCssPropWithPrefixes("cssTransforms3d", "perspective");
+
+	/**
+	 * Whether the current browser supports CSS transitions
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransitions
+	 */
+	preserveOrTestCssPropWithPrefixes("cssTransitions", "transition");
+
+	/**
+	 * Whether the current browser supports (named) CSS animations
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssAnimations
+	 */
+	preserveOrTestCssPropWithPrefixes("cssAnimations", "animationName");
+
+	/**
+	 * Whether the current browser supports CSS gradients. Note that ANY support for CSS gradients leads to "true" here, no matter what the syntax is.
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssGradients
+	 */
+	if (jQuery.support.cssGradients === undefined) {
+		var oElem = document.createElement('div'),
+		oStyle = oElem.style;
+		try {
+			oStyle.backgroundImage = "linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-moz-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-webkit-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-ms-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-webkit-gradient(linear, left top, right bottom, from(red), to(white))";
+		} catch (e) {/* no support...*/}
+		jQuery.support.cssGradients = (oStyle.backgroundImage && oStyle.backgroundImage.indexOf("gradient") > -1);
+		
+		oElem = null; // free for garbage collection
 	}
 
+	/**
+	 * Whether the current browser supports the OLD CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.flexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("flexBoxLayout", "boxFlex");
+
+	/**
+	 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.ie10FlexBoxLayout
+	 * @since 1.12.0
+	 */
+	preserveOrTestCssPropWithPrefixes("ie10FlexBoxLayout", "flexOrder");	// Just using one of the IE10 properties that's not in the new FlexBox spec
+	
+	/**
+	 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.newFlexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
+
+	/**
+	 * Whether the current browser needs a polyfill as a fallback for flex box support
+	 * @type {boolean}
+	 * @private
+	 * @name jQuery.support.useFlexBoxPolyfill
+	 * @since 1.12.0
+	 */
+	if(!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
+		jQuery.support.useFlexBoxPolyfill = true;
+	} else {
+		jQuery.support.useFlexBoxPolyfill = false;
+	}
+	
 	// *********** fixes for (pending) jQuery bugs **********
 	if (!jQuery.support.opacity) {
 		(function() {
@@ -11222,7 +11370,7 @@ if ( !$.curCSS ) {
 					jQuery.sap.measure.start(url.url, "Request for "+ url.url);
 					fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
-				}
+				};
 			}else if(fnAjax){
 				jQuery.ajax = fnAjax;
 			}
@@ -11541,7 +11689,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.core.Core') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
@@ -11551,7 +11699,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.dom') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
@@ -11680,7 +11828,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		sTagName = this.prop("tagName");
 		sType = this.prop("type");
 
-		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password"))
+		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password" || sType == "search"))
 				|| sTagName == "TEXTAREA" )) {
 
 			var oDomRef = this.get(0);
@@ -12144,7 +12292,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 
 
 	/*!
-	 * The following functions are taken from jQuery UI 1.8.17
+	 * The following functions are taken from jQuery UI 1.8.17 but modified
 	 *
 	 * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
 	 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -12203,6 +12351,8 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		 * http://jquery.org/license
 		 *
 		 * http://docs.jquery.com/UI
+		 *
+		 * But since visible is modified, focusable is different too the jQuery UI version too.
 		 */
 		jQuery.extend( jQuery.expr[ ":" ], {
 			/**
@@ -12212,6 +12362,22 @@ jQuery.sap.declare("jquery.sap.dom", false);
 			 * as it is semantically the same thing and intended to do exactly the same.
 			 */
 			focusable: function( element ) {
+				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
+			}
+		});
+	}
+
+	if (!jQuery.expr[":"].sapFocusable) {
+		/*!
+		 * Do not use jQuery UI focusable because this might be overwritten if jQuery UI is loaded
+		 */
+		jQuery.extend( jQuery.expr[ ":" ], {
+			/**
+			 * This defines the jQuery ":sapFocusable" selector; If already present, nothing is
+			 * done here, so we will not overwrite any previous implementation.
+			 * If jQuery UI is loaded later on, this implementation here will NOT be overwritten by.
+			 */
+			sapFocusable: function( element ) {
 				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
 			}
 		});
@@ -12327,7 +12493,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.events') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides functionality related to eventing.
@@ -12336,7 +12502,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.keycodes') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /*
@@ -12867,157 +13033,197 @@ jQuery.sap.KeyCodes = {
 
 
 
-(function(){
+(function() {
 
 	jQuery.sap._touchToMouseEvent = true;
 
-	if ("ontouchend" in document) {
+	var onTouchStart,
+		onTouchMove,
+		onTouchEnd,
+		onTouchCancel,
+		onMouseEvent,
+		aMouseEvents,
+		bIsSimulatingTouchToMouseEvent = false;
 
-		var bHandleEvent = false;
-		var oTarget = null;
-		var bIsMoved = false;
-		var iStartX = null;
-		var iStartY = null;
+	if (jQuery.browser.webkit && /Mobile/.test(navigator.userAgent) && "ontouchend" in document) {
 
-		/**
-		 * Fires a synthetic mouse event for a given type and native touch event.
-		 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var fireMouseEvent = function(sType, oEvent) {
+		bIsSimulatingTouchToMouseEvent = true;
 
-			if (!bHandleEvent || !jQuery.sap._touchToMouseEvent) {
-				return;
-			}
-			
-			// we need mapping of the different event types to get the correct target
-			var oMappedEvent = oEvent.type == "touchend" ? oEvent.changedTouches[0] : oEvent.touches[0]; 
+		var simulateTouchToMouseEvent = (function() {
+			var document = window.document,
+				bHandleEvent = false,
+				oTarget = null,
+				bIsMoved = false,
+				iStartX,
+				iStartY,
+				i = 0;
 
-		    // create the synthetic event
-			var newEvent = document.createEvent('MouseEvent');  // trying to create an actual TouchEvent will create an error
-		    newEvent.initMouseEvent(sType, true, true, window, oEvent.detail,
-		    		oMappedEvent.screenX, oMappedEvent.screenY, oMappedEvent.clientX, oMappedEvent.clientY,
-		    		oEvent.ctrlKey, oEvent.shiftKey, oEvent.altKey, oEvent.metaKey,
-		    		oEvent.button, oEvent.relatedTarget);
-		    
-		    newEvent.isSynthetic = true;
+			aMouseEvents = ["mousedown", "mouseover", "mouseup", "mouseout", "click"];
 
-		    // Timeout needed. Do not interrupt the native event handling.
-		    window.setTimeout(function() {
-		    	oTarget.dispatchEvent(newEvent);
-		    },0);
-		};
+			/**
+			 * Fires a synthetic mouse event for a given type and native touch event.
+			 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			var fireMouseEvent = function(sType, oEvent) {
 
-
-		/**
-		 * Checks if the target of the event is an input field.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @return {Boolean} whether the target of the event is an input field.
-		 */
-		var isInputField = function(oEvent) {
-			return oEvent.target.tagName.match(/input|textarea|select/i);
-		};
-
-		
-		/**
-		 * Mouse event handler. Prevents propagation for native events. 
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onMouseEvent = function(oEvent) {
-			if (!oEvent.isSynthetic && !isInputField(oEvent) && jQuery.sap._touchToMouseEvent) {
-				oEvent.stopPropagation();
-				oEvent.preventDefault();
-			}
-		};
-
-
-		/**
-		 * Touch start event handler. Called whenever a finger is added to the surface. Fires mouse start event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchStart = function(oEvent) {
-			var oTouches = oEvent.touches;
-
-			bHandleEvent = (oTouches.length == 1 && !isInputField(oEvent));
-
-			if (bHandleEvent) {
-				bIsMoved = false;
-				var oTouch = oTouches[0];
-
-				// As we are only interested in the first touch target, we remember it
-				oTarget = oTouch.target;
-			    if(oTarget.nodeType == 3) {
-			    	// no text node
-			    	oTarget = oTarget.parentNode;
-			    }
-
-			    // Remember the start position of the first touch to determine if a click was performed or not.
-				iStartX = oTouch.clientX;
-				iStartY = oTouch.clientY;
-				fireMouseEvent("mousedown", oEvent);
-			}
-		};
-
-
-		/**
-		 * Touch move event handler. Fires mouse move event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchMove = function(oEvent) {
-			if (bHandleEvent) {
-				var oTouch = oEvent.touches[0];
-				// Check if the finger is moved. When the finger was moved, no "click" event is fired.
-				if (Math.abs(oTouch.clientX - iStartX) > 10 || Math.abs(oTouch.clientY - iStartY) > 10) {
-					bIsMoved = true;
+				if (!bHandleEvent) {
+					return;
 				}
-				if (bIsMoved) {
-					// Fire "mousemove" event only when the finger was moved. This is to prevent unwanted movements. 
-					fireMouseEvent("mousemove", oEvent);
+
+				// we need mapping of the different event types to get the correct target
+				var oMappedEvent = oEvent.type == "touchend" ? oEvent.changedTouches[0] : oEvent.touches[0]; 
+
+				// create the synthetic event
+				var newEvent = document.createEvent('MouseEvent');  // trying to create an actual TouchEvent will create an error
+				newEvent.initMouseEvent(sType, true, true, window, oEvent.detail,
+						oMappedEvent.screenX, oMappedEvent.screenY, oMappedEvent.clientX, oMappedEvent.clientY,
+						oEvent.ctrlKey, oEvent.shiftKey, oEvent.altKey, oEvent.metaKey,
+						oEvent.button, oEvent.relatedTarget);
+
+				newEvent.isSynthetic = true;
+
+				// Timeout needed. Do not interrupt the native event handling.
+				window.setTimeout(function() {
+						oTarget.dispatchEvent(newEvent);
+				}, 0);
+			};
+
+			/**
+			 * Checks if the target of the event is an input field.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @return {Boolean} whether the target of the event is an input field.
+			 */
+			var isInputField = function(oEvent) {
+				return oEvent.target.tagName.match(/input|textarea|select/i);
+			};
+
+			/**
+			 * Mouse event handler. Prevents propagation for native events. 
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onMouseEvent = function(oEvent) {
+				if (!oEvent.isSynthetic && !isInputField(oEvent)) {
+					oEvent.stopPropagation();
+					oEvent.preventDefault();
 				}
+			};
+
+			/**
+			 * Touch start event handler. Called whenever a finger is added to the surface. Fires mouse start event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchStart = function(oEvent) {
+				var oTouches = oEvent.touches,
+					oTouch;
+
+				bHandleEvent = (oTouches.length == 1 && !isInputField(oEvent));
+
+				if (bHandleEvent) {
+					bIsMoved = false;
+					oTouch = oTouches[0];
+
+					// As we are only interested in the first touch target, we remember it
+					oTarget = oTouch.target;
+					if(oTarget.nodeType == 3) {
+
+						// no text node
+						oTarget = oTarget.parentNode;
+					}
+
+					// Remember the start position of the first touch to determine if a click was performed or not.
+					iStartX = oTouch.clientX;
+					iStartY = oTouch.clientY;
+					fireMouseEvent("mousedown", oEvent);
+				}
+			};
+
+			/**
+			 * Touch move event handler. Fires mouse move event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchMove = function(oEvent) {
+				var oTouch;
+
+				if (bHandleEvent) {
+					oTouch = oEvent.touches[0];
+
+					// Check if the finger is moved. When the finger was moved, no "click" event is fired.
+					if (Math.abs(oTouch.clientX - iStartX) > 10 || Math.abs(oTouch.clientY - iStartY) > 10) {
+						bIsMoved = true;
+					}
+
+					if (bIsMoved) {
+
+						// Fire "mousemove" event only when the finger was moved. This is to prevent unwanted movements. 
+						fireMouseEvent("mousemove", oEvent);
+					}
+				}
+			};
+
+			/**
+			 * Touch end event handler. Fires mouse up and click event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchEnd = function(oEvent) {
+				fireMouseEvent("mouseup", oEvent);
+				if (!bIsMoved) {
+					fireMouseEvent("click", oEvent);
+				}
+			};
+
+			/**
+			 * Touch cancel event handler. Fires mouse up event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchCancel = function(oEvent) {
+				fireMouseEvent("mouseup", oEvent);
+			};
+
+			// Bind mouse events
+			for (; i < aMouseEvents.length; i++) {
+
+				// Add click on capturing phase to prevent propagation if necessary
+				document.addEventListener(aMouseEvents[i], onMouseEvent, true);
 			}
-		};
 
-
-		/**
-		 * Touch end event handler. Fires mouse up and click event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchEnd = function(oEvent) {
-			fireMouseEvent("mouseup", oEvent);
-			if (!bIsMoved) {
-				fireMouseEvent("click", oEvent);
-			}
-		};
-
-		
-		/**
-		 * Touch cancel event handler. Fires mouse up event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchCancel = function(oEvent) {
-			fireMouseEvent("mouseup", oEvent);
-		};
-
-		// Add click on capturing phase to prevent propagation if necessary
-		document.addEventListener('mousedown', onMouseEvent, true);
-		document.addEventListener('mouseover', onMouseEvent, true);
-		document.addEventListener('mouseup', onMouseEvent, true);
-		document.addEventListener('mouseout', onMouseEvent, true);
-		document.addEventListener('click', onMouseEvent, true);
-		// Bind touch events
-		document.addEventListener('touchstart', onTouchStart, true);
-		document.addEventListener('touchmove', onTouchMove, true);
-		document.addEventListener('touchend', onTouchEnd, true);
-		document.addEventListener('touchcancel', onTouchCancel, true);
+			// Bind touch events
+			document.addEventListener('touchstart', onTouchStart, true);
+			document.addEventListener('touchmove', onTouchMove, true);
+			document.addEventListener('touchend', onTouchEnd, true);
+			document.addEventListener('touchcancel', onTouchCancel, true);
+		}());
 	}
-	
 
+	/**
+	 * Disable touch to mouse handling
+	 *
+	 * @public
+	 */
+	jQuery.sap.disableTouchToMouseHandling = function() {
+		var i = 0;
+
+		if (!bIsSimulatingTouchToMouseEvent) {
+			return;
+		}
+
+		// unbind touch events
+		document.removeEventListener('touchstart', onTouchStart, true);
+		document.removeEventListener('touchmove', onTouchMove, true);
+		document.removeEventListener('touchend', onTouchEnd, true);
+		document.removeEventListener('touchcancel', onTouchCancel, true);
+
+		// unbind mouse events
+		for (; i < aMouseEvents.length; i++) {
+			document.removeEventListener(aMouseEvents[i], onMouseEvent, true);
+		}
+	};
 
 	/**
 	 * List of DOM events that a UIArea automatically takes care of.
@@ -13048,7 +13254,8 @@ jQuery.sap.KeyCodes = {
 		"dragleave",
 		"dragend",
 		"drop",
-		"paste"
+		"paste",
+		"cut"
 	];
 
 
@@ -13501,6 +13708,10 @@ jQuery.sap.KeyCodes = {
 			// also simulate touch events when sap-ui-xx-fakeOS is set (independently of the value and the current browser)
 			bSimulate = bSimulate || (document.location.search.indexOf("sap-ui-xx-fakeOS") > -1 || !!jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS")); // only allowed as URL parameter or in the bootstrap tag
 			
+			// always simulate touch events when the mobile lib is involved (FIXME: hack for Kelley, this does currently not work with dynamic library loading)
+			var sLibs = jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-libs");
+			bSimulate = bSimulate || (sLibs && sLibs.match(/sap.m\b/));
+
 			return bSimulate;
 		}
 
@@ -13509,7 +13720,7 @@ jQuery.sap.KeyCodes = {
 		var aAdditionalControlEvents = [];
 		var aAdditionalPseudoEvents = [];
 
-		if("ontouchend" in document){ //Touch events natively supported
+		if(jQuery.support.touch){ //Touch events natively supported
 			jQuery.sap.touchEventMode = "ON";
 
 			//ensure that "oEvent.touches", ... works (and not only "oEvent.originalEvent.touches", ...)
@@ -13536,14 +13747,25 @@ jQuery.sap.KeyCodes = {
 						$this = jQuery(this);
 						var fHandler = function(oEvent) {
 							if(!(oEvent.type != "mouseout" || (oEvent.type === "mouseout" && jQuery.sap.checkMouseEnterOrLeave(oEvent, that)))){
-								return;
+								var bSkip = true;
+								var sControlId = $this.data("__touchstart_control");
+								if(sControlId){
+									var oCtrlDom = jQuery.sap.domById(sControlId);
+									if(oCtrlDom && jQuery.sap.checkMouseEnterOrLeave(oEvent, oCtrlDom)){
+										bSkip = false;
+									}
+								}
+								if(bSkip){
+									return;
+								}
 							}
-
 							var oNewEvent = jQuery.event.fix(oEvent.originalEvent);
 							oNewEvent.type = sSapName;
+							//reset the _sapui_handledByUIArea flag
+							if (oNewEvent.originalEvent._sapui_firstUIArea) {
+								oNewEvent.originalEvent._sapui_handledByUIArea = false;
+							}
 
-							//TODO Extend if necessary
-							//Extended by adding changedTouches and targetTouches which equal to touches
 							var aTouches = [{
 								identifier: 1,
 								pageX: oNewEvent.pageX,
@@ -13552,23 +13774,36 @@ jQuery.sap.KeyCodes = {
 								clientY: oNewEvent.clientY,
 								screenX: oNewEvent.screenX,
 								screenY: oNewEvent.screenY,
+								target: oNewEvent.target,
 								radiusX: 1,
 								radiusY: 1,
 								rotationAngle: 0
 							}];
-							
-							oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
-							
-							//when touchend, the touches and targetTouches should be empty array
-							if(sName === "touchend"){
-								oNewEvent.touches = oNewEvent.targetTouches = [];
+
+							switch (sName) {
+								case "touchstart":
+								case "touchmove":
+									oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
+									break;
+	
+								case "touchend":
+									oNewEvent.changedTouches = aTouches;
+									oNewEvent.touches = oNewEvent.targetTouches = [];
+									break;
+
+								// no default
 							}
-							
+
 							if(sName === "touchstart" || $this.data("__touch_in_progress")){
 								$this.data("__touch_in_progress", "X");
+								var oControl = jQuery.fn.control ? jQuery(oEvent.target).control(0) : null;
+								if(oControl){
+									$this.data("__touchstart_control", oControl.getId());
+								}
 								oHandle.handler.call(that, oNewEvent);
 								if(sName === "touchend"){
 									$this.removeData("__touch_in_progress");
+									$this.removeData("__touchstart_control");
 								}
 							}
 						};
@@ -13878,14 +14113,13 @@ jQuery.sap.KeyCodes = {
 	}
 
 }());
-
 }; // end of jquery.sap.events
 
 if ( !jQuery.sap.isDeclared('jquery.sap.mobile') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides common helper functions for the mobile version of UI5 
@@ -13894,35 +14128,60 @@ jQuery.sap.declare("jquery.sap.mobile");
 
 
 (function( $ ) {
-	var FAKE_OS_PATTERN = /(?:\?|&)sap-ui-xx-fakeOS=([^&]+)/;
+	var FAKE_OS_PATTERN = /(?:\?|&)sap-ui-xx-fakeOS=([^&]+)/,
+		mFakeFonts = undefined;
+	$.sap.simulateMobileOnDesktop = false;
 
 	// OS overriding mechanism
-	if (jQuery.browser.webkit && !jQuery.support.touch) { // on non-touch webkit browsers we are interested in overriding
+	if ((jQuery.browser.webkit || (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) >= 10)) && !jQuery.support.touch) { // on non-touch webkit browsers and IE10 we are interested in overriding
 		var result = document.location.search.match(FAKE_OS_PATTERN);
 		var resultUA = result && result[1] || jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
 		if (resultUA) {
+			$.sap.simulateMobileOnDesktop = true;
 			var ua = { // for "ios"/"android"/"blackberry" we have defined fake user-agents; these will affect all other browser/platform detection mechanisms
 					ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					iphone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					ipad: "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206",
 					android: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
-					blackberry: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; de) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.296 Mobile Safari/534.11+"
+					android_phone: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
+					android_tablet: "Mozilla/5.0 (Linux; Android 4.1.2; Nexus 7 Build/JZ054K) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
+					blackberry: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/10.0.9.2372 Mobile Safari/537.10+",
+					winphone: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 920)"
 			}[resultUA];
 
-			if (ua) {
+			if (ua &&
+					(jQuery.browser.webkit && resultUA !== "winphone" || jQuery.browser.msie && resultUA === "winphone")) { // only for the working combinations
+				
+				mFakeFonts = {
+					ios: "'Helvetica Neue'",
+					android: "Roboto,'Droid Sans'",
+					blackberry: "'BBGlobal Sans','DejaVu Sans'",
+					winphone: "'Segoe WP', 'Segoe UI'"
+				};
+				
 				// code for modifying the real user-agent
 				if (jQuery.browser.safari) {
 					var __originalNavigator = window.navigator;
 					window.navigator = new Object();
 					window.navigator.__proto__ = __originalNavigator;
 					window.navigator.__defineGetter__('userAgent', function(){ return ua; });
-
-				} else { // Chrome - we have already verified we have a webkit browser
-					window.navigator.__defineGetter__('userAgent', function(){ return ua; });
+				} else { // Chrome, IE10
+					Object.defineProperty(navigator, "userAgent", {
+						get: function() {
+							return ua;
+						}
+					});
 				}
 
-				// all downstream checks will be fine with the faked user-agent. Now we also need to adjust the wrong upstream settings in jQuery:
-				jQuery.browser.msie = jQuery.browser.opera = jQuery.browser.mozilla = false;
-				jQuery.browser.webkit = true;
-				jQuery.browser.version = "534.46"; // this is not exactly true for all UAs, but there are much bigger shortcomings of this approach than a minor version of the browser, so giving the exact value is not worth the effort
+				if(jQuery.browser.webkit) {
+					// all downstream checks will be fine with the faked user-agent. 
+					// But now we also need to adjust the wrong upstream settings in jQuery:
+					jQuery.browser.msie = jQuery.browser.opera = jQuery.browser.mozilla = false;
+					jQuery.browser.webkit = true;
+					jQuery.browser.version = "534.46"; // this is not exactly true for all UAs, but there are much bigger shortcomings of this approach than a minor version of the browser, so giving the exact value is not worth the effort
+				} else {
+					// in IE10 with winphone emulation, jQuery.browser has already the correct information
+				}
 			}
 		}
 	}
@@ -13945,23 +14204,36 @@ jQuery.sap.declare("jquery.sap.mobile");
 			} else if (result[0].match(bbDevices)) {
 				return({os:"blackberry", version:result[4]});
 			} else {
-				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
+				// currently we only support iOS, Android, BlackBerry 10.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
 				return;
 			}
+			
+		} else if (userAgent.indexOf("(BB10;") > 0) { 
+			// BlackBery 10 has a different structure...
+			platform = /\sVersion\/([\d.]+)\s/;
+			result = userAgent.match(platform);
+			if (result){
+				return {os: "blackberry", version:result[1]};
+			} else {
+				return {os: "blackberry", version:10};
+			}
+			
 		} else {
 			// Windows phone has a different structure, so we need to check with another regExp.
 			platform = /Windows Phone (?:OS )?([\d.]*)/;
 			result = userAgent.match(platform);
 			if (result){
-				return({os: "winphone", version:result[1]});
+				return {os: "winphone", version:result[1]};
 			} else {
 				return;
 			}
 		}
 	}
 
-	var os = getOS() || {};
-	var $window = $(window);
+	var os = getOS() || {},
+		oHtml = window.document.documentElement,
+		iDocumentWidth = oHtml.clientWidth,
+		iDocumentHeight = oHtml.clientHeight;
 
 	if (os.os) {
 		var f = parseFloat(os.version);
@@ -14016,6 +14288,12 @@ jQuery.sap.declare("jquery.sap.mobile");
 		if (!$.os) $.os = {};
 	}
 
+	// if fakeOS is set, the first installed font of the list of fonts for the various platforms will win, but we should only use appropriate ones for the simulated platform
+	if (mFakeFonts) { // this is only defined if we are in a valid fakeOS situation
+		var sFont = mFakeFonts[$.os.os];
+		// this is only relevant for demo purposes in MVI theme. Disabling it for the moment.   $("head").append("<style>.sapUiBody{font-family:" + sFont + ",Helvetica,Arial !important;</style>");
+	}
+
 	// feature and state detection
 	$.extend( $.support, {
 		/**
@@ -14027,11 +14305,29 @@ jQuery.sap.declare("jquery.sap.mobile");
 	});
 
 	function isLandscape(){
-//		return (window.orientation === undefined) || window.orientation === 90 || window.orientation === -90; // landscape is assumed to be default and returned on desktop browsers
-		return $window.width() > $window.height();
+		var iWidth = oHtml.clientWidth,
+			iHeight = oHtml.clientHeight,
+			bKeyboardOpen = false;
+		if(jQuery.sap.touchEventMode === "ON"){
+			//if runs in real device, landscape/portrait detection is skipped when keyboard opens
+			//when keyboard opens, only height changes.
+			//we can't simply compare the width and height on window because when keyboard is open in android, it makes the window smaller which can turn a device from portrait to landscape, for example in Nexus 7
+			//because the height may get smaller than the width when keyboard opens.
+			if((iWidth === iDocumentWidth) && (iHeight !== iDocumentHeight)){
+				bKeyboardOpen = true;
+			}
+			//return window.orientation === undefined || window.orientation === 90 || window.orientation === -90;
+		}
+		
+		iDocumentWidth = iWidth;
+		iDocumentHeight = iHeight;
+		
+		//if keyboard opens, landscape value doesn't change. otherwise, compare width with height.
+		return bKeyboardOpen ? $.device.is.landscape : iWidth > iHeight;
 	}
 
-	var landscape = isLandscape();
+	var landscape = iDocumentWidth > iDocumentHeight;
+	var android_phone = (/(?=android)(?=.*mobile)/i.test(navigator.userAgent));
 	/**
 	 * @name jQuery.device
 	 * @namespace
@@ -14076,7 +14372,23 @@ jQuery.sap.declare("jquery.sap.mobile");
 		 * @type {boolean}
 		 * @public 
 		 */
-		ipad: /ipad/i.test(navigator.userAgent)
+		ipad: /ipad/i.test(navigator.userAgent),
+		/**
+		 * Whether the application runs on an Android phone
+		 * https://developers.google.com/chrome/mobile/docs/user-agent
+		 * Some device vendors however do not follow this rule
+		 * @type {boolean}
+		 * @public
+		 */
+		android_phone: android_phone,
+		/**
+		 * Whether the application runs on an Android tablet
+		 * https://developers.google.com/chrome/mobile/docs/user-agent
+		 * Some device vendors however do not follow this rule
+		 * @type {boolean}
+		 * @public
+		 */
+		android_tablet: (!!$.os.android && !android_phone)
 	},$.device.is);
 
 	$(window).bind("resize", function(){
@@ -14084,46 +14396,65 @@ jQuery.sap.declare("jquery.sap.mobile");
 		$.device.is.landscape = landscape;
 		$.device.is.portrait = !landscape;
 	});
-
+	
 	var tablet = (function(){
-		if(jQuery.os.ios){
-			return jQuery.device.is.ipad;
+		if($.os.ios){
+			return $.device.is.ipad;
 		}else{
 			//this is how android distinguishes between tablet and phone
 			//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
-			return (Math.min($window.width(), $window.height()) >= 600);
+			if(jQuery.sap.touchEventMode === "ON"){
+				//in real mobile device
+				return (Math.min(window.screen.width / window.devicePixelRatio, window.screen.height / window.devicePixelRatio) >= 600);
+			}else{
+				//in desktop browser
+				//return (Math.min($window.width(), $window.height()) >= 600);
+				return $.device.is.android_tablet;
+			}
 		}
 	}());
 
 	$.device.is = $.extend( /** @lends jQuery.device.is */ { 
 		/**
-		 * Whether the running device is a tablet. If the desktop browser runs with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile, this property will also be set according to the window size.
-		 * This property will be false when runs in desktop browser without touch support. 
-		 * This property will only be set once when the application starts up, and it won't be updated when the window resizes in a touch enabled desktop browser.
+		 * Whether the running device is a tablet.
+		 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile), 
+		 * this property will also be set according to the simulated platform.
+		 * This property will be false when runs in desktop browser.
 		 * @type {boolean}
 		 * @public
 		 */
-		tablet: tablet && (jQuery.sap.touchEventMode !== "OFF"),
+		tablet: ($.support.touch || $.sap.simulateMobileOnDesktop) && tablet,
 		/**
-		 * Whether the running device is a phone. If the desktop browser runs with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile, this property will also be set according to the window size.
-		 * This property will be false when runs in desktop browser without touch support. 
-		 * This property will only be set once when the application starts up, and it won't be updated when the window resizes in a touch enabled desktop browser.
+		 * Whether the running device is a phone.
+		 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile), 
+		 * this property will also be set according to the simulated platform.
+		 * This property will be false when runs in desktop browser.
 		 * @type {boolean}
 		 * @public
 		 */
-		phone: !tablet && (jQuery.sap.touchEventMode !== "OFF"),
+		phone: ($.support.touch || $.sap.simulateMobileOnDesktop) && !tablet,
 		/**
-		 * Whether the running device is a desktop browser without touch support.
+		 * Whether the running device is a desktop browser.
+		 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile), 
+		 * this property will be false.
 		 * @type {boolean}
 		 * @public
 		 */
-		desktop: (jQuery.sap.touchEventMode === "OFF")
+		desktop: !$.support.touch && !$.sap.simulateMobileOnDesktop
 	}, $.device.is);
+	
+	// add CSS class to root element to distinguish device classes
+	// "sap-phone" for small touch devices, "sap-tablet" for large touch devices, "sap-desktop" for non-touch devices
+	// TODO: move to central device API once that one is done; in the future also introduce device size classes and take care of desktop with touch, Surface, Win8 etc.
+	$("html").addClass("sap-" + ($.device.is.desktop ? "desktop" : ($.device.is.tablet ? "tablet" : "phone")));
 
 	var _bInitMobileTriggered = false;
 
 	/**
 	 * Does some basic modifications to the HTML page that make it more suitable for mobile apps.
+	 * Only the first call to this method is executed, subsequent calls are ignored. Note that this method is also called by the constructor of toplevel controls like sap.m.App, sap.m.SplitApp and sap.m.Shell.
+	 * Exception: if no homeIcon was set, subsequent calls have the chance to set it.
+	 * 
 	 * The "options" parameter configures what exactly should be done.
 	 *  
 	 * It can have the following properties:
@@ -14132,39 +14463,31 @@ jQuery.sap.declare("jquery.sap.mobile");
 	 * <li>statusBar: the iOS status bar color, "default", "black" or "black-translucent" (default: "default")</li>
 	 * <li>hideBrowser: whether the browser UI should be hidden as far as possible to make the app feel more native (default: true)</li>
 	 * <li>preventScroll: whether native scrolling should be disabled in order to prevent the "rubber-band" effect where the whole window is moved (default: true)</li>
+	 * <li>preventPhoneNumberDetection: whether Safari Mobile should be prevented from transforming any numbers that look like phone numbers into clickable links; this should be left as "true", otherwise it might break controls because Safari actually changes the DOM. This only affects all page content which is created after initMobile is called.</li>
 	 * <li>rootId: the ID of the root element that should be made fullscreen; only used when hideBrowser is set (default: the document.body)</li>
 	 * <li>useFullScreenHeight: a boolean that defines whether the height of the html root element should be set to 100%, which is required for other elements to cover the full height (default: true)</li>
-	 * <li>homeIcon: The icon to be displayed on the home screen of iOS devices after the user does "add to home screen" (default: no icon).
-	 *     This icon must be in PNG format. The property can either hold the URL of one single icon which is used for all devices (and possibly scaled, 
-	 *     which looks not perfect), or an object holding icon URLs for the different required sizes; one example is:
-	 *     <pre>
-	 *     {
-	 *        'phone':'phone-icon.png',
-	 *        'phone@2':'phone-retina.png',
-	 *        'tablet':'tablet-icon.png',
-	 *        'tablet@2':'tablet-retina.png'
-	 *     }
-	 *     </pre>
-	 *     The respective image sizes are 57/114 px for the phone and 72/144 px for the tablet. If an object is given but the required size is missing 
-	 *     from the object, the largest given URL will be used.</li>
-	 * <li>homeIconPrecomposed: whether the home icon already has some glare effect (otherwise iOS will add it) (default: false)</li>
+	 * <li>homeIcon: deprecated since 1.12, use jQuery.sap.setIcons instead.
 	 * </ul>
+	 * 
 	 * 
 	 * @param {object}  [options] configures what exactly should be done
 	 * @param {boolean} [options.viewport=true] whether to set the viewport in a way that disables zooming
 	 * @param {string}  [options.statusBar='default'] the iOS status bar color, "default", "black" or "black-translucent"
 	 * @param {boolean} [options.hideBrowser=true] whether the browser UI should be hidden as far as possible to make the app feel more native
 	 * @param {boolean} [options.preventScroll=true] whether native scrolling should be disabled in order to prevent the "rubber-band" effect where the whole window is moved
+	 * @param {boolean} [options.preventPhoneNumberDetection=true] whether Safari mobile should be prevented from transforming any numbers that look like phone numbers into clickable links
 	 * @param {string}  [options.rootId] the ID of the root element that should be made fullscreen; only used when hideBrowser is set. If not set, the body is used
 	 * @param {boolean} [options.useFullScreenHeight=true] whether the height of the html root element should be set to 100%, which is required for other elements to cover the full height 
-	 * @param {string}  [options.homeIcon=undefined] The icon to be displayed on the home screen of iOS devices after the user does "add to home screen".
-	 * @param {boolean} [options.homeIconPrecomposed=false] whether the home icon already has some glare effect (otherwise iOS will add it) 
+	 * @param {string}  [options.homeIcon=undefined] deprecated since 1.12, use jQuery.sap.setIcons instead.
+	 * @param {boolean} [options.homeIconPrecomposed=false] deprecated since 1.12, use jQuery.sap.setIcons instead. 
 	 * 
 	 * @name jQuery.sap.initMobile
 	 * @function
 	 * @public
 	 */
 	$.sap.initMobile = function(options) {
+		var $head = $("head");
+		
 		if (!_bInitMobileTriggered) { // only one initialization per HTML page
 			_bInitMobileTriggered = true;
 
@@ -14173,18 +14496,31 @@ jQuery.sap.declare("jquery.sap.mobile");
 				statusBar: "default",
 				hideBrowser: true,
 				preventScroll: true,
+				preventPhoneNumberDetection: true,
 				useFullScreenHeight: true,
 				homeIconPrecomposed: false
 			}, options);
-
+			
+			// en-/disable automatic link generation for phone numbers
+			if ($.os.ios && options.preventPhoneNumberDetection) {
+				$head.append($('<meta name="format-detection" content="telephone=no">')); // this only works for all DOM created afterwards
+				
+			} else if ($.browser.msie) {
+				$head.append($('<meta http-equiv="cleartype" content="on">'));
+				$head.append($('<meta name="msapplication-tap-highlight" content="no"/>'));
+			}
+			
 			$(function() {
-				var $head = $("head");
 
 				// initialize viewport
 				if (options.viewport) {
 					if ($.device.is.iphone && (Math.max(window.screen.height, window.screen.width) === 568)) {
 						// iPhone 5
 						$head.append($('<meta name="viewport" content="user-scalable=0, initial-scale=1.0">'));
+					} else if ($.os.android && $.os.fVersion < 3){
+						$head.append($('<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'));
+					} else if ($.os.winphone){
+						$head.append($('<meta name="viewport" content="width=320, user-scalable=no">'));
 					} else {
 						// all other devices
 						$head.append($('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'));
@@ -14192,6 +14528,7 @@ jQuery.sap.declare("jquery.sap.mobile");
 				}
 
 				if ($.os.ios) {
+
 					// enable fullscreen when possible
 					$head.append($('<meta name="apple-mobile-web-app-capable" content="yes">')); // since iOS 2.1
 
@@ -14201,26 +14538,6 @@ jQuery.sap.declare("jquery.sap.mobile");
 					// splash screen
 					//<link rel="apple-touch-startup-image" href="/startup.png">
 
-				} else if ($.browser.msie) {
-					$head.append($('<meta http-equiv="cleartype" content="on">'));
-				}
-
-				// Home Icon (also working in Android depending on version and other circumstances)
-				var icon = options.homeIcon;
-				if (icon) {
-					var precomposed = options.homeIconPrecomposed ? "-precomposed" : "";
-					if (typeof icon === "string") { // case 1: one home icon to rule them all
-						$head.append($('<link rel="apple-touch-icon' + precomposed + '" href="' + icon + '">'));
-
-					} else if (typeof icon === "object") { // case 2: a config object with optimized home icons for different devices
-						var getBestIcon = function(res) {
-							return icon[res] || icon['tablet@2'] || icon['phone@2'] || icon['phone'] || icon['tablet']; // fallback logic
-						};
-						var requiredSize = ($.device.is.ipad ? "tablet" : "phone") + ($.support.retina ?  "@2": "");
-						var size = ($.device.is.ipad ? 72 : 57) * ($.support.retina ?  2 : 1);
-						var sizes = (size === 57) ? '' : 'sizes="' + size + 'x' + size + '"';
-						$head.append($('<link rel="apple-touch-icon"' + precomposed + ' ' + sizes + ' href="' + getBestIcon(requiredSize) + '">'));
-					}
 				}
 
 				// hide browser address bar
@@ -14243,7 +14560,11 @@ jQuery.sap.declare("jquery.sap.mobile");
 				}
 
 				if (options.preventScroll) {
-					$(window).bind("touchmove", function(e){e.preventDefault();}); // this one prevents the rubber-band effect - and disables native scrolling
+					$(window).bind("touchmove", function sapInitMobileTouchMoveHandle(oEvent){
+						if (!oEvent.isDefaultPrevented()) {
+							oEvent.preventDefault();	// this one prevents the rubber-band effect - and disables native scrolling
+						}
+					});
 				}
 
 				if (options.useFullScreenHeight) {
@@ -14252,6 +14573,7 @@ jQuery.sap.declare("jquery.sap.mobile");
 					});
 				}
 			});
+
 
 			// platform depending checks to show mobile support message
 			$(function() {
@@ -14270,33 +14592,62 @@ jQuery.sap.declare("jquery.sap.mobile");
 						jQuery.os.os == "winphone") {
 
 					// check OS version
-					if ((jQuery.os.ios && jQuery.os.fVersion < 5) ||
-							(jQuery.os.android && jQuery.os.fVersion < 2.3) ||
-							(jQuery.os.blackberry && jQuery.os.fVersion < 7) ||
-							(jQuery.os.winphone) ||
-							(!jQuery.browser.webkit)) { 
+					if ((jQuery.os.ios && jQuery.os.fVersion < 5) ||              // iOS < 5.x
+							(jQuery.os.android && jQuery.os.fVersion < 2.3) ||    // Android < 2.3
+							(jQuery.os.blackberry && jQuery.os.fVersion < 10) ||  // BlackBerry < 10
+							(jQuery.os.winphone && jQuery.os.fVersion < 8) ||     // Windows Phone < 8
+							(!jQuery.os.winphone && !jQuery.browser.webkit) ||    // non-Webkit browsers on iOS/Android/BlackBerry
+							(jQuery.os.winphone && !jQuery.browser.msie)) {       // non-IE browsers on Windows Phone
 						bShowSupportMessage = true;
-						sSupportMessage= getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_DEVICE", [jQuery.os.os, jQuery.os.fVersion]);
+						sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_DEVICE", [jQuery.os.os, jQuery.os.fVersion]);
 					}
 
-					// check browser
+				// check desktop browser
 				} else {
 
-					// check if browser is webkit-based
-					if (!jQuery.browser.webkit){
+					// check if browser is something else than webkit-based or IE9+
+					if (!jQuery.browser.webkit && !(jQuery.browser.msie && jQuery.browser.fVersion >= 9)){
 						sPopupWidth = "auto";
 						bShowSupportMessage = true;
 						sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_BROWSER");
 
-					} else {
-						// show message only if no URL parameter is set
-						var result = window.location.search.match(FAKE_OS_PATTERN);
-						var resultUA = result && result[1] || jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
-						if (!resultUA || (resultUA !== "ios" && resultUA !== "android" && resultUA !== "blackberry")) {
-							sPopupWidth = "480px";
-							iTimeOut = 5000;
-							bShowSupportMessage = true;
-							sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_URL_PARAM");
+					} else { // webkit or IE9+
+						
+						// now it gets dirty: in sap_mvi only IE10 or webkit with fakeOS is supported, in sap_bluecrystal these browsers are all fully supported
+						// this should go into library metadata or so, but for now hardcode that
+						// and give the warning only for MVI (blacklist), not for unknown themes, because those might support desktop without fakeOS
+						
+						// so find out the theme - this ignores any configuration  (URL ... bootstrap ... config)
+						var oThemeMatch = document.location.search.match(/sap-ui-theme=([^&]+)/);
+						var sTheme = oThemeMatch ? oThemeMatch[1] : jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-theme");
+						sTheme = sTheme || (window["sap-ui-config"] ? window["sap-ui-config"].theme : null);
+						
+						if (sTheme !== "sap_mvi") { // sap_bluecrystal or any unknown theme
+							// IE9+ and webkit are (or could be) supported
+							
+						} else { // sap_mvi; only supported with fakeOS
+							// show message if no URL parameter is set
+							var result = window.location.search.match(FAKE_OS_PATTERN);
+							var resultUA = result && result[1] || jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
+							
+							if (!resultUA) { // desktop browser with no fakeOS being set
+								if (jQuery.browser.msie && jQuery.browser.fVersion >= 9) {
+									// IE9+ without fakeOS is supported now as regular desktop platform
+								} else {
+									sPopupWidth = "480px";
+									iTimeOut = 6000;
+									bShowSupportMessage = true;
+									sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_URL_PARAM");
+								}
+								
+								// fakeOS is set, desktop browser
+							} else if (jQuery.browser.webkit && resultUA === "winphone" ||
+									!jQuery.browser.webkit && resultUA !== "winphone") { // fakeOS set, but to a platform not supported in current browser
+								sPopupWidth = "480px";
+								iTimeOut = 7000;
+								bShowSupportMessage = true;
+								sSupportMessage = getRB("sap.ui.core").getText("MOBILE_SUPPORT_MESSAGE_URL_PARAM_COMBINATION");
+							}
 						}
 
 					}
@@ -14344,6 +14695,105 @@ jQuery.sap.declare("jquery.sap.mobile");
 			});
 
 		}
+		
+		if (options.homeIcon) {
+			var oIcons = options.homeIcon;
+			if (typeof oIcons === "string") {
+				oIcons = {phone:oIcons};
+			}
+			oIcons.precomposed = options.homeIconPrecomposed;
+			oIcons.favicon = options.homeIcon.icon;
+			oIcons.icon = undefined;
+			$.sap.setIcons(oIcons);
+		}
+	};
+	
+	
+	/**
+	 * Sets the bookmark icon for desktop browsers and the icon to be displayed on the home screen of iOS devices after the user does "add to home screen".
+	 * 
+	 * Only call this method once and call it early when the page is loading: browsers behave differently when the favicon is modified while the page is alive. 
+	 * Some update the displayed icon inside the browser but use an old icon for bookmarks.
+	 * When a favicon is given, any other existing favicon in the document will be removed.
+	 * When at least one home icon is given, all existing home icons will be removed and new home icon tags for all four resolutions will be created.
+	 * 
+	 * The home icons must be in PNG format and given in different sizes for iPad/iPhone with and without retina display. 
+	 * The favicon is used in the browser and for desktop shortcuts and should optimally be in ICO format: 
+	 * PNG does not seem to be supported by Internet Explorer and ICO files can contain different image sizes for different usage locations. E.g. a 16x16px version
+	 * is used inside browsers.
+	 * 
+	 * All icons are given in an an object holding icon URLs and other settings. The properties of this object are:
+	 * <ul>
+	 * <li>phone: a 57x57 pixel version for non-retina iPhones</li>
+	 * <li>tablet: a 72x72 pixel version for non-retina iPads</li>
+	 * <li>phone@2: a 114x114 pixel version for retina iPhones</li>
+	 * <li>tablet@2: a 144x144 pixel version for retina iPads</li>
+	 * <li>precomposed: whether the home icons already have some glare effect (otherwise iOS will add it) (default: false)</li>
+	 * <li>favicon: the ICO file to be used inside the browser and for desktop shortcuts</li>
+	 * </ul>
+	 * 
+	 * One example is:
+	 * <pre>
+	 * {
+	 *    'phone':'phone-icon_57x57.png',
+	 *    'phone@2':'phone-retina_117x117.png',
+	 *    'tablet':'tablet-icon_72x72.png',
+	 *    'tablet@2':'tablet-retina_144x144.png',
+	 *    'precomposed':true,
+	 *    'favicon':'desktop.ico'
+	 * }
+	 * </pre>
+	 * If one of the sizes is not given, the largest available alternative image will be used instead for this size.
+	 * On Android these icons may or may not be used by the device. Apparently chances can be improved by using icons with glare effect, so the "precomposed" property can be set to "true". Some Android devices may also use the favicon for bookmarks instead of the home icons.</li>
+	 */
+	$.sap.setIcons = function(oIcons) {
+		if (!oIcons || (typeof oIcons !== "object")) {
+			$.sap.log.warning("Call to jQuery.sap.setIcons() has been ignored because there were no icons given or the argument was not an object.");
+			return ;
+		}
+		
+		var $head = $("head"),
+			precomposed = oIcons.precomposed ? "-precomposed" : "",
+			getBestFallback = function(res) {
+				return oIcons[res] || oIcons['tablet@2'] || oIcons['phone@2'] || oIcons['phone'] || oIcons['tablet']; // fallback logic
+			},
+			mSizes = {
+				"phone": "",
+				"tablet": "72x72", 
+				"phone@2": "114x114",
+				"tablet@2": "144x144"
+			};
+		
+		// desktop icon
+		if (oIcons["favicon"]) {
+			// remove any other favicons
+			var $fav = $head.find("[rel^=shortcut]"); // cannot search for "shortcut icon"
+			$fav.each(function(){
+				if (this.rel === "shortcut icon") {
+					$(this).remove();
+				}
+			});
+			
+			// create favicon
+			$head.append($('<link rel="shortcut icon" href="' + oIcons["favicon"] + '" />'));
+		}
+		
+		
+		// mobile home screen icons
+		
+		if (getBestFallback("phone")) {
+			// if any home icon is given remove old ones
+			$head.find("[rel=apple-touch-icon]").remove();
+			$head.find("[rel=apple-touch-icon-precomposed]").remove();
+		}
+		
+		for (var platform in mSizes) {
+			oIcons[platform] = oIcons[platform] || getBestFallback(platform);
+			if (oIcons[platform]) {
+				var size = mSizes[platform];
+				$head.append($('<link rel="apple-touch-icon' + precomposed + '" ' + (size ? 'sizes="' + size + '"' : "") + ' href="' + oIcons[platform] + '" />'));
+			}
+		}
 	};
 
 })( jQuery );
@@ -14354,7 +14804,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.properties') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides access to Java-like properties files
@@ -14363,7 +14813,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.sjax') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /*
@@ -14574,7 +15024,7 @@ jQuery.sap.declare("jquery.sap.sjax", false);
 	 * currently in the list.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
@@ -14826,7 +15276,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.resources') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides access to Java-like resource bundles in properties file format
@@ -14845,7 +15295,7 @@ jQuery.sap.declare("jquery.sap.resources");
 	 *
 	 * Use {@link jQuery.sap.resources} to create an instance of jQuery.sap.util.ResourceBundle.
 	 * There you have to specify the URL to the base .properties file of a bundle
-     * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
+	 * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
 	 * a locale. The locale is defined as a string of the language and an optional country code
 	 * separated by underscore (e.g. "en_GB" or "fr"). If no locale is passed, the default
 	 * locale is "en" if the SAPUI5 framework is not available. Otherwise the default locale is taken from
@@ -14855,24 +15305,34 @@ jQuery.sap.declare("jquery.sap.resources");
 	 * for a given key will be returned.
 	 *
 	 * With the given locale, the ResourceBundle requests the locale-specific properties file
-	 * (e.g. "mybundle_fr_FR.properties").
-	 * If no file is found for the locale "fr_FR", the fall back is requested. The fall back is the
-	 * language code without any specific country code, in this case "fr".
-	 * The same is true if the getText() method did not find a string value for a given key.
-	 * If no language-specific file is found the English file, it is requested with locale "en".
-	 * If also the English file is not present, the file without language and country code is requested.
-	 * This is the file that is originally used as URL parameter.
+	 * (e.g. "mybundle_fr_FR.properties"). If no file is found for the requested locale or if the file
+	 * does not contain a text for the given key, a sequence of fall back locales is tried one by one. 
+	 * First, if the locale contains a region information (fr_FR), then the locale without the region is
+	 * tried (fr). If that also can't be found or doesn't contain the requested text, the english file 
+	 * is used (en - assuming that most development projects contain at least english texts).    
+	 * If that also fails, the file without locale (base URL of the bundle) is tried.
+	 * 
+	 * If none of the requested files can be found or none of them contains a text for the given key,
+	 * then the key itself is returned as text. 
 	 *
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
 	 */
+	
 	/**
-	 * Returns a locale-specific string value for the given key sKey.
+	 * Returns a locale-specific string value for the given key sKey. 
+	 * 
+	 * The text is searched in this resource bundle according to the fallback chain described in 
+	 * {@link jQuery.sap.util.ResourceBundle}. If no text could be found, the key itself is used as text.
+	 * 
+	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer 
+	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key). 
+	 * 
 	 * @param {string} sKey
 	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.
 	 * @return {string} The value belonging to the key, if found; otherwise the key itself.
@@ -14899,7 +15359,7 @@ jQuery.sap.declare("jquery.sap.resources");
 	var rlocale=/^((?:[A-Z]{2,3}(?:-[A-Z]{3}){0,3})|[A-Z]{4}|[A-Z]{5,8})(?:-([A-Z]{4}))?(?:-([A-Z]{2}|[0-9]{3}))?(-[0-9A-Z]{5,8}|(?:[0-9][0-9A-Z]{3}))*(?:-([0-9A-WYZ](?:-[0-9A-Z]{2,8})+))*(?:-(X(?:-[0-9A-Z]{1,8})+))?$/i;
 
 	/**
-	 * Resource bundles are stored according to the Java DEvelopment Kit conventions.
+	 * Resource bundles are stored according to the Java Development Kit conventions.
 	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi", "in" for "id" and "sh" for "sr").
 	 * Make sure to convert newer codes to older ones before creating file names.
 	 */
@@ -14925,7 +15385,16 @@ jQuery.sap.declare("jquery.sap.resources");
 		if ( typeof sLocale === 'string' && (m = rlocale.exec(sLocale.replace(/_/g, '-'))) ) {
 			var sLanguage = m[1].toLowerCase();
 			sLanguage = M_ISO639_NEW_TO_OLD[sLanguage] || sLanguage;
-			return sLanguage + (m[3] ? "_" + m[3].toUpperCase() + (m[4] ? "_" + m[4].slice(1).replace("-","_") : "") : "");
+			var sScript = m[2] ? m[2].toLowerCase() : undefined;
+			var sRegion = m[3] ? m[3].toUpperCase() : undefined;
+			if ( sLanguage === "zh" && !sRegion ) {
+				if ( sScript === "hans" ) {
+					sRegion = "CN"; 
+				} else if ( sScript === "hant" ) {
+					sRegion = "TW";
+				}
+			} 
+			return sLanguage + (sRegion ? "_" + sRegion + (m[4] ? "_" + m[4].slice(1).replace("-","_") : "") : "");
 		}
 	}
 	
@@ -15086,25 +15555,32 @@ jQuery.sap.declare("jquery.sap.resources");
 	 */
 	function load(oBundle, sLocale) {
 		var oUrl = oBundle.oUrlInfo; 
-		if(jQuery.inArray(sLocale, oBundle.aLocales) == -1){
-			var oHeader = null;
-			var sTempUrl;
-			switch (oUrl.ext) {
-				case '.hdbtextbundle':
-					sLocale = convertLocaleToBCP47(sLocale);
-					oHeader = {
-						"Accept-Language": sLocale
-					};
-					sTempUrl = oUrl.url;
-					//Alternative: add locale as query
-					//sTempUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : "");
-					break;
-				default:
-					sTempUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
-					break;
+		if( jQuery.inArray(sLocale, oBundle.aLocales) == -1 ){
+			var props;
+			if ( shouldRequest(sLocale) ) {
+				var oHeader = null;
+				var sTempUrl;
+				switch (oUrl.ext) {
+					case '.hdbtextbundle':
+						sLocale = convertLocaleToBCP47(sLocale);
+						oHeader = {
+							"Accept-Language": sLocale
+						};
+						sTempUrl = oUrl.url;
+						//Alternative: add locale as query
+						//sTempUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : "");
+						break;
+					default:
+						sTempUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
+						break;
+				}
+	
+				props = jQuery.sap.properties({url : sTempUrl, headers: oHeader});
+			} else {
+				props = {
+						getProperty : function() { return undefined; }
+				}
 			}
-
-			var props = jQuery.sap.properties({url : sTempUrl, headers: oHeader});
 			oBundle.aPropertyFiles.push(props);
 			oBundle.aLocales.push(sLocale);
 			return props;
@@ -15112,6 +15588,14 @@ jQuery.sap.declare("jquery.sap.resources");
 		return null;
 	}
 
+	function shouldRequest(sLocale) {
+		var aLanguages = window.sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getConfiguration().getSupportedLanguages();
+		if ( aLanguages && aLanguages.length > 0 ) {
+			return jQuery.inArray(sLocale, aLanguages) >= 0;
+		}
+		return true;
+	}
+	
 	/**
 	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
 	 * using the given URL and locale to determine what to load.
@@ -15138,7 +15622,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.script') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides miscellaneous utility functions that might be useful for any script
@@ -15231,12 +15715,12 @@ jQuery.sap.declare("jquery.sap.script", false);
 
 	// Javadoc for private inner class "UriParams" - this list of comments is intentional!
 	/**
-	 * @interface  Encapsulates all URI parameters of the current windows location (URL).
+	 * @interface	Encapsulates all URI parameters of the current windows location (URL).
 	 *
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -15308,16 +15792,16 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * Example for reading a single URI parameter (or the value of the first
 	 * occurrence of the URI parameter):
 	 * <pre>
-	 *  var sValue = jQuery.sap.getUriParameters().get("myUriParam");
+	 *	var sValue = jQuery.sap.getUriParameters().get("myUriParam");
 	 * </pre>
 	 *
 	 * Example for reading the values of the first of the URI parameter
 	 * (with multiple occurrences):
 	 * <pre>
-	 *  var aValues = jQuery.sap.getUriParameters().get("myUriParam", true);
-	 *  for(i in aValues){
+	 *	var aValues = jQuery.sap.getUriParameters().get("myUriParam", true);
+	 *	for(i in aValues){
 	 *	var sValue = aValues[i];
-	 *  }
+	 *	}
 	 * </pre>
 	 *
 	 * @public
@@ -15388,6 +15872,9 @@ jQuery.sap.declare("jquery.sap.script", false);
 			if (a.constructor != b.constructor) {
 				return false;
 			}
+			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
+				return jQuery.sap.isEqualNode(a,b);
+			}
 			if (a instanceof Date) {
 				return a.valueOf() == b.valueOf();
 			}
@@ -15407,14 +15894,50 @@ jQuery.sap.declare("jquery.sap.script", false);
 	};
 	
 	/**
+	 * Iterates over elements of the given object or array. 
+	 * 
+	 * Works similar to <code>jQuery.each</code>, but a numeric index is only used for 
+	 * instances of <code>Array</code>. For all other objects, including those with a numeric 
+	 * <code>length</code> property, the properties are iterated by name. 
+	 * 
+	 * The contract for the <code>fnCallback</code> is the same as for <code>jQuery.each</code>,
+	 * when it returns <code>false</code>, then the iteration stops (break).
+	 * 
+	 * @param {object|any[]} oObject object or array to enumerate the properties of
+	 * @param {function} fnCallback function to call for each property name
+	 * @return {object|any[]} the given <code>oObject</code> 
+	 * @since 1.11
+	 */
+	jQuery.sap.each = function(oObject, fnCallback) {
+		var isArray = jQuery.isArray(oObject),
+			length, i;
+
+		if ( isArray ) {
+			for (i=0,length=oObject.length; i < length; i++) {
+				if ( fnCallback.call(oObject[i], i, oObject[i]) === false ) {
+					break;
+				}
+			}
+		} else {
+			for ( i in oObject ) {
+				if ( fnCallback.call(oObject[i], i, oObject[i] ) === false ) {
+					break;
+				}
+			}
+		}
+
+		return oObject;
+	};
+	
+	/**
 	 * Substitute for <code>for(n in o)</code> loops which fixes the 'Don'tEnum' bug of IE8.
 	 * 
 	 * Iterates over all enumerable properties of the given object and calls the
 	 * given callback function for each of them. The assumed signature of the 
 	 * callback function is 
 	 * 
-	 *   fnCallback(name, value)
-	 *   
+	 *	 fnCallback(name, value)
+	 *	 
 	 * where name is the name of the property and value is its value.
 	 * 
 	 * When an object in IE8 overrides a property of Object.prototype
@@ -15426,55 +15949,538 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * (hasOwnProperty(name) is true) or when the property value is different 
 	 * from the value in the Object.prototype object.
 	 * 
-   * @param {object} oObject object to enumerate the properties of
-   * @param {function} fnCallback function to call for each property name
+	 * @param {object} oObject object to enumerate the properties of
+	 * @param {function} fnCallback function to call for each property name
 	 * @function
 	 * @since 1.7.1
 	 */
 	jQuery.sap.forIn = {toString:null}.propertyIsEnumerable("toString") ?
-	    // for browsers without the bug we use the straight forward implementation of a for in loop
-      function(oObject, fnCallback) {
-        for(var n in oObject) {
-          if ( fnCallback(n, oObject[n]) === false ) {
-            return;
-          }
-        }
-      } : 
-      // use a special implementation for IE8 
-      (function() {
-        var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
-            DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
-            oObjectPrototype = Object.prototype,
-            fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
-            
-        return function(oObject, fnCallback) {
-          var n,i;
-          
-          // standard for(in) loop
-          for(n in oObject) {
-            if ( fnCallback(n, oObject[n]) === false ) {
-              return;
-            }
-          }
-          // additionally check the known 'don't enum' names
-          for(var i=0; i<DONT_ENUM_KEYS_LENGTH; i++) {
-            n = DONT_ENUM_KEYS[i];
-            // assume an enumerable property if it is either an own property
-            // or if its value differes fro mthe value in the Object.prototype
-            if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
-              if ( fnCallback(n, oObject[n]) === false ) {
-                return;
-              }
-            }
-          }
-          // Note: this substitute implementation still fails in several regards
-          // - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
-          // - it fails when one of the don't enum properties by intention has been overridden in the 
-          //   prototype chain with a value identical to the value in Object.prototype
-          // - the don't enum properties are handled out of order. This is okay with the ECMAScript
-          //   spec but might be unexpected for some callers
-        }
-     	}());
+		// for browsers without the bug we use the straight forward implementation of a for in loop
+		function(oObject, fnCallback) {
+			for(var n in oObject) {
+				if ( fnCallback(n, oObject[n]) === false ) {
+					return;
+				}
+			}
+		} : 
+		// use a special implementation for IE8 
+		(function() {
+			var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
+					DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
+					oObjectPrototype = Object.prototype,
+					fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
+					
+			return function(oObject, fnCallback) {
+				var n,i;
+				
+				// standard for(in) loop
+				for(n in oObject) {
+					if ( fnCallback(n, oObject[n]) === false ) {
+						return;
+					}
+				}
+				// additionally check the known 'don't enum' names
+				for(var i=0; i<DONT_ENUM_KEYS_LENGTH; i++) {
+					n = DONT_ENUM_KEYS[i];
+					// assume an enumerable property if it is either an own property
+					// or if its value differes fro mthe value in the Object.prototype
+					if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
+						if ( fnCallback(n, oObject[n]) === false ) {
+							return;
+						}
+					}
+				}
+				// Note: this substitute implementation still fails in several regards
+				// - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
+				// - it fails when one of the don't enum properties by intention has been overridden in the 
+				//	 prototype chain with a value identical to the value in Object.prototype
+				// - the don't enum properties are handled out of order. This is okay with the ECMAScript
+				//	 spec but might be unexpected for some callers
+			}
+	 	}());
+		
+
+	/**
+	 * Calculate delta of old list and new list
+	 * This implements the algorithm described in "A Technique for Isolating Differences Between Files"
+	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268)
+	 * @public
+	 * @param {Array} aOld Old Array
+	 * @param {Array} aNew New Array
+	 * @param {function} [fnCompare] Function to compare list entries
+	 * @param {function} [fnKey] Function to generate a string from the list entry for optimized performance
+	 * @return {Array} List of changes
+	 */
+	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare, fnKey){
+		fnCompare = fnCompare || function(vValue1, vValue2) {
+			return vValue1 == vValue2;
+		}
+
+		var aOldRefs = [];
+		var aNewRefs = [];
+
+		//This code has better performance but needs a key for the entries
+		/*
+		var oNewSymbols = {};
+		var oOldSymbols = {};
+
+		//Pass 1: collect symbols for new array
+		for (var i = 0; i < aNew.length; i++) {
+			var sKey = fnKey(aNew[i]);
+			if (oNewSymbols[sKey] == null) {
+				oNewSymbols[sKey] = { rows: [], o: null };
+			}
+			oNewSymbols[sKey].rows.push(i);
+		}
+
+		//Pass 2: collect symbols for old array
+		for ( var i = 0; i < aOld.length; i++ ) {
+			var sKey = fnKey(aOld[i]);
+			if (oOldSymbols[sKey] == null) {
+				oOldSymbols[sKey] = { rows: [], n: null };
+			}
+			oOldSymbols[sKey].rows.push(i);
+		}
+
+		//Pass 3: Find matches for unique lines
+		for (var i in oNewSymbols) {
+			if (oNewSymbols[i].rows.length == 1 && oOldSymbols[i] != undefined && oOldSymbols[i].rows.length == 1) {
+				aNewRefs[oNewSymbols[i].rows[0]] = {
+					data: aNew[oNewSymbols[i].rows[0]],
+					row: oOldSymbols[i].rows[0]
+				};
+				aOldRefs[oOldSymbols[i].rows[0]] = {
+					data: aOld[oOldSymbols[i].rows[0]],
+					row: oNewSymbols[i].rows[0]
+				};
+			}
+		}*/
+		//Find references
+		for (var i = 0; i < aNew.length; i++) {
+			var oNewEntry = aNew[i];
+			var iFound = 0;
+			var iTempJ;
+			for (var j = 0; j < aOld.length; j++) {
+				if (fnCompare(oNewEntry,aOld[j])) {
+					iFound++;
+					iTempJ = j;
+					if (iFound > 1) {
+						break;
+					}
+				}
+			}
+			if (iFound == 1) {
+				aNewRefs[i] = {
+					data: aNew[i],
+					row: iTempJ
+				};
+				aOldRefs[iTempJ] = {
+					data: aOld[iTempJ],
+					row: i
+				};
+			}
+		}
+
+		//Pass 4: Find adjacent matches in ascending order
+		for (var i = 0; i < aNew.length - 1; i++) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i+1] &&
+				aNewRefs[i].row + 1 < aOld.length &&
+				!aOldRefs[aNewRefs[i].row + 1] &&
+				fnCompare(aNew[i+1], aOld[ aNewRefs[i].row + 1 ])) {
+
+				aNewRefs[i+1] = {
+					data: aNew[i+1],
+					row: aNewRefs[i].row + 1
+				};
+				aOldRefs[aNewRefs[i].row+1] = {
+					data: aOldRefs[aNew[i].row+1],
+					row: i + 1
+				};
+
+			}
+		}
+
+		//Pass 5: Find adjacent matches in descending order
+		for (var i = aNew.length - 1; i > 0; i--) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i-1] &&
+				aNewRefs[i].row > 0 &&
+				!aOldRefs[aNewRefs[i].row - 1] &&
+				fnCompare(aNew[i-1], aOld[aNewRefs[i].row - 1])) {
+
+				aNewRefs[i-1] = {
+					data: aNew[i-1],
+					row: aNewRefs[i].row - 1
+				};
+				aOldRefs[aNew[i].row-1] = {
+					data: aOldRefs[aNewRefs[i].row-1],
+					row: i - 1
+				};
+
+			}
+		}
+
+		//Pass 6: Generate diff data
+		var aDiff = [];
+
+		if (aNew.length == 0) {
+			//New list is empty, all items were deleted
+			for (var i = 0; i < aOld.length; i++) {
+				aDiff.push({
+					index: 0,
+					type: 'delete'
+				});
+			}
+		} else {
+			var iNewListIndex = 0;
+			if (!aOldRefs[0]) {
+				//Detect all deletions at the beginning of the old list
+				for (var i = 0; i < aOld.length && !aOldRefs[i]; i++) {
+					aDiff.push({
+						index: 0,
+						type: 'delete'
+					});
+					iNewListIndex = i + 1;
+				}
+			}
+
+			for (var i = 0; i < aNew.length; i++) {
+				if (!aNewRefs[i] || aNewRefs[i].row > iNewListIndex) {
+					//Entry doesn't exist in old list = insert
+					aDiff.push({
+						index: i,
+						type: 'insert'
+					});
+				} else {
+					iNewListIndex = aNewRefs[i].row + 1;
+					for (var j = aNewRefs[i].row + 1; j < aOld.length && (!aOldRefs[j] || aOldRefs[j].row < i); j++) {
+						aDiff.push({
+							index: i+1,
+							type: 'delete'
+						});
+						iNewListIndex = j + 1;
+					}
+				}
+			}
+		}
+
+		return aDiff;
+	};
+
+	/**
+	 * Parse simple JS objects.
+	 * 
+	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
+	 * the JSON specification as a format description, but a subset of the JavaScript language.
+	 * The main difference is, that keys in objects do not need to be quoted and strings can also
+	 * be defined using apostrophes instead of quotation marks.
+	 * 
+	 * The parser does not support functions, but only boolean, number, string, object and array.
+	 * 
+	 * @param {string} The string containing the JS objects
+	 * @throws an error, if the string does not contain a valid JS object
+	 * @returns {object} the JS object
+	 * 
+	 * @since 1.11
+	 */
+	jQuery.sap.parseJS = (function() {
+
+		var at, // The index of the current character
+		ch, // The current character
+		escapee = {
+			'"': '"',
+			'\'': '\'',
+			'\\': '\\',
+			'/': '/',
+			b: '\b',
+			f: '\f',
+			n: '\n',
+			r: '\r',
+			t: '\t'
+		},
+			text,
+
+			error = function(m) {
+
+				// Call error when something is wrong.
+				throw {
+					name: 'SyntaxError',
+					message: m,
+					at: at,
+					text: text
+				};
+			},
+
+			next = function(c) {
+
+				// If a c parameter is provided, verify that it matches the current character.
+				if (c && c !== ch) {
+					error("Expected '" + c + "' instead of '" + ch + "'");
+				}
+
+				// Get the next character. When there are no more characters,
+				// return the empty string.
+				ch = text.charAt(at);
+				at += 1;
+				return ch;
+			},
+
+			number = function() {
+
+				// Parse a number value.
+				var number, string = '';
+
+				if (ch === '-') {
+					string = '-';
+					next('-');
+				}
+				while (ch >= '0' && ch <= '9') {
+					string += ch;
+					next();
+				}
+				if (ch === '.') {
+					string += '.';
+					while (next() && ch >= '0' && ch <= '9') {
+						string += ch;
+					}
+				}
+				if (ch === 'e' || ch === 'E') {
+					string += ch;
+					next();
+					if (ch === '-' || ch === '+') {
+						string += ch;
+						next();
+					}
+					while (ch >= '0' && ch <= '9') {
+						string += ch;
+						next();
+					}
+				}
+				number = +string;
+				if (!isFinite(number)) {
+					error("Bad number");
+				} else {
+					return number;
+				}
+			},
+
+			string = function() {
+
+				// Parse a string value.
+				var hex, i, string = '', quote,
+					uffff;
+
+				// When parsing for string values, we must look for " and \ characters.
+				if (ch === '"' || ch === '\'') {
+					quote = ch;
+					while (next()) {
+						if (ch === quote) {
+							next();
+							return string;
+						}
+						if (ch === '\\') {
+							next();
+							if (ch === 'u') {
+								uffff = 0;
+								for (i = 0; i < 4; i += 1) {
+									hex = parseInt(next(), 16);
+									if (!isFinite(hex)) {
+										break;
+									}
+									uffff = uffff * 16 + hex;
+								}
+								string += String.fromCharCode(uffff);
+							} else if (typeof escapee[ch] === 'string') {
+								string += escapee[ch];
+							} else {
+								break;
+							}
+						} else {
+							string += ch;
+						}
+					}
+				}
+				error("Bad string");
+			},
+
+			name = function() {
+
+				// Parse a name value.
+				var name = '',
+					charcode,
+					allowed = function(ch) {
+						return ch === "_" ||
+							(ch >= "0" && ch <= "9") ||
+							(ch >= "a" && ch <= "z") ||
+							(ch >= "A" && ch <= "Z") 
+					};
+
+				if (allowed(ch)) {
+					name += ch;
+				} else {
+					error("Bad name");
+				}
+
+				while (next()) {
+					if (ch === ' ') {
+						next();
+						return name;
+					}
+					if (ch === ':') {
+						return name;
+					}
+					if (allowed(ch)) {
+						name += ch;
+					} else {
+						error("Bad name");
+					}
+				}
+				error("Bad name");
+			},
+
+			white = function() {
+
+				// Skip whitespace.
+				while (ch && ch <= ' ') {
+					next();
+				}
+			},
+
+			word = function() {
+
+				// true, false, or null.
+				switch (ch) {
+				case 't':
+					next('t');
+					next('r');
+					next('u');
+					next('e');
+					return true;
+				case 'f':
+					next('f');
+					next('a');
+					next('l');
+					next('s');
+					next('e');
+					return false;
+				case 'n':
+					next('n');
+					next('u');
+					next('l');
+					next('l');
+					return null;
+				}
+				error("Unexpected '" + ch + "'");
+			},
+
+			value, // Place holder for the value function.
+			array = function() {
+
+				// Parse an array value.
+				var array = [];
+
+				if (ch === '[') {
+					next('[');
+					white();
+					if (ch === ']') {
+						next(']');
+						return array; // empty array
+					}
+					while (ch) {
+						array.push(value());
+						white();
+						if (ch === ']') {
+							next(']');
+							return array;
+						}
+						next(',');
+						white();
+					}
+				}
+				error("Bad array");
+			},
+
+			object = function() {
+
+				// Parse an object value.
+				var key, object = {};
+
+				if (ch === '{') {
+					next('{');
+					white();
+					if (ch === '}') {
+						next('}');
+						return object; // empty object
+					}
+					while (ch) {
+						if (ch >= "0" && ch <= "9") {
+							key = number();
+						} else if (ch === '"' || ch === '\''){
+							key = string();
+						} else {
+							key = name();
+						}
+						white();
+						next(':');
+						if (Object.hasOwnProperty.call(object, key)) {
+							error('Duplicate key "' + key + '"');
+						}
+						object[key] = value();
+						white();
+						if (ch === '}') {
+							next('}');
+							return object;
+						}
+						next(',');
+						white();
+					}
+				}
+				error("Bad object");
+			};
+
+		value = function() {
+
+			// Parse a JS value. It could be an object, an array, a string, a number,
+			// or a word.
+			white();
+			switch (ch) {
+			case '{':
+				return object();
+			case '[':
+				return array();
+			case '"':
+			case '\'':
+				return string();
+			case '-':
+				return number();
+			default:
+				return ch >= '0' && ch <= '9' ? number() : word();
+			}
+		};
+
+		// Return the parse function. It will have access to all of the above
+		// functions and variables.
+		return function(source, start) {
+			var result;
+
+			text = source;
+			at = start || 0;
+			ch = ' ';
+			result = value();
+			
+			if ( isNaN(start) ) {
+				white();
+				if (ch) {
+					error("Syntax error");
+				}
+				return result;
+			} else {
+				return { result : result, at : at-1 };
+			}
+
+		};
+	}())
 	
 }());
 
@@ -15484,7 +16490,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.Global') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -15501,7 +16507,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.Global') ) {
  * sap.ui.lazyRequire("sap.ui.core/Control");
  * sap.ui.lazyRequire("sap.ui.commons/Button");
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -15522,7 +16528,7 @@ jQuery.sap.declare("sap.ui.Global");
  * The <code>sap</code> namespace is automatically registered with the
  * OpenAjax hub if it exists.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @namespace
  * @public
  * @name sap
@@ -15535,7 +16541,7 @@ if ( typeof window.sap !== "object" && typeof window.sap !== "function"  ) {
  * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
  * point for UI related JavaScript functionality provided by SAP.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @namespace
  * @name sap.ui
  * @public
@@ -15548,8 +16554,8 @@ sap.ui = jQuery.extend(sap.ui, {
 		 * The version of the SAP UI Library
 		 * @type string
 		 */
-		version: "1.8.4",
-		buildinfo : { lastchange : "198749", buildtime : "201211072311" }
+		version: "1.12.1",
+		buildinfo : { lastchange : "1ff088fb4df06eaf3dff13aad41425c03f7c25ae", buildtime : "201305081001" }
 	});
 
 /**
@@ -15750,7 +16756,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.EventProvider') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.EventProvider
@@ -15759,7 +16765,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.Object') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -15776,7 +16782,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.Interface') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.Interface
@@ -15789,7 +16795,7 @@ jQuery.sap.declare("sap.ui.base.Interface");
  *        only the defined functions will be visible, no internals of the class can be accessed.
  *
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @param {sap.ui.base.Object}
  *            oObject the instance that needs an interface created
  * @param {string[]}
@@ -15810,7 +16816,7 @@ sap.ui.base.Interface = function(oObject, aMethods) {
 		return function() {
 //				return oObject[sMethodName].apply(oObject, arguments);
 				var tmp = oObject[sMethodName].apply(oObject, arguments);
-				return (!(tmp instanceof sap.ui.core.Element)&&(tmp instanceof sap.ui.base.Object))?tmp.getInterface():tmp;
+				return (!(tmp instanceof sap.ui.core.Element||tmp instanceof sap.ui.core.Component)&&(tmp instanceof sap.ui.base.Object))?tmp.getInterface():tmp;
 			};
 	}
 
@@ -15835,7 +16841,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.Metadata') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.Metadata
@@ -15850,7 +16856,7 @@ jQuery.sap.declare("sap.ui.base.Metadata");
  *
  * @class Metadata for a class.
  * @author Frank Weigel
- * @version 1.8.4
+ * @version 1.12.1
  * @since 0.8.6
  * @public
  */
@@ -15918,7 +16924,8 @@ sap.ui.base.Metadata.prototype.applySettings = function(oClassInfo) {
 
 	this._bAbstract = !!oStaticInfo["abstract"];
 	this._bFinal = !!oStaticInfo["final"];
-
+	this._sStereotype = oStaticInfo.stereotype || (this._oParent ? this._oParent._sStereotype : "object");
+	
 	// handle interfaces
 	this._aInterfaces = jQuery.sap.unique(oStaticInfo.interfaces || []);
 
@@ -15957,6 +16964,14 @@ sap.ui.base.Metadata.prototype.afterApplySettings = function() {
 		this._aAllPublicMethods = this._aPublicMethods;
 	}
 
+};
+
+/**
+ * Stereotype of the described class. 
+ * @experimental might be enhanced to a set of stereotypes
+ */
+sap.ui.base.Metadata.prototype.getStereotype = function() {
+	return this._sStereotype;
 };
 
 /**
@@ -16044,6 +17059,11 @@ sap.ui.base.Metadata.prototype.isInstanceOf = function(sInterface) {
 	}
 
 	return false;
+};
+
+
+sap.ui.base.Metadata.prototype.isAbstract = function() {
+	return this._bAbstract;
 };
 
 sap.ui.base.Metadata.prototype.isFinal = function() {
@@ -16157,7 +17177,7 @@ sap.ui.base.Metadata.createClass = function (fnBaseClass, sClassName, oClassInfo
  * @class Base class for all SAPUI5 Objects
  * @abstract
  * @author Malte Wedel
- * @version 1.8.4
+ * @version 1.12.1
  * @public
  * @name sap.ui.base.Object
  */
@@ -16307,7 +17327,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.Event') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.Event
@@ -16325,7 +17345,7 @@ jQuery.sap.declare("sap.ui.base.Event");
  * @extends sap.ui.base.Object
  * @implements sap.ui.base.Poolable
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @public
  */
 // TODO Previous documentation stated that sId is numerical, but this seems not to be true
@@ -16452,7 +17472,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.ObjectPool') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.ObjectPool
@@ -16490,7 +17510,7 @@ jQuery.sap.declare("sap.ui.base.ObjectPool");
  *
  * @extends sap.ui.base.Object
  * @author Malte Wedel
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */
@@ -16593,7 +17613,7 @@ sap.ui.base.ObjectPool.prototype.returnObject = function(oObject) {
  * @abstract
  * @extends sap.ui.base.Object
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  * @name sap.ui.base.EventProvider
@@ -16666,6 +17686,36 @@ sap.ui.base.EventProvider.prototype.attachEvent = function(sEventId, oData, fnFu
 };
 
 /**
+ * Adds a one time event registration for the given object and given event name. When the event occurs, the handler function is called and removed
+ * from registration.
+ *
+ * @param {String}
+ *            sEventId The identifier of the event to listen for
+ * @param {Object}
+ *            [oData] The object, that should be passed along with the event-object when firing the event
+ * @param {Function}
+ *            fnFunction The function to call, when the event occurs. This function will be called on the
+ *            oListener-instance (if present) or on the event provider-instance
+ * @param {Object}
+ *            [oListener] The object, that wants to be notified, when the event occurs
+ * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
+ * @public
+ */
+sap.ui.base.EventProvider.prototype.attachEventOnce = function(sEventId, oData, fnFunction, oListener) {
+	if(typeof(oData) === "function") {
+		oListener = fnFunction;
+		fnFunction = oData;
+		oData = undefined;
+	}
+	function fnOnce() { 
+		this.detachEvent(sEventId, fnOnce);  // ‘this’ is always the control, due to the context ‘undefined’ in the attach call below
+		fnFunction.apply(oListener || this, arguments);  // needs to do the same resolution as in fireEvent
+	}
+	this.attachEvent(sEventId, oData, fnOnce, undefined);  // a listener of ‘undefined’ enforce a context of ‘this’ even after clone
+	return this;
+};
+
+/**
  * Removes an event registration for the given object and given event name.
  *
  * The passed parameters must match those used for registration with {@link #attachEvent } beforehand!
@@ -16680,7 +17730,6 @@ sap.ui.base.EventProvider.prototype.attachEvent = function(sEventId, oData, fnFu
  * @public
  */
 sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction, oListener) {
-
 	jQuery.sap.assert(typeof(sEventId) === "string" && sEventId, "EventProvider.detachEvent: sEventId must be a non-empty string" );
 	jQuery.sap.assert(typeof(fnFunction) === "function", "EventProvider.detachEvent: fnFunction must be a function");
 	jQuery.sap.assert(!oListener || typeof(oListener) === "object", "EventProvider.detachEvent: oListener must be empty or an object");
@@ -16689,12 +17738,16 @@ sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction,
 	if (!aEventListeners) {
 		return this;
 	}
+	
+	var bListenerDetached = false;
+	
 	//PERFOPT use array. remember length to not re-calculate over and over again
 	for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 		//PERFOPT check for identity instead of equality... avoid type conversion
 		if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
 			//delete aEventListeners[i];
 			aEventListeners.splice(i,1);
+			bListenerDetached = true;
 			break;
 		}
 	}
@@ -16703,8 +17756,10 @@ sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction,
 		delete this.mEventRegistry[sEventId];
 	}
 
-	// Inform interested parties about changed EventHandlers
-	this.fireEvent(sap.ui.base.EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerDetached' });
+	if(bListenerDetached){
+		// Inform interested parties about changed EventHandlers
+		this.fireEvent(sap.ui.base.EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerDetached' });
+	}
 
 	return this;
 };
@@ -16722,9 +17777,8 @@ sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction,
  * @protected
  */
 sap.ui.base.EventProvider.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
-
 	// at least in BrowserEventManager when firing events of its E_EVENTS enumeration, the type will be an integer... thus avoid this check
-//	jQuery.sap.assert(typeof (sEventId) == "string");
+	//	jQuery.sap.assert(typeof (sEventId) == "string");
 
 	// get optional parameters right
 	if (typeof mParameters == "boolean") {
@@ -16840,25 +17894,2218 @@ sap.ui.base.EventProvider.prototype.toString = function() {
 	}
 };
 
-///**
-// * Destroy this instance of the EventProvider.
-// * @protected
-// */
-//sap.ui.base.EventProvider.prototype.exit = function() {
-//	this.mEventRegistry = null;
-//};
+
+/**
+ * @see sap.ui.base.Object.prototype.destroy
+ * @public
+ */
+sap.ui.base.EventProvider.prototype.destroy = function() {
+	this.mEventRegistry = {};
+	sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+};
+
 }; // end of sap.ui.base.EventProvider
+
+if ( !jQuery.sap.isDeclared('sap.ui.base.DataType') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides class sap.ui.base.DataType
+jQuery.sap.declare("sap.ui.base.DataType");
+
+/**
+ * @class Describes the metadata of a data type and provides methods for validation.
+ * @author Frank Weigel
+ * @since 0.9.0
+ */
+sap.ui.base.DataType = function() {
+	// Avoid construction of a DataType.
+	// DataType is only a function to support the "instanceof" operator.
+	throw new Error();
+};
+
+/**
+ * The qualified name of the data type.
+ * Note that this name usually equals the design time name of the type.
+ * Only for primitive types it differs, namely it omits the package 'sap.ui.core'.
+ * @return {string} name of the data type
+ * @public
+ */
+sap.ui.base.DataType.prototype.getName = function() {
+	return undefined;
+};
+
+/**
+ * The base type of this type or undefined if this is a primitive type.
+ * @return {sap.ui.base.DataType} base type or undefined
+ * @public
+ */
+sap.ui.base.DataType.prototype.getBaseType = function() {
+	return undefined;
+};
+
+/**
+ * The component type of this type or undefined if this is not an array.
+ * @return {sap.ui.base.DataType} component type or undefined
+ * @public
+ */
+sap.ui.base.DataType.prototype.getComponentType = function() {
+	return undefined;
+};
+
+/**
+ * The default value for this type. Each type must define a default value.
+ * @return {any} default value of the data type. The type of the returned value
+ *    must match the JavaScript type of the data type (a string for string types etc.)
+ * @public
+ */
+sap.ui.base.DataType.prototype.getDefaultValue = function() {
+	return undefined;
+};
+
+/**
+ * Whether this type is an array type.
+ * @return {boolean} whether this type is an array type
+ * @public
+ */
+sap.ui.base.DataType.prototype.isArrayType = function() {
+	return undefined;
+};
+
+/**
+ * Parses the given string value and converts it into the specific data type.
+ * @param {string} sValue string representation for a value of this type
+ * @return the value in the correct internal format
+ * @public
+ */
+sap.ui.base.DataType.prototype.parseValue = function(sValue) {
+	// currently this function considers to handle primitive values
+	// - in future may be other values might be also relevant.
+	var sType = this.getName();
+	if (sType == "string") {
+		return sValue;
+	} else if (sType == "boolean") {
+		return sValue == "true";
+	} else if (sType == "int") {
+		return parseInt(sValue, 10);
+	} else if (sType == "float") {
+		return parseFloat(sValue);
+	} else {
+		// support for other types like e.g.
+		// sap.ui.core.CSSSize (just apply)
+		return sValue;
+	}
+};
+
+/**
+ * A validation check. To be implemented by concrete types.
+ * @param {any} vValue the value to be checked
+ * @return {boolean} whether the given value is valid for this data type (without conversion)
+ * @public
+ */
+sap.ui.base.DataType.prototype.isValid = undefined;
+
+(function() {
+
+	function createType(name, s, base) {
+
+		jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
+		jQuery.sap.assert(!base || base instanceof sap.ui.base.DataType, "DataType.<createType>: base type must be empty or a DataType");
+		s = s || {};
+		base = base || sap.ui.base.DataType.prototype;
+
+		// create a new type object with the base type as prototype
+		var type = jQuery.sap.newObject(base);
+
+		// getter for the name
+		type.getName = function() { return name; };
+
+		// if a default value is specified, create a getter for it
+		if ( s.hasOwnProperty("defaultValue") ) {
+			var vDefault = s.defaultValue;
+			type.getDefaultValue = function() { return vDefault; };
+		}
+
+		// if a validator is specified either chain it with the base type validator
+		// or set it if no base validator exists
+		if ( s.hasOwnProperty("isValid") ) {
+			var fnIsValid = s.isValid;
+			type.isValid = base.isValid ? function(vValue) {
+				if ( !base.isValid(vValue) ) {
+					return false;
+				}
+				return fnIsValid(vValue);
+			} : fnIsValid;
+		};
+
+		// not an array type
+		type.isArrayType = function() { return false; };
+		
+		return type;
+	}
+
+	function createArrayType(componentType) {
+		jQuery.sap.assert(componentType instanceof sap.ui.base.DataType, "DataType.<createArrayType>: componentType must be a DataType");
+
+		// create a new type object with the base type as prototype
+		var type = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
+
+		// getter for the name
+		type.getName = function() { return componentType.getName() + "[]"; };
+
+		// getter for component type
+		type.getComponentType = function() { return componentType; };
+
+		// array validator
+		type.isValid = function(aValues) {
+			if (aValues === null) {
+				return true;
+			}
+			if (jQuery.isArray(aValues)) {
+				for (var i = 0; i < aValues.length; i++) {
+					if (!componentType.isValid(aValues[i])) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		};
+
+		// array parser
+		type.parseValue = function(sValue) {
+			var aValues = sValue.split(",");
+			for (var i = 0; i < aValues.length; i++) {
+				aValues[i] = componentType.parseValue(aValues[i]);
+			}
+			return aValues;
+		};
+
+		// is an array type
+		type.isArrayType = function() { return true; };
+
+		return type;
+	}
+
+	var PREDEFINED_TYPES = {
+
+		"any" :
+				createType("any", {
+					defaultValue : null,
+					isValid : function(vValue) {
+						return true;
+					}
+				}),
+
+		"boolean" :
+			createType("boolean", {
+				defaultValue : false,
+				isValid : function(vValue) {
+					return typeof vValue === "boolean";
+				}
+			}),
+
+		"int" :
+			createType("int", {
+				defaultValue : 0,
+				isValid : function(vValue) {
+					return typeof vValue === "number" && Math.floor(vValue) == vValue;
+				}
+			}),
+
+		"float" :
+			createType("float", {
+				defaultValue : 0.0,
+				isValid : function(vValue) {
+					return typeof vValue === "number";
+				}
+			}),
+
+		"string" :
+			createType("string", {
+				defaultValue : "",
+				isValid : function(vValue) {
+					return typeof vValue === "string" || vValue instanceof String;
+				}
+			}),
+		"object" :
+			createType("object", {
+				defaultValue : null,
+				isValid : function(vValue) {
+					return typeof vValue === "object" || typeof vValue === "function";
+				}
+			})
+	};
+
+	/**
+	 * Returns the type object for the type with the given name.
+	 * @return the type object or undefined when no such type object exists.
+	 * @public
+	 */
+	sap.ui.base.DataType.getType = function(sTypeName) {
+		if (sTypeName.indexOf("[]") > 0) {
+			var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
+				oComponentType = this.getType(sComponentTypeName);
+			return oComponentType && createArrayType(oComponentType);
+		} else {
+			return PREDEFINED_TYPES[sTypeName] || jQuery.sap.getObject(sTypeName);
+		}
+	};
+
+	/**
+	 * Creates a new type as a subtype of a given type.
+	 * @param {string} sName the unique name of the new type
+	 * @param {object} [mSettings settings] for the new type
+	 * @param {any} [mSettings.defaultValue] the default value for the new type
+	 * @param {function} [mSettings.isValid] a validator function for values of the new type
+	 * @param {sap.ui.base.DataType} [base] the base type for the new type
+	 * @public
+	 */
+	sap.ui.base.DataType.createType = createType;
+
+	// ---- minimal support for interface types ----
+	
+	var mInterfaces = {};
+	
+	/**
+	 * Registers the given array of type names as known interface types.
+	 * Only purpose is to enable the {@link #isInterfaceType} check.
+	 * @param {string[]} aTypes interface types to be reigstered  
+	 * @private
+	 */
+	sap.ui.base.DataType.registerInterfaceTypes = function(aTypes) {
+		for(var i=0; i<aTypes.length; i++) {
+			jQuery.sap.setObject(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
+		}
+	};
+	
+	/**
+	 * @param {string} sType name of type to check
+	 * @return {boolean} whether the given type is known to be an interface type
+	 * @private 
+	 */
+	sap.ui.base.DataType.isInterfaceType = function(sType) {
+		return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];
+	};
+
+}());
+}; // end of sap.ui.base.DataType
 
 if ( !jQuery.sap.isDeclared('sap.ui.core.Configuration') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides class sap.ui.core.Configuration
 jQuery.sap.declare("sap.ui.core.Configuration");
 
+if ( !jQuery.sap.isDeclared('sap.ui.core.Locale') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+//Provides the locale object sap.ui.core.Locale
+jQuery.sap.declare("sap.ui.core.Locale");
+
+
+(function() {
+
+	/**
+	 * A regular expression that describes language tags according to BCP-47.
+	 * @see BCP47 "Tags for Identifying Languages" (http://www.ietf.org/rfc/bcp/bcp47.txt)
+	 *
+	 * The matching groups are
+	 *  0=all
+	 *  1=language (shortest ISO639 code + ext. language sub tags | 4digits (reserved) | registered language sub tags)
+	 *  2=script (4 letters)
+	 *  3=region (2letter language or 3 digits)
+	 *  4=variants (separated by '-', Note: capturing group contains leading '-' to shorten the regex!)
+	 *  5=extensions (including leading singleton, multiple extensions separated by '-')
+	 *  6=private use section (including leading 'x', multiple sections separated by '-')
+	 *  
+	 *            [-------------------- language ----------------------][--- script ---][------- region --------][------------ variants --------------][--------- extensions --------------][------ private use -------]
+	 */
+	var rLocale=/^((?:[A-Z]{2,3}(?:-[A-Z]{3}){0,3})|[A-Z]{4}|[A-Z]{5,8})(?:-([A-Z]{4}))?(?:-([A-Z]{2}|[0-9]{3}))?(-[0-9A-Z]{5,8}|(?:[0-9][0-9A-Z]{3}))*(?:-([0-9A-WYZ](?:-[0-9A-Z]{2,8})+))*(?:-(X(?:-[0-9A-Z]{1,8})+))?$/i;
+
+	/**
+	 * Creates an instance of the Locale.
+	 *
+	 * @class Locale represents a locale setting, consisting of a language, script, region, variants, extensions and private use section
+	 *
+	 * @param {string} sLocaleId the locale identifier, in format en-US or en_US.
+	 *
+	 * @extends sap.ui.base.Object
+	 * @author SAP AG
+	 * @version 1.12.1
+	 * @constructor
+	 * @public
+	 * @name sap.ui.core.Locale
+	 */
+	sap.ui.base.Object.extend("sap.ui.core.Locale", /** @lends sap.ui.core.Locale.prototype */ {
+
+		constructor : function(sLocaleId) {
+			sap.ui.base.Object.apply(this);
+			var aResult = rLocale.exec(sLocaleId.replace(/_/g, "-"));
+			this.sLocaleId = sLocaleId;
+			this.sLanguage = aResult[1] || null;
+			this.sScript = aResult[2] || null;
+			this.sRegion = aResult[3] || null;
+			this.sVariant = (aResult[4] && aResult[4].slice(1)) || null; // remove leading dash from capturing group
+			this.sExtension = aResult[5] || null;
+			this.sPrivateUse = aResult[6] || null;
+
+			// normalization according to BCP47:
+			if ( this.sLanguage ) {
+				this.sLanguage = this.sLanguage.toLowerCase();
+			}
+			if ( this.sScript ) {
+				this.sScript = this.sScript.toLowerCase().replace(/^[a-z]/, function($) { return $.toUpperCase(); });
+			} 
+			if ( this.sRegion ) {
+				this.sRegion = this.sRegion.toUpperCase();
+			} 
+		},
+
+		/**
+		 * Get the locale language.
+		 *
+		 * Note that the case might differ from the original script tag 
+		 * (Lower case is enforced as recommended by BCP47/ISO639).
+		 * 
+		 * @return {string} the language code
+		 * @public
+		 */
+		getLanguage : function() {
+			return this.sLanguage;
+		},
+
+		/**
+		 * Get the locale script or null if none was specified.
+		 * 
+		 * Note that the case might differ from the original language tag
+		 * (Upper case first letter and lower case reminder enforced as 
+		 * recommended by BCP47/ISO15924)  
+		 * 
+		 * @return {string} the script code or null
+		 * @public
+		 */
+		getScript : function() {
+			return this.sScript;
+		},
+
+		/**
+		 * Get the locale region or null if none was specified.
+		 *
+		 * Note that the case might differ from the original script tag 
+		 * (Upper case is enforced as recommended by BCP47/ISO3166-1).
+		 * 
+		 * @return {string} the ISO3166-1 region code (2-letter or 3-digits)
+		 * @public
+		 */
+		getRegion : function() {
+			return this.sRegion;
+		},
+
+		/**
+		 * Get the locale variants as a single string or null.
+		 * 
+		 * Multiple variants are separated by a dash '-'.
+		 * 
+		 * @return {string} the variant or null
+		 * @public
+		 */
+		getVariant : function() {
+			return this.sVariant;
+		},
+
+		/**
+		 * Get the locale variants as an array of individual variants.
+		 * 
+		 * The separating dashes are not part of the result.
+		 * If there is no variant section in the locale tag, an empty array is returned.
+		 * 
+		 * @return {string[]} the individual variant sections 
+		 * @public
+		 */
+		getVariantSubtags : function() {
+			return this.sVariant ? this.sVariant.split('-') : [];
+		},
+
+		/**
+		 * Get the locale extension as a single string or null.
+		 * 
+		 * The extension always consists of a singleton character (not 'x'), 
+		 * a dash '-' and one or more extension token, each separated 
+		 * again with a dash.
+		 * 
+		 * Use {@link #getExtensions} to get the individual extension tokens as an array.
+		 * 
+		 * @return {string} the extension
+		 * @public
+		 */
+		getExtension : function() {
+			return this.sExtension;
+		},
+
+		/**
+		 * Get the locale extensions as an array of tokens.
+		 * 
+		 * The leading singleton and the separating dashes are not part of the result.
+		 * If there is no extensions section in the locale tag, an empty array is returned.
+		 * 
+		 * @return {string[]} the individual extension sections
+		 * @public
+		 */
+		getExtensionSubtags : function() {
+			return this.sExtension ? this.sExtension.slice(2).split('-') : [];
+		},
+
+		/**
+		 * Get the locale private use section or null.
+		 *
+		 * @return {string} the private use section
+		 * @public
+		 */
+		getPrivateUse : function() {
+			return this.sPrivateUse;
+		},
+
+		/**
+		 * Get the locale private use section
+		 *
+		 * @return {string} the private use section
+		 * @public
+		 */
+		getPrivateUseSubtags : function() {
+			return this.sPrivateUse ? this.sPrivateUse.slice(2).split('-') : [];
+		},
+
+		hasPrivateUseSubtag : function(sSubtag) {
+			jQuery.sap.assert(sSubtag && sSubtag.match(/^[0-9A-Z]{1,8}$/i), "subtag must be a valid BCP47 private use tag");
+			return jQuery.inArray(sSubtag, this.getPrivateUseSubtags()) >= 0;
+		},
+
+		toString : function() {
+			var r=[this.sLanguage];
+			if ( this.sScript ) {
+				r.push(this.sScript);
+			}
+			if ( this.sRegion ) {
+				r.push(this.sRegion);
+			}
+			if ( this.sVariant ) {
+				r.push(this.sVariant);
+			}
+			if ( this.sExtension ) {
+				r.push(this.sExtension );
+			}
+			if ( this.sPrivateUse ) {
+				r.push(this.sPrivateUse );
+			}
+			return r.join("-");
+		}
+
+	});
+
+	var M_ISO639_OLD_TO_NEW = {
+			"iw" : "he",
+			"ji" : "yi",
+			"in" : "id", 
+			"sh" : "sr"
+	};
+
+	/**
+	 * A list of locales for which the CLDR specifies "right-to-left"
+	 * as the character orientation.
+	 * 
+	 * The string literal below is substituted during the build.
+	 * The value is determined from the CLDR JSON files which are 
+	 * bundled with the UI5 runtime.
+	 */ 
+	var A_RTL_LOCALES = "ar,fa,he".split(",");
+
+	/**
+	 * Checks whether the given language tag implies a character orientation 
+	 * of 'right-to-left' ('RTL').
+	 * 
+	 * The implementation of this method and the configuration above assume 
+	 * that when a language (e.g. 'ar') is marked as 'RTL', then all language/region
+	 * combinations for that language (e.g. 'ar_SA') will be 'RTL' as well, 
+	 * even if the combination is not mentioned in the above configuration.
+	 * There is no mean to define RTL=false for a language/region, when RTL=true for 
+	 * the language alone. 
+	 *
+	 * As of 3/2013 this is true for all supported locales/regions of UI5.
+	 * 
+	 * @private
+	 */
+	sap.ui.core.Locale._impliesRTL = function(sLanguage) {
+		var oLocale = new sap.ui.core.Locale(sLanguage);
+		sLanguage = oLocale.getLanguage() || "";
+		sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
+		var sRegion = oLocale.getRegion() || "";
+		
+		if ( sRegion && jQuery.inArray(sLanguage + "_" + sRegion, A_RTL_LOCALES) >= 0 ) {
+			return true;
+		}
+		return jQuery.inArray(sLanguage, A_RTL_LOCALES) >= 0;
+	};
+	
+}());
+
+}; // end of sap.ui.core.Locale
+
+if ( !jQuery.sap.isDeclared('sap.ui.thirdparty.URI') ) {
+  jQuery.sap.declare('sap.ui.thirdparty.URI');
+/*!
+ * URI.js - Mutating URLs
+ *
+ * Version: 1.8.1
+ *
+ * Author: Rodney Rehm
+ * Web: http://medialize.github.com/URI.js/
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+ *   GPL v3 http://opensource.org/licenses/GPL-3.0
+ *
+ */
+(function (root, factory) {
+    // https://github.com/umdjs/umd/blob/master/returnExports.js
+    if (typeof exports === 'object') {
+        // Node
+        module.exports = factory(require('./punycode'), require('./IPv6'), require('./SecondLevelDomains'));
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
+    } else {
+        // Browser globals (root is window)
+        root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains);
+    }
+}(this, function (punycode, IPv6, SLD) {
+"use strict";
+
+function URI(url, base) {
+    // Allow instantiation without the 'new' keyword
+    if (!(this instanceof URI)) {
+        return new URI(url, base);
+    }
+
+    if (url === undefined) {
+        if (typeof location !== 'undefined') {
+            url = location.href + "";
+        } else {
+            url = "";
+        }
+    }
+
+    this.href(url);
+
+    // resolve to base according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#constructor
+    if (base !== undefined) {
+        return this.absoluteTo(base);
+    }
+
+    return this;
+};
+
+var p = URI.prototype;
+var hasOwn = Object.prototype.hasOwnProperty;
+
+function escapeRegEx(string) {
+    // https://github.com/medialize/URI.js/commit/85ac21783c11f8ccab06106dba9735a31a86924d#commitcomment-821963
+    return string.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+}
+
+function isArray(obj) {
+    return String(Object.prototype.toString.call(obj)) === "[object Array]";
+}
+
+function filterArrayValues(data, value) {
+    var lookup = {};
+    var i, length;
+
+    if (isArray(value)) {
+        for (i = 0, length = value.length; i < length; i++) {
+            lookup[value[i]] = true;
+        }
+    } else {
+        lookup[value] = true;
+    }
+
+    for (i = 0, length = data.length; i < length; i++) {
+        if (lookup[data[i]] !== undefined) {
+            data.splice(i, 1);
+            length--;
+            i--;
+        }
+    }
+
+    return data;
+}
+
+// state: allow duplicate query parameters (a=1&a=1)
+URI.duplicateQueryParameters = false;
+// static properties
+URI.protocol_expression = /^[a-z][a-z0-9-+-]*$/i;
+URI.idn_expression = /[^a-z0-9\.-]/i;
+URI.punycode_expression = /(xn--)/i;
+// well, 333.444.555.666 matches, but it sure ain't no IPv4 - do we care?
+URI.ip4_expression = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+// credits to Rich Brown
+// source: http://forums.intermapper.com/viewtopic.php?p=1096#1096
+// specification: http://www.ietf.org/rfc/rfc4291.txt
+URI.ip6_expression = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/ ;
+// gruber revised expression - http://rodneyrehm.de/t/url-regex.html
+URI.find_uri_expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
+// http://www.iana.org/assignments/uri-schemes.html
+// http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
+URI.defaultPorts = {
+    http: "80",
+    https: "443",
+    ftp: "21",
+    gopher: "70",
+    ws: "80",
+    wss: "443"
+};
+// allowed hostname characters according to RFC 3986
+// ALPHA DIGIT "-" "." "_" "~" "!" "$" "&" "'" "(" ")" "*" "+" "," ";" "=" %encoded
+// I've never seen a (non-IDN) hostname other than: ALPHA DIGIT . -
+URI.invalid_hostname_characters = /[^a-zA-Z0-9\.-]/;
+// encoding / decoding according to RFC3986
+function strictEncodeURIComponent(string) {
+    // see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/encodeURIComponent
+    return encodeURIComponent(string)
+        .replace(/[!'()*]/g, escape)
+        .replace(/\*/g, "%2A");
+}
+URI.encode = strictEncodeURIComponent;
+URI.decode = decodeURIComponent;
+URI.iso8859 = function() {
+    URI.encode = escape;
+    URI.decode = unescape;
+};
+URI.unicode = function() {
+    URI.encode = strictEncodeURIComponent;
+    URI.decode = decodeURIComponent;
+};
+URI.characters = {
+    pathname: {
+        encode: {
+            // RFC3986 2.1: For consistency, URI producers and normalizers should
+            // use uppercase hexadecimal digits for all percent-encodings.
+            expression: /%(24|26|2B|2C|3B|3D|3A|40)/ig,
+            map: {
+                // -._~!'()*
+                "%24": "$",
+                "%26": "&",
+                "%2B": "+",
+                "%2C": ",",
+                "%3B": ";",
+                "%3D": "=",
+                "%3A": ":",
+                "%40": "@"
+            }
+        },
+        decode: {
+            expression: /[\/\?#]/g,
+            map: {
+                "/": "%2F",
+                "?": "%3F",
+                "#": "%23"
+            }
+        }
+    },
+    reserved: {
+        encode: {
+            // RFC3986 2.1: For consistency, URI producers and normalizers should
+            // use uppercase hexadecimal digits for all percent-encodings.
+            expression: /%(21|23|24|26|27|28|29|2A|2B|2C|2F|3A|3B|3D|3F|40|5B|5D)/ig,
+            map: {
+                // gen-delims
+                "%3A": ":",
+                "%2F": "/",
+                "%3F": "?",
+                "%23": "#",
+                "%5B": "[",
+                "%5D": "]",
+                "%40": "@",
+                // sub-delims
+                "%21": "!",
+                "%24": "$",
+                "%26": "&",
+                "%27": "'",
+                "%28": "(",
+                "%29": ")",
+                "%2A": "*",
+                "%2B": "+",
+                "%2C": ",",
+                "%3B": ";",
+                "%3D": "="
+            }
+        }
+    }
+};
+URI.encodeQuery = function(string) {
+    return URI.encode(string + "").replace(/%20/g, '+');
+};
+URI.decodeQuery = function(string) {
+    return URI.decode((string + "").replace(/\+/g, '%20'));
+};
+URI.recodePath = function(string) {
+    var segments = (string + "").split('/');
+    for (var i = 0, length = segments.length; i < length; i++) {
+        segments[i] = URI.encodePathSegment(URI.decode(segments[i]));
+    }
+
+    return segments.join('/');
+};
+URI.decodePath = function(string) {
+    var segments = (string + "").split('/');
+    for (var i = 0, length = segments.length; i < length; i++) {
+        segments[i] = URI.decodePathSegment(segments[i]);
+    }
+
+    return segments.join('/');
+};
+// generate encode/decode path functions
+var _parts = {'encode':'encode', 'decode':'decode'};
+var _part;
+var generateAccessor = function(_group, _part) {
+    return function(string) {
+        return URI[_part](string + "").replace(URI.characters[_group][_part].expression, function(c) {
+            return URI.characters[_group][_part].map[c];
+        });
+    };
+};
+
+for (_part in _parts) {
+    URI[_part + "PathSegment"] = generateAccessor("pathname", _parts[_part]);
+}
+
+URI.encodeReserved = generateAccessor("reserved", "encode");
+
+URI.parse = function(string, parts) {
+    var pos, t;
+    if (!parts) {
+        parts = {};
+    }
+    // [protocol"://"[username[":"password]"@"]hostname[":"port]"/"?][path]["?"querystring]["#"fragment]
+
+    // extract fragment
+    pos = string.indexOf('#');
+    if (pos > -1) {
+        // escaping?
+        parts.fragment = string.substring(pos + 1) || null;
+        string = string.substring(0, pos);
+    }
+
+    // extract query
+    pos = string.indexOf('?');
+    if (pos > -1) {
+        // escaping?
+        parts.query = string.substring(pos + 1) || null;
+        string = string.substring(0, pos);
+    }
+
+    // extract protocol
+    if (string.substring(0, 2) === '//') {
+        // relative-scheme
+        parts.protocol = '';
+        string = string.substring(2);
+        // extract "user:pass@host:port"
+        string = URI.parseAuthority(string, parts);
+    } else {
+        pos = string.indexOf(':');
+        if (pos > -1) {
+            parts.protocol = string.substring(0, pos);
+            if (parts.protocol && !parts.protocol.match(URI.protocol_expression)) {
+                // : may be within the path
+                parts.protocol = undefined;
+            } else if (parts.protocol === 'file') {
+                // the file scheme: does not contain an authority
+                string = string.substring(pos + 3);
+            } else if (string.substring(pos + 1, pos + 3) === '//') {
+                string = string.substring(pos + 3);
+
+                // extract "user:pass@host:port"
+                string = URI.parseAuthority(string, parts);
+            } else {
+                string = string.substring(pos + 1);
+                parts.urn = true;
+            }
+        }
+    }
+
+    // what's left must be the path
+    parts.path = string;
+
+    // and we're done
+    return parts;
+};
+URI.parseHost = function(string, parts) {
+    // extract host:port
+    var pos = string.indexOf('/');
+    var bracketPos;
+    var t;
+
+    if (pos === -1) {
+        pos = string.length;
+    }
+
+    if (string[0] === "[") {
+        // IPv6 host - http://tools.ietf.org/html/draft-ietf-6man-text-addr-representation-04#section-6
+        // I claim most client software breaks on IPv6 anyways. To simplify things, URI only accepts
+        // IPv6+port in the format [2001:db8::1]:80 (for the time being)
+        bracketPos = string.indexOf(']');
+        parts.hostname = string.substring(1, bracketPos) || null;
+        parts.port = string.substring(bracketPos+2, pos) || null;
+    } else if (string.indexOf(':') !== string.lastIndexOf(':')) {
+        // IPv6 host contains multiple colons - but no port
+        // this notation is actually not allowed by RFC 3986, but we're a liberal parser
+        parts.hostname = string.substring(0, pos) || null;
+        parts.port = null;
+    } else {
+        t = string.substring(0, pos).split(':');
+        parts.hostname = t[0] || null;
+        parts.port = t[1] || null;
+    }
+
+    if (parts.hostname && string.substring(pos)[0] !== '/') {
+        pos++;
+        string = "/" + string;
+    }
+
+    return string.substring(pos) || '/';
+};
+URI.parseAuthority = function(string, parts) {
+    string = URI.parseUserinfo(string, parts);
+    return URI.parseHost(string, parts);
+};
+URI.parseUserinfo = function(string, parts) {
+    // extract username:password
+    var pos = string.indexOf('@');
+    var firstSlash = string.indexOf('/');
+    var t;
+
+    // authority@ must come before /path
+    if (pos > -1 && (firstSlash === -1 || pos < firstSlash)) {
+        t = string.substring(0, pos).split(':');
+        parts.username = t[0] ? URI.decode(t[0]) : null;
+        t.shift();
+        parts.password = t[0] ? URI.decode(t.join(':')) : null;
+        string = string.substring(pos + 1);
+    } else {
+        parts.username = null;
+        parts.password = null;
+    }
+
+    return string;
+};
+URI.parseQuery = function(string) {
+    if (!string) {
+        return {};
+    }
+
+    // throw out the funky business - "?"[name"="value"&"]+
+    string = string.replace(/&+/g, '&').replace(/^\?*&*|&+$/g, '');
+
+    if (!string) {
+        return {};
+    }
+
+    var items = {};
+    var splits = string.split('&');
+    var length = splits.length;
+    var v, name, value;
+
+    for (var i = 0; i < length; i++) {
+        v = splits[i].split('=');
+        name = URI.decodeQuery(v.shift());
+        // no "=" is null according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#collect-url-parameters
+        value = v.length ? URI.decodeQuery(v.join('=')) : null;
+
+        if (items[name]) {
+            if (typeof items[name] === "string") {
+                items[name] = [items[name]];
+            }
+
+            items[name].push(value);
+        } else {
+            items[name] = value;
+        }
+    }
+
+    return items;
+};
+
+URI.build = function(parts) {
+    var t = "";
+
+    if (parts.protocol) {
+        t += parts.protocol + ":";
+    }
+
+    if (!parts.urn && (t || parts.hostname)) {
+        t += '//';
+    }
+
+    t += (URI.buildAuthority(parts) || '');
+
+    if (typeof parts.path === "string") {
+        if (parts.path[0] !== '/' && typeof parts.hostname === "string") {
+            t += '/';
+        }
+
+        t += parts.path;
+    }
+
+    if (typeof parts.query === "string" && parts.query) {
+        t += '?' + parts.query;
+    }
+
+    if (typeof parts.fragment === "string" && parts.fragment) {
+        t += '#' + parts.fragment;
+    }
+    return t;
+};
+URI.buildHost = function(parts) {
+    var t = "";
+
+    if (!parts.hostname) {
+        return "";
+    } else if (URI.ip6_expression.test(parts.hostname)) {
+        if (parts.port) {
+            t += "[" + parts.hostname + "]:" + parts.port;
+        } else {
+            // don't know if we should always wrap IPv6 in []
+            // the RFC explicitly says SHOULD, not MUST.
+            t += parts.hostname;
+        }
+    } else {
+        t += parts.hostname;
+        if (parts.port) {
+            t += ':' + parts.port;
+        }
+    }
+
+    return t;
+};
+URI.buildAuthority = function(parts) {
+    return URI.buildUserinfo(parts) + URI.buildHost(parts);
+};
+URI.buildUserinfo = function(parts) {
+    var t = "";
+
+    if (parts.username) {
+        t += URI.encode(parts.username);
+
+        if (parts.password) {
+            t += ':' + URI.encode(parts.password);
+        }
+
+        t += "@";
+    }
+
+    return t;
+};
+URI.buildQuery = function(data, duplicates) {
+    // according to http://tools.ietf.org/html/rfc3986 or http://labs.apache.org/webarch/uri/rfc/rfc3986.html
+    // being »-._~!$&'()*+,;=:@/?« %HEX and alnum are allowed
+    // the RFC explicitly states ?/foo being a valid use case, no mention of parameter syntax!
+    // URI.js treats the query string as being application/x-www-form-urlencoded
+    // see http://www.w3.org/TR/REC-html40/interact/forms.html#form-content-type
+
+    var t = "";
+    var unique, key, i, length;
+    for (key in data) {
+        if (hasOwn.call(data, key) && key) {
+            if (isArray(data[key])) {
+                unique = {};
+                for (i = 0, length = data[key].length; i < length; i++) {
+                    if (data[key][i] !== undefined && unique[data[key][i] + ""] === undefined) {
+                        t += "&" + URI.buildQueryParameter(key, data[key][i]);
+                        if (duplicates !== true) {
+                            unique[data[key][i] + ""] = true;
+                        }
+                    }
+                }
+            } else if (data[key] !== undefined) {
+                t += '&' + URI.buildQueryParameter(key, data[key]);
+            }
+        }
+    }
+
+    return t.substring(1);
+};
+URI.buildQueryParameter = function(name, value) {
+    // http://www.w3.org/TR/REC-html40/interact/forms.html#form-content-type -- application/x-www-form-urlencoded
+    // don't append "=" for null values, according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#url-parameter-serialization
+    return URI.encodeQuery(name) + (value !== null ? "=" + URI.encodeQuery(value) : "");
+};
+
+URI.addQuery = function(data, name, value) {
+    if (typeof name === "object") {
+        for (var key in name) {
+            if (hasOwn.call(name, key)) {
+                URI.addQuery(data, key, name[key]);
+            }
+        }
+    } else if (typeof name === "string") {
+        if (data[name] === undefined) {
+            data[name] = value;
+            return;
+        } else if (typeof data[name] === "string") {
+            data[name] = [data[name]];
+        }
+
+        if (!isArray(value)) {
+            value = [value];
+        }
+
+        data[name] = data[name].concat(value);
+    } else {
+        throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
+    }
+};
+URI.removeQuery = function(data, name, value) {
+    var i, length, key;
+    
+    if (isArray(name)) {
+        for (i = 0, length = name.length; i < length; i++) {
+            data[name[i]] = undefined;
+        }
+    } else if (typeof name === "object") {
+        for (key in name) {
+            if (hasOwn.call(name, key)) {
+                URI.removeQuery(data, key, name[key]);
+            }
+        }
+    } else if (typeof name === "string") {
+        if (value !== undefined) {
+            if (data[name] === value) {
+                data[name] = undefined;
+            } else if (isArray(data[name])) {
+                data[name] = filterArrayValues(data[name], value);
+            }
+        } else {
+            data[name] = undefined;
+        }
+    } else {
+        throw new TypeError("URI.addQuery() accepts an object, string as the first parameter");
+    }
+};
+
+URI.commonPath = function(one, two) {
+    var length = Math.min(one.length, two.length);
+    var pos;
+
+    // find first non-matching character
+    for (pos = 0; pos < length; pos++) {
+        if (one[pos] !== two[pos]) {
+            pos--;
+            break;
+        }
+    }
+
+    if (pos < 1) {
+        return one[0] === two[0] && one[0] === '/' ? '/' : '';
+    }
+
+    // revert to last /
+    if (one[pos] !== '/') {
+        pos = one.substring(0, pos).lastIndexOf('/');
+    }
+
+    return one.substring(0, pos + 1);
+};
+
+URI.withinString = function(string, callback) {
+    // expression used is "gruber revised" (@gruber v2) determined to be the best solution in
+    // a regex sprint we did a couple of ages ago at
+    // * http://mathiasbynens.be/demo/url-regex
+    // * http://rodneyrehm.de/t/url-regex.html
+
+    return string.replace(URI.find_uri_expression, callback);
+};
+
+URI.ensureValidHostname = function(v) {
+    // Theoretically URIs allow percent-encoding in Hostnames (according to RFC 3986)
+    // they are not part of DNS and therefore ignored by URI.js
+
+    if (v.match(URI.invalid_hostname_characters)) {
+        // test punycode
+        if (!punycode) {
+            throw new TypeError("Hostname '" + v + "' contains characters other than [A-Z0-9.-] and Punycode.js is not available");
+        }
+
+        if (punycode.toASCII(v).match(URI.invalid_hostname_characters)) {
+            throw new TypeError("Hostname '" + v + "' contains characters other than [A-Z0-9.-]");
+        }
+    }
+};
+
+p.build = function(deferBuild) {
+    if (deferBuild === true) {
+        this._deferred_build = true;
+    } else if (deferBuild === undefined || this._deferred_build) {
+        this._string = URI.build(this._parts);
+        this._deferred_build = false;
+    }
+
+    return this;
+};
+
+p.clone = function() {
+    return new URI(this);
+};
+
+p.toString = function() {
+    return this.build(false)._string;
+};
+p.valueOf = function() {
+    return this.toString();
+};
+
+// generate simple accessors
+_parts = {protocol: 'protocol', username: 'username', password: 'password', hostname: 'hostname',  port: 'port'};
+generateAccessor = function(_part){
+    return function(v, build) {
+        if (v === undefined) {
+            return this._parts[_part] || "";
+        } else {
+            this._parts[_part] = v;
+            this.build(!build);
+            return this;
+        }
+    };
+};
+
+for (_part in _parts) {
+    p[_part] = generateAccessor(_parts[_part]);
+}
+
+// generate accessors with optionally prefixed input
+_parts = {query: '?', fragment: '#'};
+generateAccessor = function(_part, _key){
+    return function(v, build) {
+        if (v === undefined) {
+            return this._parts[_part] || "";
+        } else {
+            if (v !== null) {
+                v = v + "";
+                if (v[0] === _key) {
+                    v = v.substring(1);
+                }
+            }
+
+            this._parts[_part] = v;
+            this.build(!build);
+            return this;
+        }
+    };
+};
+
+for (_part in _parts) {
+    p[_part] = generateAccessor(_part, _parts[_part]);
+}
+
+// generate accessors with prefixed output
+_parts = {search: ['?', 'query'], hash: ['#', 'fragment']};
+generateAccessor = function(_part, _key){
+    return function(v, build) {
+        var t = this[_part](v, build);
+        return typeof t === "string" && t.length ? (_key + t) : t;
+    };
+};
+
+for (_part in _parts) {
+    p[_part] = generateAccessor(_parts[_part][1], _parts[_part][0]);
+}
+
+p.pathname = function(v, build) {
+    if (v === undefined || v === true) {
+        var res = this._parts.path || (this._parts.urn ? '' : '/');
+        return v ? URI.decodePath(res) : res;
+    } else {
+        this._parts.path = v ? URI.recodePath(v) : "/";
+        this.build(!build);
+        return this;
+    }
+};
+p.path = p.pathname;
+p.href = function(href, build) {
+    if (href === undefined) {
+        return this.toString();
+    }
+
+    this._string = "";
+    this._parts = {
+        protocol: null,
+        username: null,
+        password: null,
+        hostname: null,
+        urn: null,
+        port: null,
+        path: null,
+        query: null,
+        fragment: null,
+        // state
+        duplicateQueryParameters: URI.duplicateQueryParameters
+    };
+
+    var _URI = href instanceof URI;
+    var _object = typeof href === "object" && (href.hostname || href.path);
+    var key;
+    
+    // window.location is reported to be an object, but it's not the sort
+    // of object we're looking for: 
+    // * location.protocol ends with a colon
+    // * location.query != object.search
+    // * location.hash != object.fragment
+    // simply serializing the unknown object should do the trick 
+    // (for location, not for everything...)
+    if (!_URI && _object && Object.prototype.toString.call(href) !== "[object Object]") {
+        href = href.toString();
+    }
+
+    if (typeof href === "string") {
+        this._parts = URI.parse(href, this._parts);
+    } else if (_URI || _object) {
+        var src = _URI ? href._parts : href;
+        for (key in src) {
+            if (hasOwn.call(this._parts, key)) {
+                this._parts[key] = src[key];
+            }
+        }
+    } else {
+        throw new TypeError("invalid input");
+    }
+
+    this.build(!build);
+    return this;
+};
+
+// identification accessors
+p.is = function(what) {
+    var ip = false;
+    var ip4 = false;
+    var ip6 = false;
+    var name = false;
+    var sld = false;
+    var idn = false;
+    var punycode = false;
+    var relative = !this._parts.urn;
+
+    if (this._parts.hostname) {
+        relative = false;
+        ip4 = URI.ip4_expression.test(this._parts.hostname);
+        ip6 = URI.ip6_expression.test(this._parts.hostname);
+        ip = ip4 || ip6;
+        name = !ip;
+        sld = name && SLD && SLD.has(this._parts.hostname);
+        idn = name && URI.idn_expression.test(this._parts.hostname);
+        punycode = name && URI.punycode_expression.test(this._parts.hostname);
+    }
+
+    switch (what.toLowerCase()) {
+        case 'relative':
+            return relative;
+
+        case 'absolute':
+            return !relative;
+
+        // hostname identification
+        case 'domain':
+        case 'name':
+            return name;
+
+        case 'sld':
+            return sld;
+
+        case 'ip':
+            return ip;
+
+        case 'ip4':
+        case 'ipv4':
+        case 'inet4':
+            return ip4;
+
+        case 'ip6':
+        case 'ipv6':
+        case 'inet6':
+            return ip6;
+
+        case 'idn':
+            return idn;
+
+        case 'url':
+            return !this._parts.urn;
+
+        case 'urn':
+            return !!this._parts.urn;
+
+        case 'punycode':
+            return punycode;
+    }
+
+    return null;
+};
+
+// component specific input validation
+var _protocol = p.protocol;
+var _port = p.port;
+var _hostname = p.hostname;
+
+p.protocol = function(v, build) {
+    if (v !== undefined) {
+        if (v) {
+            // accept trailing ://
+            v = v.replace(/:(\/\/)?$/, '');
+
+            if (v.match(/[^a-zA-z0-9\.+-]/)) {
+                throw new TypeError("Protocol '" + v + "' contains characters other than [A-Z0-9.+-]");
+            }
+        }
+    }
+    return _protocol.call(this, v, build);
+};
+p.scheme = p.protocol;
+p.port = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v !== undefined) {
+        if (v === 0) {
+            v = null;
+        }
+
+        if (v) {
+            v += "";
+            if (v[0] === ":") {
+                v = v.substring(1);
+            }
+
+            if (v.match(/[^0-9]/)) {
+                throw new TypeError("Port '" + v + "' contains characters other than [0-9]");
+            }
+        }
+    }
+    return _port.call(this, v, build);
+};
+p.hostname = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v !== undefined) {
+        var x = {};
+        URI.parseHost(v, x);
+        v = x.hostname;
+    }
+    return _hostname.call(this, v, build);
+};
+
+// compound accessors
+p.host = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        return this._parts.hostname ? URI.buildHost(this._parts) : "";
+    } else {
+        URI.parseHost(v, this._parts);
+        this.build(!build);
+        return this;
+    }
+};
+p.authority = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        return this._parts.hostname ? URI.buildAuthority(this._parts) : "";
+    } else {
+        URI.parseAuthority(v, this._parts);
+        this.build(!build);
+        return this;
+    }
+};
+p.userinfo = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        if (!this._parts.username) {
+            return "";
+        }
+
+        var t = URI.buildUserinfo(this._parts);
+        return t.substring(0, t.length -1);
+    } else {
+        if (v[v.length-1] !== '@') {
+            v += '@';
+        }
+
+        URI.parseUserinfo(v, this._parts);
+        this.build(!build);
+        return this;
+    }
+};
+p.resource = function(v, build) {
+    var parts;
+    
+    if (v === undefined) {
+        return this.path() + this.search() + this.hash();
+    }
+    
+    parts = URI.parse(v);
+    this._parts.path = parts.path;
+    this._parts.query = parts.query;
+    this._parts.fragment = parts.fragment;
+    this.build(!build);
+    return this;
+};
+
+// fraction accessors
+p.subdomain = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    // convenience, return "www" from "www.example.org"
+    if (v === undefined) {
+        if (!this._parts.hostname || this.is('IP')) {
+            return "";
+        }
+
+        // grab domain and add another segment
+        var end = this._parts.hostname.length - this.domain().length - 1;
+        return this._parts.hostname.substring(0, end) || "";
+    } else {
+        var e = this._parts.hostname.length - this.domain().length;
+        var sub = this._parts.hostname.substring(0, e);
+        var replace = new RegExp('^' + escapeRegEx(sub));
+
+        if (v && v[v.length - 1] !== '.') {
+            v += ".";
+        }
+
+        if (v) {
+            URI.ensureValidHostname(v);
+        }
+
+        this._parts.hostname = this._parts.hostname.replace(replace, v);
+        this.build(!build);
+        return this;
+    }
+};
+p.domain = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (typeof v === 'boolean') {
+        build = v;
+        v = undefined;
+    }
+
+    // convenience, return "example.org" from "www.example.org"
+    if (v === undefined) {
+        if (!this._parts.hostname || this.is('IP')) {
+            return "";
+        }
+
+        // if hostname consists of 1 or 2 segments, it must be the domain
+        var t = this._parts.hostname.match(/\./g);
+        if (t && t.length < 2) {
+            return this._parts.hostname;
+        }
+
+        // grab tld and add another segment
+        var end = this._parts.hostname.length - this.tld(build).length - 1;
+        end = this._parts.hostname.lastIndexOf('.', end -1) + 1;
+        return this._parts.hostname.substring(end) || "";
+    } else {
+        if (!v) {
+            throw new TypeError("cannot set domain empty");
+        }
+
+        URI.ensureValidHostname(v);
+
+        if (!this._parts.hostname || this.is('IP')) {
+            this._parts.hostname = v;
+        } else {
+            var replace = new RegExp(escapeRegEx(this.domain()) + "$");
+            this._parts.hostname = this._parts.hostname.replace(replace, v);
+        }
+
+        this.build(!build);
+        return this;
+    }
+};
+p.tld = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (typeof v === 'boolean') {
+        build = v;
+        v = undefined;
+    }
+
+    // return "org" from "www.example.org"
+    if (v === undefined) {
+        if (!this._parts.hostname || this.is('IP')) {
+            return "";
+        }
+
+        var pos = this._parts.hostname.lastIndexOf('.');
+        var tld = this._parts.hostname.substring(pos + 1);
+
+        if (build !== true && SLD && SLD.list[tld.toLowerCase()]) {
+            return SLD.get(this._parts.hostname) || tld;
+        }
+
+        return tld;
+    } else {
+        var replace;
+        
+        if (!v) {
+            throw new TypeError("cannot set TLD empty");
+        } else if (v.match(/[^a-zA-Z0-9-]/)) {
+            if (SLD && SLD.is(v)) {
+                replace = new RegExp(escapeRegEx(this.tld()) + "$");
+                this._parts.hostname = this._parts.hostname.replace(replace, v);
+            } else {
+                throw new TypeError("TLD '" + v + "' contains characters other than [A-Z0-9]");
+            }
+        } else if (!this._parts.hostname || this.is('IP')) {
+            throw new ReferenceError("cannot set TLD on non-domain host");
+        } else {
+            replace = new RegExp(escapeRegEx(this.tld()) + "$");
+            this._parts.hostname = this._parts.hostname.replace(replace, v);
+        }
+
+        this.build(!build);
+        return this;
+    }
+};
+p.directory = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined || v === true) {
+        if (!this._parts.path && !this._parts.hostname) {
+            return '';
+        }
+
+        if (this._parts.path === '/') {
+            return '/';
+        }
+
+        var end = this._parts.path.length - this.filename().length - 1;
+        var res = this._parts.path.substring(0, end) || (this._parts.hostname ? "/" : "");
+
+        return v ? URI.decodePath(res) : res;
+
+    } else {
+        var e = this._parts.path.length - this.filename().length;
+        var directory = this._parts.path.substring(0, e);
+        var replace = new RegExp('^' + escapeRegEx(directory));
+
+        // fully qualifier directories begin with a slash
+        if (!this.is('relative')) {
+            if (!v) {
+                v = '/';
+            }
+
+            if (v[0] !== '/') {
+                v = "/" + v;
+            }
+        }
+
+        // directories always end with a slash
+        if (v && v[v.length - 1] !== '/') {
+            v += '/';
+        }
+
+        v = URI.recodePath(v);
+        this._parts.path = this._parts.path.replace(replace, v);
+        this.build(!build);
+        return this;
+    }
+};
+p.filename = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined || v === true) {
+        if (!this._parts.path || this._parts.path === '/') {
+            return "";
+        }
+
+        var pos = this._parts.path.lastIndexOf('/');
+        var res = this._parts.path.substring(pos+1);
+
+        return v ? URI.decodePathSegment(res) : res;
+    } else {
+        var mutatedDirectory = false;
+        
+        if (v[0] === '/') {
+            v = v.substring(1);
+        }
+
+        if (v.match(/\.?\//)) {
+            mutatedDirectory = true;
+        }
+
+        var replace = new RegExp(escapeRegEx(this.filename()) + "$");
+        v = URI.recodePath(v);
+        this._parts.path = this._parts.path.replace(replace, v);
+
+        if (mutatedDirectory) {
+            this.normalizePath(build);
+        } else {
+            this.build(!build);
+        }
+
+        return this;
+    }
+};
+p.suffix = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined || v === true) {
+        if (!this._parts.path || this._parts.path === '/') {
+            return "";
+        }
+
+        var filename = this.filename();
+        var pos = filename.lastIndexOf('.');
+        var s, res;
+
+        if (pos === -1) {
+            return "";
+        }
+
+        // suffix may only contain alnum characters (yup, I made this up.)
+        s = filename.substring(pos+1);
+        res = (/^[a-z0-9%]+$/i).test(s) ? s : "";
+        return v ? URI.decodePathSegment(res) : res;
+    } else {
+        if (v[0] === '.') {
+            v = v.substring(1);
+        }
+
+        var suffix = this.suffix();
+        var replace;
+
+        if (!suffix) {
+            if (!v) {
+                return this;
+            }
+
+            this._parts.path += '.' + URI.recodePath(v);
+        } else if (!v) {
+            replace = new RegExp(escapeRegEx("." + suffix) + "$");
+        } else {
+            replace = new RegExp(escapeRegEx(suffix) + "$");
+        }
+
+        if (replace) {
+            v = URI.recodePath(v);
+            this._parts.path = this._parts.path.replace(replace, v);
+        }
+
+        this.build(!build);
+        return this;
+    }
+};
+p.segment = function(segment, v, build) {
+    var separator = this._parts.urn ? ':' : '/';
+    var path = this.path();
+    var absolute = path.substring(0, 1) === '/';
+    var segments = path.split(separator);
+
+    if (typeof segment !== 'number') {
+        build = v;
+        v = segment;
+        segment = undefined;
+    }
+
+    if (segment !== undefined && typeof segment !== 'number') {
+        throw new Error("Bad segment '" + segment + "', must be 0-based integer");
+    }
+
+    if (absolute) {
+        segments.shift();
+    }
+
+    if (segment < 0) {
+        // allow negative indexes to address from the end
+        segment = Math.max(segments.length + segment, 0);
+    }
+
+    if (v === undefined) {
+        return segment === undefined
+            ? segments
+            : segments[segment];
+    } else if (segment === null || segments[segment] === undefined) {
+        if (isArray(v)) {
+            segments = v;
+        } else if (v || (typeof v === "string" && v.length)) {
+            if (segments[segments.length -1] === "") {
+                // empty trailing elements have to be overwritten
+                // to prefent results such as /foo//bar
+                segments[segments.length -1] = v;
+            } else {
+                segments.push(v);
+            }
+        }
+    } else {
+        if (v || (typeof v === "string" && v.length)) {
+            segments[segment] = v;
+        } else {
+            segments.splice(segment, 1);
+        }
+    }
+
+    if (absolute) {
+        segments.unshift("");
+    }
+
+    return this.path(segments.join(separator), build);
+};
+
+// mutating query string
+var q = p.query;
+p.query = function(v, build) {
+    if (v === true) {
+        return URI.parseQuery(this._parts.query);
+    } else if (v !== undefined && typeof v !== "string") {
+        this._parts.query = URI.buildQuery(v, this._parts.duplicateQueryParameters);
+        this.build(!build);
+        return this;
+    } else {
+        return q.call(this, v, build);
+    }
+};
+p.addQuery = function(name, value, build) {
+    var data = URI.parseQuery(this._parts.query);
+    URI.addQuery(data, name, value === undefined ? null : value);
+    this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters);
+    if (typeof name !== "string") {
+        build = value;
+    }
+
+    this.build(!build);
+    return this;
+};
+p.removeQuery = function(name, value, build) {
+    var data = URI.parseQuery(this._parts.query);
+    URI.removeQuery(data, name, value);
+    this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters);
+    if (typeof name !== "string") {
+        build = value;
+    }
+
+    this.build(!build);
+    return this;
+};
+p.addSearch = p.addQuery;
+p.removeSearch = p.removeQuery;
+
+// sanitizing URLs
+p.normalize = function() {
+    if (this._parts.urn) {
+        return this
+            .normalizeProtocol(false)
+            .normalizeQuery(false)
+            .normalizeFragment(false)
+            .build();
+    }
+
+    return this
+        .normalizeProtocol(false)
+        .normalizeHostname(false)
+        .normalizePort(false)
+        .normalizePath(false)
+        .normalizeQuery(false)
+        .normalizeFragment(false)
+        .build();
+};
+p.normalizeProtocol = function(build) {
+    if (typeof this._parts.protocol === "string") {
+        this._parts.protocol = this._parts.protocol.toLowerCase();
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizeHostname = function(build) {
+    if (this._parts.hostname) {
+        if (this.is('IDN') && punycode) {
+            this._parts.hostname = punycode.toASCII(this._parts.hostname);
+        } else if (this.is('IPv6') && IPv6) {
+            this._parts.hostname = IPv6.best(this._parts.hostname);
+        }
+
+        this._parts.hostname = this._parts.hostname.toLowerCase();
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizePort = function(build) {
+    // remove port of it's the protocol's default
+    if (typeof this._parts.protocol === "string" && this._parts.port === URI.defaultPorts[this._parts.protocol]) {
+        this._parts.port = null;
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizePath = function(build) {
+    if (this._parts.urn) {
+        return this;
+    }
+
+    if (!this._parts.path || this._parts.path === '/') {
+        return this;
+    }
+
+    var _was_relative;
+    var _was_relative_prefix;
+    var _path = this._parts.path;
+    var _parent, _pos;
+
+    // handle relative paths
+    if (_path[0] !== '/') {
+        if (_path[0] === '.') {
+            _was_relative_prefix = _path.substring(0, _path.indexOf('/'));
+        }
+        _was_relative = true;
+        _path = '/' + _path;
+    }
+    // resolve simples
+    _path = _path.replace(/(\/(\.\/)+)|\/{2,}/g, '/');
+    // resolve parents
+    while (true) {
+        _parent = _path.indexOf('/../');
+        if (_parent === -1) {
+            // no more ../ to resolve
+            break;
+        } else if (_parent === 0) {
+            // top level cannot be relative...
+            _path = _path.substring(3);
+            break;
+        }
+
+        _pos = _path.substring(0, _parent).lastIndexOf('/');
+        if (_pos === -1) {
+            _pos = _parent;
+        }
+        _path = _path.substring(0, _pos) + _path.substring(_parent + 3);
+    }
+    // revert to relative
+    if (_was_relative && this.is('relative')) {
+        if (_was_relative_prefix){
+            _path = _was_relative_prefix + _path;
+        } else {
+            _path = _path.substring(1);
+        }
+    }
+
+    _path = URI.recodePath(_path);
+    this._parts.path = _path;
+    this.build(!build);
+    return this;
+};
+p.normalizePathname = p.normalizePath;
+p.normalizeQuery = function(build) {
+    if (typeof this._parts.query === "string") {
+        if (!this._parts.query.length) {
+            this._parts.query = null;
+        } else {
+            this.query(URI.parseQuery(this._parts.query));
+        }
+
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizeFragment = function(build) {
+    if (!this._parts.fragment) {
+        this._parts.fragment = null;
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizeSearch = p.normalizeQuery;
+p.normalizeHash = p.normalizeFragment;
+
+p.iso8859 = function() {
+    // expect unicode input, iso8859 output
+    var e = URI.encode;
+    var d = URI.decode;
+
+    URI.encode = escape;
+    URI.decode = decodeURIComponent;
+    this.normalize();
+    URI.encode = e;
+    URI.decode = d;
+    return this;
+};
+
+p.unicode = function() {
+    // expect iso8859 input, unicode output
+    var e = URI.encode;
+    var d = URI.decode;
+
+    URI.encode = strictEncodeURIComponent;
+    URI.decode = unescape;
+    this.normalize();
+    URI.encode = e;
+    URI.decode = d;
+    return this;
+};
+
+p.readable = function() {
+    var uri = this.clone();
+    // removing username, password, because they shouldn't be displayed according to RFC 3986
+    uri.username("").password("").normalize();
+    var t = '';
+    if (uri._parts.protocol) {
+        t += uri._parts.protocol + '://';
+    }
+
+    if (uri._parts.hostname) {
+        if (uri.is('punycode') && punycode) {
+            t += punycode.toUnicode(uri._parts.hostname);
+            if (uri._parts.port) {
+                t += ":" + uri._parts.port;
+            }
+        } else {
+            t += uri.host();
+        }
+    }
+
+    if (uri._parts.hostname && uri._parts.path && uri._parts.path[0] !== '/') {
+        t += '/';
+    }
+
+    t += uri.path(true);
+    if (uri._parts.query) {
+        var q = '';
+        for (var i = 0, qp = uri._parts.query.split('&'), l = qp.length; i < l; i++) {
+            var kv = (qp[i] || "").split('=');
+            q += '&' + URI.decodeQuery(kv[0])
+                .replace(/&/g, '%26');
+
+            if (kv[1] !== undefined) {
+                q += "=" + URI.decodeQuery(kv[1])
+                    .replace(/&/g, '%26');
+            }
+        }
+        t += '?' + q.substring(1);
+    }
+
+    t += uri.hash();
+    return t;
+};
+
+// resolving relative and absolute URLs
+p.absoluteTo = function(base) {
+    var resolved = this.clone();
+    var properties = ['protocol', 'username', 'password', 'hostname', 'port'];
+    var basedir, i, p;
+
+    if (this._parts.urn) {
+        throw new Error('URNs do not have any generally defined hierachical components');
+    }
+
+    if (this._parts.hostname) {
+        return resolved;
+    }
+
+    if (!(base instanceof URI)) {
+        base = new URI(base);
+    }
+
+    for (i = 0, p; p = properties[i]; i++) {
+        resolved._parts[p] = base._parts[p];
+    }
+    
+    properties = ['query', 'path'];
+    for (i = 0, p; p = properties[i]; i++) {
+        if (!resolved._parts[p] && base._parts[p]) {
+            resolved._parts[p] = base._parts[p];
+        }
+    }
+
+    if (resolved.path()[0] !== '/') {
+        basedir = base.directory();
+        resolved._parts.path = (basedir ? (basedir + '/') : '') + resolved._parts.path;
+        resolved.normalizePath();
+    }
+
+    resolved.build();
+    return resolved;
+};
+p.relativeTo = function(base) {
+    var relative = this.clone();
+    var properties = ['protocol', 'username', 'password', 'hostname', 'port'];
+    var common, _base;
+
+    if (this._parts.urn) {
+        throw new Error('URNs do not have any generally defined hierachical components');
+    }
+
+    if (!(base instanceof URI)) {
+        base = new URI(base);
+    }
+
+    if (this.path()[0] !== '/' || base.path()[0] !== '/') {
+        throw new Error('Cannot calculate common path from non-relative URLs');
+    }
+
+    common = URI.commonPath(relative.path(), base.path());
+    _base = base.directory();
+
+    for (var i = 0, p; p = properties[i]; i++) {
+        relative._parts[p] = null;
+    }
+
+    if (!common || common === '/') {
+        return relative;
+    }
+
+    if (_base + '/' === common) {
+        relative._parts.path = './' + relative.filename();
+    } else {
+        var parents = '../';
+        var _common = new RegExp('^' + escapeRegEx(common));
+        var _parents = _base.replace(_common, '/').match(/\//g).length -1;
+
+        while (_parents--) {
+            parents += '../';
+        }
+
+        relative._parts.path = relative._parts.path.replace(_common, parents);
+    }
+
+    relative.build();
+    return relative;
+};
+
+// comparing URIs
+p.equals = function(uri) {
+    var one = this.clone();
+    var two = new URI(uri);
+    var one_map = {};
+    var two_map = {};
+    var checked = {};
+    var one_query, two_query, key;
+
+    one.normalize();
+    two.normalize();
+
+    // exact match
+    if (one.toString() === two.toString()) {
+        return true;
+    }
+
+    // extract query string
+    one_query = one.query();
+    two_query = two.query();
+    one.query("");
+    two.query("");
+
+    // definitely not equal if not even non-query parts match
+    if (one.toString() !== two.toString()) {
+        return false;
+    }
+
+    // query parameters have the same length, even if they're permutated
+    if (one_query.length !== two_query.length) {
+        return false;
+    }
+
+    one_map = URI.parseQuery(one_query);
+    two_map = URI.parseQuery(two_query);
+
+    for (key in one_map) {
+        if (hasOwn.call(one_map, key)) {
+            if (!isArray(one_map[key])) {
+                if (one_map[key] !== two_map[key]) {
+                    return false;
+                }
+            } else {
+                if (!isArray(two_map[key])) {
+                    return false;
+                }
+
+                // arrays can't be equal if they have different amount of content
+                if (one_map[key].length !== two_map[key].length) {
+                    return false;
+                }
+
+                one_map[key].sort();
+                two_map[key].sort();
+
+                for (var i = 0, l = one_map[key].length; i < l; i++) {
+                    if (one_map[key][i] !== two_map[key][i]) {
+                        return false;
+                    }
+                }
+            }
+
+            checked[key] = true;
+        }
+    }
+
+    for (key in two_map) {
+        if (hasOwn.call(two_map, key)) {
+            if (!checked[key]) {
+                // two contains a parameter not present in one
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+
+// state
+p.duplicateQueryParameters = function(v) {
+    this._parts.duplicateQueryParameters = !!v;
+    return this;
+};
+
+return URI;
+}));
+}; // end of sap.ui.thirdparty.URI
+
+
+/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
 
 (function() {
 
@@ -16901,7 +20148,9 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 	 */
 	sap.ui.base.Object.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
-		constructor : function() {
+		constructor : function(oCore) {
+			
+			this._oCore = oCore;
 			
 			function detectLanguage() {
 				var match;
@@ -16915,34 +20164,39 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 				} 
 				return navigator.language || navigator.userLanguage || navigator.browserLanguage;
 			}
-			
+
 			// definition of supported settings
 			var M_SETTINGS = {
-					"theme"           : { type : "string",   defaultValue : "base" },
-					"language"        : { type : "string",   defaultValue : detectLanguage() },
-					"formatLocale"    : { type : "string",   defaultValue : null },
-					// "timezone"      : "UTC",
-					"accessibility"   : { type : "boolean",  defaultValue : true },
-					"animation"       : { type : "boolean",  defaultValue : true },
-					"rtl"             : { type : "boolean",  defaultValue : false },
-					"debug"           : { type : "boolean",  defaultValue : false },
-					"inspect"         : { type : "boolean",  defaultValue : false },
-					"originInfo"      : { type : "boolean",  defaultValue : false },
-					"noConflict"      : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"noDuplicateIds"  : { type : "boolean",  defaultValue : true },
-					"trace"           : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"modules"         : { type : "string[]", defaultValue : [],        noUrl:true },
-					"areas"           : { type : "string[]", defaultValue : null,      noUrl:true },
-					// "libs"			  : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
-					"onInit"          : { type : "code",     defaultValue : undefined, noUrl:true },
-					"uidPrefix"       : { type : "string",   defaultValue : "__",      noUrl:true },
-					"ignoreUrlParams" : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"weinreServer"    : { type : "string",   defaultValue : "",		   noUrl:true },
-					"weinreId"        : { type : "string",   defaultValue : "" },
-					"xx-loadAllMode"  : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"preload"         : { type : "string",   defaultValue : 'auto' },
-					"xx-test-mobile"  : { type : "boolean",  defaultValue : false },
-					"appCacheBuster"  : { type : "boolean",  defaultValue : false }
+					"theme"                 : { type : "string",   defaultValue : "base" },
+					"language"              : { type : "string",   defaultValue : detectLanguage() },
+					"formatLocale"          : { type : "string",   defaultValue : null },
+					// "timezone"              : "UTC",
+					"accessibility"         : { type : "boolean",  defaultValue : true },
+					"animation"             : { type : "boolean",  defaultValue : true },
+					"rtl"                   : { type : "boolean",  defaultValue : null },
+					"debug"                 : { type : "boolean",  defaultValue : false },
+					"inspect"               : { type : "boolean",  defaultValue : false },
+					"originInfo"            : { type : "boolean",  defaultValue : false },
+					"noConflict"            : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"noDuplicateIds"        : { type : "boolean",  defaultValue : true },
+					"trace"                 : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"modules"               : { type : "string[]", defaultValue : [],        noUrl:true },
+					"areas"                 : { type : "string[]", defaultValue : null,      noUrl:true },
+					// "libs"                  : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
+					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true },
+					"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
+					"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"weinreServer"          : { type : "string",   defaultValue : "",        noUrl:true },
+					"weinreId"              : { type : "string",   defaultValue : "" },
+					"preload"               : { type : "string",   defaultValue : 'auto' },
+					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
+					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
+					"xx-preloadLibCss"      : { type : "string[]", defaultValue : [] },
+					"xx-bindingSyntax"      : { type : "string",   defaultValue : "simple",  noUrl:true }, // simple|complex...
+					"xx-accessibilityMode"  : { type : "boolean",  defaultValue : false },
+					"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
+					"xx-bootTask"           : { type : "function", defaultValue : undefined, noUrl:true }
 			};
 
 			this.oFormatSettings = new sap.ui.core.Configuration.FormatSettings(this);
@@ -16971,7 +20225,13 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 					config[sName] = "" + sValue; // enforce string
 					break;
 				case "code":
-					config[sName] = typeof sValue === "function" ? sValue : "" + sValue;
+					config[sName] = typeof sValue === "function" ? sValue : String(sValue);
+					break;
+				case "function":
+					if ( typeof sValue !== "function" ) {
+						throw new Error("unsupported value");
+					}
+					config[sName] = sValue;
 					break;
 				case "string[]":
 					if ( jQuery.isArray(sValue) ) {
@@ -16987,6 +20247,26 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 				}
 			}
 
+			function validateThemeRoot(sThemeRoot) {
+				// might in future be checked against a whitelist - for now it is a hardcoded URL prefix
+				var rThemeRepository = /^\/sap\/public\/bc\/themes\//i,
+					oPage,
+					oThemeRoot,
+					sPath;
+				
+				try {
+					oPage = new URI().normalize();
+					oThemeRoot = new URI(sThemeRoot, window.location.href).normalize();
+					if ( oThemeRoot.hostname() === oPage.hostname() && rThemeRepository.test(oThemeRoot.path()) ) {
+						sPath = oThemeRoot.path();
+						return sPath + (sPath.slice(-1) === '/' ? '' : '/') + "UI5/";
+					}
+				} catch (e) {
+					// malformed URL are also not accepted 
+				}
+				jQuery.sap.log.error("Invalid Theme Root URL: URL must point into the central theme repository on the same server - setting ignored");
+			}
+			
 			// 1. collect the defaults
 			for (var n in M_SETTINGS ) {
 				config[n] = M_SETTINGS[n].defaultValue;
@@ -17034,9 +20314,9 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 				var oUriParams = jQuery.sap.getUriParameters();
 
 				// map SAP parameters (if later as sap-ui parameter set this wins)
-				if (oUriParams.mParams['sap-locale']) {
-					// map sap-locale to sap-ui-language and ignore sap-language
-					var sValue = oUriParams.get('sap-locale');
+				if (oUriParams.mParams['sap-locale'] || oUriParams.mParams['sap-language']) {
+					// map sap-locale or sap-language to sap-ui-language
+					var sValue = oUriParams.get('sap-locale') || oUriParams.get('sap-language');
 					if (sValue === "") {
 						//empty URL parameters set the parameter back to its system default
 						config['language'] = M_SETTINGS['language'].defaultValue;
@@ -17050,9 +20330,9 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 					// "" = false, "X", "x" = true
 					var sValue = oUriParams.get('sap-accessibility');
 					if (sValue === "X" || sValue === "x") {
-						setValue('accessibility', true);
+						setValue('xx-accessibilityMode', true);
 					} else {
-						setValue('accessibility', false);
+						setValue('xx-accessibilityMode', false);
 					}
 				}
 
@@ -17072,19 +20352,7 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 						// empty URL parameters set the parameter back to its system default
 						config['theme'] = M_SETTINGS['theme'].defaultValue;
 					} else {
-						// check if @ in theme - not allowed yet
-						var iIndex = sValue.indexOf("@");
-						if (iIndex >= 0) {
-							jQuery.sap.log.warning("@ not allowed in theme name (theme-root not supported!)");
-							if (iIndex == 0) {
-								config['theme'] = M_SETTINGS['theme'].defaultValue;
-							}else{
-								// use part before @ as theme
-								setValue('theme', sValue.slice(0, iIndex));
-							}
-						}else{
-							setValue('theme', sValue);
-						}
+						setValue('theme', sValue);
 					}
 				}
 
@@ -17104,6 +20372,40 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 				}
 			}
 
+		  // calculate RTL mode
+			this.derivedRTL = sap.ui.core.Locale._impliesRTL(config.language);
+			
+			// analyze theme parameter
+			var sTheme = config.theme;
+			var iIndex = sTheme.indexOf("@");
+			if (iIndex >= 0) {
+				var sThemeRoot = validateThemeRoot(sTheme.slice(iIndex+1));
+				if ( sThemeRoot ) {
+					config.theme = sTheme.slice(0, iIndex);
+					config.themeRoot = sThemeRoot;
+				} else {
+					// fallback to non-URL parameter (if not equal to sTheme)
+					config.theme = (oCfg.theme && oCfg.theme !== sTheme) ? oCfg.theme : "base";
+					iIndex = -1; // enable theme mapping below 
+				}
+			}
+			// resolve theme name alias, but only if no theme root was given 
+			if ( iIndex < 0 && config.theme === "sap_corbu" ) {
+				config.theme = "sap_goldreflection";
+			}
+			
+			var aLangs = config['xx-supportedLanguages'];
+			if ( aLangs.length === 0 || (aLangs.length === 1 && aLangs[0] === '*') ) {
+				aLangs = [];
+			} else if ( aLangs.length === 1 && aLangs[0] === 'default' ) {
+				aLangs = "ar,bg,ca,cs,da,de,el,en,es,et,fi,fr,hi,hr,hu,it,iw,ja,ko,lt,lv,nl,no,pl,pt,ro,ru,sh,sk,sl,sv,th,tr,uk,vi,zh_CN,zh_TW".split(/,/);
+				if ( aLangs.length === 1 && aLangs[0].slice(0,1) === '@' ) {
+					aLangs = [];
+				}
+			}
+			config['xx-supportedLanguages'] = aLangs; 
+			
+			// log  all non default value
 			for (var n in M_SETTINGS) {
 				if ( config[n] !== M_SETTINGS[n].defaultValue ) {
 					jQuery.sap.log.info("  " + n + " = " + config[n]);
@@ -17141,8 +20443,66 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		},
 
 		/**
+		 * Sets a new language tag to be used from now on for language/region dependent 
+		 * functionality (e.g. formatting, data types, translated texts, ...). 
+		 * 
+		 * When the language has changed, the Core will fire its 
+		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
+		 * 
+		 * The framework <strong>does not</strong> guarantee that already created, language 
+		 * dependent objects will be updated by this call. It therefore remains best practice 
+		 * for applications to switch the language early, e.g. before any language dependent 
+		 * objects are created. Applications that need to support more dynamic changes of 
+		 * the language should listen to the <code>localizationChanged</code> event and adapt 
+		 * all language dependent objects that they use (e.g. by rebuilding their UI).
+		 * 
+		 * Currently, the framework notifies the following objects about a change of the
+		 * localization settings before it fires the <code>localizationChanged</code> event:
+		 * 
+		 * <ul>
+		 * <li>date and number data types that are used in property bindings or composite 
+		 *     bindings in existing Elements, Controls, UIAreas or Components</li>
+		 * <li>ResourceModels currently assigned to the Core, an UIArea, Component, 
+		 *     Element or Control</li>
+		 * <li>Elements or Controls that implement the <code>onLocalizationChanged</code> hook. 
+		 * </ul>
+		 * 
+		 * It furthermore derives the RTL mode from the new language, if no explicit RTL
+		 * mode has been set. If the RTL mode changes, the following additional actions will be taken:
+		 * 
+		 * <ul>
+		 * <li>the URLs of already loaded library theme files will be changed</li>
+		 * <li>the <code>dir</code> attribute of the page will be changed to reflect the new mode.</li> 
+		 * <li>all UIAreas will be invalidated (which results in a rendering of the whole UI5 UI)</li> 
+		 * </ul>
+		 * 
+		 * @param {string} sLanguage the new language as a BCP47 compliant language tag; case doesn't matter
+		 *   and underscores can be used instead of a dashes to separate components (compatibility with Java Locale Ids)
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * 
+		 * @experimental Since 1.11.1 - See method documentation for restrictions.
+		 * @public
+		 */
+		setLanguage : function (sLanguage) {
+			check(typeof sLanguage === "string" && sLanguage, "sLanguage must be a BCP47 language tag or Java Locale id or null"); // TODO delegate to Locale?
+			var bOldRTL = this.getRTL(),
+				mChanges;
+			
+			if ( sLanguage != this.language ) {
+				mChanges = this._collect();
+				this.language = mChanges.language = sLanguage;
+				this.derivedRTL = sap.ui.core.Locale._impliesRTL(sLanguage);
+				if ( bOldRTL != this.getRTL() ) {
+					mChanges.rtl = this.getRTL();
+				}
+				this._endCollect();
+			}
+			return this;
+		},
+
+		/**
 		 * Returns the active locale for the current session. 
-		 * The locale is derived from the {@link #getLanguage language} property.  
+		 * The locale is derived from the {@link #getLanguage language} property.
 		 * @return {sap.ui.core.Locale} the locale
 		 * @public
 		 */
@@ -17151,8 +20511,9 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		},
 
 		/**
-		 * Returns the format locale string with language and region code. Falls back to language configuration,
-		 * in case it has not been explicitly defined.
+		 * Returns the format locale string with language and region code. Falls back to 
+		 * language configuration, in case it has not been explicitly defined.
+		 * 
 		 * @return {string} the format locale string with language and country code
 		 * @public
 		 */
@@ -17160,6 +20521,44 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 			return this.formatLocale || this.language;
 		},
 
+		/**
+		 * Sets a new formatLocale to be used from now on for retrieving locale
+		 * specific formatters. Modifying this setting does not have an impact on 
+		 * the retrieval of translated texts!
+		 * 
+		 * Can either be set to a concrete value (a BCP-47 or Java locale compliant 
+		 * language tag) or to <code>null</code>. When set to <code>null</code> (default 
+		 * value) then locale specific formatters are retrieved for the current language.
+		 * 
+		 * After changing the formatLocale, the framework tries  to update localization 
+		 * specific parts of the UI. See the documentation of {@link #setLanguage} for 
+		 * details and restrictions.
+		 * 
+		 * @param {string|null} sFormatLocale the new format locale as a BCP47 compliant language tag; 
+		 *   case doesn't matter and underscores can be used instead of a dashes to separate 
+		 *   components (compatibility with Java Locale Ids)
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * 
+		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
+		 */
+		setFormatLocale : function(sFormatLocale) {
+			check(sFormatLocale === null || typeof sFormatLocale === "string" && sFormatLocale, "sFormatLocale must be a BCP47 language tag or Java Locale id or null");
+			var mChanges;
+			if ( sFormatLocale != this.formatLocale ) {
+				mChanges = this._collect();
+				this.formatLocale = mChanges.formatLocale = sFormatLocale;
+				this._endCollect();
+			}
+			return this;
+		},
+
+		/**
+		 * @experimental 
+		 */
+		getSupportedLanguages : function() {
+			return this["xx-supportedLanguages"];
+		},
+		
 		/**
 		 * Returns whether the accessibility mode is used or not
 		 * @return {boolean} whether the accessibility mode is used or not
@@ -17179,12 +20578,45 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		},
 
 		/**
-		 * Returns whether the page uses the RTL text direction
+		 * Returns whether the page uses the RTL text direction.
+		 * 
+		 * If no mode has been explicitly set (neither true nor false),
+		 * the mode is derived from the current language setting.
+		 * 
 		 * @return {boolean} whether the page uses the RTL text direction
 		 * @public
 		 */
 		getRTL : function () {
-			return this.rtl;
+			// if rtl has not been set (still null), return the rtl mode derived from the language 
+			return this.rtl === null ? this.derivedRTL : this.rtl;
+		},
+
+		/**
+		 * Sets the character orientation mode to be used from now on.
+		 * 
+		 * Can either be set to a concrete value (true meaning right-to-left,
+		 * false meaning left-to-right) or to <code>null</code> which means that 
+		 * the character orientation mode should be derived from the current 
+		 * language (incl. region) setting.
+		 * 
+		 * After changing the character orientation mode, the framework tries  
+		 * to update localization specific parts of the UI. See the documentation of 
+		 * {@link #setLanguage} for details and restrictions.
+		 * 
+		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * 
+		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
+		 */
+		setRTL : function(bRTL) {
+			check(bRTL === null || typeof bRTL === "boolean", "bRTL must be null or a boolean");
+			var mChanges;
+			if ( bRTL != this.rtl ) {
+				mChanges = this._collect();
+				this.rtl = mChanges.rtl = this.getRTL();
+				this._endCollect();
+			}
+			return this;
 		},
 
 		/**
@@ -17290,6 +20722,21 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 */
 		getFormatSettings : function() {
 			return this.oFormatSettings;
+		},
+
+		_collect : function() {
+			var mChanges = this.mChanges || (this.mChanges = { __count : 0});
+			mChanges.__count++;
+			return mChanges;
+		},
+		
+		_endCollect : function() {
+			var mChanges = this.mChanges;
+			if ( mChanges && (--mChanges.__count) === 0 ) {
+				delete mChanges.__count;
+				this._oCore && this._oCore.fireLocalizationChanged(mChanges);
+				delete this.mChanges;
+			}
 		}
 
 	});
@@ -17379,11 +20826,17 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		},
 
 		_set : function(sKey, oValue) {
+			var oOldValue = this.mSettings[sKey];
 			if ( oValue != null ) {
 				this.mSettings[sKey] = oValue;
 			} else {
 				delete this.mSettings[sKey];
-			} 
+			}
+			if ( (oOldValue == null != oValue == null) || !jQuery.sap.equal(oOldValue, oValue) ) {
+				var mChanges = this.oConfiguration._collect();
+				mChanges[sKey] = oValue;
+				this.oConfiguration._endCollect();
+			}
 		},
 
 		/**
@@ -17403,6 +20856,10 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 * 
 		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
 		 *  
+		 * After changing the date pattern, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -17431,6 +20888,10 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 * 
 		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
 		 *  
+		 * After changing the time pattern, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -17460,6 +20921,10 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 * 
 		 * See class {@link sap.ui.core.format.NumberFormat} for details about the symbols.
 		 *  
+		 * After changing the number symbol, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sStyle must be one of decimal, group, plusSign, minusSign.
 		 * @param {string} sSymbol will be used to represent the given symbol type
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -17492,15 +20957,21 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 * This method modifies the date patterns for 'short' and 'medium' style with the corresponding ABAP 
 		 * format. When called with a null or undefined format id, any previously applied format will be removed.
 		 * 
+		 * After changing the legacy date format, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyDateFormat : function(sFormatId) {
 			check(!sFormatId || M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6'] or empty");
-			this.sLegacyDateFormat = sFormatId = sFormatId || "";
+			var mChanges = this.oConfiguration._collect();
+			this.sLegacyDateFormat = mChanges.legacyTimeFormat = sFormatId = sFormatId || "";
 			this.setDatePattern("short", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
 			this.setDatePattern("medium", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
+			this.oConfiguration._endCollect();
 			return this;
 		},
 
@@ -17520,16 +20991,22 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 * formats and sets the day period texts to "AM"/"PM" or "am"/"pm" respectively. When called 
 		 * with a null or undefined format id, any previously applied format will be removed.
 		 * 
+		 * After changing the legacy time format, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sFormatId id of the ABAP time format (one of '0','1','2','3','4')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyTimeFormat : function(sFormatId) {
 			check(!sFormatId || M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
-			this.sLegacyTimeFormat = sFormatId = sFormatId || "";
+			var mChanges = this.oConfiguration._collect();
+			this.sLegacyTimeFormat = mChanges.legacyTimeFormat = sFormatId = sFormatId || "";
 			this.setTimePattern("short", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].pattern);
 			this.setTimePattern("medium", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].pattern);
 			this._setDayPeriods("abbreviated", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].dayPeriods);
+			this.oConfiguration._endCollect();
 			return this;
 		},
 
@@ -17548,6 +21025,10 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		 * This method will modify the 'group' and 'decimal' symbols. When called with a null 
 		 * or undefined format id, any previously applied format will be removed.
 		 * 
+		 * After changing the legacy number format, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
 		 * @param {string} sFormatId id of the ABAP number format set (one of ' ','X','Y')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
@@ -17555,9 +21036,11 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 		setLegacyNumberFormat : function(sFormatId) {
 			sFormatId = sFormatId ? sFormatId.toUpperCase() : "";
 			check(!sFormatId || M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
-			this.sLegacyNumberFormat = sFormatId;
+			var mChanges = this.oConfiguration._collect();
+			this.sLegacyNumberFormat = mChanges.legacyNumberFormat = sFormatId;
 			this.setNumberSymbol("group", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].groupingSeparator);
 			this.setNumberSymbol("decimal", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].decimalSeparator);
+			this.oConfiguration._endCollect();
 		},
 
 		/*
@@ -17574,31 +21057,823 @@ jQuery.sap.declare("sap.ui.core.Configuration");
 
 }; // end of sap.ui.core.Configuration
 
-if ( !jQuery.sap.isDeclared('sap.ui.core.Control') ) {
+if ( !jQuery.sap.isDeclared('sap.ui.core.ElementMetadata') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
-// Provides base class sap.ui.core.Control for all controls
-jQuery.sap.declare("sap.ui.core.Control");
+// Provides class sap.ui.core.ElementMetadata
+jQuery.sap.declare("sap.ui.core.ElementMetadata");
+if ( !jQuery.sap.isDeclared('sap.ui.base.ManagedObjectMetadata') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides class sap.ui.base.ManagedObjectMetadata
+jQuery.sap.declare("sap.ui.base.ManagedObjectMetadata");
+
+
+
+/**
+ * Creates a new metadata object for a Element subclass.
+ *
+ * @param {string} sClassName fully qualified name of the class that is described by this metadata object
+ * @param {object} oStaticInfo static info to construct the metadata from
+ *
+ * @class
+ * @author Frank Weigel
+ * @version 1.12.1
+ * @since 0.8.6
+ */
+sap.ui.base.ManagedObjectMetadata = function(sClassName, oClassInfo) {
+
+	// call super constructor
+	sap.ui.base.Metadata.apply(this, arguments);
+
+};
+
+//chain the prototypes
+sap.ui.base.ManagedObjectMetadata.prototype = jQuery.sap.newObject(sap.ui.base.Metadata.prototype);
+
+/**
+ * @private
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.applySettings = function(oClassInfo) {
+
+	var oStaticInfo = oClassInfo.metadata;
+
+	sap.ui.base.Metadata.prototype.applySettings.call(this, oClassInfo);
+
+	var rPlural = /(children|ies|ves|oes|ses|ches|shes|xes|s)$/i;
+	var mSingular = {'children' : -3, 'ies' : 'y', 'ves' : 'f', 'oes' : -2, 'ses' : -2, 'ches' : -2, 'shes' : -2, 'xes' : -2, 's' : -1 };
+
+	function normalize(mInfoMap, sDefaultName, oDefaultValues) {
+		var sName,oInfo;
+		mInfoMap = mInfoMap || {};
+		for(sName in mInfoMap) {
+			oInfo = mInfoMap[sName];
+			// if settings are not an object literal and if there is a default setting, set it
+			if ( sDefaultName && typeof oInfo !== "object" ) {
+				oInfo = {};
+				oInfo[sDefaultName] = mInfoMap[sName];
+			}
+			oInfo = jQuery.extend({}, oDefaultValues, oInfo);
+			oInfo.name = sName;
+			// if info contains a multiple flag but no singular name, calculate one
+			if ( oInfo.multiple === true && !oInfo.singularName) {
+				oInfo.singularName = sName.replace(rPlural, function($,sPlural) {
+					var vRepl = mSingular[sPlural.toLowerCase()];
+					return typeof vRepl === "string" ? vRepl : sPlural.slice(0,vRepl);
+				});
+			}
+			mInfoMap[sName] = oInfo;
+		}
+		return mInfoMap;
+	}
+
+	function filter(mInfoMap, bPublic) {
+		var mResult={},sName;
+		for(sName in mInfoMap) {
+			if ( bPublic === (mInfoMap[sName].visibility === 'public') ) {
+				mResult[sName] = mInfoMap[sName];
+			}
+		}
+		return mResult;
+	}
+	
+	var rLibName = /([a-z][^.]*(?:\.[a-z][^.]*)*)\./;
+
+	function defaultLibName(sName) {
+	  var m = rLibName.exec(sName);
+	  return (m && m[1]) || "";
+	}
+
+	// init basic metadata from static infos and fallback to defaults
+	this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
+	this._mProperties = normalize(oStaticInfo.properties, "type", { type : "string", group : "Misc" });
+	var mAllAggregations = normalize(oStaticInfo.aggregations, "type", { type : "sap.ui.core.Control", multiple : true, visibility : 'public' });
+	this._mAggregations = filter(mAllAggregations, true);
+	this._mPrivateAggregations = filter(mAllAggregations, false);
+	this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
+	this._mAssociations = normalize(oStaticInfo.associations, "type", { type : "sap.ui.core.Control", multiple : false});
+	this._mEvents = normalize(oStaticInfo.events, /* no default setting */ null, { allowPreventDefault : false });
+
+	this._bEnriched = false;
+
+	if ( oClassInfo.metadata.__version > 1.0 ) {
+		this.generateAccessors();
+	}
+
+};
+
+/**
+ * @private
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.afterApplySettings = function() {
+
+	sap.ui.base.Metadata.prototype.afterApplySettings.call(this);
+
+	// if there is a parent class, produce the flattened "all" views for the element specific metadata
+	// PERFOPT: this could be done lazily
+	var oParent = this.getParent();
+	if ( oParent && oParent instanceof sap.ui.base.ManagedObjectMetadata ) {
+		this._mAllEvents = jQuery.extend({},oParent._mAllEvents, this._mEvents);
+		this._mAllProperties = jQuery.extend({},oParent._mAllProperties, this._mProperties);
+		this._mAllPrivateAggregations = jQuery.extend({},oParent._mAllPrivateAggregations, this._mPrivateAggregations);
+		this._mAllAggregations = jQuery.extend({},oParent._mAllAggregations, this._mAggregations);
+		this._mAllAssociations = jQuery.extend({},oParent._mAllAssociations, this._mAssociations);
+		this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
+		if ( oParent._mHiddenAggregations ) {
+		  this._mHiddenAggregations = jQuery.extend({},oParent._mHiddenAggregations);
+		}
+	} else {
+		this._mAllEvents = this._mEvents;
+		this._mAllProperties = this._mProperties;
+		this._mAllPrivateAggregations = this._mPrivateAggregations;
+		this._mAllAggregations = this._mAggregations;
+		this._mAllAssociations = this._mAssociations;
+	}
+
+};
+
+sap.ui.base.ManagedObjectMetadata.Kind = {
+  PROPERTY :0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
+};
+
+
+/**
+ * Returns the name of the library that contains the described UIElement.
+ * @return {string} the name of the library
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getLibraryName = function() {
+	return this._sLibraryName;
+};
+
+/**
+ * Returns whether the class/control is abstract
+ * @return {boolean} whether the class/control is abstract
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.isAbstract = function() {
+	return this._bAbstract;
+};
+
+/**
+ * Declares an additional property for the UIElement class described by this metadata.
+ *
+ * Any property declaration via this method must happen before the described class
+ * is subclassed, or the added property will not be visible in the subclass.
+ *
+ * Typically used to enrich UIElement classes in an aspect oriented manner.
+ * @public
+ * @see sap.ui.core.EnabledPropagator
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.addProperty = function(sName, oInfo) {
+	oInfo.name = sName;
+	this._mProperties[sName] = oInfo;
+	if(!this._mAllProperties[sName]) {// ensure extended AllProperties meta-data is also enriched
+		this._mAllProperties[sName] = oInfo;
+	}
+
+	if ( this._bEnriched ) { // does not seem right! this is the 'drop out' condition for _enrichChildInfos() -> senseless
+		this._enrichChildInfos();
+	}
+	// TODO notify listeners (subclasses) about change
+};
+
+/**
+ * Checks the existance of the given property by its name
+ * @param {string} sName name of the property
+ * @return {boolean} true, if the property exists
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.hasProperty = function(sName) {
+	return !!this._mAllProperties[sName];
+};
+
+/**
+ * Returns infos about the properties declared by the UIElement class
+ * described by this metadata object. Properties from ancestor classes
+ * are not returned.
+ *
+ * The returned map contains property info objects keyed by the property name.
+ *
+ * @return {map} Map of property infos keyed by property names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getProperties = function() {
+	return this._mProperties;
+};
+
+/**
+ * Returns infos about all properties declared by the UIElement class
+ * described by this metadata object as well as properties from base classes.
+ *
+ * The returned map contains property info objects keyed by the property name.
+ *
+ * @return {map} Map of property infos keyed by property names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAllProperties = function() {
+	return this._mAllProperties;
+};
+
+/**
+ * Returns infos about the public aggregations declared by the UIElement class
+ * described by this metadata object. Aggregations from ancestor classes
+ * are not returned.
+ *
+ * The returned map contains aggregation info objects keyed by the aggregation name.
+ * In case of 0..1 aggregations this is the singular name, otherwise it is the plural
+ * name.
+ *
+ * @return {map} Map of aggregation infos keyed by aggregation names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAggregations = function() {
+	return this._mAggregations;
+};
+
+/**
+ * Checks the existance of the given aggregation by its name
+ * @param {string} sName name of the aggregation
+ * @return {boolean} true, if the aggregation exists
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.hasAggregation = function(sName) {
+	return !!this._mAllAggregations[sName];
+};
+
+/**
+ * Returns infos about all public aggregations declared by the UIElement class
+ * described by this metadata object as well as public aggregations from base classes.
+ *
+ * The returned map contains aggregation info objects keyed by the aggregation name.
+ * In case of 0..1 aggregations this is the singular name, otherwise it is the plural
+ * name.
+ *
+ * @return {map} Map of aggregation infos keyed by aggregation names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAllAggregations = function() {
+	return this._mAllAggregations;
+};
+
+/**
+ * Returns infos about all private (hidden) aggregations declared by the UIElement class
+ * described by this metadata object as well as private aggregations from base classes.
+ *
+ * The returned map contains aggregation info objects keyed by the aggregation name.
+ * In case of 0..1 aggregations this is the singular name, otherwise it is the plural
+ * name.
+ *
+ * @return {map} Map of aggregation infos keyed by aggregation names
+ * @protected
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
+	return this._mAllPrivateAggregations;
+};
+
+/**
+ * Returns the info object for a public or private aggregation declared by the described 
+ * ManagedObject class or by any of its ancestors.
+ *
+ * @return {object} aggregation info or null
+ * @protected
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
+	return this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName] 
+};
+
+/**
+ * Returns the name of the default aggregation of this control.
+ * If the control itself does not define a default aggregation, then the
+ * default aggregation of the parent is returned. If no control in the
+ * hierarchy defines a default aggregation, null is returned.
+ *
+ * @return {string} Name of the default aggregation for this class
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getDefaultAggregationName = function() {
+	return this._sDefaultAggregation;
+};
+
+/**
+ * Returns the name of the default aggregation of this control.
+ * If the control itself does not define a default aggregation, then the
+ * default aggregation of the parent is returned.
+ *
+ * @return {string} Name of the default aggregation for this class
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getDefaultAggregation = function() {
+	return this._sDefaultAggregation && this.getAllAggregations()[this._sDefaultAggregation];
+};
+
+/**
+ * Returns infos about the associations declared by the UIElement class
+ * described by this metadata object. Associations from ancestor classes
+ * are not returned.
+ *
+ * The returned map contains association info objects keyed by the association name.
+ * In case of 0..1 associations this is the singular name, otherwise it is the plural
+ * name.
+ *
+ * @return {map} Map of association infos keyed by association names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAssociations = function() {
+	return this._mAssociations;
+};
+
+/**
+ * Checks the existance of the given association by its name
+ * @param {string} sName name of the association
+ * @return {boolean} true, if the association exists
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.hasAssociation = function(sName) {
+	return !!this._mAllAssociations[sName];
+};
+
+/**
+ * Returns infos about all associations declared by the UIElement class
+ * described by this metadata object as well as associations from base classes.
+ *
+ * The returned map contains association info objects keyed by the association name.
+ * In case of 0..1 associations this is the singular name, otherwise it is the plural
+ * name.
+ *
+ * @return {map} Map of association infos keyed by association names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAllAssociations = function() {
+	return this._mAllAssociations;
+};
+
+/**
+ * Returns infos about the events declared by the UIElement class
+ * described by this metadata object. Events from ancestor classes
+ * are not returned.
+ *
+ * The returned map contains events info objects keyed by the events name.
+ *
+ * @return {map} Map of event infos keyed by event names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getEvents = function() {
+	return this._mEvents;
+};
+
+/**
+ * Checks the existance of the given event by its name
+ * @param {string} sName name of the event
+ * @return {boolean} true, if the event exists
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.hasEvent = function(sName) {
+	return !!this._mAllEvents[sName];
+};
+
+/**
+ * Returns infos about all events declared by the UIElement class
+ * described by this metadata object as well as events from base classes.
+ *
+ * The returned map contains event info objects keyed by the event name.
+ *
+ * @return {map} Map of event infos keyed by event names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getAllEvents = function() {
+	return this._mAllEvents;
+};
+
+/**
+ * Returns a map of default values for all properties declared by the
+ * described class and its ancestors, keyed by the property name.
+ *
+ * @return {map} Map of default values keyed by property names
+ * @public
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getPropertyDefaults = function() {
+
+	var mDefaults = this._mDefaults,
+		oType;
+	if ( mDefaults ) {
+		return mDefaults;
+	}
+
+	if ( this.getParent() instanceof sap.ui.base.ManagedObjectMetadata ) {
+		mDefaults = jQuery.sap.newObject(this.getParent().getPropertyDefaults());
+	} else {
+		mDefaults = {};
+	}
+
+	for(var s in this._mProperties) {
+		if ( this._mProperties[s].defaultValue !== null ) {
+			mDefaults[s] = this._mProperties[s].defaultValue;
+		} else {
+			oType = sap.ui.base.DataType.getType(this._mProperties[s].type);
+			if (oType instanceof sap.ui.base.DataType) {
+				mDefaults[s] = oType.getDefaultValue();
+			} else { // Enumeration
+				for (var i in oType) {
+					mDefaults[s] = oType[i];
+					break;
+				}
+			}
+		}
+	}
+	return (this._mDefaults = mDefaults);
+};
+
+
+sap.ui.base.ManagedObjectMetadata.prototype.createPropertyBag = function() {
+	if ( !this._fnPropertyBagFactory ) {
+		this._fnPropertyBagFactory = jQuery.sap.factory(this.getPropertyDefaults());
+	}
+	return new (this._fnPropertyBagFactory)();
+};
+
+/**
+ * Helper method that enriches the (generated) information objects for children
+ * (e.g. properties, aggregations, ...) of this Element.
+ *
+ * Also ensures that the parent metadata is enriched.
+ *
+ * @private
+ */
+sap.ui.base.ManagedObjectMetadata.prototype._enrichChildInfos = function() {
+
+	if ( this._bEnriched ) {
+		return;
+	}
+
+	if ( this.getParent() instanceof sap.ui.base.ManagedObjectMetadata ) {
+		this.getParent()._enrichChildInfos();
+	}
+
+	var m,sName,oInfo;
+	function method(sPrefix, sName) {
+		return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
+	}
+
+	// adapt properties
+	m=this._mProperties;
+	for(sName in m) {
+		oInfo = m[sName];
+		oInfo._sName = sName;
+		oInfo._sUID = sName;
+		oInfo._oParent = this;
+		oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.PROPERTY;
+		oInfo._sMutator = method("set", sName);
+		oInfo._sGetter = method("get", sName);
+	}
+
+	// adapt aggregations
+	m=this._mAggregations;
+	for(sName in m) {
+		oInfo = m[sName];
+		oInfo._sName = sName;
+		oInfo._sUID = "aggregation:" + sName;
+		oInfo._oParent = this;
+		oInfo._sDestructor = method("destroy", sName);
+		oInfo._sGetter = method("get", sName);
+		if ( oInfo.multiple ) {
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.MULTIPLE_AGGREGATION;
+			oInfo._sMutator = method("add", oInfo.singularName);
+			oInfo._sRemoveMutator = method("remove", oInfo.singularName);
+		} else {
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.SINGLE_AGGREGATION;
+			oInfo._sMutator = method("set", sName);
+		}
+	}
+
+	// adapt associations
+	m=this._mAssociations;
+	for(sName in m) {
+		oInfo = m[sName];
+		oInfo._sName = sName;
+		oInfo._sUID = "association:" + sName;
+		oInfo._oParent = this;
+		oInfo._sGetter = method("get", sName);
+		if ( oInfo.multiple ) {
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.MULTIPLE_ASSOCIATION;
+			oInfo._sMutator = method("add", oInfo.singularName);
+		} else {
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.SINGLE_ASSOCIATION;
+			oInfo._sMutator = method("set", sName);
+		}
+	}
+
+	// adapt events
+	m=this._mEvents;
+	for(sName in m) {
+		oInfo = m[sName];
+		oInfo._sName = sName;
+		oInfo._sUID = "event:" + sName;
+		oInfo._oParent = this;
+		oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.EVENT;
+		oInfo._sMutator = method("attach", sName);
+	}
+
+	this._bEnriched = true;
+};
+
+/**
+ * Builds a "reflection like" map of setters/type infos keyed by the possible JSON names.
+ * Mainly used for the {@link sap.ui.core.Element.applySettings} method.
+ *
+ * @see sap.ui.core.Element.prototype.applySettings
+ * @private
+ */
+sap.ui.base.ManagedObjectMetadata.prototype.getJSONKeys = function() {
+
+	if ( this._mJSONKeys ) {
+		return this._mJSONKeys;
+	}
+
+	this._enrichChildInfos();
+
+	var mJSONKeys = {};
+	function addKeys(m) {
+		var sName, oInfo;
+		for(sName in m) {
+			oInfo = m[sName];
+			if ( !mJSONKeys[sName] || oInfo._iKind < mJSONKeys[sName]._iKind ) {
+				mJSONKeys[sName] = oInfo;
+			};
+			mJSONKeys[oInfo._sUID] = oInfo;
+		};
+	}
+
+	addKeys(this.getAllProperties());
+	addKeys(this.getAllAggregations());
+	addKeys(this.getAllAssociations());
+	addKeys(this.getAllEvents());
+
+	return (this._mJSONKeys = mJSONKeys);
+};
+
+sap.ui.base.ManagedObjectMetadata.prototype.generateAccessors = function() {
+
+	var meta=this;
+	var proto = this.getClass().prototype;
+	function method(sPrefix, sName, fn, bDeprecated) {
+		var sName = sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
+		if ( !proto[sName] ) {
+			proto[sName] = bDeprecated ? function() {
+				jQuery.sap.log.warning("Usage of deprecated feature: " + meta.getName() + "." + sName);
+				return fn.apply(this, arguments);
+			} : fn; 
+			meta._aPublicMethods.push(sName);
+		}
+	}
+
+	jQuery.each(this._mProperties, function(n,info) {
+		method("get", n, function() { return this.getProperty(n); });
+		method("set", n, function(v) { this.setProperty(n,v); return this; }, info.deprecated);
+		if ( info.bindable ) {
+			method("bind", n, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, info.deprecated);
+			method("unbind", n, function(p) { this.unbindProperty(n,p); return this; });
+		}
+	});
+	jQuery.each(this._mAggregations, function(n,info) {
+		if ( !info.multiple ) {
+			method("get", n, function() { return this.getAggregation(n); });
+			method("set", n, function(v) { this.setAggregation(n,v); return this; }, info.deprecated);
+		} else {
+			var n1 = info.singularName;
+			method("get", n, function() { return this.getAggregation(n,[]); });
+			method("add", n1, function(a) { this.addAggregation(n,a); return this; }, info.deprecated);
+			method("insert", n1, function(i,a) { this.insertAggregation(n,i,a); return this; }, info.deprecated);
+			method("remove", n1, function(a) { return this.removeAggregation(n,a); });
+			method("removeAll", n, function() { return this.removeAllAggregation(n); });
+			method("indexOf", n1, function(a) { return this.indexOfAggregation(n,a); });
+		}
+		method("destroy", n, function() { this.destroyAggregation(n); return this; });
+		if ( info.bindable ) {
+			method("bind", n, function(p,t,s,f) { this.bindAggregation(n,p,t,s,f); return this; }, info.deprecated);
+			method("unbind", n, function(p) { this.unbindAggregation(n,p); return this; });
+		}
+	});
+	jQuery.each(this._mAssociations, function(n,info) {
+		if ( !info.multiple ) {
+			method("get", n, function() { return this.getAssociation(n); });
+			method("set", n, function(v) { this.setAssociation(n,v); return this; }, info.deprecated);
+		} else {
+			var n1 = info.singularName;
+			method("get", n, function() { return this.getAssociation(n,[]); });
+			method("add", n1, function(a) { this.addAssociation(n,a); return this; }, info.deprecated);
+			method("remove", n1, function(a) { return this.removeAssociation(n,a); });
+			method("removeAll", n, function() { return this.removeAllAssociation(n); });
+		}
+	});
+	jQuery.each(this._mEvents, function(n,info) {
+		method("attach", n, function(d,f,o) { this.attachEvent(n,d,f,o); return this; }, info.deprecated);
+		method("detach", n, function(f,o) { this.detachEvent(n,f,o); return this; });
+		var n1 = !!info.allowPreventDefault;
+		method("fire", n, function(p) { return this.fireEvent(n,p, n1); });
+	});
+
+};
+
+(function() {
+
+	/**
+	 * Usage counters for the different UID tokens
+	 */
+	var mUIDCounts = {};
+
+	function uid(sId) {
+		jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
+
+		sId = sap.ui.getCore().getConfiguration().getUIDPrefix() + sId;
+
+		// initialize counter
+		mUIDCounts[sId] = mUIDCounts[sId] || 0;
+
+		// combine prefix + counter
+		// concatenating sId and a counter is only safe because we don't allow trailing numbers in sId!
+		return (sId + mUIDCounts[sId]++);
+	}
+
+	/**
+	 * Calculates a new id based on a prefix.
+	 *
+	 * @return {string} A (hopefully unique) control id
+	 * @public
+	 * @function
+	 */
+	sap.ui.base.ManagedObjectMetadata.uid = uid;
+
+	/**
+	 * Calculates a new id for an instance of this class.
+	 *
+	 * Note that the calculated short name part is usually not unique across
+	 * all classes, but doesn't have to be. It might even be empty when the
+	 * class name consists of invalid characters only.
+	 *
+	 * @return {string} A (hopefully unique) control id
+	 * @public
+	 */
+	sap.ui.base.ManagedObjectMetadata.prototype.uid = function() {
+
+		var sId = this._sUIDToken;
+		if ( typeof sId !== "string" ) {
+			// start with qualified class name
+			sId  = this.getName();
+			// reduce to unqualified name
+			sId = sId.slice(sId.lastIndexOf('.')+1);
+			// reduce a camel case, multi word name to the last word
+			sId = sId.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").slice(-1)[0];
+			// remove unwanted chars (and no trailing digits!) and convert to lower case
+			sId = this._sUIDToken = sId.replace(/([^A-Za-z0-9-_.:])|([0-9]+$)/g,"").toLowerCase();
+		}
+
+		return uid(sId);
+	};
+
+}());
+}; // end of sap.ui.base.ManagedObjectMetadata
+
+
+/**
+ * Creates a new metadata object for a UIElement subclass.
+ *
+ * @param {string} sClassName fully qualified name of the class that is described by this metadata object
+ * @param {object} oStaticInfo static info to construct the metadata from
+ *
+ * @class
+ * @author SAP
+ * @version 1.12.1
+ * @since 0.8.6
+ */
+sap.ui.core.ElementMetadata = function(sClassName, oClassInfo) {
+
+	// call super constructor
+	sap.ui.base.ManagedObjectMetadata.apply(this, arguments);
+};
+
+//chain the prototypes
+sap.ui.core.ElementMetadata.prototype = jQuery.sap.newObject(sap.ui.base.ManagedObjectMetadata.prototype);
+
+/**
+ * Calculates a new id based on a prefix.
+ *
+ * @return {string} A (hopefully unique) control id
+ * @public
+ * @function
+ */
+sap.ui.core.ElementMetadata.uid = sap.ui.base.ManagedObjectMetadata.uid;
+
+/**
+ * By default, the element name is equal to the class name
+ * @return {string} the qualified name of the UIElement class
+ * @public
+ */
+sap.ui.core.ElementMetadata.prototype.getElementName = function() {
+	return this._sClassName;
+};
+
+/**
+ * Determines the class name of the renderer for the described control class.
+ */
+sap.ui.core.ElementMetadata.prototype.getRendererName = function() {
+	return this._sRendererName;
+};
+
+/**
+ * Retrieves the renderer for the described control class
+ */
+sap.ui.core.ElementMetadata.prototype.getRenderer = function() {
+
+	// determine name via function for those legacy controls that override getRendererName()
+	var sRendererName = this.getRendererName();
+
+	if ( !sRendererName ) {
+		return;
+	}
+
+	// check if renderer class exists already
+	var fnRendererClass = jQuery.sap.getObject(sRendererName);
+	if(fnRendererClass) {
+		return fnRendererClass;
+	}
+
+	// if not, try to load a module with the same name
+	jQuery.sap.require(sRendererName);
+	return jQuery.sap.getObject(sRendererName);
+};
+
+sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
+
+	var oStaticInfo = oClassInfo.metadata;
+
+	this._sVisibility = oStaticInfo["visibility"] || "public";
+
+	// remove renderer stuff before calling super.
+	var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
+	delete oClassInfo.renderer;
+
+	sap.ui.base.ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
+
+	this._sRendererName = this.getName() + "Renderer";
+
+	if ( typeof vRenderer !== "undefined" ) {
+
+		if ( typeof vRenderer === "string" ) {
+			this._sRendererName = vRenderer || undefined;
+			return;
+		}
+		if ( typeof vRenderer === "function" ) {
+			vRenderer = { render : vRenderer };
+		}
+
+		var oParent = this.getParent();
+		var oBaseRenderer;
+		if ( oParent && oParent instanceof sap.ui.core.ElementMetadata ) {
+			oBaseRenderer = oParent.getRenderer();
+		}
+		if ( !oBaseRenderer ) {
+			jQuery.sap.require("sap.ui.core.Renderer");
+			oBaseRenderer = sap.ui.core.Renderer;
+		}
+		var oRenderer = jQuery.sap.newObject(oBaseRenderer);
+		jQuery.extend(oRenderer, vRenderer);
+		jQuery.sap.setObject(this.getRendererName(), oRenderer);
+	}
+};
+
+sap.ui.core.ElementMetadata.prototype.afterApplySettings = function() {
+	sap.ui.base.ManagedObjectMetadata.prototype.afterApplySettings.apply(this, arguments);
+	this.register && this.register(this);
+};
+
+sap.ui.core.ElementMetadata.prototype.isHidden = function() {
+	return this._sVisibility === "hidden";
+};
+
+}; // end of sap.ui.core.ElementMetadata
+
 if ( !jQuery.sap.isDeclared('sap.ui.core.Element') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base class for all controls and UI elements.
 jQuery.sap.declare("sap.ui.core.Element");
 
-
 if ( !jQuery.sap.isDeclared('jquery.sap.strings') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides useful string operations not available in pure JavaScript.
@@ -17766,986 +22041,52 @@ jQuery.sap.declare("jquery.sap.strings", false);
      * @type {string}
      * @since 1.7.0
      * @public
-     * @SecPassthrough {0 1|return}
+     * @SecPassthrough {0|return}
      */
 	jQuery.sap.camelCase = function camelCase(sString) { 
 		return sString.replace( rCamelCase, function( sMatch, sChar ) {
 			return sChar.toUpperCase();
 		});
 	};
+	
+	var rEscapeRegExp = /[-[\]{}()*+?.,\\^$|#\s]/g;
 
+	/**
+	 * This function escapes the reserved letters in Regular Expression
+   * @param {string} sString string to escape
+   * @return The escaped string
+   * @type {string}
+   * @since 1.9.3
+   * @public
+   * @SecPassthrough {0|return}
+	 */
+	jQuery.sap.escapeRegExp = function escapeRegExp(sString) {
+		return sString.replace(rEscapeRegExp, "\\$&");
+	};
+	
 }());
 }; // end of jquery.sap.strings
 
-
-if ( !jQuery.sap.isDeclared('sap.ui.base.DataType') ) {
+if ( !jQuery.sap.isDeclared('sap.ui.base.ManagedObject') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
-// Provides class sap.ui.base.DataType
-jQuery.sap.declare("sap.ui.base.DataType");
+// Provides the base class for all objects with managed properties and aggregations.
+jQuery.sap.declare("sap.ui.base.ManagedObject");
 
-/**
- * @class Describes the metadata of a data type and provides methods for validation.
- * @author Frank Weigel
- * @since 0.9.0
- */
-sap.ui.base.DataType = function() {
-	// Avoid construction of a DataType.
-	// DataType is only a function to support the "instanceof" operator.
-	throw new Error();
-};
 
-/**
- * The qualified name of the data type.
- * Note that this name usually equals the design time name of the type.
- * Only for primitive types it differs, namely it omits the package 'sap.ui.core'.
- * @return {string} name of the data type
- * @public
- */
-sap.ui.base.DataType.prototype.getName = function() {
-	return undefined;
-};
 
-/**
- * The base type of this type or undefined if this is a primitive type.
- * @return {sap.ui.base.DataType} base type or undefined
- * @public
- */
-sap.ui.base.DataType.prototype.getBaseType = function() {
-	return undefined;
-};
 
-/**
- * The component type of this type or undefined if this is not an array.
- * @return {sap.ui.base.DataType} component type or undefined
- * @public
- */
-sap.ui.base.DataType.prototype.getComponentType = function() {
-	return undefined;
-};
 
-/**
- * The default value for this type. Each type must define a default value.
- * @return {any} default value of the data type. The type of the returned value
- *    must match the JavaScript type of the data type (a string for string types etc.)
- * @public
- */
-sap.ui.base.DataType.prototype.getDefaultValue = function() {
-	return undefined;
-};
-
-/**
- * Whether this type is an array type.
- * @return {boolean} whether this type is an array type
- * @public
- */
-sap.ui.base.DataType.prototype.isArrayType = function() {
-	return undefined;
-};
-
-/**
- * Parses the given string value and converts it into the specific data type.
- * @param {string} sValue string representation for a value of this type
- * @return the value in the correct internal format
- * @public
- */
-sap.ui.base.DataType.prototype.parseValue = function(sValue) {
-	// currently this function considers to handle primitive values
-	// - in future may be other values might be also relevant.
-	var sType = this.getName();
-	if (sType == "string") {
-		return sValue;
-	} else if (sType == "boolean") {
-		return sValue == "true";
-	} else if (sType == "int") {
-		return parseInt(sValue, 10);
-	} else if (sType == "float") {
-		return parseFloat(sValue);
-	} else {
-		// support for other types like e.g.
-		// sap.ui.core.CSSSize (just apply)
-		return sValue;
-	}
-};
-
-/**
- * A validation check. To be implemented by concrete types.
- * @param {any} vValue the value to be checked
- * @return {boolean} whether the given value is valid for this data type (without conversion)
- * @public
- */
-sap.ui.base.DataType.prototype.isValid = undefined;
-
-(function() {
-
-	function createType(name, s, base) {
-
-		jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
-		jQuery.sap.assert(!base || base instanceof sap.ui.base.DataType, "DataType.<createType>: base type must be empty or a DataType");
-		s = s || {};
-		base = base || sap.ui.base.DataType.prototype;
-
-		// create a new type object with the base type as prototype
-		var type = jQuery.sap.newObject(base);
-
-		// getter for the name
-		type.getName = function() { return name; };
-
-		// if a default value is specified, create a getter for it
-		if ( s.hasOwnProperty("defaultValue") ) {
-			var vDefault = s.defaultValue;
-			type.getDefaultValue = function() { return vDefault; };
-		}
-
-		// if a validator is specified either chain it with the base type validator
-		// or set it if no base validator exists
-		if ( s.hasOwnProperty("isValid") ) {
-			var fnIsValid = s.isValid;
-			type.isValid = base.isValid ? function(vValue) {
-				if ( !base.isValid(vValue) ) {
-					return false;
-				}
-				return fnIsValid(vValue);
-			} : fnIsValid;
-		};
-
-		// not an array type
-		type.isArrayType = function() { return false; };
-		
-		return type;
-	}
-
-	function createArrayType(componentType) {
-		jQuery.sap.assert(componentType instanceof sap.ui.base.DataType, "DataType.<createArrayType>: compoinentType must be a DataType");
-
-		// create a new type object with the base type as prototype
-		var type = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
-
-		// getter for the name
-		type.getName = function() { return componentType.getName() + "[]"; };
-
-		// getter for component type
-		type.getComponentType = function() { return componentType; };
-
-		// array validator
-		type.isValid = function(aValues) {
-			if (aValues === null) {
-				return true;
-			}
-			if (jQuery.isArray(aValues)) {
-				for (var i = 0; i < aValues.length; i++) {
-					if (!componentType.isValid(aValues[i])) {
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		};
-
-		// array parser
-		type.parseValue = function(sValue) {
-			var aValues = sValue.split(",");
-			for (var i = 0; i < aValues.length; i++) {
-				aValues[i] = componentType.parseValue(aValues[i]);
-			}
-			return aValues;
-		};
-
-		// is an array type
-		type.isArrayType = function() { return true; };
-
-		return type;
-	}
-
-	var PREDEFINED_TYPES = {
-
-		"any" :
-				createType("any", {
-					defaultValue : null,
-					isValid : function(vValue) {
-						return true;
-					}
-				}),
-
-		"boolean" :
-			createType("boolean", {
-				defaultValue : false,
-				isValid : function(vValue) {
-					return typeof vValue === "boolean";
-				}
-			}),
-
-		"int" :
-			createType("int", {
-				defaultValue : 0,
-				isValid : function(vValue) {
-					return typeof vValue === "number" && Math.floor(vValue) == vValue;
-				}
-			}),
-
-		"float" :
-			createType("float", {
-				defaultValue : 0.0,
-				isValid : function(vValue) {
-					return typeof vValue === "number";
-				}
-			}),
-
-		"string" :
-			createType("string", {
-				defaultValue : "",
-				isValid : function(vValue) {
-					return typeof vValue === "string" || vValue instanceof String;
-				}
-			}),
-		"object" :
-			createType("object", {
-				defaultValue : null,
-				isValid : function(vValue) {
-					return typeof vValue === "object" || typeof vValue === "function";
-				}
-			})
-	};
-
-	/**
-	 * Returns the type object for the type with the given name.
-	 * @return the type object or undefined when no such type object exists.
-	 * @public
-	 */
-	sap.ui.base.DataType.getType = function(sTypeName) {
-		if (sTypeName.indexOf("[]") > 0) {
-			var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
-				oComponentType = this.getType(sComponentTypeName);
-			return oComponentType && createArrayType(oComponentType);
-		} else {
-			return PREDEFINED_TYPES[sTypeName] || jQuery.sap.getObject(sTypeName);
-		}
-	};
-
-	/**
-	 * Creates a new type as a subtype of a given type.
-	 * @param {string} sName the unique name of the new type
-	 * @param {object} [mSettings settings] for the new type
-	 * @param {any} [mSettings.defaultValue] the default value for the new type
-	 * @param {function} [mSettings.isValid] a validator function for values of the new type
-	 * @param {sap.ui.base.DataType} [base] the base type for the new type
-	 * @public
-	 */
-	sap.ui.base.DataType.createType = createType;
-
-}());
-}; // end of sap.ui.base.DataType
-
-if ( !jQuery.sap.isDeclared('sap.ui.core.ElementMetadata') ) {
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5)
- * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
- */
-
-// Provides class sap.ui.core.ElementMetadata
-jQuery.sap.declare("sap.ui.core.ElementMetadata");
-
-
-
-/**
- * Creates a new metadata object for a UIElement subclass.
- *
- * @param {string} sClassName fully qualified name of the class that is described by this metadata object
- * @param {object} oStaticInfo static info to construct the metadata from
- *
- * @class
- * @author Frank Weigel
- * @version 1.8.4
- * @since 0.8.6
- */
-sap.ui.core.ElementMetadata = function(sClassName, oClassInfo) {
-
-	// call super constructor
-	sap.ui.base.Metadata.apply(this, arguments);
-
-};
-
-//chain the prototypes
-sap.ui.core.ElementMetadata.prototype = jQuery.sap.newObject(sap.ui.base.Metadata.prototype);
-
-/**
- * @private
- */
-sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
-
-	var oStaticInfo = oClassInfo.metadata;
-
-	// remove renderer stuff before calling super.
-	var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
-	delete oClassInfo.renderer;
-
-	sap.ui.base.Metadata.prototype.applySettings.call(this, oClassInfo);
-
-	var rPlural = /(children|ies|ves|oes|ses|ches|shes|xes|s)$/i;
-	var mSingular = {'children' : -3, 'ies' : 'y', 'ves' : 'f', 'oes' : -2, 'ses' : -2, 'ches' : -2, 'shes' : -2, 'xes' : -2, 's' : -1 };
-
-	function normalize(mInfoMap, sDefaultName, oDefaultValues) {
-		var sName,oInfo;
-		mInfoMap = mInfoMap || {};
-		for(sName in mInfoMap) {
-			oInfo = mInfoMap[sName];
-			// if settings are not an object literal and if there is a default setting, set it
-			if ( sDefaultName && typeof oInfo !== "object" ) {
-				oInfo = {};
-				oInfo[sDefaultName] = mInfoMap[sName];
-			}
-			oInfo = jQuery.extend({}, oDefaultValues, oInfo);
-			oInfo.name = sName;
-			// if info contains a multiple flag but no singular name, calculate one
-			if ( oInfo.multiple === true && !oInfo.singularName) {
-				oInfo.singularName = sName.replace(rPlural, function($,sPlural) {
-					var vRepl = mSingular[sPlural.toLowerCase()];
-					return typeof vRepl === "string" ? vRepl : sPlural.slice(0,vRepl);
-				});
-			}
-			mInfoMap[sName] = oInfo;
-		}
-		return mInfoMap;
-	}
-
-  var rLibName = /([a-z][^.]*(?:\.[a-z][^.]*)*)\./;
-  
-	function defaultLibName(sName) {
-	  var m = rLibName.exec(sName);
-	  return (m && m[1]) || "";
-	}
-	
-	// init basic metadata from static infos and fallback to defaults
-	this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
-	this._mProperties = normalize(oStaticInfo.properties, "type", { type : "string", group : "Misc" });
-	this._mAggregations = normalize(oStaticInfo.aggregations, "type", { type : "sap.ui.core.Control", multiple : true });
-	this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
-	this._mAssociations = normalize(oStaticInfo.associations, "type", { type : "sap.ui.core.Control", multiple : false});
-	this._mEvents = normalize(oStaticInfo.events, /* no default setting */ null, { allowPreventDefault : false });
-	this._sRendererName = this.getName() + "Renderer";
-
-	this._bEnriched = false;
-
-	if ( oClassInfo.metadata.__version > 1.0 ) {
-		this.generateAccessors();
-	}
-
-	if ( typeof vRenderer !== "undefined" ) {
-
-		if ( typeof vRenderer === "string" ) {
-			this._sRendererName = vRenderer || undefined;
-			return;
-		}
-		if ( typeof vRenderer === "function" ) {
-			vRenderer = { render : vRenderer };
-		}
-
-		var oParent = this.getParent();
-		var oBaseRenderer;
-		if ( oParent && oParent instanceof sap.ui.core.ElementMetadata ) {
-			oBaseRenderer = oParent.getRenderer();
-		}
-		if ( !oBaseRenderer ) {
-			jQuery.sap.require("sap.ui.core.Renderer");
-			oBaseRenderer = sap.ui.core.Renderer;
-		}
-		var oRenderer = jQuery.sap.newObject(oBaseRenderer);
-		jQuery.extend(oRenderer, vRenderer);
-		jQuery.sap.setObject(this.getRendererName(), oRenderer);
-	}
-};
-
-/**
- * @private
- */
-sap.ui.core.ElementMetadata.prototype.afterApplySettings = function() {
-
-	sap.ui.base.Metadata.prototype.afterApplySettings.call(this);
-
-	// if there is a parent class, produce the flattened "all" views for the element specific metadata
-	// PERFOPT: this could be done lazily
-	var oParent = this.getParent();
-	if ( oParent && oParent instanceof sap.ui.core.ElementMetadata ) {
-		this._mAllEvents = jQuery.extend({},oParent._mAllEvents, this._mEvents);
-		this._mAllProperties = jQuery.extend({},oParent._mAllProperties, this._mProperties);
-		this._mAllAggregations = jQuery.extend({},oParent._mAllAggregations, this._mAggregations);
-		this._mAllAssociations = jQuery.extend({},oParent._mAllAssociations, this._mAssociations);
-		this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
-		if ( oParent._mHiddenAggregations ) {
-		  this._mHiddenAggregations = jQuery.extend({},oParent._mHiddenAggregations);
-		}
-	} else {
-		this._mAllEvents = this._mEvents;
-		this._mAllProperties = this._mProperties;
-		this._mAllAggregations = this._mAggregations;
-		this._mAllAssociations = this._mAssociations;
-	}
-
-};
-
-sap.ui.core.ElementMetadata.Kind = {
-  PROPERTY :0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
-};
-
-/**
- * By default, the element name is equal to the class name
- * @return {string} the qualified name of the UIElement class
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getElementName = function() {
-	return this._sClassName;
-};
-
-/**
- * Returns the name of the library that contains the described UIElement.
- * @return {string} the name of the library
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getLibraryName = function() {
-	return this._sLibraryName;
-};
-
-/**
- * Returns whether the class/control is abstract
- * @return {boolean} whether the class/control is abstract
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.isAbstract = function() {
-	return this._bAbstract;
-};
-
-/**
- * Declares an additional property for the UIElement class described by this metadata.
- *
- * Any property declaration via this method must happen before the described class
- * is subclassed, or the added property will not be visible in the subclass.
- *
- * Typically used to enrich UIElement classes in an aspect oriented manner.
- * @public
- * @see sap.ui.core.EnabledPropagator
- */
-sap.ui.core.ElementMetadata.prototype.addProperty = function(sName, oInfo) {
-	oInfo.name = sName;
-	this._mProperties[sName] = oInfo;
-	if(!this._mAllProperties[sName]) {// ensure extended AllProperties meta-data is also enriched
-		this._mAllProperties[sName] = oInfo;
-	}
-
-	if ( this._bEnriched ) { // does not seem right! this is the 'drop out' condition for _enrichChildInfos() -> senseless
-		this._enrichChildInfos();
-	}
-	// TODO notify listeners (subclasses) about change
-};
-
-/**
- * Checks the existance of the given property by its name
- * @param {string} sName name of the property
- * @return {boolean} true, if the property exists
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.hasProperty = function(sName) {
-	return !!this._mAllProperties[sName];
-};
-
-/**
- * Returns infos about the properties declared by the UIElement class
- * described by this metadata object. Properties from ancestor classes
- * are not returned.
- *
- * The returned map contains property info objects keyed by the property name.
- *
- * @return {map} Map of property infos keyed by property names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getProperties = function() {
-	return this._mProperties;
-};
-
-/**
- * Returns infos about all properties declared by the UIElement class
- * described by this metadata object as well as properties from base classes.
- *
- * The returned map contains property info objects keyed by the property name.
- *
- * @return {map} Map of property infos keyed by property names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getAllProperties = function() {
-	return this._mAllProperties;
-};
-
-/**
- * Returns infos about the aggregations declared by the UIElement class
- * described by this metadata object. Aggregations from ancestor classes
- * are not returned.
- *
- * The returned map contains aggregation info objects keyed by the aggregation name.
- * In case of 0..1 aggregations this is the singular name, otherwise it is the plural
- * name.
- *
- * @return {map} Map of aggregation infos keyed by aggregation names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getAggregations = function() {
-	return this._mAggregations;
-};
-
-/**
- * Checks the existance of the given aggregation by its name
- * @param {string} sName name of the aggregation
- * @return {boolean} true, if the aggregation exists
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.hasAggregation = function(sName) {
-	return !!this._mAllAggregations[sName];
-};
-
-/**
- * Returns infos about all aggregations declared by the UIElement class
- * described by this metadata object as well as aggregations from base classes.
- *
- * The returned map contains aggregation info objects keyed by the aggregation name.
- * In case of 0..1 aggregations this is the singular name, otherwise it is the plural
- * name.
- *
- * @return {map} Map of aggregation infos keyed by aggregation names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getAllAggregations = function() {
-	return this._mAllAggregations;
-};
-
-/**
- * Returns the name of the default aggregation of this control.
- * If the control itself does not define a default aggregation, then the
- * default aggregation of the parent is returned. If no control in the
- * hierarchy defines a default aggregation, null is returned.
- *
- * @return {string} Name of the default aggregation for this class
- */
-sap.ui.core.ElementMetadata.prototype.getDefaultAggregationName = function() {
-	return this._sDefaultAggregation;
-};
-
-/**
- * Returns the name of the default aggregation of this control.
- * If the control itself does not define a default aggregation, then the
- * default aggregation of the parent is returned.
- *
- * @return {string} Name of the default aggregation for this class
- */
-sap.ui.core.ElementMetadata.prototype.getDefaultAggregation = function() {
-	return this._sDefaultAggregation && this.getAllAggregations()[this._sDefaultAggregation];
-};
-
-/**
- * Returns infos about the associations declared by the UIElement class
- * described by this metadata object. Associations from ancestor classes
- * are not returned.
- *
- * The returned map contains association info objects keyed by the association name.
- * In case of 0..1 associations this is the singular name, otherwise it is the plural
- * name.
- *
- * @return {map} Map of association infos keyed by association names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getAssociations = function() {
-	return this._mAssociations;
-};
-
-/**
- * Checks the existance of the given association by its name
- * @param {string} sName name of the association
- * @return {boolean} true, if the association exists
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.hasAssociation = function(sName) {
-	return !!this._mAllAssociations[sName];
-};
-
-/**
- * Returns infos about all associations declared by the UIElement class
- * described by this metadata object as well as associations from base classes.
- *
- * The returned map contains association info objects keyed by the association name.
- * In case of 0..1 associations this is the singular name, otherwise it is the plural
- * name.
- *
- * @return {map} Map of association infos keyed by association names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getAllAssociations = function() {
-	return this._mAllAssociations;
-};
-
-/**
- * Returns infos about the events declared by the UIElement class
- * described by this metadata object. Events from ancestor classes
- * are not returned.
- *
- * The returned map contains events info objects keyed by the events name.
- *
- * @return {map} Map of event infos keyed by event names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getEvents = function() {
-	return this._mEvents;
-};
-
-/**
- * Checks the existance of the given event by its name
- * @param {string} sName name of the event
- * @return {boolean} true, if the event exists
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.hasEvent = function(sName) {
-	return !!this._mAllEvents[sName];
-};
-
-/**
- * Returns infos about all events declared by the UIElement class
- * described by this metadata object as well as events from base classes.
- *
- * The returned map contains event info objects keyed by the event name.
- *
- * @return {map} Map of event infos keyed by event names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getAllEvents = function() {
-	return this._mAllEvents;
-};
-
-/**
- * Returns a map of default values for all properties declared by the
- * described class and its ancestors, keyed by the property name.
- *
- * @return {map} Map of default values keyed by property names
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getPropertyDefaults = function() {
-
-	var mDefaults = this._mDefaults,
-		oType;
-	if ( mDefaults ) {
-		return mDefaults;
-	}
-
-	if ( this.getParent() instanceof sap.ui.core.ElementMetadata ) {
-		mDefaults = jQuery.sap.newObject(this.getParent().getPropertyDefaults());
-	} else {
-		mDefaults = {};
-	}
-
-	for(var s in this._mProperties) {
-		if ( this._mProperties[s].defaultValue !== null ) {
-			mDefaults[s] = this._mProperties[s].defaultValue;
-		} else {
-			oType = sap.ui.base.DataType.getType(this._mProperties[s].type);
-			if (oType instanceof sap.ui.base.DataType) {
-				mDefaults[s] = oType.getDefaultValue();
-			} else { // Enumeration
-				for (var i in oType) {
-					mDefaults[s] = oType[i];
-					break;
-				}
-			}
-		}
-	}
-	return (this._mDefaults = mDefaults);
-};
-
-/**
- * Determines the class name of the renderer for the described control class.
- */
-sap.ui.core.ElementMetadata.prototype.getRendererName = function() {
-	return this._sRendererName;
-};
-
-/**
- * Retrieves the renderer for the described control class
- */
-sap.ui.core.ElementMetadata.prototype.getRenderer = function() {
-
-	// determine name via function for those legacy controls that override getRendererName()
-	var sRendererName = this.getRendererName();
-
-	if ( !sRendererName ) {
-		return;
-	}
-
-	// check if renderer class exists already
-	var fnRendererClass = jQuery.sap.getObject(sRendererName);
-	if(fnRendererClass) {
-		return fnRendererClass;
-	}
-
-	// if not, try to load a module with the same name
-	jQuery.sap.require(sRendererName);
-	return jQuery.sap.getObject(sRendererName);
-};
-
-sap.ui.core.ElementMetadata.prototype.createPropertyBag = function() {
-	if ( !this._fnPropertyBagFactory ) {
-		this._fnPropertyBagFactory = jQuery.sap.factory(this.getPropertyDefaults());
-	}
-	return new (this._fnPropertyBagFactory)();
-};
-
-/**
- * Helper method that enriches the (generated) information objects for children
- * (e.g. properties, aggregations, ...) of this Element.
- *
- * Also ensures that the parent metadata is enriched.
- *
- * @private
- */
-sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
-
-	if ( this._bEnriched ) {
-		return;
-	}
-
-	if ( this.getParent() instanceof sap.ui.core.ElementMetadata ) {
-		this.getParent()._enrichChildInfos();
-	}
-
-	var m,sName,oInfo;
-	function method(sPrefix, sName) {
-		return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-	}
-
-	// adapt properties
-	m=this._mProperties;
-	for(sName in m) {
-		oInfo = m[sName];
-		oInfo._sName = sName;
-		oInfo._sUID = sName;
-		oInfo._oParent = this;
-		oInfo._iKind = sap.ui.core.ElementMetadata.Kind.PROPERTY;
-		oInfo._sMutator = method("set", sName);
-		oInfo._sGetter = method("get", sName);
-	}
-
-	// adapt aggregations
-	m=this._mAggregations;
-	for(sName in m) {
-		oInfo = m[sName];
-		oInfo._sName = sName;
-		oInfo._sUID = "aggregation:" + sName;
-		oInfo._oParent = this;
-		oInfo._sDestructor = method("destroy", sName);
-		oInfo._sGetter = method("get", sName);
-		if ( oInfo.multiple ) {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.MULTIPLE_AGGREGATION;
-			oInfo._sMutator = method("add", oInfo.singularName);
-			oInfo._sRemoveMutator = method("remove", oInfo.singularName);
-		} else {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.SINGLE_AGGREGATION;
-			oInfo._sMutator = method("set", sName);
-		}
-	}
-
-	// adapt associations
-	m=this._mAssociations;
-	for(sName in m) {
-		oInfo = m[sName];
-		oInfo._sName = sName;
-		oInfo._sUID = "association:" + sName;
-		oInfo._oParent = this;
-		oInfo._sGetter = method("get", sName);
-		if ( oInfo.multiple ) {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.MULTIPLE_ASSOCIATION;
-			oInfo._sMutator = method("add", oInfo.singularName);
-		} else {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.SINGLE_ASSOCIATION;
-			oInfo._sMutator = method("set", sName);
-		}
-	}
-
-	// adapt events
-	m=this._mEvents;
-	for(sName in m) {
-		oInfo = m[sName];
-		oInfo._sName = sName;
-		oInfo._sUID = "event:" + sName;
-		oInfo._oParent = this;
-		oInfo._iKind = sap.ui.core.ElementMetadata.Kind.EVENT;
-		oInfo._sMutator = method("attach", sName);
-	}
-
-	this._bEnriched = true;
-};
-
-/**
- * Builds a "reflection like" map of setters/type infos keyed by the possible JSON names.
- * Mainly used for the {@link sap.ui.core.Element.applySettings} method.
- *
- * @see sap.ui.core.Element.prototype.applySettings
- * @private
- */
-sap.ui.core.ElementMetadata.prototype.getJSONKeys = function() {
-
-	if ( this._mJSONKeys ) {
-		return this._mJSONKeys;
-	}
-
-	this._enrichChildInfos();
-
-	var mJSONKeys = {};
-	function addKeys(m) {
-		var sName, oInfo;
-		for(sName in m) {
-			oInfo = m[sName];
-			if ( !mJSONKeys[sName] || oInfo._iKind < mJSONKeys[sName]._iKind ) {
-				mJSONKeys[sName] = oInfo;
-			};
-			mJSONKeys[oInfo._sUID] = oInfo;
-		};
-	}
-
-	addKeys(this.getAllProperties());
-	addKeys(this.getAllAggregations());
-	addKeys(this.getAllAssociations());
-	addKeys(this.getAllEvents());
-
-	return (this._mJSONKeys = mJSONKeys);
-};
-
-sap.ui.core.ElementMetadata.prototype.generateAccessors = function() {
-
-	var meta=this;
-	var proto = this.getClass().prototype;
-	function method(sPrefix, sName, fn, bDeprecated) {
-		var sName = sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-		if ( !proto[sName] ) {
-			proto[sName] = bDeprecated ? function() {
-				jQuery.sap.log.warning("Usage of deprecated feature: " + meta.getName() + "." + sName);
-				return fn.apply(this, arguments);
-			} : fn; 
-			meta._aPublicMethods.push(sName);
-		}
-	}
-
-	jQuery.each(this._mProperties, function(n,info) {
-		method("get", n, function() { return this.getProperty(n); });
-		method("set", n, function(v) { this.setProperty(n,v); return this; }, info.deprecated);
-		if ( info.bindable ) {
-			method("bind", n, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, info.deprecated);
-			method("unbind", n, function(p) { this.unbindProperty(n,p); return this; });
-		}
-	});
-	jQuery.each(this._mAggregations, function(n,info) {
-		if ( !info.multiple ) {
-			method("get", n, function() { return this.getAggregation(n); });
-			method("set", n, function(v) { this.setAggregation(n,v); return this; }, info.deprecated);
-		} else {
-			var n1 = info.singularName;
-			method("get", n, function() { return this.getAggregation(n,[]); });
-			method("add", n1, function(a) { this.addAggregation(n,a); return this; }, info.deprecated);
-			method("insert", n1, function(i,a) { this.insertAggregation(n,i,a); return this; }, info.deprecated);
-			method("remove", n1, function(a) { return this.removeAggregation(n,a); });
-			method("removeAll", n, function() { return this.removeAllAggregation(n); });
-			method("indexOf", n1, function(a) { return this.indexOfAggregation(n,a); });
-		}
-		method("destroy", n, function() { this.destroyAggregation(n); return this; });
-		if ( info.bindable ) {
-			method("bind", n, function(p,t,s,f) { this.bindAggregation(n,p,t,s,f); return this; }, info.deprecated);
-			method("unbind", n, function(p) { this.unbindAggregation(n,p); return this; });
-		}
-	});
-	jQuery.each(this._mAssociations, function(n,info) {
-		if ( !info.multiple ) {
-			method("get", n, function() { return this.getAssociation(n); });
-			method("set", n, function(v) { this.setAssociation(n,v); return this; }, info.deprecated);
-		} else {
-			var n1 = info.singularName;
-			method("get", n, function() { return this.getAssociation(n,[]); });
-			method("add", n1, function(a) { this.addAssociation(n,a); return this; }, info.deprecated);
-			method("remove", n1, function(a) { return this.removeAssociation(n,a); });
-			method("removeAll", n, function() { return this.removeAllAssociation(n); });
-		}
-	});
-	jQuery.each(this._mEvents, function(n,info) {
-		method("attach", n, function(d,f,o) { this.attachEvent(n,d,f,o); return this; }, info.deprecated);
-		method("detach", n, function(f,o) { this.detachEvent(n,f,o); return this; });
-		var n1 = !!info.allowPreventDefault;
-		method("fire", n, function(p) { return this.fireEvent(n,p, n1); });
-	});
-
-};
-
-(function() {
-
-	/**
-	 * Usage counters for the different UID tokens
-	 */
-	var mUIDCounts = {};
-
-	function uid(sId) {
-		jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
-
-		sId = sap.ui.getCore().getConfiguration().getUIDPrefix() + sId;
-
-		// initialize counter
-		mUIDCounts[sId] = mUIDCounts[sId] || 0;
-
-		// combine prefix + counter
-		// concatenating sId and a counter is only safe because we don't allow trailing numbers in sId!
-		return (sId + mUIDCounts[sId]++);
-	}
-
-	/**
-	 * Calculates a new id based on a prefix.
-	 *
-	 * @return {string} A (hopefully unique) control id
-	 * @public
-	 * @function
-	 */
-	sap.ui.core.ElementMetadata.uid = uid;
-
-	/**
-	 * Calculates a new id for an instance of this class.
-	 *
-	 * Note that the calculated short name part is usually not unique across
-	 * all classes, but doesn't have to be. It might even be empty when the
-	 * class name consists of invalid characters only.
-	 *
-	 * @return {string} A (hopefully unique) control id
-	 * @public
-	 */
-	sap.ui.core.ElementMetadata.prototype.uid = function() {
-
-		var sId = this._sUIDToken;
-		if ( typeof sId !== "string" ) {
-			// start with qualified class name
-			sId  = this.getName();
-			// reduce to unqualified name
-			sId = sId.slice(sId.lastIndexOf('.')+1);
-			// reduce a camel case, multi word name to the last word
-			sId = sId.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").slice(-1)[0];
-			// remove unwanted chars (and no trailing digits!) and convert to lower case
-			sId = this._sUIDToken = sId.replace(/([^A-Za-z0-9-_.:])|([0-9]$)/g,"").toLowerCase();
-		}
-
-		return uid(sId);
-	};
-
-}());
-
-}; // end of sap.ui.core.ElementMetadata
 
 if ( !jQuery.sap.isDeclared('sap.ui.model.Model') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base implementation for all model implementations
@@ -18755,7 +22096,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.model.BindingMode') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides enumeration sap.ui.model.FilterOperator
@@ -18801,7 +22142,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.model.Context') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides an abstraction for model bindings
@@ -18823,30 +22164,44 @@ jQuery.sap.declare("sap.ui.model.Context");
  * @param {Object} oContext the context object
  * @abstract
  * @public
+ * @name sap.ui.model.Context
  */
-sap.ui.model.Context = function(oModel, sPath){
-	sap.ui.base.Object.apply(this);
+sap.ui.base.Object.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context */ {
+	
+	constructor : function(oModel, sPath){
 
-	this.oModel = oModel;
-	this.sPath = sPath;
-
-};
-sap.ui.model.Context.prototype = jQuery.sap.newObject(sap.ui.base.Object.prototype);
-
-/*
- * Describe the sap.ui.model.Binding.
- * Resulting metadata can be obtained via sap.ui.model.Binding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Context", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"getModel", "getPath", "getProperty", "getObject"
-  ]
+		sap.ui.base.Object.apply(this);
+	
+		this.oModel = oModel;
+		this.sPath = sPath;
+	
+	},
+	
+	metadata : {
+		"abstract" : true,
+	  publicMethods : [
+			"getModel", "getPath", "getProperty", "getObject"
+		]
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Context with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.C.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Context.extend
+ * @function
+ */
 
 // Getter
 /**
@@ -18919,43 +22274,67 @@ sap.ui.model.Context.prototype.toString = function() {
  * @extends sap.ui.base.Object
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
  * @public
+ * @name sap.ui.model.Model
  */
-sap.ui.model.Model = function () {
-	sap.ui.base.EventProvider.apply(this, arguments);
+sap.ui.base.EventProvider.extend("sap.ui.model.Model", /** @lends sap.ui.model.Model */ {
+	
+	constructor : function () {
+		sap.ui.base.EventProvider.apply(this, arguments);
+	
+		this.oData = {};
+		this.aBindings = [];
+		this.mContexts = {};
+		this.iSizeLimit = 100;
+		this.sDefaultBindingMode = sap.ui.model.BindingMode.TwoWay;
+		this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
+		this.bLegacySyntax = false;
+	},
 
-	this.oData = {};
-	this.aBindings = [];
-	this.mContexts = {};
-	this.iSizeLimit = 100;
-	this.sDefaultBindingMode = sap.ui.model.BindingMode.TwoWay;
-	this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
-	this.bLegacySyntax = false;
-};
+	metadata : {
 
-// chain the prototypes
-sap.ui.model.Model.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
-
-/*
- * Describe the sap.ui.model.Model.
- * Resulting metadata can be obtained via sap.ui.model.Model.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Model", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"bindProperty", "bindList", "bindTree", "createBindingContext", "destroyBindingContext", "getProperty",
-	"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
-	"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
-	"detachRequestSent", "setSizeLimit"
-  ]
+		"abstract" : true,
+		publicMethods : [
+			// methods
+			"bindProperty", "bindList", "bindTree", "bindContext", "createBindingContext", "destroyBindingContext", "getProperty",
+			"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
+			"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
+			"detachRequestSent", "setSizeLimit"
+	  ]
+	
+	  /* the following would save code, but requires the new ManagedObject (1.9.1) 
+	  , events : {
+	  	"parseError" : {},
+	  	"requestFailed" : {},
+	  	"requestSent" : {},
+	  	"requestCompleted" ; {} 
+	  }
+	  */
+	
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Model with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Model.extend
+ * @function
+ */
+
 
 /**
  * Map of event names, that are provided by the model.
@@ -19044,15 +22423,12 @@ sap.ui.model.Model.prototype.detachRequestFailed = function(fnFunction, oListene
 /**
  * Fire event requestFailed to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'message' of type <code>string</code> A text that describes the failure.</li>
- * <li>'statusCode' of type <code>string</code> HTTP status code returned by the request (if available)</li>
- * <li>'statusText' of type <code>string</code> The status as a text, details not specified, intended only for diagnosis output</li>
- * <li>'responseText' of type <code>string</code> Response that has been received for the request ,as a text string</li>
- * </ul>
- *
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {string} [mArguments.message]  A text that describes the failure.
+ * @param {string} [mArguments.statusCode]  HTTP status code returned by the request (if available)
+ * @param {string} [mArguments.statusText] The status as a text, details not specified, intended only for diagnosis output
+ * @param {string} [mArguments.responseText] Response that has been received for the request ,as a text string
+ * 
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -19121,18 +22497,15 @@ sap.ui.model.Model.prototype.detachParseError = function(fnFunction, oListener) 
 /**
  * Fire event parseError to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'errorCode' of type <code>int</code> </li>
- * <li>'url' of type <code>string</code> </li>
- * <li>'reason' of type <code>string</code> </li>
- * <li>'srcText' of type <code>string</code> </li>
- * <li>'line' of type <code>int</code> </li>
- * <li>'linepos' of type <code>int</code> </li>
- * <li>'filepos' of type <code>int</code> </li>
- * </ul>
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {int} [mArguments.errorCode]
+ * @param {string} [mArguments.url]
+ * @param {string} [mArguments.reason]
+ * @param {string} [mArguments.srcText]
+ * @param {int} [mArguments.line]
+ * @param {int} [mArguments.linepos]
+ * @param {int} [mArguments.filepos]
  *
- * @param {Map} [mArguments] the arguments to pass along with the event.
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -19142,7 +22515,24 @@ sap.ui.model.Model.prototype.fireParseError = function(mArguments) {
 };
 
 /**
- * Attach event-handler <code>fnFunction</code> to the 'requestSent' event of this <code>sap.ui.model.Model</code>.<br/>
+ * The 'requestSent' event is fired, after a request has been sent to a backend.
+ *
+ * Note: Subclasses might add additional parameters to the event object.
+ * 
+ * @name sap.ui.model.Model#requestSent
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+ * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+ * @param {string} oControlEvent.getParameters.type The type of the request (if available)
+ * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+ * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available)
+ * @public
+ */
+
+/**
+ * Attach event-handler <code>fnFunction</code> to the 'requestSent' event of this <code>sap.ui.model.Model</code>.
  *
  *
  * @param {object}
@@ -19162,7 +22552,7 @@ sap.ui.model.Model.prototype.attachRequestSent = function(oData, fnFunction, oLi
 };
 
 /**
- * Detach event-handler <code>fnFunction</code> from the 'requestSent' event of this <code>sap.ui.model.Model</code>.<br/>
+ * Detach event-handler <code>fnFunction</code> from the 'requestSent' event of this <code>sap.ui.model.Model</code>.
  *
  * The passed function and listener object must match the ones previously used for event registration.
  *
@@ -19181,15 +22571,11 @@ sap.ui.model.Model.prototype.detachRequestSent = function(fnFunction, oListener)
 /**
  * Fire event requestSent to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'url' of type <code>string</code> The url which is sent to the backend.</li>
- * <li>'type' of type <code>string</code> The type of the request (if available)</li>
- * <li>'async' of type <code>boolean</code> If the request is synchronous or asynchronous (if available)</li>
- * <li>'info' of type <code>string</code> additional information for the request (if available)</li>
- * </ul>
- *
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {string} [mArguments.url] The url which is sent to the backend.
+ * @param {string} [mArguments.type] The type of the request (if available)
+ * @param {boolean} [mArguments.async] If the request is synchronous or asynchronous (if available)
+ * @param {string} [mArguments.info] additional information for the request (if available)
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -19199,7 +22585,25 @@ sap.ui.model.Model.prototype.fireRequestSent = function(mArguments) {
 };
 
 /**
- * Attach event-handler <code>fnFunction</code> to the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.<br/>
+ * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response), 
+ * no matter whether the request succeeded or not.
+ * 
+ * Note: Subclasses might add additional parameters to the event object.
+ * 
+ * @name sap.ui.model.Model#requestCompleted
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+ * @param {string} oControlEvent.getParameters.url The url which was sent to the backend
+ * @param {string} oControlEvent.getParameters.type The type of the request (if available)
+ * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+ * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available)
+ * @public
+ */
+
+/**
+ * Attach event-handler <code>fnFunction</code> to the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.
  *
  *
  * @param {object}
@@ -19219,7 +22623,7 @@ sap.ui.model.Model.prototype.attachRequestCompleted = function(oData, fnFunction
 };
 
 /**
- * Detach event-handler <code>fnFunction</code> from the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.<br/>
+ * Detach event-handler <code>fnFunction</code> from the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.
  *
  * The passed function and listener object must match the ones previously used for event registration.
  *
@@ -19238,15 +22642,12 @@ sap.ui.model.Model.prototype.detachRequestCompleted = function(fnFunction, oList
 /**
  * Fire event requestCompleted to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'url' of type <code>string</code> The url which was sent to the backend.</li>
- * <li>'type' of type <code>string</code> The type of the request (if available)</li>
- * <li>'async' of type <code>boolean</code> If the request was synchronous or asynchronous (if available)</li>
- * <li>'info' of type <code>string</code> additional information for the request (if available)</li>
- * </ul>
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {string} [mArguments.url] The url which was sent to the backend.
+ * @param {string} [mArguments.type] The type of the request (if available)
+ * @param {boolean} [mArguments.async] If the request was synchronous or asynchronous (if available)
+ * @param {string} [mArguments.info] additional information for the request (if available)
  *
- * @param {Map} [mArguments] the arguments to pass along with the event.
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -19329,7 +22730,9 @@ sap.ui.model.Model.prototype.fireRequestCompleted = function(mArguments) {
  *		   [mParameters=null] the parameters used to create the new binding context
  * @param {function}
  *         fnCallBack the function which should be called after the binding context has been created
-
+ * @param {boolean}
+ *         [bForceUpdate] force update even if data is already available 
+ *         
  * @public
  */
 
@@ -19359,6 +22762,26 @@ sap.ui.model.Model.prototype.fireRequestCompleted = function(mArguments) {
  */
 
 /**
+ * Create ContextBinding
+ * 
+ * @name sap.ui.model.Model.prototype.bindContext
+ * @function
+ * @param {string}
+ *         sPath the path pointing to the property that should be bound
+ * @param {object}
+ *         [oContext=null] the context object for this databinding (optional)
+ * @param {object}
+ *         [mParameters=null] additional model specific parameters (optional)
+ * @return {sap.ui.model.ContextBinding}
+ *
+ * @public
+ */
+sap.ui.model.Model.prototype.bindContext = function(sPath, oContext, mParameters) {
+	var oBinding = new sap.ui.model.ContextBinding(this, sPath, oContext, mParameters);
+	return oBinding;
+};
+
+/**
  * Gets a binding context. If context already exists, return it from the map,
  * otherwise create one using the context constructor.
  *
@@ -19377,7 +22800,18 @@ sap.ui.model.Model.prototype.getContext = function(sPath) {
 };
 
 /**
- * Resolve the path relative to the given context
+ * Resolve the path relative to the given context.
+ * 
+ * If a relative path is given (not starting with a '/') but no context,
+ * then the path can't be resolved and undefined is returned.
+ *
+ * For backward compatibility, the behavior of this method can be changed by 
+ * setting the 'legacySyntax' property. Then an unresolvable, relative path 
+ * is automatically converted into an absolute path.
+ * 
+ * @param {string} sPath path to resolve
+ * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+ * @return {string} resolved path or undefined
  */
 sap.ui.model.Model.prototype.resolve = function(sPath, oContext) {
 	var bIsRelative = !jQuery.sap.startsWith(sPath, "/"),
@@ -19389,10 +22823,11 @@ sap.ui.model.Model.prototype.resolve = function(sPath, oContext) {
 			sResolvedPath = sContextPath + (jQuery.sap.endsWith(sContextPath, "/") ? "" : "/") + sPath;
 		}
 		else {
-			sResolvedPath = this.isLegacySyntax() ? "/" + sPath : "";
+			sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 		}
 	}
-	if (jQuery.sap.endsWith(sResolvedPath, "/")) {
+	// invariant: path never ends with a slash
+	if (sResolvedPath && jQuery.sap.endsWith(sResolvedPath, "/")) {
 		sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
 	}
 	return sResolvedPath;
@@ -19504,20 +22939,11 @@ sap.ui.model.Model.prototype.getInterface = function() {
 
 }; // end of sap.ui.model.Model
 
-if ( !jQuery.sap.isDeclared('sap.ui.model.SimpleType') ) {
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5)
- * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
- */
-
-// Provides the base implementation for all model implementations
-jQuery.sap.declare("sap.ui.model.SimpleType");
 if ( !jQuery.sap.isDeclared('sap.ui.model.Type') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base implementation for all model implementations
@@ -19534,33 +22960,45 @@ jQuery.sap.declare("sap.ui.model.Type");
  * @extends sap.ui.base.Object
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
  * @public
+ * @name sap.ui.model.Type
  */
-sap.ui.model.Type = function () {
-	sap.ui.base.Object.apply(this, arguments);
-	this.sName = "Type";
-};
+sap.ui.base.Object.extend("sap.ui.model.Type", /** @lends sap.ui.model.Type */ {
+	
+	constructor : function () {
+		sap.ui.base.Object.apply(this, arguments);
+		this.sName = "Type";
+	},
 
-// chain the prototypes
-sap.ui.model.Type.prototype = jQuery.sap.newObject(sap.ui.base.Object.prototype);
-
-/*
- * Describe the sap.ui.model.Type.
- * Resulting metadata can be obtained via sap.ui.model.Type.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Type", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-    // methods
-    "getName"
-  ]
-
+	metadata : {
+		"abstract" : true,
+		publicMethods : [
+	    // methods
+	    "getName"
+	  ]
+	}
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Type with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Type.extend
+ * @function
+ */
 
 
 /**
@@ -19574,11 +23012,192 @@ sap.ui.model.Type.prototype.getName = function() {
 };
 }; // end of sap.ui.model.Type
 
+if ( !jQuery.sap.isDeclared('sap.ui.model.CompositeBinding') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides an abstract property binding.
+jQuery.sap.declare("sap.ui.model.CompositeBinding");
+if ( !jQuery.sap.isDeclared('sap.ui.model.PropertyBinding') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides an abstract property binding.
+jQuery.sap.declare("sap.ui.model.PropertyBinding");
+if ( !jQuery.sap.isDeclared('sap.ui.model.Binding') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides an abstraction for model bindings
+jQuery.sap.declare("sap.ui.model.Binding");
+
+
+/**
+ * Constructor for Binding class.
+ *
+ * @class
+ * The Binding is the object, which holds the necessary information for a data binding,
+ * like the binding path and the binding context, and acts like an interface to the
+ * model for the control, so it is the event provider for changes in the data model
+ * and provides getters for accessing properties or lists.
+ *
+ * @param {sap.ui.model.Model} the model
+ * @param {String} sPath the path
+ * @param {Object} oContext the context object
+ * @abstract
+ * @public
+ * @name sap.ui.model.Binding
+ */
+sap.ui.base.EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding */ {
+	
+	constructor : function(oModel, sPath, oContext, mParameters){
+		sap.ui.base.EventProvider.apply(this);
+	
+		this.sPath = sPath;
+		this.oContext = oContext;
+		this.oModel = oModel;
+		this.mParameters = mParameters;
+	
+	},
+
+	metadata : {
+		"abstract" : true,
+	  publicMethods : [
+			// methods
+			"getPath", "getContext", "getModel", "attachChange", "detachChange"
+	  ]
+	
+	}
+
+});
+
+/**
+ * Creates a new subclass of class sap.ui.model.Binding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Binding.extend
+ * @function
+ */
+
+// Getter
+/**
+ * Getter for path
+ * @return {String} the binding path
+ */
+sap.ui.model.Binding.prototype.getPath = function() {
+	return this.sPath;
+};
+
+/**
+ * Getter for context
+ * @return {Object} the context object
+ */
+sap.ui.model.Binding.prototype.getContext = function() {
+	return this.oContext;
+};
+
+/**
+ * Setter for context
+ * @param {Object} oContext the new context object
+ */
+sap.ui.model.Binding.prototype.setContext = function(oContext) {
+	if (this.oContext != oContext) {
+		this.oContext = oContext;
+		this._fireChange();
+	}
+};
+
+/**
+ * Getter for model
+ * @return {sap.ui.core.Model} the model
+ */
+sap.ui.model.Binding.prototype.getModel = function() {
+	return this.oModel;
+};
+
+// Eventing and related
+/**
+ * Attach event-handler <code>fnFunction</code> to the '_change' event of this <code>sap.ui.model.Model</code>.<br/>
+ * @param {function} fnFunction The function to call, when the event occurs.
+ * @param {object} [oListener] object on which to call the given function.
+ * @protected
+ */
+sap.ui.model.Binding.prototype.attachChange = function(fnFunction, oListener) {
+	if (!this.hasListeners("_change")) {
+		this.oModel.addBinding(this);
+	}
+	this.attachEvent("_change", fnFunction, oListener);
+};
+
+/**
+ * Detach event-handler <code>fnFunction</code> from the '_change' event of this <code>sap.ui.model.Model</code>.<br/>
+ * @param {function} fnFunction The function to call, when the event occurs.
+ * @param {object} [oListener] object on which to call the given function.
+ * @protected
+ */
+sap.ui.model.Binding.prototype.detachChange = function(fnFunction, oListener) {
+	this.detachEvent("_change", fnFunction, oListener);
+	if (!this.hasListeners("_change")) {
+		this.oModel.removeBinding(this);
+	}
+};
+
+/**
+ * Fire event _change to attached listeners.
+
+ * @param {Map}
+ *         mArguments the arguments to pass along with the event.
+ * @private
+ */
+sap.ui.model.Binding.prototype._fireChange = function(mArguments) {
+	this.fireEvent("_change", mArguments);
+};
+
+/**
+ * Determines if the binding should be updated by comparing the current model against a specified model.
+ * @param {object} oModel The model instance to compare against
+ * @returns {boolean} true if this binding should be updated
+ * @protected
+ */
+sap.ui.model.Binding.prototype.updateRequired = function(oModel) {
+	return oModel && this.getModel() === oModel;
+};
+
+}; // end of sap.ui.model.Binding
+
+if ( !jQuery.sap.isDeclared('sap.ui.model.SimpleType') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides the base implementation for all model implementations
+jQuery.sap.declare("sap.ui.model.SimpleType");
+
 if ( !jQuery.sap.isDeclared('sap.ui.model.ParseException') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a filter for list bindings
@@ -19587,7 +23206,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.base.Exception') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a filter for list bindings
@@ -19641,7 +23260,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.model.ValidateException') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a filter for list bindings
@@ -19667,7 +23286,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.model.FormatException') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a filter for list bindings
@@ -19700,35 +23319,49 @@ sap.ui.model.FormatException.prototype = jQuery.sap.newObject(sap.ui.base.Except
  * @extends sap.ui.model.Type
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
+ * @param {object} [oFormatOptions] options as provided by concrete subclasses
+ * @param {object} [oConstraints] constraints as supported by concrete subclasses
  * @public
+ * @name sap.ui.model.SimpleType
  */
-sap.ui.model.SimpleType = function(oFormatOptions, oConstraints) {
-	sap.ui.model.Type.apply(this, arguments);
-	this.setFormatOptions(oFormatOptions || {});
-	this.setConstraints(oConstraints || {});
-	this.sName = "SimpleType";
-};
+sap.ui.model.Type.extend("sap.ui.model.SimpleType", /** @lends sap.ui.model.SimpleType */ {
 
-// chain the prototypes
-sap.ui.model.SimpleType.prototype = jQuery.sap.newObject(sap.ui.model.Type.prototype);
+	constructor : function(oFormatOptions, oConstraints) {
+		sap.ui.model.Type.apply(this, arguments);
+		this.setFormatOptions(oFormatOptions || {});
+		this.setConstraints(oConstraints || {});
+		this.sName = "SimpleType";
+	},
 
-/*
- * Describe the sap.ui.model.SimpleType.
- * Resulting metadata can be obtained via sap.ui.model.SimpleType.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.SimpleType", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Type",
-  publicMethods : [
-    // methods
-    "setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
-  ]
-
+  metadata : {
+  	"abstract" : true,
+  	publicMethods : [
+	    "setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
+	  ]
+  }
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.SimpleType with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.SimpleType.extend
+ * @function
+ */
+
 
 /**
  * Format the given value in model representation to an output value in the given
@@ -19790,6 +23423,3412 @@ sap.ui.model.SimpleType.prototype.setFormatOptions = function(oFormatOptions) {
 
 
 /**
+ * Constructor for PropertyBinding
+ *
+ * @class
+ * The PropertyBinding is used to access single data values in the data model.
+ *
+ * @param {sap.ui.model.Model} oModel
+ * @param {String} sPath
+ * @param {Object} oContext
+ * @abstract
+ * @public
+ * @name sap.ui.model.PropertyBinding
+ */
+
+sap.ui.model.Binding.extend("sap.ui.model.PropertyBinding", /** @lends sap.ui.model.PropertyBinding */ {
+
+	constructor : function (oModel, sPath, oContext, mParameters) {
+		sap.ui.model.Binding.apply(this, arguments);
+		this.oType;
+		this.fnFormatter;
+		this.sInternalType;
+	},
+	metadata : {
+		"abstract" : true,
+		
+	  publicMethods : [
+		  "getValue", "setValue", "setType", "getType", "setFormatter", "getFormatter", "getExternalValue", "setExternalValue"
+	  ]
+	}
+
+});
+
+/**
+ * Creates a new subclass of class sap.ui.model.PropertyBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.PropertyBinding.extend
+ * @function
+ */
+
+// the 'abstract methods' to be implemented by child classes
+/**
+ * Returns the current value of the bound target
+ *
+ * @function
+ * @name sap.ui.model.PropertyBinding.prototype.getValue
+ * @return {object} the current value of the bound target
+ *
+ * @public
+ */
+
+/**
+ * Sets the value for this binding. A model implementation should check if the current default binding mode permits
+ * setting the binding value and if so set the new value also in the model.
+ *
+ * @function
+ * @name sap.ui.model.PropertyBinding.prototype.setValue
+ * @param {object} oValue the value to set for this binding
+ *
+ * @public
+ */
+
+/**
+ * Returns the current external value of the bound target which is formatted via a type or formatter function. 
+ *
+ * @throws sap.ui.model.FormatException
+ *
+ * @return {object} the current value of the bound target
+ *
+ * @public
+ */
+sap.ui.model.PropertyBinding.prototype.getExternalValue = function() {	
+	var oValue = this.getValue();
+	if (this.oType) {
+		oValue = this.oType.formatValue(oValue, this.sInternalType);
+	}
+	if (this.fnFormatter) {
+		oValue = this.fnFormatter(oValue);
+	}
+	return oValue;
+};
+
+
+/**
+ * Sets the value for this binding. The value is parsed and validated against its type and then set to the binding.
+ * A model implementation should check if the current default binding mode permits
+ * setting the binding value and if so set the new value also in the model.
+ *
+ * @param {object} oValue the value to set for this binding
+ * 
+ * @throws sap.ui.model.ParseException
+ * @throws sap.ui.model.ValidateException
+ *
+ * @public
+ */
+sap.ui.model.PropertyBinding.prototype.setExternalValue = function(oValue) {
+	// formatter doesn't support two way binding
+	if (this.fnFormatter) {
+		return;
+	}
+	if (this.oType) {
+		oValue = this.oType.parseValue(oValue, this.sInternalType);
+		this.oType.validateValue(oValue);
+	}
+	// if no type specified set value directly
+	this.setValue(oValue);
+};
+
+/**
+ * Sets the optional type and internal type for the binding. The type and internal type are used to do the parsing/formatting correctly.
+ * The internal type is the property type of the element which the value is formatted to.  
+ *
+ * @param {object} oType the sap.ui.model.Type for the binding
+ * @param {String} sInternalType the internal type of the element property which this binding is bound against.
+ * 
+ * @public
+ */
+sap.ui.model.PropertyBinding.prototype.setType = function(oType, sInternalType) {
+	this.oType = oType;
+	this.sInternalType = sInternalType;
+};
+
+/**
+ *  Returns the type if any for the binding.
+ *  @returns the binding type
+ *  @public
+ */
+sap.ui.model.PropertyBinding.prototype.getType = function() {
+	return this.oType;
+};
+
+/**
+ * Sets the optional formatter function for the binding.
+
+ * @param {function} fnFormatter the formatter function for the binding
+ * 
+ * @public
+ */
+sap.ui.model.PropertyBinding.prototype.setFormatter = function(fnFormatter) {
+	this.fnFormatter = fnFormatter;
+};
+
+/**
+ *  Returns the formatter function
+ *  @returns the formatter function
+ *  @public
+ */
+sap.ui.model.PropertyBinding.prototype.getFormatter = function() {
+	return this.fnFormatter;
+};
+
+}; // end of sap.ui.model.PropertyBinding
+
+
+
+/**
+ * Constructor for CompositeBinding
+ *
+ * @class
+ * The CompositeBinding is used to bundle multiple property bindings which are be used to provide a single binding against
+ * these property bindings. Note: Only One Way binding is supported. So setValue and setExternalValue throw exceptions.
+ *
+ * @public
+ * @name sap.ui.model.CompositeBinding
+ */
+
+sap.ui.model.PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding */ {
+
+	constructor : function (aBindings, bRawValues) {
+		sap.ui.model.Binding.apply(this, arguments); // TODO is this needed?
+		this.aBindings = aBindings;
+		this.bRawValues = bRawValues;
+	},
+	metadata : {
+		
+	  publicMethods : [
+	          "getBindings", "attachChange", "detachChange"
+	  ]
+	}
+
+});
+
+sap.ui.model.CompositeBinding.prototype.getPath = function() {
+	jQuery.sap.assert(null, "Composite Binding has no path!");
+	return null;
+};
+
+sap.ui.model.CompositeBinding.prototype.getModel = function() {
+	jQuery.sap.assert(null, "Composite Binding has no model!");
+	return null;
+};
+
+sap.ui.model.CompositeBinding.prototype.getContext = function() {
+	jQuery.sap.assert(null, "Composite Binding has no context!");
+	return null;
+};
+
+sap.ui.model.CompositeBinding.prototype.getType = function() {
+	jQuery.sap.assert(null, "Composite Binding type is not supported!");
+	return null;
+};
+
+/**
+ * sets the context for each property binding in this composite binding
+ * @param {object} oContext the new context for the bindings
+ */
+sap.ui.model.CompositeBinding.prototype.setContext = function(oContext) {
+	jQuery.each(this.aBindings, function(i, oBinding){
+		// null context could also be set
+		if(!oContext || oBinding.updateRequired(oContext.getModel())) {
+			oBinding.setContext(oContext);
+		}
+	});
+};
+
+/**
+ * Not supported for CompositeBinding as a composite binding contains an array of property bindings. 
+ * An exception will be thrown. 
+ *
+ * @param {object} oValue the value to set for this binding
+ * 
+ * @throws sap.ui.base.Exception
+ *
+ * @public
+ */
+sap.ui.model.CompositeBinding.prototype.setValue = function(oValue) {
+	throw new sap.ui.base.Exception("Composite Binding does not support setValue because it contains multiple property bindings!");
+};
+
+/**
+ * Returns the raw values of the property bindings in an array.
+ *
+ * @return {object} the values of the internal property bindings in an array
+ *
+ * @public
+ */
+sap.ui.model.CompositeBinding.prototype.getValue = function() {	
+	var aValues = [],
+	oValue;
+
+	jQuery.each(this.aBindings, function(i, oBinding) {
+		oValue = oBinding.getValue();
+		aValues.push(oValue);
+	});
+
+	return aValues;
+};
+
+/**
+ * Returns the current external value of the bound target which is formatted via a type or formatter function. 
+ *
+ * @return {object} the current value of the bound target
+ *
+ *@throws sap.ui.model.FormatException
+ *
+ * @public
+ */
+sap.ui.model.CompositeBinding.prototype.getExternalValue = function() {	
+	var aValues = [],
+		oValue;
+	if (this.bRawValues) {
+		// type of property bindings is ignored here because we call getValue().
+		aValues = this.getValue();
+	} else {
+		// composite type is ignored here and the property binding types are used in getExternalValue()
+		jQuery.each(this.aBindings, function(i, oBinding) {
+			oValue = oBinding.getExternalValue();
+			aValues.push(oValue);
+		});
+	}
+	
+	if (this.fnFormatter) {
+		oValue = this.fnFormatter.apply(this, aValues);
+	} else {
+		if ( aValues.length > 1) {
+			// default: multiple values are joined together if no formatter specified
+			oValue = aValues.join(" ");
+		} else {
+			oValue = aValues[0];
+		}
+	}
+	
+	return oValue;
+};
+
+
+/**
+ * Not supported for CompositeBinding as a composite binding contains an array of property bindings. 
+ * An exception will be thrown. 
+ *
+ * @param {object} oValue the value to set for this binding
+ * 
+ * @throws sap.ui.base.Exception
+ *
+ * @public
+ */
+sap.ui.model.CompositeBinding.prototype.setExternalValue = function(oValue) {
+	throw new sap.ui.base.Exception("Composite Binding does not support setExternalValue because it contains multiple property bindings!");
+};
+
+/**
+ * Returns the property bindings contained in this composite binding.
+ *
+ * @return {array} the property bindings in this composite binding
+ *
+ * @public
+ */
+sap.ui.model.CompositeBinding.prototype.getBindings = function() {
+	return this.aBindings;
+};
+
+//Eventing and related
+/**
+* Attach event-handler <code>fnFunction</code> to the '_change' event of this <code>sap.ui.model.Model</code>.<br/>
+* @param {function} fnFunction The function to call, when the event occurs.
+* @param {object} [oListener] object on which to call the given function.
+* @protected
+*/
+sap.ui.model.CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
+	
+	jQuery.each(this.aBindings, function(i, oBinding){
+		oBinding.attachChange(fnFunction, oListener);
+	});
+};
+
+/**
+* Detach event-handler <code>fnFunction</code> from the '_change' event of this <code>sap.ui.model.Model</code>.<br/>
+* @param {function} fnFunction The function to call, when the event occurs.
+* @param {object} [oListener] object on which to call the given function.
+* @protected
+*/
+sap.ui.model.CompositeBinding.prototype.detachChange = function(fnFunction, oListener) {
+	jQuery.each(this.aBindings, function(i, oBinding){
+		oBinding.detachChange(fnFunction, oListener);
+	});
+};
+
+/**
+ * Determines if the property bindings in the composite binding should be updated by calling updateRequired on all property bindings with the specified model.
+ * @param {object} oModel The model instance to compare against
+ * @returns {boolean} true if this binding should be updated
+ * @protected
+ */
+sap.ui.model.CompositeBinding.prototype.updateRequired = function(oModel) {
+	var bUpdateRequired = false;
+	jQuery.each(this.aBindings, function(i, oBinding){
+		bUpdateRequired = bUpdateRequired || oBinding.updateRequired(oModel);
+	});
+	return bUpdateRequired;
+
+};
+
+
+}; // end of sap.ui.model.CompositeBinding
+
+if ( !jQuery.sap.isDeclared('sap.ui.model.ContextBinding') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides an abstraction for list bindings
+jQuery.sap.declare("sap.ui.model.ContextBinding");
+
+
+/**
+ * Constructor for ContextBinding
+ *
+ * @class
+ * The ContextBinding is a specific binding for a setting context for the model
+ *
+ * @param {sap.ui.model.Model} oModel
+ * @param {String} sPath
+ * @param {Object} oContext
+ * @param {Object} [mParameters]
+ * @abstract
+ * @public
+ * @name sap.ui.model.ContextBinding
+ */
+sap.ui.model.Binding.extend("sap.ui.model.ContextBinding", /** @lends sap.ui.model.ContextBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, mParameters){
+		var that = this;
+		sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
+		oModel.createBindingContext(sPath, oContext, mParameters, function(oContext) {
+			that.oElementContext = oContext;
+			that._fireChange();
+		});
+	},
+
+	metadata : {
+		 publicMethods : [
+		 // methods
+		 	"getElementContext"
+		 ]
+	}
+});
+
+/**
+ * Creates a new subclass of class sap.ui.model.ContextBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.ContextBinding.extend
+ * @function
+ */
+
+/**
+ * Check whether this Binding would provide new values and in case it changed,
+ * inform interested parties about this.
+ *
+ * @param {boolean} bForceupdate
+ */
+sap.ui.model.ContextBinding.prototype.checkUpdate = function(bForceupdate, oEvent) {
+	this._fireChange(oEvent);
+};
+
+sap.ui.model.ContextBinding.prototype._refresh = function() {
+	var that = this;
+	//recreate Context: force update
+	this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+		that.oElementContext = oContext;
+		that._fireChange();
+	},true);
+};
+
+sap.ui.model.ContextBinding.prototype.setContext = function(oContext) {
+	var that = this;
+	if (this.oContext != oContext) {
+		this.oContext = oContext;
+		this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+			that.oElementContext = oContext;
+			that._fireChange();
+		});
+	}
+};
+
+sap.ui.model.ContextBinding.prototype.getBoundContext = function(oContext) {
+	return this.oElementContext;
+};
+}; // end of sap.ui.model.ContextBinding
+
+if ( !jQuery.sap.isDeclared('sap.ui.base.BindingParser') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides static class sap.ui.base.BindingParser
+jQuery.sap.declare("sap.ui.base.BindingParser");
+
+
+(function() {
+	
+	/**
+	 * Regular expression to check for a (new) object literal
+	 */
+	var rObject = /^\{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*:/;
+	
+	/**
+	 * Regular expression to split the binding string into hard coded string fragments and embedded bindings.
+	 * 
+	 * Also handles escaping of '{' and '}'.
+	 */
+	var rFragments = /(\\[\\\{\}])|(\{)/g;
+
+	/**
+	 * Helper to create a formatter function. Only used to reduce the closure size of the formatter
+	 */
+	function makeFormatter(aFragments) {
+		return function(aValues) {
+			var aResult = [],
+				l=aFragments.length,
+				i;
+			
+			for(i=0; i<l; i++) {
+				if ( typeof aFragments[i] === "number" ) {
+					// a numerical fragment references the part with the same number 
+					aResult.push(arguments[aFragments[i]])
+				} else {
+					// anything else is a string fragment 
+					aResult.push(aFragments[i]);
+				}
+			}
+			return aResult.join('');
+		};
+	}
+
+	/**
+	 * @static
+	 * @class
+	 */
+	sap.ui.base.BindingParser = {};
+	
+	sap.ui.base.BindingParser.simpleParser = function(sString, oContext) {
+
+		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
+			return { path : sString.slice(1,-1) };
+		}
+	
+	};
+	
+	sap.ui.base.BindingParser.complexParser = function(sString, oContext, bUnescape) {
+		var parseObject=jQuery.sap.parseJS,
+			oBindingInfo = {parts:[]},
+			aFragments=[],
+			bUnescaped,
+			oParseResult,
+			p=0,
+			m,end;
+
+		function resolveRef(o,sProp) {
+			if ( typeof o[sProp] === "string" ) {
+				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
+					o[sProp] = jQuery.proxy(jQuery.sap.getObject(o[sProp].slice(1), undefined, oContext), oContext);
+				} else {
+					o[sProp] = jQuery.sap.getObject(o[sProp]);
+				} 
+			}
+		}
+
+		function resolveType(o,sProp) {
+			var FNType;
+			if ( typeof o[sProp] === "string" ) {
+				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
+					FNType = jQuery.sap.getObject(o[sProp].slice(1), undefined, oContext);
+				} else {
+					FNType = jQuery.sap.getObject(o[sProp]);
+				} 
+				// TODO find another solution for the type parameters?
+				o[sProp] = new FNType(o.formatOptions, o.constraints);
+				delete o.formatOptions;
+				delete o.constraints;
+			}
+		}
+
+		while ( m=rFragments.exec(sString) ) {
+			
+			// check for a skipped literal string fragment  
+			if ( p < m.index ) {
+				aFragments.push(sString.slice(p, m.index));
+			}
+			
+			// handle the different kinds of matches
+			if ( m[1] ) {
+				
+				// an escaped opening bracket, closing bracket or backslash
+				aFragments.push(m[1].slice(1));
+				bUnescaped = true;
+				
+			} else { // embedded binding
+				
+				if ( rObject.test(sString.slice(m.index)) ) {
+					
+					oParseResult = parseObject(sString, m.index);
+					resolveType(oParseResult.result,'type');
+					resolveRef(oParseResult.result,'formatter');
+					resolveRef(oParseResult.result,'factory'); // list binding
+					aFragments.push(oBindingInfo.parts.length);
+					oBindingInfo.parts.push(oParseResult.result);
+					rFragments.lastIndex = oParseResult.at;
+					
+				} else {
+					
+					// TODO find closing brace via regex as well?
+					end = sString.indexOf('}', m.index);
+					if ( end < m.index ) {
+						throw new SyntaxError("no closing braces found in '" + sString + "' after pos:" + m.index);
+					}
+					aFragments.push(oBindingInfo.parts.length);
+					oBindingInfo.parts.push({path:sString.slice(m.index+1, end)});
+					rFragments.lastIndex = end+1;
+					
+				}
+			}
+			
+			// remember where we are
+			p = rFragments.lastIndex;
+		}
+		
+		// check for a trailing literal string fragment  
+		if ( p < sString.length ) {
+			aFragments.push(sString.slice(p));
+		}
+
+		// only if a part has been found we can return a binding info
+		if (oBindingInfo.parts.length > 0) {
+			if ( aFragments.length === 1 /* implies: && typeof aFragments[0] === "number" */ ) {
+				// special case: a single binding only
+				return oBindingInfo.parts[0];
+			} else /* if ( aFragments.length > 1 ) */ {
+				// create the formatter function from the fragments
+				oBindingInfo.formatter = makeFormatter(aFragments);
+				return oBindingInfo;
+			}
+		} else if ( bUnescape && bUnescaped ) {
+			return aFragments.join('');
+		}
+		
+	};
+	
+}());
+
+}; // end of sap.ui.base.BindingParser
+
+
+/**
+ * Constructs and initializes a managed object with the given <code>sId</code> and settings.
+ *
+ * If the optional <code>mSettings</code> are given, they must be a simple object  
+ * that defines values for properties, aggregations, associations or events keyed by their name.
+ *
+ * <b>Valid Names:</b>
+ *
+ * The property (key) names supported in the object literal are exactly the (case sensitive)
+ * names documented in the JSDoc for the properties, aggregations, associations and events
+ * of the managed object and its base classes. Note that for  0..n aggregations and associations this
+ * usually is the plural name, whereas it is the singular name in case of 0..1 relations.
+ *
+ * If a key name is ambiguous for a specific managed object class (e.g. a property has the same
+ * name as an event), then this method prefers property, aggregation, association and
+ * event in that order. To resolve such ambiguities, the keys can be prefixed with
+ * <code>aggregation:</code>, <code>association:</code> or <code>event:</code>.
+ * In that case the keys must be quoted due to the ':'.
+ *
+ * Each subclass should document the set of supported names in its constructor documentation.
+ *
+ * <b>Valid Values:</b>
+ *
+ * <ul>
+ * <li>for normal properties, the value has to be of the correct simple type (no type conversion occurs)
+ * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type
+ * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type
+ * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted
+ * <li>0..n associations are not supported yet
+ * <li>for events either a function (event handler) is accepted or an array of length 2
+ *     where the first element is a function and the 2nd element is an object to invoke the method on.
+ * </ul>
+ *
+ * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
+ *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
+ * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
+ * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
+ *
+ * @class Base Class for managed objects.
+ * @extends sap.ui.base.EventProvider
+ * @author SAP
+ * @version 1.12.1
+ * @public
+ * @name sap.ui.base.ManagedObject
+ * @experimental Since 1.11.2. support for the optional parameter oScope is still experimental 
+ */
+sap.ui.base.EventProvider.extend("sap.ui.base.ManagedObject", {
+
+	metadata : {
+	  "abstract" : true,
+	  publicMethods : [ "getId", "getMetadata", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation" , "getElementBinding"],
+	  library : "sap.ui.core", // UI Library that contains this class
+	  properties : {
+	  },
+	  aggregations : {
+	  },
+	  associations : {},
+	  events : {}
+	},
+
+	constructor : function(sId, mSettings, oScope) {
+
+		sap.ui.base.EventProvider.apply(this); // no use to pass our arguments
+		if (typeof(sId) != "string" && arguments.length>0) {
+			// shift arguments in case sId was missing, but mSettings was given
+			oScope = mSettings;
+			mSettings = sId;
+			if (mSettings && mSettings.id) {
+				sId = mSettings["id"];
+			} else {
+				sId = null;
+			}
+		}
+
+		if (!sId) {
+			sId = this.getMetadata().uid() || jQuery.sap.uid();
+		} else {
+			var preprocessor = sap.ui.base.ManagedObject._fnIdPreprocessor;
+			sId = (preprocessor ? preprocessor.call(this, sId) : sId);
+			var oType = sap.ui.base.DataType.getType("sap.ui.core.ID");
+			if (!oType.isValid(sId)) {
+				throw new Error("\"" + sId + "\" is not a valid ID.");
+			}
+		}
+		this.sId = sId;
+
+		// managed object interface
+		// create an empty property bag that uses a map of defaultValues as its prototype
+		this.mProperties = this.getMetadata().createPropertyBag();
+		this.mAggregations = {};
+		this.mAssociations = {};
+		this.mMethods = {};
+
+		// private properties
+		this.oParent = null;
+
+		this.aDelegates = [];
+		this.aBeforeDelegates = [];
+		this.iSuppressInvalidate = 0;
+		this.oPropagatedProperties = {oModels:{}, oBindingContexts:{}};
+
+		// data binding
+		this.oModels = {};
+		this.oBindingContexts = {};
+		this.mBindingInfos = {};
+		this.sBindingPath = null;
+		this.mBindingParameters = null;
+		this.mBoundElements = {};
+		// TODO: generic concept for init hooks?
+		if ( this._initCompositeSupport ) {
+			this._initCompositeSupport(mSettings);
+		}
+
+		// Call init method here instead of specific Controls constructor.
+		if (this.init) {
+			this.init();
+		}
+
+		// apply the settings
+		this.applySettings(mSettings, oScope);
+
+		// registers the object in the Core
+		if (this.register) this.register();
+
+	}
+
+}, /* Metadata constructor */ sap.ui.base.ManagedObjectMetadata);
+
+
+
+/**
+ * Creates a new ManagedObject from the given data.
+ *
+ * If vData is a managed object already, that object is returned.
+ * If vData is an object (literal), then a new object is created with vData as settings.
+ * The type of the object is either determined by a "Type" entry in the vData or
+ * by a type information in the oKeyInfo object
+ * @param {sap.ui.base.ManagedObject|object} vData the data to create the object from
+ * @param {object} oKeyInfo
+ * @public
+ * @static
+ */
+sap.ui.base.ManagedObject.create = function(vData, oKeyInfo) {
+	if ( !vData || vData instanceof sap.ui.base.ManagedObject || typeof vData !== "object" || vData instanceof String) {
+		return vData;
+	}
+
+	function getClass(vType) {
+		if ( typeof vType === "function" ) {
+			return vType;
+		} 
+		if (typeof vType === "string" ) {
+			return jQuery.sap.getObject(vType);
+		}
+	}
+
+	var fnClass = getClass(vData.Type) || getClass(oKeyInfo && oKeyInfo.type);
+	if ( typeof fnClass === "function" ) {
+		return new fnClass(vData);
+	}
+
+	// we don't know how to create the ManagedObject from vData, so fail
+	// extension points could be integrated here
+	var message = "Don't know how to create a ManagedObject from " + vData + " (" + (typeof vData) + ")";
+	jQuery.sap.log.fatal(message);
+	throw new Error(message);
+};
+
+/**
+ * A global preprocessor for the ID of a ManagedObject (used internally).
+ * If set, this function will be called before the ID is applied to any ManagedObject.
+ * If the original ID was empty, the hook will not be called (to be discussed).
+ *
+ * The expected signature is <code>function(sId)</code>, and <code>this</code> will
+ * be the current ManagedObject.
+ *
+ * @return new ID of the ManagedObject
+ * @type function
+ * @private
+ */
+sap.ui.base.ManagedObject._fnIdPreprocessor = null;
+
+/**
+ * A global preprocessor for the settings of a ManagedObject (used internally).
+ * If set, this function will be called before the settings are applied to any ManagedObject.
+ * If the original settings are empty, the hook will not be called (to be discussed).
+ *
+ * The expected signature is <code>function(mSettings)</code>, and <code>this</code> will
+ * be the current ManagedObject.
+ *
+ * @type function
+ * @private
+ */
+sap.ui.base.ManagedObject._fnSettingsPreprocessor = null;
+
+sap.ui.base.ManagedObject.runWithPreprocessors = function(fn, oPreprocessors) {
+	jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+	jQuery.sap.assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
+
+	var oOldPreprocessors = { id : this._fnIdPreprocessor, settings : this._fnSettingsPreprocessor };
+	oPreprocessors = oPreprocessors || {};
+
+	this._fnIdPreprocessor = oPreprocessors.id; 
+	this._fnSettingsPreprocessor = oPreprocessors.settings;
+
+	try {
+		var result = fn.call();
+		this._fnIdPreprocessor = oOldPreprocessors.id; 
+		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
+		return result;
+	} catch (e) {
+		this._fnIdPreprocessor = oOldPreprocessors.id; 
+		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
+		throw e;
+	}
+
+};
+
+/**
+ * Sets all the properties, aggregations, associations and event handlers as given in
+ * the object literal <code>mSettings</code>. If a property, aggregation, etc.
+ * is not listed in <code>mSettings</code>, then its value is not changed by this method.
+ *
+ * For properties and 0..1 aggregations/associations, any given setting overwrites
+ * the current value. For 0..n aggregations, the given values are appended; event
+ * listeners are registered in addition to existing ones.
+ *
+ * For the possible keys and values in <code>mSettings</code> see the general
+ * documentation in {@link sap.ui.base.ManagedObject} or the specific documentation
+ * of the constructor of the concrete managed object class.
+ *
+ * @param {object} mSettings the settings to apply to this managed object
+ * @param {object} [oScope] Scope object to resolve types and formatters
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @public
+ * @experimental Since 1.11.2. support for complex string binding syntax as well as the 
+ * 				scope object for resolving string based type and formatter references 
+ * 				in bindings is still experimental
+ */
+sap.ui.base.ManagedObject.prototype.applySettings = function(mSettings, oScope) {
+
+	// PERFOPT: don't retrieve (expensive) JSONKeys if no settings are given
+	if ( !mSettings || jQuery.isEmptyObject(mSettings) ) {
+		return this;
+	}
+
+	var oMetadata = this.getMetadata(),
+		mValidKeys = oMetadata.getJSONKeys(),
+		makeControl = sap.ui.base.ManagedObject.create,
+		preprocessor = sap.ui.base.ManagedObject._fnSettingsPreprocessor,
+		sKey, oValue, oKeyInfo;
+
+	// call the preprocessor if it has been defined
+	preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
+	
+	// process models
+	if ( mSettings.models ) {
+		if ( typeof mSettings.models !== "object" ) {
+			throw new Error("models must be a simple object");
+		}
+		if ( mSettings.models instanceof sap.ui.model.Model) {
+			this.setModel(mSettings.models);
+		} else {
+			for(var sKey in mSettings.models ) {
+				this.setModel(mSettings.models[sKey], sKey);
+			}
+		}
+		delete mSettings.models;
+	}
+	//process BindingContext
+	if ( mSettings.bindingContexts ) {
+		if ( typeof mSettings.bindingContexts !== "object" ) {
+			throw new Error("bindingContexts must be a simple object");
+		}
+		if ( mSettings.bindingContexts instanceof sap.ui.model.Context) {
+			this.setBindingContext(mSettings.bindingContexts);
+		} else {
+			for(var sKey in mSettings.bindingContexts ) {
+				this.setBindingContext(mSettings.bindingContexts[sKey], sKey);
+			}
+		}
+		delete mSettings.bindingContexts;
+	}
+	// process all settings
+	// process settings
+	for(sKey in mSettings) {
+		// get info object for the key
+		if ( oKeyInfo = mValidKeys[sKey] ) {
+			oValue = mSettings[sKey];
+			switch(oKeyInfo._iKind) {
+			case 0: // PROPERTY
+				var oBindingInfo = this.extractBindingInfo(oValue, oKeyInfo.type === "object", oScope);
+				if (oBindingInfo && typeof oBindingInfo === "object") {
+					this.bindProperty(sKey, oBindingInfo);
+				} else {
+					this[oKeyInfo._sMutator](oBindingInfo || oValue);
+				}
+				break;
+			case 1: // SINGLE_AGGREGATION
+				var oBindingInfo = oKeyInfo.altTypes && this.extractBindingInfo(oValue, jQuery.inArray("object", oKeyInfo.altTypes) >= 0, oScope); 
+				if ( oBindingInfo && typeof oBindingInfo === "object" ) {
+					this.bindProperty(sKey, oBindingInfo);
+				} else {
+					this[oKeyInfo._sMutator](makeControl(oBindingInfo || oValue, oKeyInfo));
+				}
+				break;
+			case 2: // MULTIPLE_AGGREGATION
+				var oBindingInfo = this.extractBindingInfo(oValue, false, oScope); 
+				if (oBindingInfo && typeof oBindingInfo === "object" ) {
+					this.bindAggregation(sKey, oBindingInfo);
+				} else {
+					oValue = oBindingInfo || oValue; // could be an unescaped string if altTypes contains 'string'
+					if ( oValue && !jQuery.isArray(oValue) ) {
+						oValue = [oValue];
+					}
+					if ( oValue ) {
+						for(var i=0,l=oValue.length; i<l; i++) {
+							this[oKeyInfo._sMutator](makeControl(oValue[i], oKeyInfo));
+						}
+					}
+				}
+				break;
+			case 3: // SINGLE_ASSOCIATION
+				this[oKeyInfo._sMutator](oValue);
+				break;
+			case 4: // MULTIPLE_ASSOCIATION
+				if ( oValue && !jQuery.isArray(oValue) ) {
+					oValue = [oValue];
+				}
+				if ( oValue ) {
+					for(var i=0,l=oValue.length; i<l; i++) {
+						this[oKeyInfo._sMutator](oValue[i]);
+					}
+				}
+				break;
+			case 5: // EVENT
+				if ( typeof oValue == "function" ) {
+					this[oKeyInfo._sMutator](oValue);
+				}
+				else {
+					this[oKeyInfo._sMutator](oValue[0], oValue[1], oValue[2]);
+				}
+					//this[oKeyInfo._sMutator].apply(this, oValue); // could be replacement for line before
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return this;
+};
+
+/**
+ * Returns a simple string representation of this managed object.
+ *
+ * Mainly useful for tracing purposes.
+ * @public
+ * @return {string} a string description of this managed object
+ */
+sap.ui.base.ManagedObject.prototype.toString = function() {
+	return "ManagedObject " + this.getMetadata().getName() + "#" + this.getId();
+};
+
+/**
+ * Returns the object's Id.
+ *
+ * @return {string} the objects's Id.
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getId = function() {
+	return this.sId;
+};
+
+
+/**
+ * Sets a new value for the given property <code>sPropertyName</code> and marks
+ * this object as changed. If the given <code>oValue</code> equals the
+ * current value, nothing happens.
+ *
+ * @param {string}  sPropertyName name of the property to set
+ * @param {any}     oValue value to set the property to
+ * @param {boolean} [bSuppressInvalidate] if true, the managed is not marked as changed
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * TODO better name bSuppressInvalidate positive, e.g. "bStayValid"
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
+
+	// check for a value change
+	var oOldValue = this.mProperties[sPropertyName];
+
+	// value validation
+	oValue = this.validateProperty(sPropertyName, oValue);
+
+	if (jQuery.sap.equal(oOldValue, oValue)) {
+		return this;
+	} // no change
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	// change the property (and invalidate if the rendering should be updated)
+	this.mProperties[sPropertyName] = oValue;
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// check whether property is bound and update model in case of two way binding
+	this.updateModelProperty(sPropertyName, oValue, oOldValue);
+
+	// prototype for generic property change events
+	// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
+	sap.ui.base.EventProvider.prototype.fireEvent.apply(this, ["_change", {
+		"id": this.getId(),
+		"name": sPropertyName,
+		"oldValue": oOldValue,
+		"newValue": oValue
+	}]);
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns the value for the property with the given <code>sPropertyName</code>
+ *
+ * @param {string} sPropertyName the name of the property
+ * @type any
+ * @return the value of the property
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getProperty = function(sPropertyName) {
+	var oValue = this.mProperties[sPropertyName],
+		oMetadata = this.getMetadata(),
+		oProperty = oMetadata.getAllProperties()[sPropertyName],
+		oType;
+
+	if (!oProperty) {
+		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
+	}
+
+	oType = sap.ui.base.DataType.getType(oProperty.type);
+
+	// If property has an array type, clone the array to avoid modification of original data
+	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
+		oValue = oValue.slice(0);
+	}
+	
+	// If proprerty is of type String instead of string, convert with valueOf()
+	if (oValue instanceof String) {
+		oValue = oValue.valueOf();
+	}
+	
+	return oValue;
+};
+
+/**
+ * Checks whether the given value is of the proper type for the given property name. In case null or undefined is
+ * passed, the default value for this property is returned.
+ *
+ * @param {string} sPropertyName the name of the property
+ * @param {any} oValue the value
+ * @return {any} the passed value or the property's default value if null or undefined was passed
+ * @throws Error if no property with the given name is found or the given value does not fit to the property type
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
+	var oMetadata = this.getMetadata(),
+		oProperty = oMetadata.getAllProperties()[sPropertyName],
+		oType;
+
+	if (!oProperty) {
+		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
+	}
+
+	oType = sap.ui.base.DataType.getType(oProperty.type);
+
+	// If property has an array type, clone the array to avoid modification of original data
+	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
+		oValue = oValue.slice(0);
+	}
+	
+	// In case null is passed as the value return the default value, either from the property or from the type
+	if (oValue === null || oValue === undefined) {
+		if (oProperty.defaultValue !== null) {
+			return oProperty.defaultValue;
+		} else {
+			return oType.getDefaultValue();
+		}
+	}
+
+	// Implicit casting for string only, other types are causing errors
+	if (oType instanceof sap.ui.base.DataType) {
+		if (oType.getName() == "string") {
+			if (!(typeof oValue == "string" || oValue instanceof String)) {
+				oValue = "" + oValue;
+			}
+		} else if (oType.getName() == "string[]") {
+			for (var i = 0; i < oValue.length; i++) {
+				if (!typeof oValue[i] == "string") {
+					oValue[i] = "" + oValue[i];
+				}
+			}
+		} else if (!oType.isValid(oValue)) {
+			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
+					oType.getName() + " for property \"" + sPropertyName + "\" of " + this);
+		}
+	} else if (!(oValue in oType)){ // Enumeration
+		throw new Error("\"" + oValue + "\" is not a valid entry of the enumeration for property \"" + sPropertyName + "\" of " + this);
+	}
+
+	return oValue;
+};
+
+/**
+ * Returns the origin info on the property value of the given property name
+ *
+ * @param {string} sPropertyName the name of the property
+ * @return {object} a map of properties describing the origin of this property value or null
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getOriginInfo = function(sPropertyName) {
+	var oValue = this.mProperties[sPropertyName];
+	if (!(oValue instanceof String && oValue.originInfo)) {
+		return null;
+	}
+	return oValue.originInfo;
+};
+
+
+// ######################################################################################################
+// Associations
+// ######################################################################################################
+
+/**
+ * Sets an association for the managed object
+ *
+ * @param {string}
+ *            sAssociationName name of the association
+ * @param {string | sap.ui.base.ManagedObject}
+ *            sId the ID of the managed object that is set as an association, or the managed object itself or null
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the managed objects invalidate method is not called
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
+	if (sId instanceof sap.ui.base.ManagedObject) {
+		sId = sId.getId();
+	} else if (sId != null && typeof sId !== "string") {
+		jQuery.sap.assert(false, "setAssociation(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
+		return this;
+	}
+
+	if (this.mAssociations[sAssociationName] === sId) {
+		return this;
+	} // no change
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	this.mAssociations[sAssociationName] = sId;
+
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns an association of the managed object with a given sAssociationName
+ *
+ * @param {string} sAssociationName the name of the association
+ * @param {object}
+ *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
+ * @return {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getAssociation = function(sAssociationName, oDefaultForCreation) {
+	var result = this.mAssociations[sAssociationName];
+
+	if (!result) {
+		result = this.mAssociations[sAssociationName] = oDefaultForCreation || null;
+	} else {
+		if (typeof result.length === 'number' && !(result.propertyIsEnumerable('length')) ) {
+			// Return a copy of the array instead of the array itself as reference!!
+			return result.slice();
+		}
+		// simple type or ManagedObject
+		return result;
+	}
+
+	return result;
+};
+
+/**
+ * Adds some entity with the ID <code>sId</code> to the association identified by <code>sAssociationName</code>.
+ *
+ * @param {string}
+ *            sAssociationName the string identifying the association the object should be added to.
+ * @param {string | sap.ui.base.ManagedObject}
+ *            sId the ID of the managed object to add; if empty, nothing is added; if a <code>sap.ui.base.ManagedObject</code> is given, its ID is added
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this managed object as well as the newly associated object are not marked as changed
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
+	if (sId instanceof sap.ui.base.ManagedObject) {
+		sId = sId.getId();
+	} else if (typeof sId !== "string") {
+	  // TODO what about empty string?
+    jQuery.sap.assert(false, "addAssociation(): sId must be a string or an instance of sap.ui.base.ManagedObject");
+		return this;
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	var aIds = this.mAssociations[sAssociationName];
+	if (!aIds) {
+		aIds = this.mAssociations[sAssociationName] = [sId];
+	} else {
+		aIds.push(sId);
+	}
+
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Removes a ManagedObject from the association named <code>sAssociationName</code>.
+ *
+ * @param {string}
+ *            sAssociationName the string identifying the association the ManagedObject should be removed from.
+ * @param {int | string | sap.ui.base.ManagedObject}
+ *            vObject the position or ID of the ManagedObject to remove or the ManagedObject itself; if <code>vObject</code> is invalid input,
+ *            a negative value or a value greater or equal than the current size of the association, nothing is removed
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the managed object is not marked as changed
+ * @return the ID of the removed ManagedObject or null
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
+	var aIds = this.mAssociations[sAssociationName];
+	var sId = null;
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (typeof(vObject) == "object" && vObject.getId) { // object itself is given
+		vObject = vObject.getId();
+	}
+
+	if (typeof(vObject) == "string") { // ID of the object is given or has just been retrieved
+		for (var i = 0; i < aIds.length; i++) {
+			if (aIds[i] == vObject) {
+				vObject = i;
+				break;
+			}
+		}
+	}
+
+	if (typeof(vObject) == "number") { // "object" is the index now
+		if (vObject < 0 || vObject >= aIds.length) {
+			jQuery.sap.log.warning("ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
+		} else {
+			sId = aIds[vObject];
+			aIds.splice(vObject, 1);
+			if (!this.isInvalidateSuppressed()) {
+				this.invalidate();
+			}
+		}
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return sId;
+};
+
+/**
+ * Removes all the objects in the 0..n-association named <code>sAssociationName</code> (and returns them in an array).<br/>
+ *
+ * @param {string}
+ *            sAssociationName the name of the association
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @type Array
+ * @return an array with the IDs of the removed objects (might be empty)
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate){
+	var aIds = this.mAssociations[sAssociationName];
+	if (!aIds)	{
+		return [];
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	delete this.mAssociations[sAssociationName];
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return aIds;
+};
+
+// ######################################################################################################
+// End of Associations
+// ######################################################################################################
+
+
+// ######################################################################################################
+// Aggregations
+// ######################################################################################################
+
+/**
+ * Checks whether the given value is of the proper type for the given aggregation name. 
+ *
+ * @param {string} sAggregationName the name of the aggregation
+ * @param {sap.ui.base.ManagedObject|any} oObject the aggregated object or a primitive value
+ * @param {boolean} bMultiple whether the aggregation must have cardinality 0..n
+ * @return {sap.ui.base.ManagedObject|any} the passed object
+ * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
+	var oMetadata = this.getMetadata(),
+		oAggregation = oMetadata.getManagedAggregation(sAggregationName), // public or private
+		aAltTypes,
+		oType,
+		i,
+		msg;
+
+	// undeclared aggregation 
+	if (!oAggregation) {
+		if(sAggregationName && oMetadata._mHiddenAggregations && oMetadata._mHiddenAggregations[sAggregationName]){
+			oAggregation = oMetadata._mHiddenAggregations[sAggregationName];
+			jQuery.sap.log.error("Support for '_mHiddenAggregations' is about to be removed (with 1.12 latest). Hidden aggregations like '" + oMetadata.getName() + "." + sAggregationName + "' instead can be declared like normal aggregations but with visibility:'hidden'.");
+		}else{
+			msg = "Aggregation \"" + sAggregationName + "\" does not exist in " + this;
+			
+			if ( /^sap\.(ui\.core|ui\.commons|ui\.table|ui\.ux3|m|makit|viz|uiext\.inbox)$/.test(oMetadata.getLibraryName() || "") ) {
+				throw new Error(msg);
+			} else {
+				// TODO throw for any lib as soon as "hidden" aggregations are a public feature.
+				// Otherwise, composite controls currently would have no legal way to react 
+				jQuery.sap.log.error("Support for undeclared aggregations is about to be removed (with 1.12 latest). Hidden aggregations like '" + oMetadata.getName() + "." + sAggregationName + "' can be declared like normal aggregations but with visibility:'hidden'.");
+				jQuery.sap.assert(false, msg);
+				return oObject;
+			}
+		}
+	}
+
+	if (oAggregation.multiple !== bMultiple ) {
+		throw new Error("Aggregation '" + sAggregationName + "' of " + this + " used with wrong cardinality (declared as " + (oAggregation.multiple ? "0..n" : "0..1") + ")");
+	}
+	
+	//Null is a valid value for 0..1 aggregations
+	if(!oAggregation.multiple && !oObject){
+		return oObject;
+	}
+	
+	oType = jQuery.sap.getObject(oAggregation.type);
+	// class types
+	if ( typeof oType === "function" && oObject instanceof oType ) {
+		return oObject;
+	}
+	// interfaces 
+	if ( oObject && oObject.getMetadata && oObject.getMetadata().isInstanceOf(oAggregation.type) ) {
+		return oObject;
+	}
+	// alternative types
+	aAltTypes = oAggregation.altTypes;
+	if ( aAltTypes && aAltTypes.length ) {
+		// for primitive types, null or undefined is valid as well 
+		if ( oObject == null ) {
+			return oObject;
+		}
+		for (i=0; i<aAltTypes.length; i++) {
+			oType = sap.ui.base.DataType.getType(aAltTypes[i]);
+			if (oType instanceof sap.ui.base.DataType) {
+				if (oType.isValid(oObject)) {
+					return oObject;
+				}
+			} else if (oObject in oType) { // Enumeration
+				return oObject;
+			}
+		}
+	}
+
+	// TODO make this stronger again (e.g. for FormattedText)
+	msg = "\"" + oObject + "\" is not valid for aggregation \"" + sAggregationName + "\" of " + this;
+	if ( sap.ui.base.DataType.isInterfaceType(oAggregation.type) ) {
+		jQuery.sap.assert(false, msg);
+		return oObject;
+	} else {
+	  throw new Error(msg);
+	}
+};
+
+/**
+ * Sets an aggregation for the managed object
+ *
+ * @param {string}
+ *            sAggregationName name of the aggregation
+ * @param {object}
+ *            oObject the managed object that is set as an aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+	var oOldChild = this.mAggregations[sAggregationName];
+	if (oOldChild === oObject) {
+		return this;
+	} // no change
+	oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ false); 
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (oOldChild instanceof sap.ui.base.ManagedObject) { // remove old child
+		oOldChild.setParent(null);
+	}
+	this.mAggregations[sAggregationName] = oObject;
+	if (oObject instanceof sap.ui.base.ManagedObject) { // adopt new child
+		oObject.setParent(this, sAggregationName, bSuppressInvalidate);
+	} else {
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
+		}
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns an aggregation of the managed object with a given sAggregationName
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {sap.ui.base.ManagedObject | Array}
+ *			  oDefaultForCreation the object that is used in case the current aggregation is empty
+ * @type sap.ui.base.ManagedObject|Array
+ * @return the aggregation array in case of 0..n-aggregations or the managed object or null in case of 0..1-aggregations
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren) {
+		aChildren = this.mAggregations[sAggregationName] = oDefaultForCreation || null;
+	}
+	if (aChildren) {
+		if (typeof aChildren.length === 'number' && !(aChildren.propertyIsEnumerable('length')) ) {
+			// Return a copy of the array instead of the array itself as reference!!
+			return aChildren.slice();
+		}
+		// simple type or ManagedObject
+		return aChildren;
+	} else {
+		return null;
+	}
+};
+
+/**
+ * Checks for the provided managed object <code>oObject</code> in the aggregation
+ * named <code>sAggregationName</code> and returns its index if found, or -1
+ * otherwise. Returns -2 if the given named aggregation is not a multiple one
+ * (and does not contain the given child).
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {sap.ui.base.ManagedObject}
+ *            oObject the ManagedObject whose index is looked for.
+ * @return {int} the index of the provided managed object in the aggregation.
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.indexOfAggregation = function(sAggregationName, oObject) {
+	var aChildren = this.mAggregations[sAggregationName];
+	if (aChildren) {
+		if (aChildren.length == undefined) {
+			return -2;
+		} // not a multiple aggregation
+
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i] == oObject) {
+				return i;
+			}
+		}
+	}
+	return -1;
+};
+
+/**
+ * Inserts managed object <code>oObject</code> to the aggregation named <code>sAggregationName</code> at
+ * position <code>iIndex</code>.
+ *
+ * @param {string}
+ *            sAggregationName the string identifying the aggregation the managed object <code>oObject</code>
+ *            should be inserted into.
+ * @param {sap.ui.base.ManagedObject}
+ *            oObject the ManagedObject to add; if empty, nothing is inserted.
+ * @param {int}
+ *            iIndex the <code>0</code>-based index the managed object should be inserted at; for a negative
+ *            value <code>iIndex</code>, <code>oObject</code> is inserted at position 0; for a value
+ *            greater than the current size of the aggregation, <code>oObject</code> is inserted at
+ *            the last position
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+	if (!oObject) {
+		return this;
+	}
+	oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true);
+
+	var aChildren = this.mAggregations[sAggregationName] || (this.mAggregations[sAggregationName] = []);
+	// force index into valid range 
+	var i = iIndex < 0 ? 0 : (iIndex > aChildren.length ? aChildren.length : iIndex);
+	if (i !== iIndex) {
+		jQuery.sap.log.warning("ManagedObject.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
+	}
+	aChildren.splice(i, 0, oObject);
+	oObject.setParent(this, sAggregationName, bSuppressInvalidate);
+
+	return this;
+};
+
+/**
+ * Adds some entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
+ *
+ * @param {string}
+ *            sAggregationName the string identifying the aggregation that <code>oObject</code> should be added to.
+ * @param {sap.ui.base.ManagedObject}
+ *            oObject the object to add; if empty, nothing is added
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+	if (!oObject) {
+		return this;
+	}
+	oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true);
+
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren) {
+		aChildren = this.mAggregations[sAggregationName] = [oObject];
+	} else {
+		aChildren.push(oObject);
+	}
+	oObject.setParent(this, sAggregationName, bSuppressInvalidate);
+	return this;
+};
+
+/**
+ * Removes an object from the aggregation named <code>sAggregationName</code>.
+ *
+ * @param {string}
+ *            sAggregationName the string identifying the aggregation the ManagedObject should be removed from
+ * @param {int | string | sap.ui.base.ManagedObject}
+ *            vObject the position or ID of the ManagedObject to remove or the ManagedObject itself; if <code>vObject</code> is invalid,
+ *            a negative value or a value greater or equal than the current size of the aggregation, nothing is removed
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @type sap.ui.base.ManagedObject
+ * @return the removed object or null
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+	var aChildren = this.mAggregations[sAggregationName];
+	var oChildControl = null;
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (typeof(vObject) == "string") { // ID of the object is given
+		vObject = sap.ui.getCore().byId(vObject);
+	}
+
+	if (typeof(vObject) == "object") { // the object itself is given or has just been retrieved
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i] == vObject) {
+				vObject = i;
+				break;
+			}
+		}
+	}
+
+	if (typeof(vObject) == "number") { // "vObject" is the index now
+		if (vObject < 0 || vObject >= aChildren.length) {
+			jQuery.sap.log.warning("ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
+
+		} else {
+			oChildControl = aChildren[vObject];
+			aChildren.splice(vObject, 1);
+			oChildControl.setParent(null);
+			if (!this.isInvalidateSuppressed()) {
+				this.invalidate();
+			}
+		}
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return oChildControl;
+};
+
+/**
+ * Removes all the controls in the 0..n-aggregation named <code>sAggregationName</code> (and returns them in an array).<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @type Array
+ * @return an array of the removed elements (might be empty)
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren)	{
+		return [];
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	delete this.mAggregations[sAggregationName];
+	for (var i = 0; i < aChildren.length; i++) {
+		aChildren[i].setParent(null);
+	}
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return aChildren;
+};
+
+/**
+ * Destroys (all) the managed object(s) in the aggregation named <code>sAggregationName</code> and afterwards empties the
+ * aggregation.
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren) {
+		return this;
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	delete this.mAggregations[sAggregationName];
+	if (aChildren instanceof sap.ui.base.ManagedObject) {
+		aChildren.destroy(bSuppressInvalidate);
+	} else if (aChildren && jQuery.isArray(aChildren)) {
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i]) {
+				aChildren[i].destroy(bSuppressInvalidate);
+			}
+		}
+	}
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+// ######################################################################################################
+// End of Aggregations
+// ######################################################################################################
+
+
+/**
+ * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
+ * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.invalidate = function() {
+	if (this.oParent) {
+		this.oParent.invalidate(this);
+	}
+};
+
+
+/**
+ * Returns whether rerendering is currently suppressed on this ManagedObject
+ * @return boolean
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.isInvalidateSuppressed = function() {
+	var bInvalidateSuppressed = this.iSuppressInvalidate > 0;
+	if (this.oParent && this.oParent instanceof sap.ui.base.ManagedObject) {
+		bInvalidateSuppressed = bInvalidateSuppressed || this.oParent.isInvalidateSuppressed();
+	}
+	return bInvalidateSuppressed;
+};
+
+
+/**
+ * Removes the given child from this object's named aggregation.
+ * @see sap.ui.core.UIArea#_removeChild
+ * @see sap.ui.base.ManagedObject#setParent
+ *
+ * @param {sap.ui.base.ManagedObject}
+ *            oChild the child object to be removed
+ * @param {string}
+ *            sAggregationName the name of this object's aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
+	if (!sAggregationName) {
+		// an aggregation name has to be specified!
+		jQuery.sap.log.error("Cannot remove aggregated child without aggregation name.", null, this);
+	} else {
+		// set suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate++;
+		}
+
+		var iIndex = this.indexOfAggregation(sAggregationName, oChild);
+		var oAggregationInfo = this.getMetadata().getJSONKeys()[sAggregationName];
+		// Note: we assume that this is the given child's parent, i.e. -1 not expected!
+		if (iIndex == -2) { // 0..1
+			if(oAggregationInfo && this[oAggregationInfo._sMutator]) { // TODO properly deal with hidden aggregations
+				this[oAggregationInfo._sMutator](null);
+			}
+			else {
+				this.setAggregation(sAggregationName, null, bSuppressInvalidate);
+			}
+		} else if(iIndex > -1 ) { // 0..n
+			if(oAggregationInfo && this[oAggregationInfo._sRemoveMutator]) { // TODO properly deal with hidden aggregations
+				this[oAggregationInfo._sRemoveMutator](iIndex);
+			}
+			else {
+				this.removeAggregation(sAggregationName, iIndex, bSuppressInvalidate);
+			}
+		} else {
+			// already removed!?
+			// this is the unexpected -1
+			// TODO: What would be better? Explicit removeCompositeChild callback on subclass?
+		}
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
+		}
+
+		// reset suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate--;
+		}
+	}
+};
+
+/**
+ * Defines this object's new parent. If no new parent is given, the parent is
+ * just unset and we assume that the old parent has removed this child from its
+ * aggregation. But if a new parent is given, this child is first removed from
+ * its old parent.
+ *
+ * @param {sap.ui.base.ManagedObject}
+ *            oParent the object that becomes this objects's new parent
+ * @param {string}
+ *            sAggregationName the name of the parent objects's aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed. The old parent, however, is marked.
+ * @return {sap.ui.base.ManagedObject}
+ *            Returns <code>this</code> to allow method chaining
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
+	var that = this;
+	
+	if ( !oParent ) {
+		this.oParent = null;
+		this.sParentAggregationName = null;
+		this.oPropagatedProperties = {oModels:{}, oBindingContexts:{}};
+		// Note: no need (and no way how) to invalidate
+		return;
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	var oOldParent = this.getParent();
+	if (oOldParent) { // remove this object from its old parent
+		// Note: bSuppressInvalidate  by intention is not propagated to the old parent.
+		// It is not sure whether the (direct or indirect) caller of setParent
+		// has enough knowledge about the old parent to automatically propagate this.
+		// If needed, callers can first remove the object from the oldParent (specifying a 
+		// suitable value for bSuppressInvalidate there) and only then call setParent.
+		oOldParent._removeChild(this, this.sParentAggregationName);  
+	}
+	// adopt new parent
+	this.oParent = oParent;
+	this.sParentAggregationName = sAggregationName;
+	
+	//get properties to propagate
+	this.oPropagatedProperties = oParent._getPropertiesToPropagate();
+	
+	// update bindings
+	if (this.hasModel()) {
+		this.updateBindingContext(false, true, undefined, true);
+		this.updateBindings(true,null); // TODO could be restricted to models that changed
+		this.propagateProperties(true);
+	}
+
+	// only the parent knows where to render us, so we have to invalidate it
+	if ( oParent && !this.isInvalidateSuppressed() ) {
+		oParent.invalidate(this);
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns the parent managed object or <code>null</code> if this object hasn't been added to a parent yet.
+ *
+ * @return {sap.ui.base.ManagedObject} The parent managed object or <code>null</code>
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getParent = function() {
+	/* Be aware that internally this.oParent is used to reduce method calls. 
+	 * Check for side effects when overriding this method */
+	return this.oParent;
+};
+
+
+/**
+ * Cleans up the resources associated with this object and all its aggregated children.
+ *
+ * After an object has been destroyed, it can no longer be used in!
+ *
+ * Applications should call this method if they don't need the object any longer.
+ *
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
+	var that = this;
+
+	// jQuery.sap.log.debug("destroying " + this);
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (this.exit) {
+		this.exit();
+	}
+
+	// TODO: generic concept for exit hooks?
+	if ( this._exitCompositeSupport ) {
+		this._exitCompositeSupport();
+	}
+
+	// ensure that also our children are destroyed!!
+	for(var oAggr in this.mAggregations){
+		this.destroyAggregation(oAggr, bSuppressInvalidate);
+	}
+	
+	// Deregister, if available
+	if (this.deregister) this.deregister();
+
+	// remove this child from parent aggregation
+	if (this.oParent && this.sParentAggregationName) {
+		this.oParent._removeChild(this, this.sParentAggregationName, bSuppressInvalidate);
+	}
+
+	// Data Binding
+	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+		if (oBindingInfo.factory) {
+			that.unbindAggregation(sName);
+		} else {
+			that.unbindProperty(sName);
+		}
+	});
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+	
+	sap.ui.base.EventProvider.prototype.destroy.apply(this, arguments);
+
+	// finally make the object unusable
+	this.setParent = function(){
+		throw Error("The object with ID "+that.getId()+" was destroyed and cannot be used anymore.");
+	};
+
+	// make visible that it's been destroyed.
+	this.bIsDestroyed = true;
+
+};
+
+
+// DataBinding
+/**
+ * Binding parser to use.
+ */
+sap.ui.base.ManagedObject.bindingParser = sap.ui.base.BindingParser.simpleParser;
+
+/**
+ * Determines whether a given object contains binding information instead of a
+ * value or aggregated controls. The method is used in applySettings for processing
+ * the JSON notation of properties/aggregations in the constructor.
+ *
+ * @param {object} oValue the value
+ * @param {object} oKeyInfo the metadata of the property
+ *
+ * @returns {boolean} whether the value contains binding information
+ *
+ * @private
+ * @deprecated
+ */
+sap.ui.base.ManagedObject.prototype.isBinding = function(oValue, oKeyInfo) {
+	return "object" === typeof this.extractBindingInfo(oValue, oKeyInfo.type === "object");
+};
+
+/**
+ * Checks whether the given value can be interpreted as a binding info and 
+ * returns that binding info or an unescaped string or undefined when it is not.
+ *  
+ * When the 'complex' binding syntax is enabled, the function might also return
+ * a string value in case the given value was a string, did not represent a binding
+ * but contained escaped special characters.
+ * 
+ * There are two possible notations for binding information in the object literal notation 
+ * of the ManagedObject constructor and ManagedObject.applySettings:
+ * <ul>
+ *   <li>property: "{path}"
+ *   This is used for property binding and can only contain the path.
+ *   </li>
+ *   <li>property:{path:"path", template:oTemplate}
+ *   This is used for aggregation binding, where a template is required or can
+ *   be used for property binding when additional data is required (e.g. formatter).
+ *   </li>
+ * </ul>
+ * 
+ * @param {object} oValue
+ * @param {boolean} bIgnoreObjects
+ * @param {object} oScope
+ *
+ * @returns {object} the binding info object or an unescaped string or undefined. 
+ *     If a binding info is returned, it contains at least a path property
+ *     or nested bindings (parts) and, dependant of the binding type, 
+ *     additional properties
+ *
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.extractBindingInfo = function(oValue, bIgnoreObjects, oScope) {
+
+	// property:{path:"path", template:oTemplate}
+	if (oValue && typeof oValue === "object" && (oValue.path || oValue.parts) && !bIgnoreObjects) {
+		// allow JSON syntax for templates
+		if (oValue.template) {
+			oValue.template = sap.ui.base.ManagedObject.create(oValue.template);
+		}
+		return oValue;
+	}
+
+	// property:"{path}" or "\{path\}"
+	if (typeof oValue === "string") {
+		// either returns a binding info or an unescaped string or undefined - depending on binding syntax 
+		return sap.ui.base.ManagedObject.bindingParser(oValue, oScope, true);
+	}
+
+	// return undefined;
+};
+
+/**
+ * Returns the binding infos for the given property or aggregation. The binding info contains information about path, binding object, format options,
+ * sorter, filter etc. for the property or aggregation.
+ *
+ * @param {string} sName the name of the property or aggregation
+ *
+ * @returns {object} the binding info object, containing at least a path property
+ *                   and, dependant of the binding type, additional properties
+ *
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getBindingInfo = function(sName) {
+	return this.mBindingInfos[sName];
+};
+
+/**
+ * Bind the object to the referenced entity in the model, which is used as the binding context
+ * to resolve bound properties or aggregations of the object itself and all of its children
+ * relatively to the given path.
+ * If a relative binding path is used, this will be applied whenever the parent context changes.
+ * @param {string} sPath the binding path
+ * @param {object} [mParameters] map of additional parameters for this binding
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public 
+ */
+sap.ui.base.ManagedObject.prototype.bindElement = function(sPath, mParameters) {
+	// if a model separator is found in the path, extract model name and path
+	var boundElement = {},
+	  oldBoundElement,
+		sModelName = undefined,
+		iSeparatorPos = sPath.indexOf(">");
+	
+	boundElement.sBindingPath = sPath;
+	boundElement.mBindingParameters = mParameters;
+	if (iSeparatorPos > 0) {
+		sModelName = sPath.substr(0, iSeparatorPos);
+		boundElement.sBindingPath = sPath.substr(iSeparatorPos + 1);
+	} 
+	
+	//if old binding exists detach handler
+	oldBoundElement = this.mBoundElements[sModelName];
+	if (oldBoundElement && oldBoundElement.binding) {
+		oldBoundElement.binding.detachChange(oldBoundElement.fChangeHandler);
+	}
+	this.mBoundElements[sModelName] = boundElement;
+
+	// if the models are already available, create the binding
+	if (this.getModel(sModelName)) {
+		this._bindElement(sModelName, boundElement);
+	}
+	return this;
+};
+
+/**
+ * Create ElementBinding
+ * 
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype._bindElement = function(sModelName, oBoundElement) {
+	var oBinding, 
+		oParentContext, 
+		oModel, 
+		that = this;
+	
+	var fChangeHandler = function(oEvent) {
+		that.setBindingContext(oBinding.getBoundContext(), sModelName);
+	};
+	
+	oModel = this.getModel(sModelName);
+	
+	if (this.oParent && oModel == this.oParent.getModel(sModelName)) {
+		oParentContext= this.oParent.getBindingContext(sModelName); 
+	}
+	
+	oBinding = oModel.bindContext(oBoundElement.sBindingPath, oParentContext, oBoundElement.mBindingParameters);
+	oBinding.attachChange(fChangeHandler);
+	oBoundElement.binding = oBinding;
+	oBoundElement.fChangeHandler = fChangeHandler;
+	
+	fChangeHandler();
+};
+
+/**
+ * Deprecated, please use bindElement instead.
+ * @deprecated
+ * @param {string} sPath the binding path
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindContext = function(sPath) {
+	this.bindElement(sPath);
+	return this;
+};
+
+/**
+ * Removes the defined binding context of this object, all bindings will now resolve
+ * relative to the parent context again.
+ *
+ * @deprecated Since 1.11.1, please use unbindElement instead.
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindContext = function(sModelName) {
+	return this.unbindElement(sModelName);
+};
+
+/**
+ * Removes the defined binding context of this object, all bindings will now resolve
+ * relative to the parent context again.
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindElement = function(sModelName) {
+	//TODO detach changerHandler
+	var oBoundElement = this.mBoundElements[sModelName]; 
+	if (oBoundElement) {
+		if (oBoundElement.binding) {
+			oBoundElement.binding.detachChange(oBoundElement.fChangeHandler)
+		}
+		delete this.mBoundElements[sModelName]
+		delete this.oBindingContexts[sModelName];
+		this.updateBindingContext(false, false, sModelName);
+	}
+	return this;
+};
+
+/**
+ * Bind a property to the model.
+ * The Setter for the given property will be called with the value retrieved
+ * from the data model.
+ * This is a generic method which can be used to bind any property to the
+ * model. A managed object may flag properties in the metamodel with
+ * bindable="bindable" to get typed bind methods for a property.
+ *
+ * @param {string} sName the name of the property
+ * @param {object} oBindingInfo the binding information
+ * @param {string} oBindingInfo.path the binding path
+ * @param {string} [oBindingInfo.model] the model identifier
+ * @param {function} [oBindingInfo.formatter] the formatter function
+ * @param {boolean} [oBindingInfo.useRawValues] determines if the parameters in the formatter functions should be passed as raw values or not. In this case
+ * 					the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
+ * 					If you use only one binding and want raw values then simply don't specify a type for that binding. 
+ * @param {sap.ui.model.Type|string} [oBindingInfo.type] the sap.ui.model.Type object or class name
+ * @param {object} [oBindingInfo.formatOptions] the format options to be used
+ * @param {object} [oBindingInfo.constraints] the constraints for this value
+ * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
+ * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindProperty = function(sName, oBindingInfo) {
+	var sPath,
+		oFormat,
+		sMode,
+		sModelName,
+		fnFormatter,
+		oType,
+		iSeparatorPos,
+		bAvailable = true,
+		that = this,
+		oMetadata = this.getMetadata(),
+		oProperty = oMetadata.getAllProperties()[sName],
+		oKeyInfo = oMetadata.getJSONKeys()[sName];
+
+	// check whether property or alternative type on aggregation exists
+	if (!oProperty && !(oKeyInfo && oKeyInfo.altTypes)) {
+		throw new Error("Property \"" + sName + "\" does not exist in " + this);
+	}
+
+	// old API compatbility (sName, sPath, oFormat, sMode)
+	if (typeof oBindingInfo == "string") {
+		sPath = arguments[1];
+		oFormat = arguments[2];
+		sMode = arguments[3];
+
+		// find out whether formatter or type has been provided
+		if (typeof oFormat == "function") {
+			fnFormatter = oFormat;
+		}
+		else if (oFormat instanceof sap.ui.model.Type) {
+			oType = oFormat;
+		}
+		oBindingInfo = {formatter: fnFormatter, parts : [ {path: sPath, type: oType, mode: sMode} ]};
+	}
+	
+	// only one binding object with one binding specified
+	if (!oBindingInfo.parts) {
+		oBindingInfo.parts = [];
+		oBindingInfo.parts[0] = {
+			path: oBindingInfo.path,
+			type: oBindingInfo.type,
+			formatOptions: oBindingInfo.formatOptions,
+			constraints: oBindingInfo.constraints,
+			model: oBindingInfo.model,
+			mode: oBindingInfo.mode 
+		};
+		delete oBindingInfo.path;
+		delete oBindingInfo.mode;
+		delete oBindingInfo.model;
+	}
+	
+	jQuery.each(oBindingInfo.parts, function(i, oPart) {
+		if (typeof oPart == "string") {
+			oPart = { path: oPart };
+			oBindingInfo.parts[i] = oPart;
+		}
+		// if a model separator is found in the path, extract model name and path
+		iSeparatorPos = oPart.path.indexOf(">");
+		if (iSeparatorPos > 0) {
+			oPart.model = oPart.path.substr(0, iSeparatorPos);
+			oPart.path = oPart.path.substr(iSeparatorPos + 1);
+		}
+		// if we have multiple bindings the binding mode can be one way only
+		if (oBindingInfo.parts.length > 1) {
+			oPart.mode = sap.ui.model.BindingMode.OneWay;
+		}
+		
+		if (!that.getModel(oPart.model)) {
+			bAvailable = false;
+		}
+		
+	});
+	
+	// if property is already bound, unbind it first
+	if (this.isBound(sName)){
+		this.unbindProperty(sName);
+	}
+
+	// store binding info to create the binding, as soon as the model is available, or when the model is changed
+	this.mBindingInfos[sName] = oBindingInfo;
+
+	// if the models are already available, create the binding
+	if (bAvailable) {
+		this._bindProperty(sName, oBindingInfo);
+	}
+	return this;
+};
+
+sap.ui.base.ManagedObject.prototype._bindProperty = function(sName, oBindingInfo) {
+	var oModel,
+	oContext,
+	oBinding,
+	oType,
+	clType,
+	oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
+	that = this,
+	aBindings = [],
+	fModelChangeHandler = function() {
+		try {			
+			var oValue = oBinding.getExternalValue();
+			oBindingInfo.skipModelUpdate = true;
+			that[oPropertyInfo._sMutator](oValue);
+			oBindingInfo.skipModelUpdate = false;
+		}catch (oException) {
+			if (oException instanceof sap.ui.model.FormatException) {
+					sap.ui.getCore().fireFormatError({element : that, property : sName, type : oBinding.getType(), newValue : oBinding.getValue(), oldValue : that.getProperty(sName), exception: oException});
+			}else {
+				throw oException;
+			}
+		}
+	};
+
+	// Only use context for bindings on the primary model
+	oContext = this.getBindingContext(oBindingInfo.model);
+	
+	jQuery.each(oBindingInfo.parts, function(i, oPart) {
+		// Only use context for bindings on the primary model
+		oContext = that.getBindingContext(oPart.model);
+		// Create binding object
+		oModel = that.getModel(oPart.model);
+		// Create type instance if needed
+		oType = oPart.type;
+		if (typeof oType == "string") {
+			clType = jQuery.sap.getObject(oType);
+			oType = new clType(oPart.formatOptions, oPart.constraints);
+		}
+		
+		oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
+		oBinding.setType(oType, oPropertyInfo.type);
+		oBinding.setFormatter(oPart.formatter);
+		
+		// TODO check if multiple bindings work with resource model 
+		if (!oPart.mode || !oModel.isBindingModeSupported(oPart.mode)) {
+			oPart.mode = oModel.getDefaultBindingMode();
+		}
+		
+		aBindings.push(oBinding);
+	});
+
+	// check if we have a composite binding
+	if (aBindings.length > 1){
+		// Create type instance if needed
+		oType = oBindingInfo.type;
+		if (typeof oType == "string") {
+			clType = jQuery.sap.getObject(oType);
+			oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
+		}
+		oBinding = new sap.ui.model.CompositeBinding(aBindings, oBindingInfo.useRawValues);
+		oBinding.setType(oType, oPropertyInfo.type);
+	} else {
+		oBinding = aBindings[0];
+	}
+	
+	// Attach to the change event of the binding and initialize value
+	// all composite bindings have already one way mode, so only check the first binding for its mode. 
+	// Because if no composite binding is used there is only one binding.
+	if (oBindingInfo.parts[0].mode != sap.ui.model.BindingMode.OneTime) {
+		oBinding.attachChange(fModelChangeHandler);
+	}
+	
+	// set only one formatter function if any
+    // because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility 
+	// for formatter function which is now called by the property binding
+	// proxy formatter here because "this" is the correct cloned object
+	oBinding.setFormatter(jQuery.proxy(oBindingInfo.formatter, this));  
+	
+	// Set additional information on the binding info
+	oBindingInfo.skipModelUpdate = false;
+	oBindingInfo.binding = oBinding;
+	oBindingInfo.modelChangeHandler = fModelChangeHandler;
+
+	fModelChangeHandler();
+};
+
+/**
+ * Unbind the property from the model
+ *
+ * @param {String} sName the name of the property
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindProperty = function(sName){
+	var oBindingInfo = this.mBindingInfos[sName];
+	if(oBindingInfo) {
+		if (oBindingInfo.binding) {
+			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+		}
+		delete this.mBindingInfos[sName];
+	}
+	return this;
+};
+
+/**
+ * Update the property in the model if two way data binding mode is enabled
+ *
+ * @param sName the name of the property to update
+ * @param oValue the new value to set for the property in the model
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){
+	if (this.isBound(sName)){
+		var oBindingInfo = this.mBindingInfos[sName],
+			oBinding = oBindingInfo.binding;
+		// only one property binding should work with two way mode...composite binding does not work with two way binding 
+		if (oBindingInfo.parts[0].mode == sap.ui.model.BindingMode.TwoWay
+				&& oBinding
+				&& !oBindingInfo.skipModelUpdate) {
+			try {
+				oBinding.setExternalValue(oValue);
+				// Only fire validation success, if a type is used
+				if (oBinding.getType()) {
+					sap.ui.getCore().fireValidationSuccess({element : this, property : sName, type : oBinding.getType(), newValue : oValue, oldValue : oOldValue});
+				}
+			}
+			catch (oException) {
+				if (oException instanceof sap.ui.model.ParseException) {
+					sap.ui.getCore().fireParseError({element : this, property : sName, type : oBinding.getType(), newValue : oValue, oldValue : oOldValue, exception: oException});
+				}else if (oException instanceof sap.ui.model.ValidateException) {
+					sap.ui.getCore().fireValidationError({element : this, property : sName, type : oBinding.getType(), newValue : oValue, oldValue : oOldValue, exception: oException});
+				}
+				else {
+					throw oException;
+				}
+			}
+		}
+	}
+};
+
+/**
+ * Bind an aggregation to the model.
+ * The bound aggregation will use the given template, clone it for each item
+ * which exists in the bound list and set the appropriate binding context.
+ * This is a generic method which can be used to bind any aggregation to the
+ * model. A managed object may flag aggregations in the metamodel with
+ * bindable="bindable" to get typed bind methods for an aggregation.
+ *
+ * @param {string} sName the aggregation to bind
+ * @param {object} oBindingInfo the binding info
+ * @param {string} oBindingInfo.path the binding path
+ * @param {sap.ui.base.ManagedObject} oBindingInfo.template the template
+ * @param {function} oBindingInfo.factory the factory function
+ * @param {sap.ui.model.Sorter} [oBindingInfo.oSorter] the initial sort order (optional)
+ * @param {array} [oBindingInfo.filters] the predefined filters (sap.ui.model.Filter) for this aggregation (optional)
+ * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+ * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to genrate custom group visualization (optional)
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindAggregation = function(sName, oBindingInfo) {
+	var sPath,
+		oTemplate,
+		oSorter,
+		aFilters,
+		oMetadata = this.getMetadata(),
+		oAggregation = oMetadata.getAllAggregations()[sName];
+
+	// check whether aggregation exists
+	if (!oAggregation) {
+		throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
+	}
+	
+	// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
+	if (typeof oBindingInfo == "string") {
+		sPath = arguments[1];
+		oTemplate = arguments[2];
+		oSorter = arguments[3];
+		aFilters = arguments[4];
+		oBindingInfo = {path: sPath, sorter: oSorter, filters: aFilters};
+		// allow either to pass the template or the factory function as 3rd parameter
+		if (oTemplate instanceof sap.ui.base.ManagedObject) {
+			oBindingInfo.template = oTemplate;
+		} else if (typeof oTemplate === "function") {
+			oBindingInfo.factory = oTemplate;
+		}
+	}
+	
+	// if aggregation is already bound, unbind it first
+	if (this.isBound(sName)){
+		this.unbindAggregation(sName);
+	}
+	
+	// check whether a template has been provided, which is required for proper processing of the binding
+	// If aggregation is marked correspondingly in the metadata, factory can be omitted (usually requires an updateXYZ method)
+	if (!(oBindingInfo.template || oBindingInfo.factory)) {
+		if ( oAggregation._doesNotRequireFactory ) {
+			// add a dummy factory as property 'factory' is used to distinguish between property- and list-binding
+			oBindingInfo.factory = function() { throw new Error("dummy factory called unexpectedly "); };
+		} else {
+			throw new Error("Missing template or factory function for aggregation " + sName + " of " + this + " !");
+		}
+	}
+	
+	// if we have a template we will create a factory function
+	if (oBindingInfo.template) {
+		oBindingInfo.factory = function(sId) {
+			return oBindingInfo.template.clone(sId);
+		} 
+	}
+	
+	// if a model separator is found in the path, extract model name and path
+	var iSeparatorPos = oBindingInfo.path.indexOf(">");
+	if (iSeparatorPos > 0) {
+		oBindingInfo.model = oBindingInfo.path.substr(0, iSeparatorPos);
+		oBindingInfo.path = oBindingInfo.path.substr(iSeparatorPos + 1);
+	}
+	
+	// store binding info to create the binding, as soon as the model is available, or when the model is changed
+	this.mBindingInfos[sName] = oBindingInfo;
+
+	// if the model is already available create the binding
+	if (this.getModel(oBindingInfo.model)) {
+		this._bindAggregation(sName, oBindingInfo);
+	}
+	return this;
+};
+
+sap.ui.base.ManagedObject.prototype._bindAggregation = function(sName, oBindingInfo) {
+	var that = this,
+		oBinding,
+		fModelChangeHandler = function(oEvent){
+			var sUpdater = "update" + sName.substr(0,1).toUpperCase() + sName.substr(1);
+			if (that[sUpdater]) {
+				that[sUpdater]();
+			} else {
+				that.updateAggregation(sName);
+			}
+		};
+		var oModel = this.getModel(oBindingInfo.model);
+		if (this.isTreeBinding(sName)) {
+			oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters);
+		} else {
+			oBinding = oModel.bindList(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
+		}
+		
+	if (this.bUseExtendedChangeDetection === true) {
+		oBinding.enableExtendedChangeDetection();
+	}
+
+	oBindingInfo.binding = oBinding;
+	oBindingInfo.modelChangeHandler = fModelChangeHandler;
+
+	oBinding.attachChange(fModelChangeHandler);
+	fModelChangeHandler();
+};
+
+/**
+ * Unbind the aggregation from the model
+ *
+ * @param {String} sName the name of the aggregation
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindAggregation = function(sName){
+	var oBindingInfo = this.mBindingInfos[sName];
+	if(oBindingInfo) {
+		if (oBindingInfo.binding) {
+			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+		}
+		delete this.mBindingInfos[sName];
+	}
+	return this;
+};
+
+/**
+ *  This method is used internally and should only be overridden by a tree managed object which utilizes the tree binding.
+ *  In this case and if the aggregation is a tree node the overridden method should then return true.
+ *  If true is returned the tree binding will be used instead of the list binding.
+ *
+ *  @param {string} sName the aggregation to bind (e.g. nodes for a tree managed object)
+ *  @return {boolean} whether tree binding should be used or list binding. Default is false. Override method to change this behavior.
+ *
+ *  @protected
+ */
+sap.ui.base.ManagedObject.prototype.isTreeBinding = function(sName) {
+	return false;
+};
+
+/**
+ * Create or update local bindings.
+ * 
+ * Called when model or binding contexts have changed. Creates bindings when the model was not available 
+ * at the time bindProperty or bindAggregation was called. Recreates the bindings when they exist already 
+ * and when the model has changed.
+ *
+ * @param {boolean} bUpdateAll forces an update of all bindings, sModelName will be ignored
+ * @param {string|undefined} sModelName name of a model whose bindings should be updated
+ * 
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) {
+	var that = this;
+
+	/*
+	 * Checks whether the binding for the given oBindingInfo became invalid because 
+	 * of the current model change (as identified by bUpdateAll and sModelName). 
+	 * 
+	 * Precondition: oBindingInfo contains a 'binding' object
+	 * 
+	 * @param oBindingInfo 
+	 * @returns {boolean}
+	 */
+	function becameInvalid(oBindingInfo) {
+		var aParts = oBindingInfo.parts,
+			i;
+		
+		if (aParts && aParts.length>1) {
+			// composite binding: invalid when for any part the model has the same name (or updateall) and when the model instance for that part differs 
+			for(i=0; i<aParts.length; i++) {
+				if ( (bUpdateAll || aParts[i].model == sModelName) && !oBindingInfo.binding.aBindings[i].updateRequired(that.getModel(aParts[i].model)) ) {
+					return true;
+				}
+			}
+		} else if (oBindingInfo.factory) {
+			// list binding: invalid when  the model has the same name (or updateall) and when the model instance differs 
+			return (bUpdateAll || oBindingInfo.model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(oBindingInfo.model));
+		} else {
+			// simple property binding: invalid when the model has the same name (or updateall) and when the model instance differs 
+			return (bUpdateAll || aParts[0].model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(aParts[0].model)); 
+		}
+		return false;
+	}
+
+	/*
+	 * Checks whether a binding can be created for the given oBindingInfo 
+	 * @param oBindingInfo
+	 * @returns {boolean} 
+	 */
+	function canCreate(oBindingInfo) {
+		var aParts = oBindingInfo.parts,
+			i;
+		
+		if (aParts) {
+			for(i=0; i<aParts.length; i++) {
+				if ( !that.getModel(aParts[i].model) ) {
+					return false;
+				}
+			}
+			return true;
+		} else if (oBindingInfo.factory) { // List binding check
+			return !!that.getModel(oBindingInfo.model); 
+		} 
+		// there should be no other cases
+		return false;
+	}
+	
+	// create property and aggregation bindings if they don't exist yet
+	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+
+		// if there is a binding and if it became invalid through the current model change, then remove it 
+		if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+			delete oBindingInfo.binding;
+		}
+
+		// if there is no binding and if all required information is available, create a binding object
+		if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
+			if (oBindingInfo.factory) {
+				that._bindAggregation(sName, oBindingInfo);
+			} else {
+				that._bindProperty(sName, oBindingInfo);
+			}
+		}
+
+	});
+	
+};
+
+/**
+ * Generic method which is called, whenever an aggregation binding is changed.
+ * This method deletes all elements in this aggregation and recreates them
+ * according to the data model.
+ * In case a managed object needs special handling for a aggregation binding, it can create
+ * a typed update-method (e.g. "updateRows") which will be used instead of the
+ * default behaviour.
+ *
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateAggregation = function(sName) {
+	var oBindingInfo = this.mBindingInfos[sName],
+		oBinding = oBindingInfo.binding,
+		fnFactory = oBindingInfo.factory,
+		oAggregationInfo = this.getMetadata().getJSONKeys()[sName],  // TODO fix handling of hidden aggregations
+		oClone,
+		oNewGroup = null,
+		sGroupFunction = null,
+		bGrouped = null,
+		sGroup = null,
+		that = this;
+	this[oAggregationInfo._sDestructor]();
+	if (this.isTreeBinding(sName)) {
+		var iNodeIndex = 0,
+			update = function(aContexts, fnFactory, oBinding, oParent){
+				jQuery.each(aContexts, function(iIndex, oContext) {
+					var sId = that.getId() + "-" + iNodeIndex++;
+					oClone = fnFactory(sId, oContext);
+					oClone.setBindingContext(oContext, oBindingInfo.model);
+					oParent[oAggregationInfo._sMutator](oClone); // also sets the Parent
+					update(oBinding.getNodeContexts(oContext), fnFactory, oBinding, oClone);
+				});
+			};
+		update(oBinding.getRootContexts(), fnFactory, oBinding, this);
+	} 
+	else {
+		sGroupFunction = oAggregationInfo._sMutator + "Group";
+		bGrouped = oBinding.isGrouped() && this[sGroupFunction];
+		jQuery.each(oBinding.getContexts(), function(iIndex, oContext) {
+			if (bGrouped) {
+				oNewGroup = oBinding.oSorter.fnGroup(oContext);
+				if (typeof oNewGroup == "string") {
+					oNewGroup = {
+						key: oNewGroup
+					};
+				} 
+				if (oNewGroup.key !== sGroup) {
+					var oGroupHeader;
+					//If factory is defined use it
+					if (oBindingInfo.groupHeaderFactory) {
+						oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
+					}
+					that[sGroupFunction](oNewGroup, oGroupHeader);
+					sGroup = oNewGroup.key;
+				}
+			}
+			var sId = that.getId() + "-" + iIndex;
+			oClone = fnFactory(sId, oContext);
+			oClone.setBindingContext(oContext, oBindingInfo.model);
+			that[oAggregationInfo._sMutator](oClone);
+		});
+	}
+};
+
+/**
+ * Find out whether a property or aggregation is bound
+ *
+ * @param {String} sName the name of the property or aggregation
+ * @return {boolean} whether a binding exists for the given name
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.isBound = function(sName){
+	return (sName in this.mBindingInfos);
+};
+
+/**
+ * Get the element binding object for a specific model
+ *
+ * @param {String} sModelName the name of the model
+ * @return {Binding} the element binding for the given model name
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getElementBinding = function(sModelName){
+	return this.mBoundElements[sModelName] && this.mBoundElements[sModelName].binding;
+};
+
+/**
+ * Get the binding object for a specific aggregation/property
+ *
+ * @param {String} sName the name of the property or aggregation
+ * @return {Binding} the binding for the given name
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getBinding = function(sName){
+	return this.mBindingInfos[sName] && this.mBindingInfos[sName].binding;
+};
+
+/**
+ * Get the binding path for a specific aggregation/property
+ *
+ * @param {String} sName the name of the property or aggregation
+ * @return {String} the binding path for the given name
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getBindingPath = function(sName){
+	var oInfo = this.mBindingInfos[sName];
+	return oInfo && (oInfo.path || (oInfo.parts && oInfo.parts[0] && oInfo.parts[0].path));
+};
+
+/**
+ * Set the binding context for this ManagedObject for the model with the given name.
+ *
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ *  
+ * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
+ *  
+ * @param {Object} oContext the new binding context for this object
+ * @param {string} [sName] the name of the model to set the context for or <code>undefined</code>
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
+	var oOldContext = this.oBindingContexts[sModelName];
+	
+	if (oOldContext != oContext) {
+		this.oBindingContexts[sModelName] = oContext;
+		this.updateBindingContext(true, true, sModelName);
+		this.propagateProperties(sModelName);
+	}
+	return this;
+};
+
+/**
+ * Update the binding context in this object and all aggregated children
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren, sModelName, bUpdateAll){
+
+	var oModel,
+		oModelNames= {},
+		oParentContext,
+		oBoundElement,
+		that = this;
+	
+	// find models that need an context update
+	if (bUpdateAll) {
+		for(sModelName in this.oModels) {
+			if ( this.oModels.hasOwnProperty(sModelName) ){
+				oModelNames[sModelName] = sModelName;
+			}
+		}
+		for(sModelName in this.oPropagatedProperties.oModels) {
+			if ( this.oPropagatedProperties.oModels.hasOwnProperty(sModelName) ){
+				oModelNames[sModelName] = sModelName;
+			}
+		}
+	} else {
+		oModelNames[sModelName] = sModelName;
+	}
+
+	for(sModelName in oModelNames ) {
+		if ( oModelNames.hasOwnProperty(sModelName) ){
+			sModelName = sModelName === "undefined" ? undefined : sModelName;
+			oModel = this.getModel(sModelName); 
+			oBoundElement = this.mBoundElements[sModelName];
+			
+			if (oBoundElement && oBoundElement.sBindingPath && !bSkipLocal) {
+				if(!oBoundElement.binding) {
+					this._bindElement(sModelName, oBoundElement);
+				} else {
+					if (this.oParent && oModel == this.oParent.getModel(sModelName)) {
+						oParentContext= this.oParent.getBindingContext(sModelName); 
+					}
+					if (oParentContext != oBoundElement.binding.getContext()) {
+						oBoundElement.binding.setContext(oParentContext);
+					}
+				}
+				continue;
+			}			
+			// update context in existing bindings
+			jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+				var oBinding = oBindingInfo.binding;
+				var aParts = oBindingInfo.parts,
+				 	i;
+				if (!oBinding) {
+					return;
+				}
+				if (aParts && aParts.length>1) {
+					// composite binding: update required  when a part use the model with the same name
+					for(i=0; i<aParts.length; i++) {
+						if ( aParts[i].model == sModelName ) {
+							oBinding.aBindings[i].setContext(that.getBindingContext(aParts[i].model));
+						}
+					}
+				} else if (oBindingInfo.factory) {
+					// list binding: update required when the model has the same name (or updateall) 
+					if ( oBindingInfo.model == sModelName) { 
+						oBinding.setContext(that.getBindingContext(oBindingInfo.model));
+					}
+					
+				} else {
+					// simple property binding: update required when the model has the same name 
+					if ( aParts[0].model == sModelName) { 
+						oBinding.setContext(that.getBindingContext(aParts[0].model));
+					} 
+				}
+			});
+			if (!bSkipChildren) {
+				var oContext = this.getBindingContext(sModelName);
+				// also update context in all child elements
+				jQuery.each(this.mAggregations, function(sName, oAggregation) {
+					if (oAggregation instanceof sap.ui.base.ManagedObject) {
+						oAggregation.oPropagatedProperties.oBindingContexts[sModelName] = oContext;
+						oAggregation.updateBindingContext(false,false,sModelName);
+					} else if (oAggregation instanceof Array) {
+						for (var i = 0; i < oAggregation.length; i++) {
+							oAggregation[i].oPropagatedProperties.oBindingContexts[sModelName] = oContext;
+							oAggregation[i].updateBindingContext(false,false,sModelName);
+						}
+					}
+				});
+			}
+		}
+	}
+};
+
+
+/**
+ * Get the binding context of this object for the given model name.
+ * 
+ * If the object does not have a binding context set on itself and has no own Model set, 
+ * it will use the first binding context defined in its parent hierarchy.
+ *
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ *  
+ * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
+ *  
+ * @param {string} [sName] the name of the model or <code>undefined</code>
+ * @return {Object} the binding context of this object
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getBindingContext = function(sModelName){
+	var oModel = this.getModel(sModelName);
+	
+	if (this.oBindingContexts[sModelName]) {
+		return this.oBindingContexts[sModelName];
+	} else if (oModel && this.oParent && this.oParent.getModel(sModelName) && oModel != this.oParent.getModel(sModelName)) {
+		return undefined;
+	} else {
+		return this.oPropagatedProperties.oBindingContexts[sModelName];
+	}
+};
+
+/**
+ * Sets or unsets a model for the given model name for this ManagedObject. 
+ * 
+ * The <code>sName</code> must either be <code>undefined</code> (or omitted) or a non-empty string.
+ * When the name is omitted, the default model is set/unset. 
+ * 
+ * When <code>oModel</code> is <code>null</code> or <code>undefined</code>, a previously set model 
+ * with that name is removed from this ManagedObject. If an ancestor (parent, UIArea or Core) has a model 
+ * with that name, this ManagedObject will immediately inherit that model from its ancestor.
+ *  
+ * All local bindings that depend on the given model name, are updated (created if the model references 
+ * became complete now; updated, if any model reference has changed; removed if the model references 
+ * became incomplete now).
+ *  
+ * Any change (new model, removed model, inherited model) is also applied to all aggregated descendants 
+ * as long as a descendant doesn't have its own model set for the given name.
+ * 
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ *  
+ * Note: By design, it is not possible to hide an inherited model by setting a <code>null</code> or 
+ * <code>undefined</code> model. Applications can set an empty model to achieve the same. 
+ * 
+ * Note: A ManagedObject inherits models from the Core only when it is a descendant of an UIArea.
+ *  
+ * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
+ * @param {string} [sName] the name of the model or <code>undefined</code>
+ * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.setModel = function(oModel, sName) {
+	if (!oModel && this.oModels[sName]) {
+		delete this.oModels[sName];
+		// propagate Models to children
+		// model changes are propagated until (including) the first descendant that has its own model with the same name 
+		this.propagateProperties(sName);
+		// if the model instance for a name changes, all bindings for that model name have to be updated
+		this.updateBindings(false, sName);
+	} else if ( oModel && oModel !== this.oModels[sName] ) { 
+		//TODO: handle null!
+		this.oModels[sName] = oModel;
+		// propagate Models to children
+		// model changes are propagated until (including) the first descendant that has its own model with the same name 
+		this.propagateProperties(sName);
+		// update binding context, for primary model only
+		this.updateBindingContext(false, true, sName);
+		// if the model instance for a name changes, all bindings for that model name have to be updated
+		this.updateBindings(false, sName);
+	} else {
+		// nothing to do
+	} 
+	return this;
+};
+
+/**
+ * Propagate Properties (models and bindingContext) to aggregated objects.
+ * @param {string|undefined|true} sName when <code>true</code>, all bindings are updated.
+ *           Otherwise only those for the given model name (undefined == name of default model)
+ * 
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.propagateProperties = function(vName) {
+	var oProperties = this._getPropertiesToPropagate(),
+		bUpdateAll = vName === true, // update all bindings when no model name parameter has been specified
+		sName = bUpdateAll ? undefined : vName,
+		that = this;
+	jQuery.each(this.mAggregations, function(sAggregationName, oAggregation) {
+		if (oAggregation instanceof sap.ui.base.ManagedObject) {
+			that._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName);
+		} else if (oAggregation instanceof Array) {
+			for (var i = 0; i < oAggregation.length; i++) {
+				if (oAggregation[i] instanceof sap.ui.base.ManagedObject) {
+					that._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName);
+				}
+			}
+		}
+	});
+};
+
+sap.ui.base.ManagedObject.prototype._propagateProperties = function(vName, oObject, oProperties, bUpdateAll, sName) {
+	if (!oProperties) {
+		oProperties = this._getPropertiesToPropagate(),
+		bUpdateAll = vName === true,
+		sName = bUpdateAll ? undefined : vName;
+	}
+	oObject.oPropagatedProperties = oProperties;
+	oObject.updateBindings(bUpdateAll,sName);
+	oObject.updateBindingContext(false, true, sName, bUpdateAll);
+	oObject.propagateProperties(vName);
+};
+
+/**
+ * Get properties for propagation
+ * @return {object} oProperties
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype._getPropertiesToPropagate = function() {
+	var bNoOwnModels = jQuery.isEmptyObject(this.oModels),
+		bNoOwnContexts = jQuery.isEmptyObject(this.oBindingContexts);
+
+	function merge(empty,o1,o2) {
+		return empty ? o1 : jQuery.extend({}, o1, o2);
+	}
+	
+	if (bNoOwnContexts && bNoOwnModels) {
+		//propagate the existing container
+		return this.oPropagatedProperties;
+	} else {
+		//merge propagated and own properties
+		return {
+				oModels : merge(bNoOwnModels, this.oPropagatedProperties.oModels, this.oModels),
+				oBindingContexts : merge(bNoOwnContexts, this.oPropagatedProperties.oBindingContexts, this.oBindingContexts)
+		};
+	}
+};
+
+/**
+ * Get the model to be used for data bindings with the given model name.
+ * If the object does not have a model set on itself, it will use the first 
+ * model defined in its parent hierarchy.
+ * 
+ * The name can be omitted to reference the default model or it must be a non-empty string.
+ * 
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ * 
+ * @param {string|undefined} [sName] name of the model to be retrieved
+ * @return {sap.ui.model.Model} oModel
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getModel = function(sName) {
+	return this.oModels[sName] || this.oPropagatedProperties.oModels[sName];
+};
+
+/**
+ * Check if any model is set to the ManagedObject or to one of its parents (including UIArea and Core)
+ *
+ * Note: A ManagedObject inherits models from the Core only when it is a descendant of an UIArea.
+ * 
+ * @return {boolean} whether a model reference exists or not
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.hasModel = function() {
+	return !(jQuery.isEmptyObject(this.oModels) && jQuery.isEmptyObject(this.oPropagatedProperties.oModels));
+};
+
+/**
+ * Clones a tree of objects starting with the object on which clone is called first (root object).
+ * 
+ * The ids within the newly created clone tree are derived from the original ids by appending
+ * the given <code>sIdSuffix</code> (if no suffix is given, one will be created; it will be 
+ * unique across multiple clone calls).
+ *  
+ * The <code>oOptions</code> configuration object can have the following properties:
+ * <ul>
+ * <li>The boolean value <code>cloneChildren</code> specifies wether associations/aggregations will be cloned</li>
+ * <li>The boolean value <code>cloneBindings</code> specifies if bindings will be cloned</li>
+ * </ul>
+ * 
+ * For each cloned object the following settings are cloned based on the metadata of the object and the defined options:
+ * <ul>
+ * <li>all properties that are not bound. If cloneBinding is false even these properties will be cloned; 
+ * the values are used by reference, they are not cloned</li>
+ * <li>all aggregated objects that are not bound. If cloneBinding is false even the ones that are bound will be cloned;
+ * they are all cloned recursively using the same <code>sIdSuffix</code></li>
+ * <li>all associated controls; when an association points to an object inside the cloned object tree,
+ *     then the cloned association will be modified to that it points to the clone of the target object.
+ *     When the association points to a managed object outside of the cloned object tree, then its 
+ *     target won't be changed.</li>  
+ * <li>all models set via setModel(); used by reference </li>
+ * <li>all property and aggregation bindings (if cloneBindings is true); the pure binding infos (path, model name) are 
+ *     cloned, but all other information like template control or factory function, 
+ *     data type or formatter function are copied by reference. The bindings themselves 
+ *     are created anew as they are specific for the combination (object, property, model).
+ *     As a result, any later changes to a binding of the original object are not reflected 
+ *     in the clone, but changes to e.g the type or template etc. are.</li> 
+ * </ul>
+ *
+ * Each clone is created by first collecting the above mentioned settings and then creating 
+ * a new instance with the normal constructor function. As a result, any side effects of 
+ * mutator methods (setProperty etc.) or init hooks are repeated during clone creation. 
+ * There is no need to override <code>clone()</code> just to reproduce these internal settings!
+ * 
+ * Custom controls however can override <code>clone()</code> to implement additional clone steps. 
+ * They usually will first call <code>clone()</code> on the super class and then modify the   
+ * returned clone accordingly.  
+ * 
+ * Applications <b>must never provide</b> the second parameter <code>aLocaleIds</code>. 
+ * It is determined automatically for the root object (and its non-existance also serves as 
+ * an indicator for the root object). Specifying it will break the implementation of <code>clone()</code>. 
+ * 
+ * @param {String} [sIdSuffix] a suffix to be appended to the cloned object id
+ * @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+ * @param {Object} [oOptions] configuration object 
+ * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
+	var that = this,
+		bCloneChildren = true, 
+		bCloneBindings = true;
+	
+	if (oOptions) {
+		bCloneChildren = !!oOptions.cloneChildren;
+		bCloneBindings = !!oOptions.cloneBindings;
+	}
+	// if no id suffix has been provided use a generated UID
+	if (!sIdSuffix) {
+		sIdSuffix = sap.ui.base.ManagedObjectMetadata.uid("clone") || jQuery.sap.uid();
+	}
+	// if no local ID array has been passed, collect IDs of all aggregated objects to
+	// be able to properly adapt associations, which are within the cloned object hierarchy
+	if (!aLocalIds && bCloneChildren) {
+		aLocalIds = jQuery.map(this.findAggregatedObjects(true), function(oObject) {return oObject.getId();});
+	}
+
+	var oMetadata = this.getMetadata(),
+		oClass = oMetadata._oClass,
+		sId = this.getId() + "-" + sIdSuffix,
+		mSettings = {},
+		mProps = this.mProperties,
+		sKey,
+		oClone;
+	
+	// Clone properties (only those with non-default value)
+	for(sKey in mProps) {
+		//do not clone properties if property is bound and bindings are cloned; Property is set on update
+		if ( mProps.hasOwnProperty(sKey) && !(this.isBound(sKey) && bCloneBindings)){
+			mSettings[sKey] = mProps[sKey];
+		}
+	}
+	
+	// Clone models		
+	mSettings["models"] = this.oModels;		
+	
+	// Clone BindingContext
+	mSettings["bindingContexts"] = this.oBindingContexts;
+
+	if(bCloneChildren) {
+		// Clone aggregations
+		jQuery.each(this.mAggregations, function(sName, oAggregation) {
+			//do not clone aggregation if aggregation is bound and bindings are cloned; aggregation is filled on update
+			if (oMetadata.hasAggregation(sName) && !(that.isBound(sName) && bCloneBindings)) {
+				if (oAggregation instanceof sap.ui.base.ManagedObject) {
+					mSettings[sName] = oAggregation.clone(sIdSuffix, aLocalIds);
+				} else if (jQuery.isArray(oAggregation)) {
+					mSettings[sName] = [];
+					for (var i = 0; i < oAggregation.length; i++) {
+						mSettings[sName].push(oAggregation[i].clone(sIdSuffix, aLocalIds));
+					}
+				} else {
+					// must be an alt type
+					mSettings[sName] = oAggregation;
+				}
+			}
+		});
+
+		// Clone associations
+		jQuery.each(this.mAssociations, function(sName, oAssociation) {
+			// Check every associated ID against the ID array, to make sure associations within
+			// the template are properly converted to associations within the clone
+			if (jQuery.isArray(oAssociation)) {
+				oAssociation = oAssociation.slice(0);
+				for (var i = 0; i < oAssociation.length; i++) {
+					if (jQuery.inArray(oAssociation[i], aLocalIds) >= 0) {
+						oAssociation[i] += "-" + sIdSuffix;
+					}
+				}
+			} else if (jQuery.inArray(oAssociation, aLocalIds) >= 0) {
+				oAssociation += "-" + sIdSuffix;
+			}
+			mSettings[sName] = oAssociation;
+		});
+	}
+	// Create clone instance
+	oClone = new oClass(sId, mSettings);
+	
+	/* Clone element bindings: Clone the objects not the parameters
+	 * Context will only be updated when adding the control to the control tree;
+	 * Maybe we have to call updateBindingcontext() here?
+	 */
+	jQuery.each(this.mBoundElements, function(sName, oBoundElement) {
+		oClone.mBoundElements[sName] = jQuery.extend({}, oBoundElement);
+	});
+	
+	// Clone events
+	jQuery.each(this.mEventRegistry, function(sName, aListeners) {
+		oClone.mEventRegistry[sName] = aListeners.slice();
+	});
+	
+	// Clone bindings
+	if (bCloneBindings) {
+		jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+			var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
+			delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
+			if (oBindingInfo.factory) {
+				oClone.bindAggregation(sName, oCloneBindingInfo);
+			} else {
+				oClone.bindProperty(sName, oCloneBindingInfo);
+			}
+		});
+	}
+	return oClone;
+};
+
+/**
+ * Update all localization dependant objects that this managedObject can reach,
+ * except for its children (which will be updated from the Core).
+ * 
+ * To make the update work as smooth as possible, it happens in two phases:
+ * <ol>
+ *  <li>In phase 1 all known models are updated.
+ *  <li>In phase 2 all bindings are updated.
+ * </ol>
+ * This separation is necessary as the models for the bindings might be updated 
+ * in some ManagedObject or in the Core and the order in which the objects are visited 
+ * is not defined (Core.mElements order)
+ * 
+ * @private
+ */
+sap.ui.base.ManagedObject._handleLocalizationChange = function(iPhase) {
+	var i;
+	
+	if ( iPhase === 1 ) {
+		
+		/*
+		 * phase 1: update the models
+		 */
+		jQuery.each(this.oModels, function(sName, oModel) {
+			if ( oModel && oModel._handleLocalizationChange ) {
+				oModel._handleLocalizationChange(); 
+			}
+		});
+		
+	} else if ( iPhase === 2 ) {
+		
+		/*
+		 * phase 2: update bindings and types
+		 */
+		jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+			var aParts = oBindingInfo.parts;
+			if (aParts) {
+				// property or composite binding: visit all parts 
+				for(i=0; i<aParts.length; i++) {
+					if ( oBindingInfo.type && oBindingInfo.type._handleLocalizationChange ) {
+						oBindingInfo.type._handleLocalizationChange();
+					}
+				}
+				if ( oBindingInfo.modelChangeHandler ) {
+					oBindingInfo.modelChangeHandler();
+				}
+			} // else: don't update list bindings
+			// Note: the template for a list binding will be visited by the core! 
+		});
+		
+	}
+}
+
+/**
+ * Maps the given aggregation with name <code>sOldAggrName</code>
+ * on aggregation <code>sNewAggrName</code> (When calling an accessor function
+ * of the old aggregation the call is forwarded to the corresponding accessor
+ * function of the new aggregation).
+ *
+ * This function should help to perform a smooth transition for users of a managed object
+ * when an aggregation must be renamed.
+ *
+ * Both aggregations must have a mutiple cardinality (0..n) and must have the same
+ * aggregated type!
+ *
+ * @param {object} oPrototype prototype of the ManagedObject class for which a mapping should be defined
+ * @param {string} sOldAggrName Name of the old deprecated aggregation
+ * @param {string} sNewAggrName Name of the new aggregation
+ * @deprecated
+ */
+sap.ui.base.ManagedObject._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
+	var mKeys = oPrototype.getMetadata().getJSONKeys(); // TODO fix handling of hidden entitites?
+	var oOldAggrInfo = mKeys[sOldAggrName];
+	var oNewAggrInfo = mKeys[sNewAggrName];
+
+	//Check whether aggregations exist and are multiple.
+	if(!oOldAggrInfo || !oNewAggrInfo || oOldAggrInfo._iKind != 2 || oNewAggrInfo._iKind != 2) {
+		return;
+	}
+
+	var mFunc = {"insert" : true, "add" : true, "remove" : true, "removeAll" : false, "indexOf" : true, "destroy" : false, "get" : false};
+
+	function method(sPrefix, sName) {
+		return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
+	}
+
+	function fAggrDelegator(sFuncName){
+		return function() {
+			return this[sFuncName].apply(this, arguments);
+		};
+	}
+
+	for(var sPrefix in mFunc){
+		var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo._sName);
+		var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo._sName);
+		oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
+	}
+};
+
+/**
+ * Searches and returns an array of child elements and controls which are
+ * referenced within an aggregation or aggregations of child elements/controls.
+ * This can be either done recursive or not.
+ * <br>
+ * <b>Take care: this operation might be expensive.</b>
+ * @param {boolean}
+ *          bRecursive true, if all nested children should be returned.
+ * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.findAggregatedObjects = function(bRecursive) {
+
+	var aAggregatedObjects = [];
+	function fFindObjects(oObject) {
+		for (var n in oObject.mAggregations) {
+			var a = oObject.mAggregations[n];
+			if (jQuery.isArray(a)) {
+				for (var i = 0; i < a.length; i++) {
+					aAggregatedObjects.push(a[i]);
+					if (bRecursive) {
+						fFindObjects(a[i]);
+					}
+				}
+			} else if (a instanceof sap.ui.base.ManagedObject) {
+				aAggregatedObjects.push(a);
+				if (bRecursive) {
+					fFindObjects(a);
+				}
+			}
+		}
+	}
+	fFindObjects(this);
+	return aAggregatedObjects;
+
+};
+
+}; // end of sap.ui.base.ManagedObject
+
+
+
+
+/**
  * Constructs and initializes an UI Element with the given <code>sId</code> and settings.
  *
  * If the optional <code>mSettings</code> are given, they must be a JSON-like object (object literal)
@@ -19827,17 +26866,18 @@ sap.ui.model.SimpleType.prototype.setFormatOptions = function(oFormatOptions) {
  * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
  *
  * @class Base Class for Elements.
- * @extends sap.ui.base.EventProvider
- * @author Martin Schaus, Daniel Brinkmann
- * @version 1.8.4
+ * @extends sap.ui.base.ManagedObject
+ * @author SAP
+ * @version 1.12.1
  * @public
  * @name sap.ui.core.Element
  */
-sap.ui.base.EventProvider.extend("sap.ui.core.Element", {
+sap.ui.base.ManagedObject.extend("sap.ui.core.Element", {
 
 	metadata : {
+		stereotype : "element",
 	  "abstract" : true,
-	  publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation", "prop" ],
+	  publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation", "prop", "getLayoutData", "setLayoutData" ],
 	  library : "sap.ui.core",
 	  properties : {
 		// TODO can't yet declare id as a property: would show up in ControlTree and applySettings would allow to modify id
@@ -19845,7 +26885,8 @@ sap.ui.base.EventProvider.extend("sap.ui.core.Element", {
 	  },
 	  aggregations : {
 		tooltip : {name : "tooltip", type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},
-		customData : {name : "customData", type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"}
+		customData : {name : "customData", type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"},
+		layoutData : {name : "layoutData", type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"}
 	  },
 	  associations : {},
 	  events : {}
@@ -19853,65 +26894,7 @@ sap.ui.base.EventProvider.extend("sap.ui.core.Element", {
 
 	constructor : function(sId, mSettings) {
 
-		sap.ui.base.EventProvider.apply(this); // no use to pass our arguments
-		if (typeof(sId) != "string" && arguments.length>0) {
-			// shift arguments in case sId was missing, but mSettings was given
-			mSettings = sId;
-			if (mSettings && mSettings.id) {
-				sId = mSettings["id"];
-			} else {
-				sId = null;
-			}
-		}
-
-		if (!sId) {
-			sId = this.getMetadata().uid() || jQuery.sap.uid();
-		} else {
-			var preprocessor = sap.ui.core.Element._fnIdPreprocessor;
-			sId = (preprocessor ? preprocessor.call(this, sId) : sId);
-			var oType = sap.ui.base.DataType.getType("sap.ui.core.ID");
-			if (!oType.isValid(sId)) {
-				throw new Error("\"" + sId + "\" is not a valid ID.");
-			}
-		}
-		this.sId = sId;
-
-		// control interface
-		// create an empty property bag that uses a map of defaultValues as its prototype
-		this.mProperties = this.getMetadata().createPropertyBag();
-		this.mAggregations = {};
-		this.mAssociations = {};
-		this.mMethods = {};
-
-		// private properties
-		this.oParent = null;
-		this.bPrerendered = this.getDomRef() != null;
-		this.aDelegates = [];
-		this.aBeforeDelegates = [];
-		this.iSuppressInvalidate = 0;
-
-		// data binding
-		this.oModels = {};
-		this.mBindingInfos = {};
-		this.sBindingPath = null;
-		this.mBindingParametes = null;
-
-		// TODO: generic concept for init hooks?
-		if ( this._initCompositeSupport ) {
-			this._initCompositeSupport(mSettings);
-		}
-
-		// Call init method here instead of specific Controls constructor.
-		if (this.init) {
-			this.init();
-		}
-
-		// apply the settings
-		this.applySettings(mSettings);
-
-		// registers the element in the Core
-		this.register();
-
+		sap.ui.base.ManagedObject.apply(this, arguments);
 	},
 
 	renderer : null // Element has no renderer
@@ -20079,24 +27062,28 @@ sap.ui.core.Element.defineClass = function(sClassName, oStaticInfo, fnMetaImpl) 
  */
 sap.ui.core.Element.prototype._handleEvent = function (oEvent) {
 	var sHandlerName = "on" + oEvent.type;
-	this._callEventHandles(this.aBeforeDelegates, sHandlerName, oEvent);
+	this._callEventHandles(this.aBeforeDelegates, sHandlerName, oEvent, true);
 	this._callEventHandles([this], sHandlerName, oEvent);
-	this._callEventHandles(this.aDelegates, sHandlerName, oEvent);
+	this._callEventHandles(this.aDelegates, sHandlerName, oEvent, true);
 };
 
 /**
  * Calls event handler of the given event handles with the given browser event.
  * @private
  */
-sap.ui.core.Element.prototype._callEventHandles = function (aHandles, sHandlerName, oEvent) {
+sap.ui.core.Element.prototype._callEventHandles = function (aHandles, sHandlerName, oEvent, bDelegateHolder) {
 	if (aHandles.length > 0) {
 		for (var i = 0; i < aHandles.length; i++) {
 			if (oEvent.isImmediateHandlerPropagationStopped()) {
 				break;
 			}
-			var oHandle = aHandles[i];
+			var oHandle = bDelegateHolder ? aHandles[i].oDelegate : aHandles[i];
+			var oThis = (bDelegateHolder && aHandles[i].vThis) ? aHandles[i].vThis : oHandle;
+			if (oThis === true) { // special case, means the control should be the context
+				oThis = this;
+			}
 			if (oHandle[sHandlerName]) {
-				oHandle[sHandlerName](oEvent);
+				oHandle[sHandlerName].call(oThis, oEvent);
 			}
 		}
 	}
@@ -20194,157 +27181,6 @@ sap.ui.core.Element.create = function(vData, oKeyInfo) {
 	throw new Error(message);
 };
 
-/**
- * A global preprocessor for the ID of an Element (used internally).
- * If set, this function will be called before the ID is applied to any Element.
- * If the original ID was empty, the hook will not be called (to be discussed).
- *
- * The expected signature is <code>function(sId)</code>, and <code>this</code> will
- * be the current Element.
- *
- * @return new ID of the Element
- * @type function
- * @private
- */
-sap.ui.core.Element._fnIdPreprocessor = null;
-
-/**
- * A global preprocessor for the settings of an Element (used internally).
- * If set, this function will be called before the settings are applied to any Element.
- * If the original settings are empty, the hook will not be called (to be discussed).
- *
- * The expected signature is <code>function(mSettings)</code>, and <code>this</code> will
- * be the current Element.
- *
- * @type function
- * @private
- */
-sap.ui.core.Element._fnSettingsPreprocessor = null;
-
-sap.ui.core.Element.runWithPreprocessors = function(fn, oPreprocessors) {
-	jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-	jQuery.sap.assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
-	
-	var oOldPreprocessors = { id : this._fnIdPreprocessor, settings : this._fnSettingsPreprocessor };
-	oPreprocessors = oPreprocessors || {};
-
-	this._fnIdPreprocessor = oPreprocessors.id; 
-	this._fnSettingsPreprocessor = oPreprocessors.settings;
-	
-	try {
-		var result = fn.call();
-		this._fnIdPreprocessor = oOldPreprocessors.id; 
-		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
-		return result;
-	} catch (e) {
-		this._fnIdPreprocessor = oOldPreprocessors.id; 
-		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
-		throw e;
-	}
-	
-};
-
-/**
- * Sets all the properties, aggregations, associations and event handlers as given in
- * the object literal <code>mSettings</code>. If a property, aggregation, etc.
- * is not listed in <code>mSettings</code>, then its value is not changed by this method.
- *
- * For properties and 0..1 aggregations/associations, any given setting overwrites
- * the current value. For 0..n aggregations, the given values are appended; event
- * listeners are registered in addition to existing ones.
- *
- * For the possible keys and values in <code>mSettings</code> see the general
- * documentation in {@link sap.ui.core.Element} or the specific documentation
- * of the constructor of the concrete UI element class.
- *
- * @param {object} mSettings the settings to apply to this element
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @public
- */
-sap.ui.core.Element.prototype.applySettings = function(mSettings) {
-
-	// PERFOPT: don't retrieve (expensive) JSONKeys if no settings are given
-	if ( !mSettings || jQuery.isEmptyObject(mSettings) ) {
-		return this;
-	}
-
-	var oMetadata = this.getMetadata(),
-		mValidKeys = oMetadata.getJSONKeys(),
-		makeControl = sap.ui.core.Element.create,
-		preprocessor = sap.ui.core.Element._fnSettingsPreprocessor,
-		sKey, oValue, oKeyInfo;
-
-	// call the preprocessor if it has been defined
-	preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
-
-	// process all settings
-	// process settings
-	for(sKey in mSettings) {
-		// get info object for the key
-		if ( oKeyInfo = mValidKeys[sKey] ) {
-			oValue = mSettings[sKey];
-			switch(oKeyInfo._iKind) {
-			case 0: // PROPERTY
-				if (this.isBinding(oValue, oKeyInfo)) {
-					var oBindingInfo = this.extractBindingInfo(oValue);
-					this.bindProperty(sKey, oBindingInfo);
-				} else {
-					this[oKeyInfo._sMutator](oValue);
-				}
-				break;
-			case 1: // SINGLE_AGGREGATION
-				if ( oKeyInfo.altTypes && this.isBinding(oValue, oKeyInfo) ) {
-					var oBindingInfo = this.extractBindingInfo(oValue);
-					this.bindProperty(sKey, oBindingInfo);
-				} else {
-					this[oKeyInfo._sMutator](makeControl(oValue, oKeyInfo));
-				}
-				break;
-			case 2: // MULTIPLE_AGGREGATION
-				if (this.isBinding(oValue, oKeyInfo)) {
-					var oBindingInfo = this.extractBindingInfo(oValue);
-					this.bindAggregation(sKey, oBindingInfo);
-				} else {
-					if ( oValue && !jQuery.isArray(oValue) ) {
-						oValue = [oValue];
-					}
-					if ( oValue ) {
-						for(var i=0,l=oValue.length; i<l; i++) {
-							this[oKeyInfo._sMutator](makeControl(oValue[i], oKeyInfo));
-						}
-					}
-				}
-				break;
-			case 3: // SINGLE_ASSOCIATION
-				this[oKeyInfo._sMutator](oValue);
-				break;
-			case 4: // MULTIPLE_ASSOCIATION
-				if ( oValue && !jQuery.isArray(oValue) ) {
-					oValue = [oValue];
-				}
-				if ( oValue ) {
-					for(var i=0,l=oValue.length; i<l; i++) {
-						this[oKeyInfo._sMutator](oValue[i]);
-					}
-				}
-				break;
-			case 5: // EVENT
-				if ( typeof oValue == "function" ) {
-					this[oKeyInfo._sMutator](oValue);
-				}
-				else {
-					this[oKeyInfo._sMutator](oValue[0], oValue[1], oValue[2]);
-				}
-					//this[oKeyInfo._sMutator].apply(this, oValue); // could be replacement for line before
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
-	return this;
-};
 
 /**
  * Returns a simple string representation of this element.
@@ -20362,15 +27198,6 @@ sap.ui.core.Element.prototype.toString = function() {
 	}
 };
 
-/**
- * Returns the element's Id.
- *
- * @return {string} the element's Id.
- * @public
- */
-sap.ui.core.Element.prototype.getId = function() {
-	return this.sId;
-};
 
 /**
  * Returns the best suitable DOM node that represents this Element.
@@ -20435,784 +27262,6 @@ sap.ui.core.Element.prototype.prop = function(sPropertyName, oValue) {
 		}
 	}
 };
-
-/**
- * Sets a new value for the given property <code>sPropertyName</code> and marks
- * this UI element for redraw. If the given <code>oValue</code> equals the
- * current value, nothing happens.
- *
- * @param {string}  sPropertyName name of the property to set
- * @param {any}     oValue value to set the property to
- * @param {boolean} [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * TODO better name bSuppressInvalidate positive, e.g. "bStayValid"
- * @protected
- */
-sap.ui.core.Element.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
-
-	// check for a value change
-	var oOldValue = this.mProperties[sPropertyName];
-
-	// value validation
-	oValue = this.validateProperty(sPropertyName, oValue);
-
-	if (jQuery.sap.equal(oOldValue, oValue)) {
-		return this;
-	} // no change
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	// change the property (and invalidate if the rendering should be updated)
-	this.mProperties[sPropertyName] = oValue;
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// check whether property is bound and update model in case of two way binding
-	this.updateModelProperty(sPropertyName, oValue, oOldValue);
-
-	// prototype for generic property change events
-	// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
-	sap.ui.base.EventProvider.prototype.fireEvent.apply(this, ["_change", {
-		"id": this.getId(),
-		"name": sPropertyName,
-		"oldValue": oOldValue,
-		"newValue": oValue
-	}]);
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns the value for the property with the given <code>sPropertyName</code>
- *
- * @param {string} sPropertyName the name of the property
- * @type any
- * @return the value of the property
- * @protected
- */
-sap.ui.core.Element.prototype.getProperty = function(sPropertyName) {
-	var oValue = this.mProperties[sPropertyName],
-		oMetadata = this.getMetadata(),
-		oProperty = oMetadata.getAllProperties()[sPropertyName],
-		oType;
-
-	if (!oProperty) {
-		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
-	}
-
-	oType = sap.ui.base.DataType.getType(oProperty.type);
-
-	// If property has an array type, clone the array to avoid modification of original data
-	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
-		oValue = oValue.slice(0);
-	}
-	
-	// If proprerty is of type String instead of string, convert with valueOf()
-	if (oValue instanceof String) {
-		oValue = oValue.valueOf();
-	}
-	
-	return oValue;
-};
-
-/**
- * Checks whether the given value is of the proper type for the given property name. In case null or undefined is
- * passed, the default value for this property is returned.
- *
- * @param {string} sPropertyName the name of the property
- * @param {any} oValue the value
- * @return {any} the passed value or the property's default value if null or undefined was passed
- * @throws Error if no property with the given name is found or the given value does not fit to the property type
- * @protected
- */
-sap.ui.core.Element.prototype.validateProperty = function(sPropertyName, oValue) {
-	var oMetadata = this.getMetadata(),
-		oProperty = oMetadata.getAllProperties()[sPropertyName],
-		oType;
-
-	if (!oProperty) {
-		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
-	}
-
-	oType = sap.ui.base.DataType.getType(oProperty.type);
-
-	// If property has an array type, clone the array to avoid modification of original data
-	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
-		oValue = oValue.slice(0);
-	}
-	
-	// In case null is passed as the value return the default value, either from the property or from the type
-	if (oValue === null || oValue === undefined) {
-		if (oProperty.defaultValue !== null) {
-			return oProperty.defaultValue;
-		} else {
-			return oType.getDefaultValue();
-		}
-	}
-
-	// Implicit casting for string only, other types are causing errors
-	if (oType instanceof sap.ui.base.DataType) {
-		if (oType.getName() == "string") {
-			if (!(typeof oValue == "string" || oValue instanceof String)) {
-				oValue = "" + oValue;
-			}
-		} else if (oType.getName() == "string[]") {
-			for (var i = 0; i < oValue.length; i++) {
-				if (!typeof oValue[i] == "string") {
-					oValue[i] = "" + oValue[i];
-				}
-			}
-		} else if (!oType.isValid(oValue)) {
-			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
-					oType.getName() + " for property \"" + sPropertyName + "\" of " + this);
-		}
-	} else if (!(oValue in oType)){ // Enumeration
-		throw new Error("\"" + oValue + "\" is not a valid entry of the enumeration for property \"" + sPropertyName + "\" of " + this);
-	}
-
-	return oValue;
-};
-
-/**
- * Checks whether the given value is of the proper type for the given aggregation name. 
- *
- * @param {string} sAggregationName the name of the aggregation
- * @param {sap.ui.core.Element|any} oElement the aggregated element or a primitive value
- * @param {boolean} bMultiple whether the aggregation must have cardinality 0..n
- * @return {sap.ui.core.Element|any} the passed object
- * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
- * @protected
- */
-sap.ui.core.Element.prototype.validateAggregation = function(sAggregationName, oElement, bMultiple) {
-	var oMetadata = this.getMetadata(),
-		oAggregation = oMetadata.getAllAggregations()[sAggregationName],
-		aAltTypes,
-		oType,
-		i;
-
-	// undeclared aggregation 
-	if (!oAggregation) {
-		if(sAggregationName && oMetadata._mHiddenAggregations && oMetadata._mHiddenAggregations[sAggregationName]){
-			oAggregation = oMetadata._mHiddenAggregations[sAggregationName];
-		}else{
-			throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
-		}
-	}
-
-	// TODO should this be part of the validation (raise an error) or not?
-	jQuery.sap.assert(oAggregation.multiple === bMultiple, "Aggregation '" + sAggregationName + "' of " + this + " used with wrong cardinality (declared as " + (oAggregation.multiple ? "0..n" : "0..1") + ")");
-	
-	//Null is a valid value for 0..1 aggregations
-	if(!oAggregation.multiple && !oElement){
-		return oElement;
-	}
-	
-	oType = jQuery.sap.getObject(oAggregation.type);
-	// class types
-	if ( typeof oType === "function" && oElement instanceof oType ) {
-		return oElement;
-	}
-	// interfaces 
-	if ( oElement && oElement.getMetadata && oElement.getMetadata().isInstanceOf(oAggregation.type) ) {
-		return oElement;
-	}
-	// alternative types
-	aAltTypes = oAggregation.altTypes;
-	if ( aAltTypes && aAltTypes.length ) {
-		// for primitive types, null or undefined is valid as well 
-		if ( oElement == null ) {
-			return oElement;
-		}
-		for (i=0; i<aAltTypes.length; i++) {
-			oType = sap.ui.base.DataType.getType(aAltTypes[i]);
-			if (oType instanceof sap.ui.base.DataType) {
-				if (oType.isValid(oElement)) {
-					return oElement;
-				}
-			} else if (oElement in oType) { // Enumeration
-				return oElement;
-			}
-		}
-	}
-	throw new Error("\"" + oElement + "\" is not valid for aggregation \"" + sAggregationName + "\" of " + this);
-}
-
-/**
- * Returns the origin info on the property value of the given property name
- *
- * @param {string} sPropertyName the name of the property
- * @return {object} a map of properties describing the origin of this property value or null
- * @public
- */
-sap.ui.core.Element.prototype.getOriginInfo = function(sPropertyName) {
-	var oValue = this.mProperties[sPropertyName];
-	if (!(oValue instanceof String && oValue.originInfo)) {
-		return null;
-	}
-	return oValue.originInfo;
-};
-
-
-// ######################################################################################################
-// Associations
-// ######################################################################################################
-
-/**
- * Sets an association for the control
- *
- * @param {string}
- *            sAssociationName name of the association
- * @param {string | sap.ui.core.Element}
- *            sId the ID of the control that is set as an association, or the control itself or null
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
-	if (sId instanceof sap.ui.core.Element) {
-		sId = sId.getId();
-	} else if (sId != null && typeof sId !== "string") {
-		jQuery.sap.assert(false, "setAssociation(): sId must be a string, an instance of sap.ui.core.Element or null");
-		return this;
-	}
-
-	if (this.mAssociations[sAssociationName] === sId) {
-		return this;
-	} // no change
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	this.mAssociations[sAssociationName] = sId;
-
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns an association of the control with a given sAssociationName
- *
- * @param {string} sAssociationName the name of the association
- * @param {object}
- *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
- * @return {string | string[]} the ID of the associated control or an array of such IDs; may be null if the association has not been populated
- * @protected
- */
-sap.ui.core.Element.prototype.getAssociation = function(sAssociationName, oDefaultForCreation) {
-	var result = this.mAssociations[sAssociationName];
-
-	if (!result) {
-		result = this.mAssociations[sAssociationName] = oDefaultForCreation || null;
-	} else {
-		if (typeof result.length === 'number' && !(result.propertyIsEnumerable('length')) ) {
-			// Return a copy of the array instead of the array itself as reference!!
-			return result.slice();
-		}
-		// simple type or Element
-		return result;
-	}
-
-	return result;
-};
-
-/**
- * Adds some entity with the ID <code>sId</code> to the association identified by <code>sAssociationName</code>.
- *
- * @param {string}
- *            sAssociationName the string identifying the association the element should be added to.
- * @param {string | sap.ui.core.Element}
- *            sId the ID of the element to add; if empty, nothing is added; if a <code>sap.ui.core.Element</code> is given, its ID is added
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element as well as the newly associated element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
-	if (sId instanceof sap.ui.core.Element) {
-		sId = sId.getId();
-	} else if (typeof sId !== "string") {
-	  // TODO what about empty string?
-    jQuery.sap.assert(false, "addAssociation(): sId must be a string or an instance of sap.ui.core.Element");
-		return this;
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	var aIds = this.mAssociations[sAssociationName];
-	if (!aIds) {
-		aIds = this.mAssociations[sAssociationName] = [sId];
-	} else {
-		aIds.push(sId);
-	}
-
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Removes an Element from the association named <code>sAssociationName</code>.
- *
- * @param {string}
- *            sAssociationName the string identifying the association the Element should be removed from.
- * @param {int | string | sap.ui.core.Element}
- *            vElement the position or ID of the Element to remove or the Element itself; if <code>vElement</code> is invalid input,
- *            a negative value or a value greater or equal than the current size of the association, nothing is removed
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return the ID of the removed Element or null
- * @protected
- */
-sap.ui.core.Element.prototype.removeAssociation = function(sAssociationName, vElement, bSuppressInvalidate) {
-	var aIds = this.mAssociations[sAssociationName];
-	var sId = null;
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (typeof(vElement) == "object" && vElement.getId) { // element itself is given
-		vElement = vElement.getId();
-	}
-
-	if (typeof(vElement) == "string") { // ID of the element is given or has just been retrieved
-		for (var i = 0; i < aIds.length; i++) {
-			if (aIds[i] == vElement) {
-				vElement = i;
-				break;
-			}
-		}
-	}
-
-	if (typeof(vElement) == "number") { // "element" is the index now
-		if (vElement < 0 || vElement >= aIds.length) {
-			jQuery.sap.log.warning("Element.removeAssociation called with invalid index: " + sAssociationName + ", " + vElement);
-		} else {
-			sId = aIds[vElement];
-			aIds.splice(vElement, 1);
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
-		}
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return sId;
-};
-
-/**
- * Removes all the controls in the 0..n-association named <code>sAssociationName</code> (and returns them in an array).<br/>
- *
- * @param {string}
- *            sAssociationName the name of the association
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @type Array
- * @return an array with the IDs of the removed elements (might be empty)
- * @protected
- */
-sap.ui.core.Element.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate){
-	var aIds = this.mAssociations[sAssociationName];
-	if (!aIds)	{
-		return [];
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	delete this.mAssociations[sAssociationName];
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return aIds;
-};
-
-// ######################################################################################################
-// End of Associations
-// ######################################################################################################
-
-
-// ######################################################################################################
-// Aggregations
-// ######################################################################################################
-/**
- * Sets an aggregation for the control
- *
- * @param {string}
- *            sAggregationName name of the aggregation
- * @param {object}
- *            oElement the control that is set as an aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.setAggregation = function(sAggregationName, oElement, bSuppressInvalidate) {
-	var oOldChild = this.mAggregations[sAggregationName];
-	if (oOldChild === oElement) {
-		return this;
-	} // no change
-	// starting with 1.6: oelement = this.validateAggregation(sAggregationName, oElement, /* multiple */ true)
-	jQuery.sap.assert.apply(jQuery.sap, (function(that) { 
-		try { 
-			that.validateAggregation(sAggregationName, oElement, /* multiple */ false); 
-			return [true]; 
-		} catch (e) { 
-			return [false, e.message]; 
-		}
-	}(this)));
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (oOldChild instanceof sap.ui.core.Element) { // remove old child
-		oOldChild.setParent(null);
-	}
-	this.mAggregations[sAggregationName] = oElement;
-	if (oElement instanceof sap.ui.core.Element) { // adopt new child
-		oElement.setParent(this, sAggregationName, bSuppressInvalidate);
-	} else {
-		if (!this.isInvalidateSuppressed()) {
-			this.invalidate();
-		}
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns an aggregation of the control with a given sAggregationName
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {sap.ui.core.Element | Array}
- *			  oDefaultForCreation the object that is used in case the current aggregation is empty
- * @type sap.ui.core.Element|Array
- * @return the aggregation array in case of 0..n-aggregations or the control or null in case of 0..1-aggregations
- * @protected
- */
-sap.ui.core.Element.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren) {
-		aChildren = this.mAggregations[sAggregationName] = oDefaultForCreation || null;
-	}
-	if (aChildren) {
-		if (typeof aChildren.length === 'number' && !(aChildren.propertyIsEnumerable('length')) ) {
-			// Return a copy of the array instead of the array itself as reference!!
-			return aChildren.slice();
-		}
-		// simple type or Element
-		return aChildren;
-	} else {
-		return null;
-	}
-};
-
-/**
- * Checks for the provided control <code>oElement</code> in the aggregation
- * named <code>sAggregationName</code> and returns its index if found, or -1
- * otherwise. Returns -2 if the given named aggregation is not a multiple one
- * (and does not contain the given child).
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {sap.ui.core.Element}
- *            oElement the Control whose index is looked for.
- * @return {int} the index of the provided control in the aggregation.
- * @protected
- */
-sap.ui.core.Element.prototype.indexOfAggregation = function(sAggregationName, oElement) {
-	var aChildren = this.mAggregations[sAggregationName];
-	if (aChildren) {
-		if (aChildren.length == undefined) {
-			return -2;
-		} // not a multiple aggregation
-
-		for (var i = 0; i < aChildren.length; i++) {
-			if (aChildren[i] == oElement) {
-				return i;
-			}
-		}
-	}
-	return -1;
-};
-
-/**
- * Inserts control <code>oElement</code> to the aggregation named <code>sAggregationName</code> at
- * position <code>iIndex</code>.
- *
- * @param {string}
- *            sAggregationName the string identifying the aggregation the control <code>oElement</code>
- *            should be inserted into.
- * @param {sap.ui.core.Element}
- *            oElement the element to add; if empty, nothing is inserted.
- * @param {int}
- *            iIndex the <code>0</code>-based index the control should be inserted at; for a negative
- *            value <code>iIndex</code>, <code>oElement</code> is inserted at position 0; for a value
- *            greater than the current size of the aggregation, <code>oElement</code> is inserted at
- *            the last position
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element as well as the added child is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.insertAggregation = function(sAggregationName, oElement, iIndex, bSuppressInvalidate) {
-	if (!oElement) {
-		return this;
-	}
-	// starting with 1.6: oElement = this.validateAggregation(sAggregationName, oElement, /* multiple */ true)
-	jQuery.sap.assert.apply(jQuery.sap, (function(that) { 
-		try { 
-			that.validateAggregation(sAggregationName, oElement, /* multiple */ true); 
-			return [true]; 
-		} catch (e) { 
-			return [false, e.message]; 
-		}
-	}(this)));
-
-	var aChildren = this.mAggregations[sAggregationName] || (this.mAggregations[sAggregationName] = []);
-	// force index into valid range 
-	var i = iIndex < 0 ? 0 : (iIndex > aChildren.length ? aChildren.length : iIndex);
-	if (i !== iIndex) {
-		jQuery.sap.log.warning("Element.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
-	}
-	aChildren.splice(i, 0, oElement);
-	oElement.setParent(this, sAggregationName, bSuppressInvalidate);
-
-	return this;
-};
-
-/**
- * Adds some entity <code>oElement</code> to the aggregation identified by <code>sAggregationName</code>.
- *
- * @param {string}
- *            sAggregationName the string identifying the aggregation the element <code>oElement</code> should be added to.
- * @param {sap.ui.core.Element}
- *            oElement the element to add; if empty, nothing is added
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element as well as the added child is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.addAggregation = function(sAggregationName, oElement, bSuppressInvalidate) {
-	if (!oElement) {
-		return this;
-	}
-	// starting with 1.6: oElement = this.validateAggregation(sAggregationName, oElement, /* multiple */ true)
-	jQuery.sap.assert.apply(jQuery.sap, (function(that) { 
-		try { 
-			that.validateAggregation(sAggregationName, oElement, /* multiple */ true); 
-			return [true]; 
-		} catch (e) { 
-			return [false, e.message]; 
-		}
-	}(this)));
-
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren) {
-		aChildren = this.mAggregations[sAggregationName] = [oElement];
-	} else {
-		aChildren.push(oElement);
-	}
-	oElement.setParent(this, sAggregationName, bSuppressInvalidate);
-
-	return this;
-};
-
-/**
- * Removes an element from the aggregation named <code>sAggregationName</code>.
- *
- * @param {string}
- *            sAggregationName the string identifying the aggregation the Element should be removed from
- * @param {int | string | sap.ui.core.Element}
- *            vElement the position or ID of the Element to remove or the Element itself; if <code>vElement</code> is invalid,
- *            a negative value or a value greater or equal than the current size of the aggregation, nothing is removed
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @type sap.ui.core.Element
- * @return the removed element or null
- * @protected
- */
-sap.ui.core.Element.prototype.removeAggregation = function(sAggregationName, vElement, bSuppressInvalidate) {
-	var aChildren = this.mAggregations[sAggregationName];
-	var oChildControl = null;
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (typeof(vElement) == "string") { // ID of the element is given
-		vElement = sap.ui.getCore().byId(vElement);
-	}
-
-	if (typeof(vElement) == "object") { // the element itself is given or has just been retrieved
-		for (var i = 0; i < aChildren.length; i++) {
-			if (aChildren[i] == vElement) {
-				vElement = i;
-				break;
-			}
-		}
-	}
-
-	if (typeof(vElement) == "number") { // "vElement" is the index now
-		if (vElement < 0 || vElement >= aChildren.length) {
-			jQuery.sap.log.warning("Element.removeAggregation called with invalid index: " + sAggregationName + ", " + vElement);
-
-		} else {
-			oChildControl = aChildren[vElement];
-			aChildren.splice(vElement, 1);
-			oChildControl.setParent(null);
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
-		}
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return oChildControl;
-};
-
-/**
- * Removes all the controls in the 0..n-aggregation named <code>sAggregationName</code> (and returns them in an array).<br/>
- * Additionally unregisters them from the hosting UIArea.
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @type Array
- * @return an array of the removed elements (might be empty)
- * @protected
- */
-sap.ui.core.Element.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren)	{
-		return [];
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	delete this.mAggregations[sAggregationName];
-	for (var i = 0; i < aChildren.length; i++) {
-		aChildren[i].setParent(null);
-	}
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return aChildren;
-};
-
-/**
- * Destroys (all) the control(s) in the aggregation named <code>sAggregationName</code> and afterwards empties the
- * aggregation.
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren) {
-		return this;
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	delete this.mAggregations[sAggregationName];
-	if (aChildren instanceof sap.ui.core.Element) {
-		aChildren.destroy(bSuppressInvalidate);
-	} else if (aChildren && jQuery.isArray(aChildren)) {
-		for (var i = 0; i < aChildren.length; i++) {
-			if (aChildren[i]) {
-				aChildren[i].destroy(bSuppressInvalidate);
-			}
-		}
-	}
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-// ######################################################################################################
-// End of Aggregations
-// ######################################################################################################
 
 
 /**
@@ -21296,16 +27345,6 @@ sap.ui.core.Element.prototype.destroyAggregation = function(sAggregationName, bS
 /// cyclic dependency
 //jQuery.sap.require("sap.ui.core.TooltipBase"); /// cyclic dependency
 
-/**
- * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
- * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
- * @protected
- */
-sap.ui.core.Element.prototype.invalidate = function() {
-	if (this.oParent) {
-		this.oParent.invalidate(this);
-	}
-};
 
 /**
  * This triggers immediate rerendering of its parent and thus of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
@@ -21318,155 +27357,6 @@ sap.ui.core.Element.prototype.rerender = function() {
 	}
 };
 
-/**
- * Returns whether rerendering is currently suppressed on this Element
- * @return boolean
- * @protected
- */
-sap.ui.core.Element.prototype.isInvalidateSuppressed = function() {
-	var bInvalidateSuppressed = this.iSuppressInvalidate > 0;
-	if (this.oParent && this.oParent instanceof sap.ui.core.Element) {
-		bInvalidateSuppressed = bInvalidateSuppressed || this.oParent.isInvalidateSuppressed();
-	}
-	return bInvalidateSuppressed;
-};
-
-
-/**
- * Removes the given child from this element's named aggregation.
- * @see sap.ui.core.UIArea#_removeChild
- * @see sap.ui.core.Element#setParent
- *
- * @param {sap.ui.core.Element}
- *            oChild the child element to be removed
- * @param {string}
- *            sAggregationName the name of this element's aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @protected
- */
-sap.ui.core.Element.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
-	if (!sAggregationName) {
-		// an aggregation name has to be specified!
-		jQuery.sap.log.error("Cannot remove aggregated child without aggregation name.", null, this);
-	} else {
-		// set suppress invalidate flag
-		if (bSuppressInvalidate) {
-			this.iSuppressInvalidate++;
-		}
-
-		var iIndex = this.indexOfAggregation(sAggregationName, oChild);
-		var oAggregationInfo = this.getMetadata().getJSONKeys()[sAggregationName];
-		// Note: we assume that this is the given child's parent, i.e. -1 not expected!
-		if (iIndex == -2) { // 0..1
-			if(oAggregationInfo && this[oAggregationInfo._sMutator]) { // TODO properly deal with hidden aggregations
-				this[oAggregationInfo._sMutator](null);
-			}
-			else {
-				this.setAggregation(sAggregationName, null, bSuppressInvalidate);
-			}
-		} else if(iIndex > -1 ) { // 0..n
-			if(oAggregationInfo && this[oAggregationInfo._sRemoveMutator]) { // TODO properly deal with hidden aggregations
-				this[oAggregationInfo._sRemoveMutator](iIndex);
-			}
-			else {
-				this.removeAggregation(sAggregationName, iIndex, bSuppressInvalidate);
-			}
-		} else {
-			// already removed!?
-			// this is the unexpected -1
-			// TODO: What would be better? Explicit removeCompositeChild callback on subclass?
-		}
-		if (!this.isInvalidateSuppressed()) {
-			this.invalidate();
-		}
-
-		// reset suppress invalidate flag
-		if (bSuppressInvalidate) {
-			this.iSuppressInvalidate--;
-		}
-	}
-};
-
-/**
- * Defines this element's new parent. If no new parent is given, the parent is
- * just reset and we assume that the old parent has removed this child from its
- * aggregation. But if a new parent is given, this child is first removed from
- * its old parent.
- *
- * @param {sap.ui.core.Element}
- *            oParent the element that becomes this element's parent
- * @param {string}
- *            sAggregationName the name of the parent element's aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw. The old parent, however, is marked for redraw.
- * @return {sap.ui.core.Element}
- *            Returns <code>this</code> to allow method chaining
- * @private
- */
-sap.ui.core.Element.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
-	if ( !oParent ) {
-		this.oParent = null;
-		this.sParentAggregationName = null;
-		// Note: no need (and no way how) to invalidate
-		return;
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	var oOldParent = this.getParent();
-	if (oOldParent) { // remove this element from its old parent
-		// Note: bSuppressInvalidate  by intention is not propagated to the old parent.
-		// It is not sure whether the (direct or indirect) caller of setParent
-		// has enough knowledge about the old parent to automatically propagate this.
-		// If needed, callers can first remove the element from the oldParent (specifying a 
-		// suitable value for bSuppressInvalidate there) and only then call setParent.
-		oOldParent._removeChild(this, this.sParentAggregationName);  
-	}
-	// adopt new parent
-	this.oParent = oParent;
-	this.sParentAggregationName = sAggregationName;
-
-	// update bindings
-	if (this.hasModel()) {
-		this.updateBindingContext();
-		this.updateBindings(true);
-	}
-
-	// Only invalidate if the control already is in the HTML and has been initialized (i.e. has a parent)
-	/*if((!this.bPrerendered || this.bPrerendered && oOldParent)) {
-		if (!this.isInvalidateSuppressed()) {
-			this.invalidate();
-		}
-	}*/
-	
-	// only the parent knows where to render us, so we have to invalidate it
-	if ( oParent && !this.isInvalidateSuppressed() ) {
-		oParent.invalidate(this);
-	}
-	
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns the parent control or <code>null</code> if this element hasn't been added to a parent yet.
- *
- * @return {sap.ui.core.Element} The parent control or <code>null</code>
- * @public
- */
-sap.ui.core.Element.prototype.getParent = function() {
-	/* Be aware that internally this.oParent is used to reduce method calls. 
-	 * Check for side effects when overriding this method */
-	return this.oParent;
-};
 
 /**
  * Returns the UI area of this element, if any.
@@ -21490,61 +27380,27 @@ sap.ui.core.Element.prototype.getUIArea = function() {
  * @public
  */
 sap.ui.core.Element.prototype.destroy = function(bSuppressInvalidate) {
-	var that = this;
 
-	// jQuery.sap.log.debug("destroying " + this);
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (this.exit) {
-		this.exit();
-	}
-
-	// TODO: generic concept for exit hooks?
-	if ( this._exitCompositeSupport ) {
-		this._exitCompositeSupport();
-	}
-
-	// ensure that also our children are destroyed!!
-	for(var oAggr in this.mAggregations){
-		this.destroyAggregation(oAggr, bSuppressInvalidate);
-	}
-	this.deregister();
-
-	// remove this child from parent aggregation
-	if (this.oParent && this.sParentAggregationName) {
-		this.oParent._removeChild(this, this.sParentAggregationName, bSuppressInvalidate);
-	}
-
-	// Data Binding
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		if (oBindingInfo.factory) {
-			that.unbindAggregation(sName);
-		} else {
-			that.unbindProperty(sName);
-		}
-	});
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
+	sap.ui.base.ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
+	
+	// TODO just a hack and has to be done correctly in near future
+	/*
+	 * Code is ok as discussed with Frank because we have no good concept yet
+	 * for mixins to attach to the exit hook. Checking whether a control has
+	 * already an exit function, overriding it and call it manually works but
+	 * has the side effect that the mixin must be called during a specific point
+	 * in time during the prototype generation which will be error prone. The
+	 * problem is that if this overridden hook is overridden at a wrong place
+	 * the exit cannot be called since it didn't exist when it was overridden.
+	 */
+	if (this._sapUiCoreLocalBusy_Exit) {
+		this._sapUiCoreLocalBusy_Exit();
 	}
 
 	// remove this control from DOM, e.g. if there is no parent (e.g. Dialog or already removed control) or this.sParentAggregationName is not properly set
 	this.$().remove();
-
-	// finally make the element unusable
-	this.setParent = function(){
-		throw Error("The control with ID "+that.getId()+" was destroyed and cannot be used anymore.");
-	};
-
-	// make visible that it's been destroyed.
-	this.bIsDestroyed = true;
-
 };
+
 
 /**
  * Fires the given event and notifies all listeners. Listeners must not change
@@ -21563,19 +27419,39 @@ sap.ui.core.Element.prototype.fireEvent = function(sEventId, mParameters) {
 	return sap.ui.base.EventProvider.prototype.fireEvent.apply(this, arguments);
 };
 
+
 /**
  * Adds a delegate that listens to the events of this element.
+ * 
+ * Note that the default behavior (delegate attachments are not cloned when a control is cloned) is usually the desired behavior in control development 
+ * where each control instance typically creates a delegate and adds it to itself. (As opposed to application development where the application may add 
+ * one delegate to a template and then expects aggregation binding to add the same delegate to all cloned elements.)
  *
- * To avoid double registrations, all registrations of the given delegate are first
- * removed and then the delegate is added.
- * @param {sap.ui.base.EventProvider} oDelegate the delegate object
- * @param {boolean} [bCallBefore] if true, the delegator event listeners are called before the event listeners of the element
+ * To avoid double registrations, all registrations of the given delegate are first removed and then the delegate is added.
+ * 
+ * @param {object} oDelegate the delegate object
+ * @param {boolean} [bCallBefore] if true, the delegator event listeners are called before the event listeners of the element; default is "false". In order to also set bClone, this parameter must be given.
+ * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
+ * @param {boolean} [bClone] if true, this delegate will also be attached to any clones of this element; default is "false"
  * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
  * @private
  */
-sap.ui.core.Element.prototype.addDelegate = function (oDelegate, bCallBefore) {
+sap.ui.core.Element.prototype.addDelegate = function (oDelegate, bCallBefore, oThis, bClone) {
 	this.removeDelegate(oDelegate);
-	(bCallBefore ? this.aBeforeDelegates : this.aDelegates).push(oDelegate);
+	
+	// shift parameters
+	if (typeof bCallBefore === "object") {
+		bClone = oThis;
+		oThis = bCallBefore;
+		bCallBefore = false;
+	}
+	
+	if (typeof oThis === "boolean") {
+		bClone = oThis;
+		oThis = undefined;
+	}
+
+	(bCallBefore ? this.aBeforeDelegates : this.aDelegates).push({oDelegate:oDelegate, bClone: !!bClone, vThis: ((oThis === this) ? true : oThis)}); // special case: if this element is the given context, set a flag, so this also works after cloning (it should be the cloned element then, not the given one)
 	return this;
 };
 
@@ -21583,22 +27459,59 @@ sap.ui.core.Element.prototype.addDelegate = function (oDelegate, bCallBefore) {
  * Removes the given delegate from this element.
  *
  * This method will remove all registrations of the given delegate, not only one.
- * @param {sap.ui.base.EventProvider} oDelegate the delegate object
+ * If the delegate was marked to be cloned and this element has been cloned, the delegate will not be removed from any clones.
+ * 
+ * @param {object} oDelegate the delegate object
  * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
  * @private
  */
 sap.ui.core.Element.prototype.removeDelegate = function (oDelegate) {
 	for (var i=0;i<this.aDelegates.length;i++) {
-		if (this.aDelegates[i]==oDelegate) {
+		if (this.aDelegates[i].oDelegate==oDelegate) {
 			this.aDelegates.splice(i,1);
 		}
 	}
 	for (var i=0;i<this.aBeforeDelegates.length;i++) {
-		if (this.aBeforeDelegates[i]==oDelegate) {
+		if (this.aBeforeDelegates[i].oDelegate==oDelegate) {
 			this.aBeforeDelegates.splice(i,1);
 		}
 	}
 	return this;
+};
+
+
+/**
+ * Adds a delegate that listens to the events that are fired on this element (as opposed to events which are fired BY this element).
+ * 
+ * When this element is cloned, the same delegate will be added to all clones. This behavior is well-suited for applications which want to add delegates
+ * that also work with templates in aggregation bindings.
+ * For control development the internal "addDelegate" method which does not clone delegates by default may be more suitable, as typically each control instance takes care of its own delegates.
+ *
+ * To avoid double registrations, all registrations of the given delegate are first
+ * removed and then the delegate is added.
+ *
+ * @param {object} oDelegate the delegate object
+ * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
+ * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+ * @since 1.9.0
+ * @public
+ */
+sap.ui.core.Element.prototype.addEventDelegate = function (oDelegate, oThis) {
+	return this.addDelegate(oDelegate, false, oThis, true);
+};
+
+/**
+ * Removes the given delegate from this element.
+ *
+ * This method will remove all registrations of the given delegate, not only one.
+ * 
+ * @param {object} oDelegate the delegate object
+ * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+ * @since 1.9.0
+ * @public
+ */
+sap.ui.core.Element.prototype.removeEventDelegate = function (oDelegate) {
+	return this.removeDelegate(oDelegate);
 };
 
 /**
@@ -21697,6 +27610,8 @@ sap.ui.core.Element.prototype.getTooltip = function() {
 	return this.getAggregation("tooltip");
 };
 
+sap.ui.core.Element.runWithPreprocessors = sap.ui.base.ManagedObject.runWithPreprocessors;
+
 /**
  * Returns the tooltip for this element but only if it is a simple string.
  * Otherwise an undefined value is returned.
@@ -21764,7 +27679,7 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 	/**
 	 * Contains the data modification logic
 	 */
-	var setData = function(element, key, value) {
+	var setData = function(element, key, value, writeToDom) {
 
 		// DELETE
 		if (value === null) { // delete this property
@@ -21786,8 +27701,9 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 			var dataObject = getDataObject(element, key);
 			if (dataObject) {
 				dataObject.setValue(value);
+				dataObject.setWriteToDom(writeToDom);
 			} else {
-				var dataObject = new sap.ui.core.CustomData({key:key,value:value});
+				var dataObject = new sap.ui.core.CustomData({key:key,value:value, writeToDom:writeToDom});
 				element.addAggregation("customData", dataObject, true);
 			}
 		}
@@ -21798,7 +27714,10 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 	 *
 	 * Usage:
 	 *    data("myKey", myData)
-	 * attaches myData (which can be any JS data type, e.g. a number, a string, an object, or a function) to this element, under the given key "myKey"
+	 * attaches myData (which can be any JS data type, e.g. a number, a string, an object, or a function) to this element, under the given key "myKey". If the key already exists,the value will be updated.
+	 *
+	 *    data("myKey", myData, writeToDom)
+	 * attaches myData to this element, under the given key "myKey" and (if writeToDom is true) writes key and value to the HTML. If the key already exists,the value will be updated. While oValue can be any JS data type to be attached, it must be a string to be also written to DOM. The key must also be a valid HTML attribute name (it must conform to sap.ui.core.ID and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
 	 *
 	 *    data("myKey")
 	 * retrieves whatever data has been attached to this Element (using the key "myKey") before
@@ -21853,892 +27772,112 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 			setData(this, arguments[0], arguments[1]);
 			return this;
 
+		} else if (argLength == 3) {            // set or remove one data element
+			setData(this, arguments[0], arguments[1], arguments[2]);
+			return this;
+
 		} else {
 			// error, illegal arguments
-			throw new Error("data() may only be called with 0-2 arguments (on UI Element with ID '" + this.getId() + "')");
+			throw new Error("data() may only be called with 0-3 arguments (on UI Element with ID '" + this.getId() + "')");
 		}
 	};
 
 })();
 
-
-// DataBinding
-/**
- * Determines whether a given object contains binding information instead of a
- * value or aggregated controls. The method is used in applySettings for processing
- * the JSON notation of properties/aggregations in the constructor.
- *
- * @param {object} oValue the value
- * @param {object} oKeyInfo the metadata of the property
- *
- * @returns {boolean} whether the value contains binding information
- *
- * @private
- */
-sap.ui.core.Element.prototype.isBinding = function(oValue, oKeyInfo) {
-	if (oValue && typeof oValue == "object" && oValue.path && oKeyInfo.type != "object") {
-		return true;
-	}
-	if (typeof oValue == "string" && jQuery.sap.startsWith(oValue, "{") && jQuery.sap.endsWith(oValue, "}")) {
-		return true;
-	}
-	return false;
-};
-
-/**
- * Extracts the binding info from the given value. There are two possible notations
- * for binding information in the JSON notation of the control constructor:
- * - property: "{path}"
- *   This is used for property binding and can only contain the path.
- * - property:{path:"path", template:oTemplate}
- *   This is used for aggregation binding, where a template is required or can
- *   be used for property binding when additional data is required (e.g. formatter).
- *
- * @param {object} oValue
- *
- * @returns {object} the binding info object, containing at least a path property
- *                   and, dependant of the binding type, additional properties
- *
- * @private
- */
-sap.ui.core.Element.prototype.extractBindingInfo = function(oValue) {
-	var oBindingInfo;
-	// property:{path:"path", template:oTemplate}
-	if (oValue && typeof oValue == "object") {
-		oBindingInfo = oValue;
-	}
-	// property:"{path}"
-	if (typeof oValue == "string") {
-		oBindingInfo = {};
-		oBindingInfo.path = oValue.substr(1, oValue.length - 2);
-	}
-	return oBindingInfo;
-};
-
-/**
- * Returns the binding infos for the given property or aggregation. The binding info contains information about path, binding object, format options,
- * sorter, filter etc. for the property or aggregation.
- *
- * @param {string} sName the name of the property or aggregation
- *
- * @returns {object} the binding info object, containing at least a path property
- *                   and, dependant of the binding type, additional properties
- *
- * @protected
- */
-sap.ui.core.Element.prototype.getBindingInfo = function(sName) {
-	return this.mBindingInfos[sName];
-};
-
-/**
- * Bind the element to the referenced entity in the model, which is used as the binding context
- * to resolve bound properties or aggregations of the element itself and all of its children
- * relatively to the given path.
- * If a relative binding path is used, this will be applied whenever the parent context changes.
- * @param {string} sPath the binding path
- * @param {object} [mParameters] map of additional parameters for this binding
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindElement = function(sPath, mParameters) {
-	this.sBindingPath = sPath;
-	this.mBindingParameters = mParameters;
-	this.updateBindingContext();
-	return this;
-};
-
-/**
- * Deprecated, please use bindElement instead.
- * @deprecated
- * @param {string} sPath the binding path
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindContext = function(sPath) {
-	this.bindElement(sPath);
-	return this;
-};
-
-/**
- * Removes the defined binding context of this element, all bindings will now resolve
- * relative to the parent context again.
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.unbindContext = function() {
-	this.sBindingPath = null;
-	this.oBindingContext = null;
-	this.updateBindingContext();
-	return this;
-};
-
-
-/**
- * Bind a property to the model.
- * The Setter for the given property will be called with the value retrieved
- * from the data model.
- * This is a generic method which can be used to bind any property to the
- * model. A control may flag properties in the metamodel with
- * bindable="bindable" to get typed bind methods for a property.
- *
- * @param {string} sName the name of the property
- * @param {object} oBindingInfo the binding information
- * @param {string} oBindingInfo.path the binding path
- * @param {string} [oBindingInfo.model] the model identifier
- * @param {function} [oBindingInfo.formatter] the formatter function or sap.ui.model.Type
- * @param {sap.ui.model.Type} [oBindingInfo.type] the sap.ui.model.Type for this binding
- * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
- * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindProperty = function(sName, oBindingInfo) {
-	var sPath,
-		oFormat,
-		sMode,
-		sModelName,
-		iSeparatorPos,
-		fnFormatter,
-		oType,
-		iSeparatorPos;
-		
-	// old API compatbility (sName, sPath, oFormat, sMode)
-	if (typeof oBindingInfo == "string") {
-		sPath = arguments[1];
-		oFormat = arguments[2];
-		sMode = arguments[3];
-		// if a model separator is found in the path, extract model name and path
-		if (iSeparatorPos > 0) {
-			sModelName = sPath.substr(0, iSeparatorPos);
-			sPath = sPath.substr(iSeparatorPos + 1);
-		}
-		// find out whether formatter or type has been provided
-		if (typeof oFormat == "function") {
-			fnFormatter = oFormat;
-		}
-		else if (oFormat instanceof sap.ui.model.SimpleType) {
-			oType = oFormat;
-		}
-		oBindingInfo = {path: sPath, formatter: fnFormatter, type: oType, model: sModelName, mode: sMode};
-	}
-
-	// if a model separator is found in the path, extract model name and path
-	iSeparatorPos = oBindingInfo.path.indexOf(">");
-	if (iSeparatorPos > 0) {
-		oBindingInfo.model = oBindingInfo.path.substr(0, iSeparatorPos);
-		oBindingInfo.path = oBindingInfo.path.substr(iSeparatorPos + 1);
-	}
-	// if property is already bound, unbind it first
-	if (this.isBound(sName)){
-		this.unbindProperty(sName);
-	}
-	// store binding info to create the binding, as soon as the model is available, or when the model is changed
-	this.mBindingInfos[sName] = oBindingInfo;
-
-	// if the model is already available, create the binding
-	if (this.getModel(oBindingInfo.model)) {
-		this._bindProperty(sName, oBindingInfo);
-	}
-	return this;
-};
-
-sap.ui.core.Element.prototype._bindProperty = function(sName, oBindingInfo) {
-	var oModel = this.getModel(oBindingInfo.model),
-		oContext,
-		oBinding,
-		oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
-		fnFormatter = oBindingInfo.formatter,
-		oType = oBindingInfo.type,
-		sInternalType = oPropertyInfo.type,
-		that = this,
-		fModelChangeHandler = function() {
-			var oValue = oBinding.getValue();
-			if (fnFormatter) {
-				oValue = fnFormatter.apply(that, [oValue]);
-			}
-			if (oType) {
-				try {
-					oValue = oType.formatValue(oValue, sInternalType);
-					oBindingInfo.skipModelUpdate = true;
-					that[oPropertyInfo._sMutator](oValue);
-					oBindingInfo.skipModelUpdate = false;
-				}catch (oException) {
-					if (oException instanceof sap.ui.model.FormatException) {
-						sap.ui.getCore().fireFormatError({element : that, property : sName, type : oType, newValue : oValue, oldValue : that.getProperty(sName), exception: oException});
-					}else {
-						throw oException;
-					}
-				}
-			}else {
-				oBindingInfo.skipModelUpdate = true;
-				that[oPropertyInfo._sMutator](oValue);
-				oBindingInfo.skipModelUpdate = false;
-			}
-		};
-
-	// Only use context for bindings on the primary model
-	oContext = oBindingInfo.model ? null : this.getBindingContext();
-
-	// Create binding object
-	oBinding = oModel.bindProperty(oBindingInfo.path, oContext, oBindingInfo.parameters);
-
-	// Set additional information on the binding info
-	oBindingInfo.skipModelUpdate = false;
-	oBindingInfo.binding = oBinding;
-	oBindingInfo.modelChangeHandler = fModelChangeHandler;
-
-	if (!oBindingInfo.mode || !oModel.isBindingModeSupported(oBindingInfo.mode)) {
-		oBindingInfo.mode = oModel.getDefaultBindingMode();
-	}
-
-	// Attach to the change event of the binding and initialize value
-	if (oBindingInfo.mode != sap.ui.model.BindingMode.OneTime) {
-		oBinding.attachChange(fModelChangeHandler);
-	}
-	fModelChangeHandler();
-};
-
-/**
- * Unbind the property from the model
- *
- * @param {String} sName the name of the property
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.unbindProperty = function(sName){
-	var oBindingInfo = this.mBindingInfos[sName];
-	if(oBindingInfo) {
-		if (oBindingInfo.binding) {
-			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-		}
-		delete this.mBindingInfos[sName];
-	}
-	return this;
-};
-
-/**
- * Update the property in the model if two way data binding mode is enabled
- *
- * @param sName the name of the property to update
- * @param oValue the new value to set for the property in the model
- * @private
- */
-sap.ui.core.Element.prototype.updateModelProperty = function(sName, oValue, oOldValue){
-	if (this.isBound(sName)){
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding = oBindingInfo.binding,
-			oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
-			oType = oBindingInfo.type,
-			sInternalType = oPropertyInfo.type;
-		if (oBindingInfo.mode == sap.ui.model.BindingMode.TwoWay
-				&& oBinding
-				&& !oBindingInfo.skipModelUpdate
-				&& !oBindingInfo.formatter) {
-			if (oType) {
-				try {
-					oValue = oType.parseValue(oValue, sInternalType);
-					oType.validateValue(oValue);
-					oBindingInfo.binding.setValue(oValue);
-					sap.ui.getCore().fireValidationSuccess({element : this, property : sName, type : oType, newValue : oValue, oldValue : oOldValue});
-				}
-				catch (oException) {
-					if (oException instanceof sap.ui.model.ParseException) {
-						sap.ui.getCore().fireParseError({element : this, property : sName, type : oType, newValue : oValue, oldValue : oOldValue, exception: oException});
-					}else if (oException instanceof sap.ui.model.ValidateException) {
-						sap.ui.getCore().fireValidationError({element : this, property : sName, type : oType, newValue : oValue, oldValue : oOldValue, exception: oException});
-					}
-					else {
-						throw oException;
-					}
-				}
-			}else {
-				oBindingInfo.binding.setValue(oValue);
-			}
-		}
-	}
-};
-
-/**
- * Bind an aggregation to the model.
- * The bound aggregation will use the given template, clone it for each element
- * which exists in the bound list and set the appropriate binding context.
- * This is a generic method which can be used to bind any aggregation to the
- * model. A control may flag aggregations in the metamodel with
- * bindable="bindable" to get typed bind methods for an aggregation.
- *
- * @param {string} sName the aggregation to bind
- * @param {object} oBindingInfo the binding info
- * @param {string} oBindingInfo.path the binding path
- * @param {sap.ui.core.Element} oBindingInfo.template the template
- * @param {function} oBindingInfo.factory the factory function
- * @param {sap.ui.model.Sorter} [oBindingInfo.oSorter] the initial sort order (optional)
- * @param {array} [oBindingInfo.filters] the predefined filters (sap.ui.model.Filter) for this aggregation (optional)
- * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindAggregation = function(sName, oBindingInfo) {
-	var sPath,
-		oTemplate,
-		oSorter,
-		aFilters;
-	
-	// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
-	if (typeof oBindingInfo == "string") {
-		sPath = arguments[1];
-		oTemplate = arguments[2];
-		oSorter = arguments[3];
-		aFilters = arguments[4];
-		oBindingInfo = {path: sPath, sorter: oSorter, filters: aFilters};
-		// allow either to pass the template or the factory function as 3rd parameter
-		if (oTemplate instanceof sap.ui.core.Element) {
-			oBindingInfo.template = oTemplate;
-		} else if (typeof oTemplate === "function") {
-			oBindingInfo.factory = oTemplate;
-		}
-	}
-	
-	// if aggregation is already bound, unbind it first
-	if (this.isBound(sName)){
-		this.unbindAggregation(sName);
-	}
-	
-	// check whether a template has been provided, which is required for proper processing of the binding
-	if (!(oBindingInfo.template || oBindingInfo.factory)) {
-		throw new Error("Missing template or factory function for aggregation " + sName + " of control id " + this.getId() + " !");
-	}
-	
-	// if we have a template we will create a factory function
-	if (oBindingInfo.template) {
-		oBindingInfo.factory = function(sId) {
-			return oBindingInfo.template.clone(sId);
-		} 
-	}
-	
-	// store binding info to create the binding, as soon as the model is available, or when the model is changed
-	this.mBindingInfos[sName] = oBindingInfo;
-
-	// if the model is already available create the binding
-	if (this.getModel()) {
-		this._bindAggregation(sName, oBindingInfo);
-	}
-	return this;
-};
-
-sap.ui.core.Element.prototype._bindAggregation = function(sName, oBindingInfo) {
-	var that = this,
-		oBinding,
-		fModelChangeHandler = function(oEvent){
-			var sUpdater = "update" + sName.substr(0,1).toUpperCase() + sName.substr(1);
-			if (that[sUpdater]) {
-				that[sUpdater]();
-			} else {
-				that.updateAggregation(sName);
-			}
-		};
-		if (this.isTreeBinding(sName)) {
-			oBinding = this.getModel().bindTree(oBindingInfo.path, this.getBindingContext(), oBindingInfo.filters, oBindingInfo.parameters);		
-		} else {
-			oBinding = this.getModel().bindList(oBindingInfo.path, this.getBindingContext(), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
-		}
-		
-	oBindingInfo.binding = oBinding;
-	oBindingInfo.modelChangeHandler = fModelChangeHandler;
-
-	oBinding.attachChange(fModelChangeHandler);
-	fModelChangeHandler();
-};
-
-/**
- * Unbind the aggregation from the model
- *
- * @param {String} sName the name of the aggregation
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.unbindAggregation = function(sName){
-	var oBindingInfo = this.mBindingInfos[sName];
-	if(oBindingInfo) {
-		if (oBindingInfo.binding) {
-			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-		}
-		delete this.mBindingInfos[sName];
-	}
-	return this;
-};
-
-/**
- *  This method is used internally and should only be overridden by a tree control which utilizes the tree binding.
- *  In this case and if the aggregation is a tree node the overridden method should then return true.
- *  If true is returned the tree binding will be used instead of the list binding.
- *
- *  @param {string} sName the aggregation to bind (e.g. nodes for a tree control)
- *  @return {boolean} whether tree binding should be used or list binding. Default is false. Override method to change this behavior.
- *
- *  @protected
- */
-sap.ui.core.Element.prototype.isTreeBinding = function(sName) {
-	return false;
-};
-
-/**
- * Create bindings in case the model was not available at the time
- * bindProperty or bindAggregation was called
- *
- * @private
- */
-sap.ui.core.Element.prototype.updateBindings = function(bUpdateAll, sModelName, bRecreate) {
-	var that = this;
-
-	// create property and aggregation bindings if they don't exist yet
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		if (that.getModel(oBindingInfo.model) && (bUpdateAll || (oBindingInfo.model == sModelName && (!oBindingInfo.binding || oBindingInfo.binding.getModel() !== that.getModel(sModelName))))) {
-			if ( bRecreate && oBindingInfo.binding ) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				delete oBindingInfo.binding;
-			}
-			if (!oBindingInfo.binding) {
-				if (oBindingInfo.factory) {
-					that._bindAggregation(sName, oBindingInfo);
-				} else {
-					that._bindProperty(sName, oBindingInfo);
-				}
-			}
-		}
-	});
-	// also update bindings in all child elements
-	jQuery.each(this.mAggregations, function(sName, oAggregation) {
-		if (oAggregation instanceof sap.ui.core.Element) {
-			oAggregation.updateBindings(bUpdateAll, sModelName, bRecreate);
-		} else if (oAggregation instanceof Array) {
-			for (var i = 0; i < oAggregation.length; i++) {
-				oAggregation[i].updateBindings(bUpdateAll, sModelName, bRecreate);
-			}
-		}
-	});
-
-};
-
-/**
- * Generic method which is called, whenever an aggregation binding is changed.
- * This method deletes all elements in this aggregation and recreates them
- * according to the data model.
- * In case a control needs special handling for a aggregation binding, it can create
- * a typed update-method (e.g. "updateRows") which will be used instead of the
- * default behaviour.
- *
- * @private
- */
-sap.ui.core.Element.prototype.updateAggregation = function(sName) {
-	var oBindingInfo = this.mBindingInfos[sName],
-		oBinding = oBindingInfo.binding,
-		fnFactory = oBindingInfo.factory,
-		oAggregationInfo = this.getMetadata().getJSONKeys()[sName],  // TODO fix handling of hidden aggregations
-		oClone,
-		that = this;
-	this[oAggregationInfo._sDestructor]();
-	if (this.isTreeBinding(sName)) {
-		var iNodeIndex = 0,
-			update = function(aContexts, fnFactory, oBinding, oParent){
-			jQuery.each(aContexts, function(iIndex, oContext) {
-				var sId = that.getId() + "-" + iNodeIndex++;
-				oClone = fnFactory(sId, oContext);
-				oClone.setBindingContext(oContext);
-				oParent[oAggregationInfo._sMutator](oClone); // also sets the Parent
-				update(oBinding.getNodeContexts(oContext), fnFactory, oBinding, oClone);
-			});
-		};
-		update(oBinding.getRootContexts(), fnFactory, oBinding, this);
-	} 
-	else {
-		jQuery.each(oBinding.getContexts(), function(iIndex, oContext) {
-			var sId = that.getId() + "-" + iIndex;
-			oClone = fnFactory(sId, oContext);
-			oClone.setBindingContext(oContext);
-			that[oAggregationInfo._sMutator](oClone);
-		});
-	}
-};
-
-/**
- * Find out whether a property or aggregation is bound
- *
- * @param {String} sName the name of the property or aggregation
- * @return {boolean} whether a binding exists for the given name
- * @public
- */
-sap.ui.core.Element.prototype.isBound = function(sName){
-	return (sName in this.mBindingInfos);
-};
-
-/**
- * Get the binding object for a specific aggregation/property
- *
- * @param {String} sName the name of the property or aggregation
- * @return {Binding} the binding for the given name
- * @public
- */
-sap.ui.core.Element.prototype.getBinding = function(sName){
-	return this.mBindingInfos[sName] && this.mBindingInfos[sName].binding;
-};
-
-/**
- * Get the binding path for a specific aggregation/property
- *
- * @param {String} sName the name of the property or aggregation
- * @return {String} the binding path for the given name
- * @protected
- */
-sap.ui.core.Element.prototype.getBindingPath = function(sName){
-	return this.mBindingInfos[sName] && this.mBindingInfos[sName].path;
-};
-
-/**
- * Set the binding context for this element.
- *
- * @param {Object} oContext the new binding context for this element
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.setBindingContext = function(oContext){
-	this.oBindingContext = oContext;
-	this.updateBindingContext();
-	return this;
-};
-
-/**
- * Update the binding context in this element and all children
- * @private
- */
-sap.ui.core.Element.prototype.updateBindingContext = function(bSkipLocal){
-
-	var oModel = this.getModel(),
-		oParentContext,
-		that = this;
-
-	if (this.sBindingPath && !bSkipLocal) {
-		if (this.oParent && oModel == this.oParent.getModel()) {
-			oParentContext= this.oParent.getBindingContext(); 
-		}
-		if (oModel) {
-			oModel.createBindingContext(this.sBindingPath, oParentContext, this.mBindingParameters, function(oContext) {
-				that.oBindingContext = oContext;
-				that.updateBindingContext(true);
-			});
-		} else {
-			this.oBindingContext = undefined;
-		}
-		return;
-	}
-
-	var oContext = this.getBindingContext();
-
-	// update context in existing bindings, but only for the primary model
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		var oBinding = oBindingInfo.binding;
-		if (oBinding && oBinding.getModel() == oModel) {
-			oBinding.setContext(oContext);
-		}
-	});
-
-	// also update context in all child elements
-	jQuery.each(this.mAggregations, function(sName, oAggregation) {
-		if (oAggregation instanceof sap.ui.core.Element) {
-			oAggregation.updateBindingContext();
-		} else if (oAggregation instanceof Array) {
-			for (var i = 0; i < oAggregation.length; i++) {
-				oAggregation[i].updateBindingContext();
-			}
-		}
-	});
-
-};
-
-
-/**
- * Get the binding context of this element
- * If the element does not have a binding context set on itself and has no own Model set, it will ask
- * the parent element for its binding context
- *
- * @return {Object} the binding context of this element
- * @public
- */
-sap.ui.core.Element.prototype.getBindingContext = function(){
-	var oModel = this.getModel();
-	
-	if (this.oBindingContext) {
-		return this.oBindingContext;
-	} else if (oModel && this.oParent && oModel != this.oParent.getModel()) {
-		return undefined;
-	} else { 
-		return this.oParent && this.oParent.getBindingContext();
-	}
-};
-
-/**
- * Set the model for databinding
- * @param {sap.ui.model.Model} oModel
- * @param {string} [sName]
- * @return {sap.ui.core.Element} <code>this</code> to allow method chaining
- * @public
- */
-sap.ui.core.Element.prototype.setModel = function(oModel, sName) {
-	if ( oModel !== this.oModels[sName] ) { 
-		this.oModels[sName] = oModel;
-		// update binding context, for primary model only
-		if (!sName){this.updateBindingContext();}
-		// if the model changes, all bindings have to be recreated (at least those to the previous model)
-		this.updateBindings(false, sName, true);
-	}
-	return this;
-};
-
-/**
- * Get the model for databinding
- * If the element does not have a model set on itself, it will ask
- * the parent element for the model to use
- * @param {string} [sName]
- * @return {sap.ui.model.Model} oModel
- * @public
- */
-sap.ui.core.Element.prototype.getModel = function(sName) {
-	return this.oModels[sName] || (this.oParent && this.oParent.getModel(sName));
-};
-
-/**
- * Check if a Model is set to the Element or to one of its Parents (including UIArea and Core)
- * @return {boolean} true or false
- * @public
- */
-sap.ui.core.Element.prototype.hasModel = function() {
-	if (!jQuery.isEmptyObject(this.oModels) || (this.oParent && this.oParent.hasModel())) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
-/**
- * Clones a tree of elements starting with the element on which clone is called first (root element).
- * 
- * The ids within the newly created clone tree are derived from the original ids by appending
- * the given <code>sIdSuffix</code> (if no suffix is given, one will be created; it will be 
- * unique across multiple clone calls).
- *  
- * For each cloned element the following settings are cloned based on the metadata of the element:
- * <ul>
- * <li>all properties; the values are used by reference, they are not cloned
- * <li>all aggregated controls; they are all cloned recursively using the same <code>sIdSuffix</code>
- * <li>all associated controls; when an association points to a control inside the cloned element tree,
- *     then the cloned association will be modified to that it points to the clone of the target element.
- *     When the association points to a control outside of the cloned element tree, then its 
- *     target won't be changed.</li>  
- * <li>all models set via setModel(); used by reference </li>
- * <li>all property and aggregation bindings; the pure binding infos (path, model name) are 
- *     cloned, but all other information like template control or factory function, 
- *     data type or formatter function are copied by reference. The bindings themselves 
- *     are created anew as they are specific for the combination (element, property, model).
- *     As a result, any later changes to a binding of the original element are not reflected 
- *     in the clone, but changes to e.g the type or template etc. are.</li> 
- * </ul>
- *
- * Each clone is created by first collecting the above mentioned settings and then creating 
- * a new instance with the normal constructor function. As a result, any side effects of 
- * mutator methods (setProperty etc.) or init hooks are repeated during clone creation. 
- * There is no need to override <code>clone()</code> just to reproduce these internal settings!
- * 
- * Custom controls however can override <code>clone()</code> to implement additional clone steps. 
- * They usually will first call <code>clone()</code> on the super class and then modify the   
- * returned clone accordingly.  
- * 
- * Applications <b>must never provide</b> the second parameter <code>aLocaleIds</code>. 
- * It is determined automatically for the root element (and its non-existance also serves as 
- * an indicator for the root element). Specifying it will break the implementation of <code>clone()</code>. 
- * 
- * @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
- * @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
- * @return {sap.ui.core.Element} reference to the newly created clone
- * @protected
- */
+/** Clone delegates
+* @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
+* @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+* @return {sap.ui.base.ManagedObject} reference to the newly created clone
+* @protected
+*/
 sap.ui.core.Element.prototype.clone = function(sIdSuffix, aLocalIds){
-	// if no id suffix has been provided use a generated UID
-	if (!sIdSuffix) {
-		sIdSuffix = sap.ui.core.ElementMetadata.uid("clone") || jQuery.sap.uid();
-	}
-	// if no local ID array has been passed, collect IDs of all contained elements to
-	// be able to properly adapt associations, which are within the cloned element hierarchy
-	if (!aLocalIds) {
-		aLocalIds = jQuery.map(this.findElements(true), function(oElement) {return oElement.getId();});
-	}
 
-	var oMetadata = this.getMetadata(),
-		oClass = oMetadata._oClass,
-		sId = this.getId() + "-" + sIdSuffix,
-		mSettings = {},
-		mProps = this.mProperties,
-		sKey,
-		oClone;
-
-	// Clone properties (only those with non-default value)
-	for(sKey in mProps) {
-		if ( mProps.hasOwnProperty(sKey) ) {
-			mSettings[sKey] = mProps[sKey];
+	var oClone = sap.ui.base.ManagedObject.prototype.clone.apply(this, arguments);
+	// Clone delegates
+	for ( var i = 0; i < this.aDelegates.length; i++) {
+		if (this.aDelegates[i].bClone) {
+			oClone.aDelegates.push(this.aDelegates[i]);
 		}
 	}
-	
-	// Clone aggregations
-	jQuery.each(this.mAggregations, function(sName, oAggregation) {
-		if (oMetadata.hasAggregation(sName)) {
-			if (oAggregation instanceof sap.ui.core.Element) {
-				mSettings[sName] = oAggregation.clone(sIdSuffix, aLocalIds);
-			} else if (jQuery.isArray(oAggregation)) {
-				mSettings[sName] = [];
-				for (var i = 0; i < oAggregation.length; i++) {
-					mSettings[sName].push(oAggregation[i].clone(sIdSuffix, aLocalIds));
-				}
-			} else {
-				// must be an alt type
-				mSettings[sName] = oAggregation;
-			}
+	for ( var i = 0; i < this.aBeforeDelegates.length; i++) {
+		if (this.aBeforeDelegates[i].bClone) {
+			oClone.aBeforeDelegates.push(this.aBeforeDelegates[i]);
 		}
-	});
-
-	// Clone associations
-	jQuery.each(this.mAssociations, function(sName, oAssociation) {
-		// Check every associated ID against the ID array, to make sure associations within
-		// the template are properly converted to associations within the clone
-		if (jQuery.isArray(oAssociation)) {
-			oAssociation = oAssociation.slice(0);
-			for (var i = 0; i < oAssociation.length; i++) {
-				if (jQuery.inArray(oAssociation[i], aLocalIds) >= 0) {
-					oAssociation[i] += "-" + sIdSuffix;
-				}
-			}
-		} else if (jQuery.inArray(oAssociation, aLocalIds) >= 0) {
-			oAssociation += "-" + sIdSuffix;
-		}
-		mSettings[sName] = oAssociation;
-	});
-
-	// Create clone instance
-	oClone = new oClass(sId, mSettings);
-
-	// Clone events
-	jQuery.each(this.mEventRegistry, function(sName, aListeners) {
-		oClone.mEventRegistry[sName] = aListeners.slice();
-	});
-
-	// Clone models
-	jQuery.each(this.oModels, function(sName, oModel) {
-		oClone.setModel(oModel, sName);
-	});
-
-	// Clone bindings
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
-		delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
-		if (oBindingInfo.factory) {
-			oClone.bindAggregation(sName, oCloneBindingInfo);
-		} else {
-			oClone.bindProperty(sName, oCloneBindingInfo);
-		}
-	});
+	}
 
 	return oClone;
 };
 
 /**
- * Maps the given aggregation with name <code>sOldAggrName</code>
- * on aggregation <code>sNewAggrName</code> (When calling an accessor function
- * of the old aggregation the call is forwarded to the corresponding accessor
- * function of the new aggregation).
- *
- * This function should help to perform a smooth transition for users of a control
- * when an aggregation must be renamed.
- *
- * Both aggregations must have a mutiple cardinality (0..n) and must have the same
- * aggregated type!
- *
- * @param {object}
- *			oPrototype Control/Element prototype for which a mapping should be defined
- * @param {string}
- *			sOldAggrName Name of the old deprecated aggregation
- * @param {string}
- *			sNewAggrName Name of the new aggregation
- * @deprecated
- */
-sap.ui.core.Element._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
-	var mKeys = oPrototype.getMetadata().getJSONKeys(); // TODO fix handling of hidden entitites?
-	var oOldAggrInfo = mKeys[sOldAggrName];
-	var oNewAggrInfo = mKeys[sNewAggrName];
-
-	//Check whether aggregations exist and are multiple.
-	if(!oOldAggrInfo || !oNewAggrInfo || oOldAggrInfo._iKind != 2 || oNewAggrInfo._iKind != 2) {
-		return;
-	}
-
-	var mFunc = {"insert" : true, "add" : true, "remove" : true, "removeAll" : false, "indexOf" : true, "destroy" : false, "get" : false};
-
-	function method(sPrefix, sName) {
-		return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-	}
-
-	function fAggrDelegator(sFuncName){
-		return function() {
-			return this[sFuncName].apply(this, arguments);
-		};
-	}
-
-	for(var sPrefix in mFunc){
-		var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo._sName);
-		var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo._sName);
-		oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
-	}
+* Searches and returns an array of child elements and controls which are
+* referenced within an aggregation or aggregations of child elements/controls.
+* This can be either done recursive or not.
+* <br>
+* <b>Take care: this operation might be expensive.</b>
+* @param {boolean}
+*          bRecursive true, if all nested children should be returned.
+* @return {sap.ui.core.Element[]} array of child elements and controls
+* @public
+*/
+sap.ui.core.Element.prototype.findElements = function(bRecursive) {
+	var aControls = sap.ui.base.ManagedObject.prototype.findAggregatedObjects.call(this, bRecursive);
+	return aControls;
 };
 
 /**
- * Searches and returns an array of child elements and controls which are
- * referenced within an aggregation or aggregations of child elements/controls.
- * This can be either done recursive or not.
- * <br>
- * <b>Take care: this operation might be expensive.</b>
- * @param {boolean}
- *          bRecursive true, if all nested children should be returned.
- * @return {sap.ui.core.Element[]} array of child elements and controls
+ * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints 
+ * for this control when it is used inside a layout.
+ *
+ * @function
+ * @name sap.ui.core.Element.prototype.setLayoutData
  * @public
  */
-sap.ui.core.Element.prototype.findElements = function(bRecursive) {
-
-	var aControls = [];
-	function fFindElements(oControl) {
-		for (var n in oControl.mAggregations) {
-			var a = oControl.mAggregations[n];
-			if (jQuery.isArray(a)) {
-				for (var i = 0; i < a.length; i++) {
-					aControls.push(a[i]);
-					if (bRecursive) {
-						fFindElements(a[i]);
-					}
-				}
-			} else if (a instanceof sap.ui.core.Element) {
-				aControls.push(a);
-				if (bRecursive) {
-					fFindElements(a);
-				}
-			}
-		}
+sap.ui.core.Element.prototype.setLayoutData = function(oLayoutData) {
+	this.setAggregation("layoutData", oLayoutData, true); // No invalidate because layout data changes does not affect the control / element itself
+	var oLayout = this.getParent();
+	if(oLayout){
+		var oEvent = jQuery.Event("LayoutDataChange");
+		oEvent.srcControl = this;
+		oLayout._handleEvent(oEvent);
 	}
-	fFindElements(this);
-	return aControls;
-
+	return this;
 };
 
+/**
+ * Returns the {@link sap.ui.core.LayoutData} defining the layout constraints 
+ * for this control when it is used inside a layout.
+ *
+ * @function
+ * @name sap.ui.core.Element.prototype.getLayoutData
+ * @public
+ */
+
+/**
+ * Allows the parent of a control to enhance the aria information while rendering
+ *
+ * This function is called in RenderManager writeAccessibilityState for the parent
+ * of the control if the function is implemented by the parent.
+ *
+ * @function
+ * @name sap.ui.core.Element.prototype.enhanceAccessibilityState
+ * @param {element} oElement the control/element for taht aria properties are rendered
+ * @param {array} mAriaProps array of aria properties
+ * @return {array} array of aria properties
+ * @protected
+ * @abstract
+ */
+
 }; // end of sap.ui.core.Element
+
+if ( !jQuery.sap.isDeclared('sap.ui.core.Control') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides base class sap.ui.core.Control for all controls
+jQuery.sap.declare("sap.ui.core.Control");
 
 //jQuery.sap.require("sap.ui.core.RenderManager"); // cyclic
 
@@ -22758,19 +27897,18 @@ sap.ui.core.Element.prototype.findElements = function(bRecursive) {
  * @extends sap.ui.core.Element
  * @abstract
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @name sap.ui.core.Control
  */
 sap.ui.core.Element.extend("sap.ui.core.Control", /* @lends sap.ui.core.Control */ {
 
 	metadata : {
+		stereotype : "control",
 		"abstract" : true,
-		publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getLayoutData", "setLayoutData"],
+		publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent"],
 		library: "sap.ui.core",
 		properties : {},
-		aggregations : {
-			layoutData : {name : "layoutData", type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"}
-		},
+		aggregations : {},
 		associations : {},
 		events : {}
 	},
@@ -22841,7 +27979,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.core.CustomStyleClassSupport') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides helper sap.ui.core.CustomStyleClassSupport
@@ -23358,22 +28496,28 @@ sap.ui.core.Control.prototype.onselectstart = function (oBrowserEvent) {
  */
 
 /**
- * Function is called before the rendering of the control is started.<br/>
- * Override this hook as you please.
+ * Function is called before the rendering of the control is started.
+ *
+ * Applications must not call this hook method directly, it is called by the framework.
+ *
+ * Subclasses of Control should override this hook to implement any necessary actions before the rendering.
  *
  * @function
  * @name sap.ui.core.Control.prototype.onBeforeRendering
- * @public
+ * @protected
  */
 //sap.ui.core.Control.prototype.onBeforeRendering = function() {};
 
 /**
- * Function is called when the rendering of the control is completed. <br/>
- * Override this hook as you please.
+ * Function is called when the rendering of the control is completed.
+ *
+ * Applications must not call this hook method directly, it is called by the framework.
+ *
+ * Subclasses of Control should override this hook to implement any necessary actions after the rendering.
  *
  * @function
  * @name sap.ui.core.Control.prototype.onAfterRendering
- * @public
+ * @protected
  */
 //sap.ui.core.Control.prototype.onAfterRendering = function() {};
 
@@ -23386,23 +28530,6 @@ sap.ui.core.Control.prototype.getIdForLabel = function () {
 	return this.getId();
 };
 
-/**
- * Returns the {@link sap.ui.core.LayoutData} defining the layout constraints 
- * for this control when it is used inside a layout.
- *
- * @function
- * @name sap.ui.core.Control.prototype.getLayoutData
- * @public
- */
-
-/**
- * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints 
- * for this control when it is used inside a layout.
- *
- * @function
- * @name sap.ui.core.Control.prototype.setLayoutData
- * @public
- */
 
 }; // end of sap.ui.core.Control
 
@@ -23410,7 +28537,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.core.FocusHandler') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.FocusHandler
@@ -23647,7 +28774,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.core.ResizeHandler') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.ResizeHandler
@@ -23776,8 +28903,9 @@ jQuery.sap.declare("sap.ui.core.ResizeHandler");
 		jQuery.each(this.aResizeListeners, function(index, oResizeListener){
 			if(oResizeListener){
 				var oDomRef = oResizeListener.oDomRef;
-				if (oDomRef.offsetWidth != oResizeListener.iWidth ||
-						oDomRef.offsetHeight != oResizeListener.iHeight) {
+				if ( jQuery.contains(document.documentElement, oDomRef) && //check that domref is still active 
+						(oDomRef.offsetWidth != oResizeListener.iWidth ||
+						oDomRef.offsetHeight != oResizeListener.iHeight)) {
 					oResizeListener.iWidth = oDomRef.offsetWidth;
 					oResizeListener.iHeight = oDomRef.offsetHeight;
 					var oEvent = jQuery.Event("resize");
@@ -23826,7 +28954,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.core.RenderManager') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the render manager sap.ui.core.RenderManager
@@ -23836,7 +28964,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.encoder') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides encoding functions for JavaScript.
@@ -23980,7 +29108,7 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 	/**
 	 * RegExp and escape function for URL escaping
 	 */
-	var rURL = /[\x00-\x29\x2b\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
+	var rURL = /[\x00-\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
 		mURLLookup = {};
 
 	var fURL = function(sChar) {
@@ -24285,7 +29413,9 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 			jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 			jQuery.sap.assert(window.html && window.html.sanitize, "Sanitizer should have been loaded");
 		}
-		return window.html.sanitize(sHTML, mOptions.uriRewriter, mOptions.tokenPolicy);
+		
+		var oTagPolicy = mOptions.tagPolicy || window.html.makeTagPolicy(mOptions.uriRewriter, mOptions.tokenPolicy);
+		return window.html.sanitizeWithPolicy(sHTML, oTagPolicy);
 	}
 	
 	/**
@@ -24319,7 +29449,7 @@ jQuery.sap.declare("jquery.sap.encoder", false);
  *
  * @extends sap.ui.base.Object
  * @author Jens Pflueger
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */
@@ -24334,7 +29464,7 @@ sap.ui.core.RenderManager.prototype = jQuery.sap.newObject(sap.ui.base.Object.pr
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
 						  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
-						  "addStyle", "writeStyles", "writeAccessibilityState",
+						  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
 						  "getConfiguration", "getHTML"];
 	var aNonRendererMethods = ["render", "flush", "destroy"];
 
@@ -24441,10 +29571,12 @@ sap.ui.core.RenderManager.prototype.renderControl = function(oControl) {
 	jQuery.sap.measure.resume(oControl.getId()+"---renderControl");
 
 	// notify the control that it will be rendered soon (e.g. detached from DOM)
+	this._bLocked = true;
 	var oEvent = jQuery.Event("BeforeRendering");
 	// store the element on the event (aligned with jQuery syntax)
 	oEvent.srcControl = oControl;
 	oControl._handleEvent(oEvent);
+	this._bLocked = false;
 
 	// unbind any generically bound browser event handlers
 	var aBindings = oControl.aBindParameters;
@@ -24529,6 +29661,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 		for (var i = 0, size = aRenderedControls.length; i < size; i++) {
 			var oControl = aRenderedControls[i];
 			if (oControl.bOutput) {
+				oRM._bLocked = true;
 				var oEvent = jQuery.Event("AfterRendering");
 				// store the element on the event (aligned with jQuery syntax)
 				oEvent.srcControl = oControl;
@@ -24537,6 +29670,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				oControl._handleEvent(oEvent);
 				// end performance measurement
 				jQuery.sap.measure.end(oControl.getId()+"---AfterRendering");
+				oRM._bLocked = false;
 			}
 		}
 
@@ -24569,7 +29703,6 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 		}
 	};
 
-
 	/**
 	 * Renders the content of the rendering buffer into the provided DOMNode.
 	 *
@@ -24601,15 +29734,17 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 			jQuery.sap.log.info("Flush must not be called from control renderers. Call ignored.", null, this);
 			return;
 		}
+		
+		var RenderManager = sap.ui.core.RenderManager;
 
 		// preserve HTML content before flushing HTML into target DOM node
 		if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
-			sap.ui.core.RenderManager.preserveContent(oTargetDomNode);
+			RenderManager.preserveContent(oTargetDomNode);
 		}
 
 		var oStoredFocusInfo = storeCurrentFocus();
 
-		var vHTML = this._prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
+		var vHTML = RenderManager.prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
 
 		if(this._fPutIntoDom){
 			//Case when render function was called
@@ -24619,7 +29754,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				//TODO It would be enough to loop over the controls for which renderControl was initially called but for this
 				//we have to manage an additional array. Rethink about later.
 				var oldDomNode = this.aRenderedControls[i].getDomRef();
-				if(oldDomNode && !sap.ui.core.RenderManager.isPreservedContent(oldDomNode)) {
+				if(oldDomNode && !RenderManager.isPreservedContent(oldDomNode)) {
 					jQuery(oldDomNode).remove();
 				}
 			}
@@ -24642,45 +29777,12 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				jQuery(oTargetDomNode).append(vHTML); // Append the HTML into the given DOM Node
 			}
 		}
-
-		var bUseDummy = false;
-		if(jQuery.browser.safari){
-			var aVersion = jQuery.browser.version.split(".");
-			if (parseInt(aVersion[0], 10) < 534 || (parseInt(aVersion[0], 10) == 534 && parseInt(aVersion[1],10) < 5)) {
-				bUseDummy = true;
-			}
-		}
-
-		if(bUseDummy){
-			// in safari we must wait until the CSS are loaded and applied (fixed in Safari 5.1)
-			var jDummy = jQuery("<div id=\"sap-ui-DummyCSSCheck\" class=\"sapUiCssCheck\" style=\"visibility:hidden;position:absolute;height:100px;width:100px;top:-150px;\"></div>");
-			jQuery(document.body).append(jDummy);
-			this._finalizeIfReady(this.aRenderedControls, oStoredFocusInfo);
-		}else{
-			finalizeRendering(this, this.aRenderedControls, oStoredFocusInfo);
-		}
+		
+		finalizeRendering(this, this.aRenderedControls, oStoredFocusInfo);
 
 		this.aRenderedControls = [];
 		this.aBuffer = [];
 		this.aStyleStack = [{}];
-	};
-
-	/**
-	 * Safari applies CSS files only after it finished rendering. So logic based on CSS property onAferRendering
-	 * goes wrong. Therefore we have to wait until the CSS is applied before we call onAfterRendering.
-	 * This is made using a dummy DIV and checking the border defined in Core global.CSS
-	 * We repeat the check until it's OK and the call the onAfterRendering
-	 * @private
-	 */
-	sap.ui.core.RenderManager.prototype._finalizeIfReady = function(aRenderedControls, oStoredFocusInfo){
-		if((jQuery.sap.domById("sap-ui-DummyCSSCheck").offsetHeight - jQuery.sap.domById("sap-ui-DummyCSSCheck").clientHeight) == 20 ){
-			//CSS loaded - fine
-			jQuery.sap.byId("sap-ui-DummyCSSCheck").remove();
-			finalizeRendering(this, aRenderedControls, oStoredFocusInfo);
-		}else{
-			//CSS still not loaded - try again
-			jQuery.sap.delayedCall(1, this, "_finalizeIfReady", [aRenderedControls, oStoredFocusInfo]);
-		}
 	};
 
 	/**
@@ -24703,13 +29805,9 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 			jQuery.sap.log.info("Render must not be called from control renderers. Call ignored.", null, this);
 			return;
 		}
-
-		if(jQuery.browser.safari){
-			// for Safari CSS bug append CSS class at the end
-			if (!sap.ui.core.RenderManager.initialized) {
-				jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath("sap.ui.core.", "/") + "SafariCheck.css");
-			}
-			sap.ui.core.RenderManager.initialized = true;
+		if(this._bLocked){
+			jQuery.sap.log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
+			return;
 		}
 
 		// Reset the buffer before rendering
@@ -24804,7 +29902,7 @@ sap.ui.core.RenderManager.getRenderer = function(oControl) {
  * <ol>
  * <li>1. "SHIV": create each HTML5 tag once in the window document to make IE8 aware of it
  * <li>2. "INNERSHIV": IE8 fails when using innerHTML in conjunction with HTML5 tags for a DOM element __not__ part of the document.
- *        _prepareHTML5 uses a dummy DOM element to convert the innerHTML to a set of DOM nodes first.
+ *        prepareHTML5 uses a dummy DOM element to convert the innerHTML to a set of DOM nodes first.
  * </ol>
  * @static
  * @private
@@ -24815,7 +29913,7 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 
 		var aTags = [ "article", "aside", "audio", "canvas", "command", "datalist", "details",
 				"figcaption", "figure", "footer", "header", "hgroup", "keygen", "mark", "meter", "nav",
-				"output", "progress", "rp", "rt", "ruby", "section", "source", "summary", "time", "video", "wbr" ];
+				"output", "progress", "rp", "rt", "ruby", "section", "source", "summary", "template", "time", "video", "wbr" ];
 
 		// 1. SHIV, create each HTML5 element once to make IE8 recognize it
 		// see http://paulirish.com/2011/the-history-of-the-html5-shiv/ for an explanation
@@ -24827,7 +29925,7 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 		// see http://jdbartlett.com/innershiv/ for an explanation of the matter
 		var rhtmltags = new RegExp("<(" + aTags.join("|") + ")(\\s|>)", "i");
 		var d = null;
-		sap.ui.core.RenderManager.prototype._prepareHTML5 = function(sHTML) {
+		sap.ui.core.RenderManager.prepareHTML5 = function(sHTML) {
 			if ( sHTML && sHTML.match(rhtmltags) ) {
 				if(!d){
 					d = document.createElement('div');
@@ -24850,12 +29948,29 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 
 		jQuery.sap.log.info("no IE8 HTML5 support required");
 
-		sap.ui.core.RenderManager.prototype._prepareHTML5 = function(sHTML) {
+		sap.ui.core.RenderManager.prepareHTML5 = function(sHTML) {
 			return sHTML;
 		};
 	}
 };
 
+/**
+ * Helper to enforce a repaint for a given dom node.
+ * 
+ * Introduced to fix repaint issues in Webkit browsers, esp. Chrome.
+ * @param {DOMNode} vDomNode a DOM node or ID of a DOM node
+ * 
+ * @private
+ */
+sap.ui.core.RenderManager.forceRepaint = function(vDomNode) {
+	var oDomNode = typeof vDomNode == "string" ? jQuery.sap.domById(vDomNode) : vDomNode;
+	if ( oDomNode ) {
+		jQuery.sap.log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
+		oDomNode.style.display = "none";
+		oDomNode.offsetHeight;
+		oDomNode.style.display = "";
+	}
+};
 
 //#################################################################################################
 // Methods for preserving HTML content
@@ -24870,7 +29985,7 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 		var $preserve = jQuery("#"+ID_PRESERVE_AREA);
 		if ($preserve.length === 0){
 			$preserve = jQuery("<DIV/>",{role:"application",id:ID_PRESERVE_AREA}).
-				addClass("sapUiHidden").
+				addClass("sapUiHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
 				appendTo(document.body);
 		}
 		return $preserve;
@@ -24897,6 +30012,8 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 	 */
 	sap.ui.core.RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
 		jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
+
+		sap.ui.getCore().getEventBus().publish("sap.ui","__preserveContent", { domNode : oRootNode});
 
 		var $preserve = getPreserveArea();
 
@@ -25173,6 +30290,23 @@ sap.ui.core.RenderManager.prototype.writeElementData = function(oElement) {
 	if(sId) {
 		this.writeAttribute("id", sId).writeAttribute("data-sap-ui", sId);
 	}
+	var aData = oElement.getCustomData();
+	var l = aData.length;
+	for (var i = 0; i < l; i++) {
+		var oData = aData[i];
+		if (oData.getWriteToDom()) { // application wants this to be written to the DOM, but there are some conditions for this to work
+			var key = oData.getKey();
+			if (typeof oData.getValue() === "string") {
+				if ((sap.ui.core.ID.isValid(key)) && (key.indexOf(":") == -1) && (key.indexOf("sap-ui") !== 0)) {
+					this.writeAttributeEscaped("data-" + key, oData.getValue());
+				} else { // error case
+					jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the key is not valid (must be a valid sap.ui.core.ID without any colon and may not start with 'sap-ui').");
+				}
+			} else { // error case: non-string value
+				jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the value is not a string.");
+			}
+		}
+	}
 	return this;
 };
 
@@ -25208,9 +30342,9 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
 /**
  * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
  * based on the element's properties and associations.
- * 
+ *
  * The ARIA properties are only written when the accessibility feature is activated in the UI5 configuration.
- * 
+ *
  * The following properties/values to ARIA attribute mappings are done (if the element does have such properties):
  * <code>editable===false</code> => <code>aria-readonly="true"</code>
  * <code>enabled===false</code> => <code>aria-disabled="true"</code>
@@ -25218,24 +30352,29 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
  * <code>required===true</code> => <code>aria-required="true"</code>
  * <code>selected===true</code> => <code>aria-selected="true"</code>
  * <code>checked===true</code> => <code>aria-checked="true"</code>
- * 
+ *
  * Additionally the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
  * the id lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
- * 
+ *
  * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
  * have to check whether it fullfills their requirements. In case of problems (for example the RadioButton has a
  * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
  * result of this function can be influenced via the parameter <code>mProps</code> as described below.
- * 
+ *
  * The parameter <code>mProps</code> can be used to either provide additional attributes which should be added and/or
  * to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended automatically to the keys
  * (Exception: Attribute 'role' does not get the prefix 'aria-').
- * 
+ *
  * Examples:
  * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the precense or absence of
  * the visibility property.
  * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the precense
  * or absence of the visibility property.
+ * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
+ * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code> attributes
+ * the following format can be used:
+ * <code>{describedby : {value: "id1 id2", append: true}}</code> => <code>aria-describedby="ida idb id1 id2"</code> (assuming that "ida idb"
+ * is the auto-generated part based on the association <code>ariaDescribedBy</code>).
  *
  * @param {sap.ui.core.Element}
  *            [oElement] the element whose accessibility state should be rendered
@@ -25248,25 +30387,25 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 	if(!sap.ui.getCore().getConfiguration().getAccessibility()){
 		return this;
 	}
-	
+
 	if(arguments.length == 1 && !(oElement instanceof sap.ui.core.Element)) {
 		mProps = oElement;
 		oElement = null;
 	}
-	
+
 	var mAriaProps = {};
-	
+
 	if(oElement != null) {
 		var oMetadata = oElement.getMetadata();
 		oMetadata._enrichChildInfos();
-		
+
 		function addACCForProp(sElemProp, sACCProp, oVal){
 			var oProp = oMetadata.getAllProperties()[sElemProp];
 			if(oProp && oElement[oProp._sGetter]() === oVal){
 				mAriaProps[sACCProp] = "true";
 			}
 		}
-		
+
 		function addACCForAssoc(sElemAssoc, sACCProp){
 			var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
 			if(oAssoc && oAssoc.multiple){
@@ -25276,7 +30415,7 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 				}
 			}
 		}
-		
+
 		addACCForProp("editable", "readonly", false);
 		addACCForProp("enabled", "disabled", false);
 		addACCForProp("visible", "hidden", false);
@@ -25286,12 +30425,38 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 		addACCForAssoc("ariaDescribedBy", "describedby");
 		addACCForAssoc("ariaLabelledBy", "labelledby");
 	}
-	
+
 	if(mProps){
+		function checkValue(v){
+			var type = typeof(v);
+			return v === null || v === "" || type === "number" || type === "string" || type === "boolean";
+		}
+		
+		var prop = {};
+		var x, val, type, autoVal;
+		
+		for(x in mProps){
+			val = mProps[x];
+			if(checkValue(val)){
+				prop[x] = val;
+			}else if(typeof(val) === "object" && checkValue(val.value)){
+				autoVal = "";
+				if(val.append && (x === "describedby" || x === "labelledby")){
+					autoVal = mAriaProps[x] ? mAriaProps[x]+" " : "";
+				}
+				prop[x] = autoVal + val.value;
+			}
+		}
+		
 		//The auto-generated values above can be overridden or reset (via null)
-		jQuery.extend(mAriaProps, mProps);
+		jQuery.extend(mAriaProps, prop);
 	}
-	
+
+	// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
+	if (oElement instanceof sap.ui.core.Element && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
+		oElement.getParent().enhanceAccessibilityState(oElement, mAriaProps);
+	}
+
 	for(var p in mAriaProps) {
 		if(mAriaProps[p] != null && mAriaProps[p] !== ""){ //allow 0 and false but no null, undefined or empty string
 			this.writeAttribute(p === "role" ? p : "aria-"+p, mAriaProps[p]);
@@ -25301,13 +30466,72 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 	return this;
 };
 
+
+/**
+ * Writes either an img tag for normal URI or an span tag with needed properties for icon URI.
+ * 
+ * Additional classes and attributes can be added to the tag by given the second and third parameter.
+ * All of the given attributes are escaped for security consideration.
+ * 
+ * 
+ * @param {sap.ui.core.URI} sURI is the URI of an image or an icon registered in sap.ui.core.IconPool.
+ * @param {array|string} aClasses are additional classes that are added to the rendered tag.
+ * @param {object} mAttributes are additional attributes that are added to the rendered tag.
+ * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+ */
+sap.ui.core.RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
+	jQuery.sap.require("sap.ui.core.IconPool");
+	
+	var bIconURI = sap.ui.core.IconPool.isIconURI(sURI),
+		sStartTag = bIconURI ? "<span " : "<img ",
+		sClasses = "", sProp, oIconInfo;
+	
+	if(typeof aClasses === "string"){
+		aClasses = [aClasses];	
+	}
+	
+	if(bIconURI){
+		if(!aClasses){
+			aClasses = [];
+		}
+		aClasses.push("sapUiIcon");
+	}
+	
+	if(jQuery.isArray(aClasses)){
+		sClasses = aClasses.join(" ");
+	}
+	
+	this.write(sStartTag + "class=\"" + sClasses + "\" ");
+
+	if(bIconURI){
+		if(!mAttributes){
+			mAttributes = {};
+		}
+		
+		oIconInfo = sap.ui.core.IconPool.getIconInfo(sURI);
+		mAttributes["data-sap-ui-icon-content"] = oIconInfo.content;
+		this.write("style=\"font-family: " + oIconInfo.fontFamily +";\" ");
+	} else {
+		this.writeAttribute("src", sURI);
+	}
+	
+	if(typeof mAttributes === "object"){
+		for(sProp in mAttributes){
+			if(mAttributes.hasOwnProperty(sProp)){
+				this.writeAttributeEscaped(sProp, mAttributes[sProp]);
+			}
+		}
+	}
+	
+	return this.write(bIconURI ? "></span>" : "/>");
+};
 }; // end of sap.ui.core.RenderManager
 
 if ( !jQuery.sap.isDeclared('sap.ui.core.UIArea') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.UIArea
@@ -25316,7 +30540,7 @@ if ( !jQuery.sap.isDeclared('jquery.sap.ui') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // A bridge between the jQuery.sap plugin and the SAPUI5 Core
@@ -25345,7 +30569,7 @@ jQuery.sap.declare("jquery.sap.ui", false);
 //	/**
 //	 * Root Namespace for the jQuery UI-Layer plugin provided by SAP AG.
 //	 *
-//	 * @version 1.8.4
+//	 * @version 1.12.1
 //	 * @namespace
 //	 * @public
 //	 */
@@ -25495,77 +30719,53 @@ jQuery.sap.declare("jquery.sap.ui", false);
  *
  * Provides means for event-handling, rerendering, etc.
  *
- * @extends sap.ui.base.EventProvider
- * @author Daniel Brinkmann, Martin Schaus
- * @version 1.8.4
- * @param {sap.ui.Core}
- *            oCore internal API of the <core>Core</code> that manages this UIArea
- * @param {object}
- *            [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
+ * @extends sap.ui.base.ManagedObject
+ * @author SAP AG
+ * @version 1.12.1
+ * @param {sap.ui.Core} oCore internal API of the <core>Core</code> that manages this UIArea
+ * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
  * @public
  */
-sap.ui.core.UIArea = function(oCore, oRootNode) {
-	if(arguments.length === 0) {
-		return;
-	}
-	sap.ui.base.EventProvider.apply(this);
+sap.ui.base.ManagedObject.extend("sap.ui.core.UIArea", {
+	constructor: function(oCore, oRootNode) {
+		if(arguments.length === 0) {
+			return;
+		}
 
-	//TODO we could get rid of oCore here, if we wanted to...
-	this.oCore = oCore;
-	this.bLocked = false;
-	this.bInitial = true;
-	this.aContentToRemove = [];
-	this.oModels = {};
-	this.iSuppressInvalidate = 0;
+		// Note: UIArea has a modifiable Id. This doesn't perfectly match the default behavior of ManagedObject
+		// But UIArea overrides getId().
+		sap.ui.base.ManagedObject.apply(this);
 
-	this.mAggregations = {}; //Use the aggregation functionality of sap.ui.core.Element
+		//TODO we could get rid of oCore here, if we wanted to...
+		this.oCore = oCore;
+		this.bLocked = false;
+		this.bInitial = true;
+		this.aContentToRemove = [];
+		
+		this.bNeedsRerendering = false;
+		if (oRootNode != null) {
+			this.setRootNode(oRootNode);
+			// Figure out whether UI Area is pre-rendered (server-side JS rendering)!
+			this.bNeedsRerendering = this.bNeedsRerendering && !jQuery.sap.domById(oRootNode.id + "-Init");
+		}
+		this.mInvalidatedControls = {};
 
-	this.bNeedsRerendering = false;
-	if (oRootNode != null) {
-		this.setRootNode(oRootNode);
-		// Figure out whether UI Area is pre-rendered (server-side JS rendering)!
-		this.bNeedsRerendering = this.bNeedsRerendering && !jQuery.sap.domById(oRootNode.id + "-Init");
-	}
-	this.mInvalidatedControls = {};
+		if(!this.bNeedsRerendering) {
+			this.oRenderControl = null;
+		} else {
+			// Core needs to be notified about an invalid UIArea
+			this.oCore.addInvalidatedUIArea(this);
+		}
 
-	if(!this.bNeedsRerendering) {
-		this.oRenderControl = null;
-	} else {
-		// Core needs to be notified about an invalid UIArea
-		this.oCore.addInvalidatedUIArea(this);
-	}
-
-};
-sap.ui.core.UIArea.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
-sap.ui.base.Object.defineClass("sap.ui.core.UIArea", {
+	},
+	metadata: {
 		// ---- object ----
-		baseType : "sap.ui.base.EventProvider",
-		publicMethods : ["getId", "setRootNode", "getRootNode", "setRootControl", "getRootControl", "getContent", "insertContent", "addContent", "removeContent", "removeAllContent", "indexOfContent", "destroyContent", "lock", "unlock", "isLocked", "getSavedContent", "setModel", "getModel", "hasModel"]
-	});
-
-sap.ui.core.UIArea.M_EVENTS = {};
-
-// UIArea has no metadata, so we have to implement the validation on our own
-// TODO create common baseclass for UIArea and Element (and maybe Core)
-sap.ui.core.UIArea.prototype.validateAggregation = function (sAggregationName, oElement, bMultiple) {
-	if ( sAggregationName != "content" ) {
-		throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
+		publicMethods : ["setRootNode", "getRootNode", "setRootControl", "getRootControl", "lock","unlock", "isLocked"],
+		aggregations : {
+			"content" : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+		}
 	}
-	// TODO should this be part of the validation (raise an error) or not?
-	jQuery.sap.assert(bMultiple, "Aggregation 'content' of " + this + " used with wrong cardinality (declared as \"0..n\")");
-	if ( !(oElement instanceof sap.ui.core.Control) ) {
-		throw new Error("\"" + oElement + "\" is not valid for aggregation \"content\" of " + this);
-	}
-	return oElement; 
-};
-//Use the remaining aggregation functionality of sap.ui.core.Element
-sap.ui.core.UIArea.prototype.getAggregation = sap.ui.core.Element.prototype.getAggregation;
-sap.ui.core.UIArea.prototype.insertAggregation = sap.ui.core.Element.prototype.insertAggregation;
-sap.ui.core.UIArea.prototype.addAggregation = sap.ui.core.Element.prototype.addAggregation;
-sap.ui.core.UIArea.prototype.removeAggregation = sap.ui.core.Element.prototype.removeAggregation;
-sap.ui.core.UIArea.prototype.removeAllAggregation = sap.ui.core.Element.prototype.removeAllAggregation;
-sap.ui.core.UIArea.prototype.indexOfAggregation = sap.ui.core.Element.prototype.indexOfAggregation;
-sap.ui.core.UIArea.prototype.destroyAggregation = sap.ui.core.Element.prototype.destroyAggregation;
+});
 
 /**
  * Returns whether rerendering is currently suppressed on this UIArea
@@ -25692,10 +30892,8 @@ sap.ui.core.UIArea.prototype._addRemovedContent = function(oDomRef) {
  *
  * @return {sap.ui.core.Control[]}
  * @public
+ * @name sap.ui.core.UIArea.prototype.getContent
  */
-sap.ui.core.UIArea.prototype.getContent = function() {
-	return this.getAggregation("content", []);
-};
 
 /**
  * Inserts a content into the aggregation named <code>content</code>.
@@ -25709,11 +30907,8 @@ sap.ui.core.UIArea.prototype.getContent = function() {
  *             the last position
  * @return {sap.ui.core.UIArea} <code>this</code> to allow method chaining
  * @public
+ * @name sap.ui.core.UIArea.prototype.insertContent
  */
-sap.ui.core.UIArea.prototype.insertContent = function(oContent, iIndex) {
-	this.insertAggregation("content", oContent, iIndex);
-	return this;
-};
 
 /**
  * Adds some content <code>oContent</code>
@@ -25781,10 +30976,8 @@ sap.ui.core.UIArea.prototype.removeAllContent = function() {
  *            oContent the content whose index is looked for.
  * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
  * @public
+ * @name sap.ui.core.UIArea.prototype.indexOfContent
  */
-sap.ui.core.UIArea.prototype.indexOfContent = function(oContent) {
-	return this.indexOfAggregation("content", oContent);
-};
 
 /**
  * Destroys all the content in the aggregation
@@ -25805,23 +30998,6 @@ sap.ui.core.UIArea.prototype.destroyContent = function() {
 	this.destroyAggregation("content");
 	//this.invalidate();
 	return this;
-};
-
-/**
- * Removes the given child from this UI area, where it must have been the root
- * control.
- * @see sap.ui.core.Element#_removeChild
- * @see sap.ui.core.Element#setParent
- *
- * @param {sap.ui.core.Control}
- *            oChild the child element to be removed
- * @protected
- */
-sap.ui.core.UIArea.prototype._removeChild = function(oChild) {
-	var idx = this.indexOfContent(oChild);
-	if(idx >=0){
-		this.removeContent(idx);
-	}
 };
 
 /**
@@ -25863,40 +31039,6 @@ sap.ui.core.UIArea.prototype.isLocked = function () {
 };
 
 /**
- * Set the model for databinding
- * @param {sap.ui.model.Model} oModel
- * @param {string} [sName]
- * @public
- */
-sap.ui.core.UIArea.prototype.setModel = function(oModel, sName) {
-	this.oModels[sName] = oModel;
-	this.updateBindings(sName);
-};
-
-/**
- * Get the model for databinding
- * @param {string} [sName]
- * @return {sap.ui.model.Model} oModel
- * @public
- */
-sap.ui.core.UIArea.prototype.getModel = function(sName) {
-	return this.oModels[sName] || this.oCore.getModel(sName);
-};
-
-/**
- * Check if a Model is set to the UI Area or to the Core
- * @return {boolean} true or false
- * @public
- */
-sap.ui.core.UIArea.prototype.hasModel = function() {
-	if (!jQuery.isEmptyObject(this.oModels) || this.oCore.hasModel()) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
-/**
  * Provide getBindingContext, as UIArea can be parent of an element.
  * Always returns null.
  *
@@ -25905,23 +31047,6 @@ sap.ui.core.UIArea.prototype.hasModel = function() {
 sap.ui.core.UIArea.prototype.getBindingContext = function(){
 	return null;
 };
-
-/**
- * Method is called by the core if a model is set to the core to update/recreate all bindings
- * for the UI Areas and its contents.
- *
- * @private
- */
-sap.ui.core.UIArea.prototype.updateBindings = function(sName){
-	jQuery.each(this.getContent(), function (i, oElement){
-		// update binding context, for primary model only
-		if (!sName){oElement.updateBindingContext();}
-		// if the model changes, all bindings have to be recreated (at least those to the previous model)
-		oElement.updateBindings(false, sName, true);
-	});
-};
-
-
 
 // ###########################################################################
 // Convenience for methods
@@ -26111,25 +31236,18 @@ sap.ui.core.UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 	// TODO: this should be the 'lowest' SAPUI5 Control of this very
 	// UIArea instance's scope -> nesting scenario
 	oElement = jQuery(oEvent.target).control(0);
-	if (oElement == null ||
-		// in case of a Dialog the getUIArea function of the element returns
-		// "null" and in case of nested UIAreas we need to ensure that the
-		// UIArea is the same => BUT in case of nested UIAreas in dialogs
-		// this pattern will not work!
-		// TODO: May be in nested UIAreas in the UIArea is set properly and not
-		//       null like for the root UI Area of the dialog!
-		// TODO: In case of PopUp control it could be that the event is handled
-		//       by the static area where the getUIArea check fails e.g.
-		//       this happens in the MenuButton.qunit.html within the test
-		//       "Menu is hidden after click on a menuitem" so in this case
-		//       we have to ignore this check in case of static area where
-		//       nevertheless the items are rendered invisible!
-		// REMARK: IN GENERAL WE SHOULD RETHINK THE getUIArea FUNCTION
-		//         BECAUSE IN CASE OF NESETED UI AREAS WE NEED TO MAKE SURE TO
-		//         CHECK IF THE EVENT OCCURED WITHIN THE SPECIFIC UIAREA
-		(this.getId() != "sap-ui-static" && oElement.getUIArea() != null && oElement.getUIArea() != this)) {
+	
+	if(oElement === null){
 		return;
 	}
+	
+	//if event is already handled by inner UIArea (as we use the bubbling phase now), returns.
+	//if capturing phase would be used, here means event is already handled by outer UIArea.
+	if((oEvent.originalEvent || oEvent)._sapui_handledByUIArea){
+		(oEvent.originalEvent || oEvent)._sapui_firstUIArea = false;
+		return;
+	}
+	(oEvent.originalEvent || oEvent)._sapui_firstUIArea = true;
 
 	// store the element on the event (aligned with jQuery syntax)
 	oEvent.srcControl = oElement;
@@ -26175,11 +31293,17 @@ sap.ui.core.UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 			break;
 		}
 
+		// Secret property on the element to allow to cancel bubbling of all events.
+		// This is a very special case, so there is no API method for this in the control. 
+		if (oElement.bStopEventBubbling) {
+			break;
+		}
+		
 		// This is the (not that common) situation that the element was deleted in its own event handler.
 		// i.e. the Element became 'inactive' (see Element#isActive())
 		var oDomRef = oElement.getDomRef();
 		if(!oDomRef) {
-			continue;
+			break;
 		}
 
 		// bubble up to the parent
@@ -26201,6 +31325,9 @@ sap.ui.core.UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 
 	// reset previously changed currentTarget
 	oEvent.currentTarget = this.getRootNode();
+	
+	// mark on the event that it's already handled by this UIArea
+	(oEvent.originalEvent || oEvent)._sapui_handledByUIArea = true;
 
 	// TODO: rethink about logging levels!
 
@@ -26313,7 +31440,1457 @@ sap.ui.core.UIArea.prototype._ondetach = function() {
 
 };
 
+/**
+ * An UIArea can't be cloned and throws an error when trying to do so.
+ */
+sap.ui.core.UIArea.prototype.clone = function() {
+	throw new Error("UIArea can't be cloned");
+};
+
+
 }; // end of sap.ui.core.UIArea
+
+if ( !jQuery.sap.isDeclared('sap.ui.core.ThemeCheck') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides class sap.ui.core.ThemeCheck
+jQuery.sap.declare("sap.ui.core.ThemeCheck");
+
+
+
+
+(function() {
+	
+sap.ui._maxThemeCheckCycles = 100;
+
+/**
+ * Creates a new ThemeCheck object.
+ *
+ * @class Helper class used by the UI5 Core to check whether the themes are applied correctly.
+ *
+ * It could happen that e.g. in onAfterRendering not all themes are available. In these cases the
+ * check waits until the CSS is applied and fires an onThemeChanged event.
+ *
+ * @extends sap.ui.base.Object
+ * @since 1.10.0
+ * @author SAP AG
+ * @constructor
+ * @protected
+ * @name sap.ui.core.ThemeCheck
+ */
+sap.ui.base.Object.extend("sap.ui.core.ThemeCheck", /** @lends sap.ui.core.ThemeCheck.prototype */ {
+
+	constructor : function(oCore) {
+		this._oCore = oCore;
+		this._iCount = 0; // Prevent endless loop
+	},
+	
+	getInterface : function() {
+		return this;
+	},
+	
+	fireThemeChangedEvent : function(bOnlyOnInitFail, bForceCheck) {
+		clear(this);
+		
+		var bUseThemeCheck = sap.ui._maxThemeCheckCycles > 0; //Possibility to switch off theme check (except of force mode (for Core.applyTheme))
+		
+		if(bUseThemeCheck || bForceCheck){
+			delayedCheckTheme.apply(this, [true]);
+		}
+		
+		if(!bOnlyOnInitFail && !this._sThemeCheckId){
+			this._oCore.fireThemeChanged({theme: this._oCore.getConfiguration().getTheme()});
+		}
+	}
+
+});
+
+sap.ui.core.ThemeCheck.checkStyle = function(oStyle, bLog){
+	if(typeof(oStyle) === "string"){
+		oStyle = jQuery.sap.domById(oStyle);
+	}
+	var $Style = jQuery(oStyle);
+	
+	try {
+		var res = !!oStyle && !!((oStyle.sheet && oStyle.sheet.cssRules.length > 0) || 
+        		!!(oStyle.styleSheet && oStyle.styleSheet.cssText.length > 0) || 
+        		!!(oStyle.innerHTML && oStyle.innerHTML.length > 0));
+		var res2 = $Style.attr("sap-ui-ready");
+		res2 = !!(res2 === "true" || res2 === "false");
+		if(bLog){
+			jQuery.sap.log.debug("ThemeCheck: Check styles '"+$Style.attr("id")+"': "+res+"/"+res2+"/"+!!oStyle);
+		}
+		return res || res2;
+	}catch(e){}
+	
+	if(bLog){
+		jQuery.sap.log.debug("ThemeCheck: Error during check styles '"+$Style.attr("id")+"': false/false/"+!!oStyle);
+	}
+	return false;
+};
+
+function clear(oThemeCheck){
+	if(oThemeCheck._sThemeCheckId){
+		jQuery.sap.clearDelayedCall(oThemeCheck._sThemeCheckId);
+		oThemeCheck._sThemeCheckId = null;
+		oThemeCheck._iCount = 0;
+	}
+};
+
+function checkTheme(oThemeCheck) {
+	var mLibs = oThemeCheck._oCore.getLoadedLibraries();
+	var res = true;
+	for(var lib in mLibs){
+		res = res && sap.ui.core.ThemeCheck.checkStyle("sap-ui-theme-"+lib, true);
+	}
+	
+	if(!res){
+		jQuery.sap.log.warning("ThemeCheck: Theme not yet applied.");
+	}
+	return res;
+};
+
+function delayedCheckTheme(bFirst) {
+	this._iCount++;
+	
+	var bEmergencyExit = this._iCount > sap.ui._maxThemeCheckCycles;
+	
+	if(!checkTheme(this) && !bEmergencyExit){
+		this._sThemeCheckId = jQuery.sap.delayedCall(2, this, delayedCheckTheme);
+	}else if(!bFirst){
+		clear(this);
+		this._oCore.fireThemeChanged({theme: this._oCore.getConfiguration().getTheme()});
+		if(bEmergencyExit){
+			jQuery.sap.log.warning("ThemeCheck: max. check cycles reached.");
+		}
+	}
+};
+
+})();
+}; // end of sap.ui.core.ThemeCheck
+
+if ( !jQuery.sap.isDeclared('sap.ui.core.Component') ) {
+/*
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides base class sap.ui.core.Component for all components
+jQuery.sap.declare("sap.ui.core.Component");
+
+if ( !jQuery.sap.isDeclared('sap.ui.core.ComponentMetadata') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+// Provides class sap.ui.core.ComponentMetadata
+jQuery.sap.declare("sap.ui.core.ComponentMetadata");
+
+
+/**
+ * Creates a new metadata object for a Component subclass.
+ *
+ * @param {string} sClassName fully qualified name of the class that is described by this metadata object
+ * @param {object} oStaticInfo static info to construct the metadata from
+ *
+ * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
+ * @class
+ * @author SAP
+ * @version 1.12.1
+ * @since 1.9.2
+ */
+sap.ui.core.ComponentMetadata = function(sClassName, oClassInfo) {
+
+	// call super constructor
+	sap.ui.base.ManagedObjectMetadata.apply(this, arguments);
+};
+
+//chain the prototypes
+sap.ui.core.ComponentMetadata.prototype = jQuery.sap.newObject(sap.ui.base.ManagedObjectMetadata.prototype);
+
+sap.ui.core.ComponentMetadata.prototype.applySettings = function(oClassInfo) {
+
+	var oStaticInfo = oClassInfo.metadata;
+
+	sap.ui.base.ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
+
+	this._mDependencies = oStaticInfo.dependencies || null;
+};
+
+/**
+ * Returns the dependencies for the component
+ */
+sap.ui.core.ComponentMetadata.prototype.getDependencies = function() {
+
+	return this._mDependencies;
+};
+
+/**
+ * Returns the list of the included files that the component needs such as css and js
+ * @return {string} the array of included files
+ * @public
+ */
+sap.ui.core.ComponentMetadata.prototype.getIncludes = function() {
+	return this._mIncludes;
+};
+
+
+
+/**
+ * Returns the UI5 Version of the used SAP UI5.
+ * @return {string} the version of UI5
+ * @public
+ */
+sap.ui.core.ComponentMetadata.prototype.getUI5Version = function() {
+	return this._mDependencies.ui5version;
+};   
+
+
+/**
+ * Returns the UI5 Version of the used SAP UI5.
+ * @return {string} the version of UI5
+ * @public
+ */
+sap.ui.core.ComponentMetadata.prototype.getComponents = function() {
+	return this._mDependencies.components;
+};
+
+/**
+ * Returns the UI5 Version of the used SAP UI5.
+ * @return {string} the version of UI5
+ * @public
+ */
+sap.ui.core.ComponentMetadata.prototype.getLibs = function() {
+	return this._mDependencies.libs;
+};
+
+
+/**
+ * Returns the version of the component.
+ * @return {string} the version of the component
+ * @public
+ */
+sap.ui.core.ComponentMetadata.prototype.getVersion = function() {
+	return this._sVersion;
+};
+
+}; // end of sap.ui.core.ComponentMetadata
+
+
+
+/**
+ * Creates and initializes a new component with the given <code>sId</code> and
+ * settings.
+ * 
+ * The set of allowed entries in the <code>mSettings</code> object depends on
+ * the concrete subclass and is described there. See {@link sap.ui.core.Component}
+ * for a general description of this argument.
+ * 
+ * @param {string}
+ *            [sId] optional id for the new control; generated automatically if
+ *            no non-empty id is given Note: this can be omitted, no matter
+ *            whether <code>mSettings</code> will be given or not!
+ * @param {object}
+ *            [mSettings] optional map/JSON-object with initial settings for the
+ *            new component instance
+ * @public
+ * 
+ * @class Base Class for Component.
+ * @extends sap.ui.base.ManagedObject
+ * @abstract
+ * @author SAP
+ * @version 1.12.1
+ * @name sap.ui.core.Component
+ * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
+ */
+sap.ui.base.ManagedObject.extend("sap.ui.core.Component", /** @lends sap.ui.core.Component */
+
+{
+	constructor : function(sId, mSettings) {
+
+		sap.ui.base.ManagedObject.apply(this, arguments);
+
+	},
+
+	metadata : {
+		stereotype : "component",
+		"abstract": true,
+		version : "0.0",
+		includes : [],  // css, javascript files that should be used in the component
+		dependencies : { // external dependencies
+			libs : [],
+			components : [],
+			ui5version : ""
+		},
+		publicMethods: [],
+		aggregations: {},
+		library: "sap.ui.core"
+	}
+
+}, /* Metadata constructor */ sap.ui.core.ComponentMetadata);
+
+/**
+ * Initializes the Component instance after creation.
+ *
+ * Applications must not call this hook method directly, it is called by the
+ * framework while the constructor of an Component is executed.
+ *
+ * Subclasses of Component should override this hook to implement any necessary
+ * initialization.
+ *
+ * @function
+ * @name sap.ui.core.Component.prototype.init
+ * @protected
+ */
+sap.ui.core.Component.prototype.init = function() {
+	this.loadIncludes();
+	this.loadDependencies();
+};
+
+/**
+ * Load included resources
+ */
+sap.ui.core.Component.prototype.loadIncludes = function() {
+
+	var aIncludes = this.getMetadata().getIncludes();
+
+	if (aIncludes && aIncludes.length > 0) {
+
+		jQuery.each(aIncludes, function(i, sFile) {			
+			var sFileLowCase = sFile.toLowerCase();
+			if (sFileLowCase.match(/.css$/)) { 
+				var sCssUrl = sap.ui.resource(this.getMetadata().getLibraryName(), sFile);
+				jQuery.sap.log.info("Loading CSS from: " + sCssUrl);
+				jQuery.sap.includeStyleSheet(sCssUrl);
+			} else {
+				// load javascript file
+				var m = sFileLowCase.match(/.js$/);
+				if (m) {
+					sFile = sFile.substring(0, m.index);
+					jQuery.sap.require(sFile);
+				}
+			}
+		});
+	}
+};
+
+/**
+ * Load external dependencies
+ */
+sap.ui.core.Component.prototype.loadDependencies = function() {
+
+	var oDep = this.getMetadata().getDependencies();
+	if (oDep){
+		this.loadLibs(oDep);
+		this.loadComponents(oDep);
+	}
+};
+
+/**
+ * Load libraries
+ */
+sap.ui.core.Component.prototype.loadLibs = function (oDependencies) {
+	var aLibs = oDependencies.libs;
+	if (aLibs && aLibs.length > 0) {
+		jQuery.each(aLibs, function(i, sLib) {
+			jQuery.sap.log.info("Loading Library: " + sLib);
+			sap.ui.getCore().loadLibrary(sLib);
+		});
+	}
+};
+
+
+/**
+ * Load dependent components
+ */
+sap.ui.core.Component.prototype.loadComponents = function (oDependencies) {
+	var aComps = oDependencies.components;
+	if (aComps){
+		jQuery.each(aComps, function(i, sName){
+			jQuery.sap.log.info(sName);
+			jQuery.sap.require(sName + ".Component");
+		});
+	}
+};
+/**
+ * Cleans up the component instance before destruction.
+ *
+ * Applications must not call this hook method directly, it is called by the
+ * framework when the element is {@link #destroy destroyed}.
+ * 
+ * Subclasses of Component should override this hook to implement any necessary
+ * cleanup.
+ *
+ * @function
+ * @name sap.ui.core.Component.prototype.exit
+ * @protected
+ */
+sap.ui.core.Component.prototype.exit = function() {
+};
+
+}; // end of sap.ui.core.Component
+
+if ( !jQuery.sap.isDeclared('sap.ui.Device') ) {
+  jQuery.sap.declare('sap.ui.Device');
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/** 
+ * Device and Feature Detection API of the SAP UI5 Library.
+ *
+ * @version 1.12.1
+ * @namespace
+ * @name sap.ui.Device
+ * @public
+ */
+
+//Declare Module if API is available
+if(window.jQuery && window.jQuery.sap && window.jQuery.sap.declare){
+	window.jQuery.sap.declare("sap.ui.Device", false);
+}
+
+//Introduce namespace if it does not yet exist
+if(typeof window.sap !== "object" && typeof window.sap !== "function" ){
+	  window.sap = {};
+}
+if(typeof window.sap.ui !== "object"){
+	window.sap.ui = {};
+}
+
+(function() {
+
+	//Skip initialization if API is already available
+	if(typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ){
+		return;
+	}
+	
+	var device = {};
+
+//******** Event Management ******** (see Event Provider)
+
+	var mEventRegistry = {};
+
+	function attachEvent(sEventId, fnFunction, oListener) {
+		if(!mEventRegistry[sEventId]){
+			mEventRegistry[sEventId] = [];
+		}
+		mEventRegistry[sEventId].push({oListener: oListener, fFunction:fnFunction});
+	};
+
+	function detachEvent(sEventId, fnFunction, oListener) {
+		var aEventListeners = mEventRegistry[sEventId];
+		
+		if (!aEventListeners) {
+			return this;
+		}
+		
+		for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
+			if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
+				aEventListeners.splice(i,1);
+				break;
+			}
+		}
+		if(aEventListeners.length == 0) {
+			delete mEventRegistry[sEventId];
+		}
+	};
+
+	function fireEvent(sEventId, mParameters) {
+		var aEventListeners = mEventRegistry[sEventId], oInfo;
+		if (aEventListeners) {
+			aEventListeners = aEventListeners.slice();
+			for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
+				oInfo = aEventListeners[i];
+				oInfo.fFunction.call(oInfo.oListener || window, mParameters);
+			}
+		}
+	};
+
+//******** OS Detection ********
+
+	/** 
+	 * Contains information about the operating system of the device.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.os
+	 * @public
+	 */
+	
+	/**
+	 * Enumeration containing the names of known operating systems.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.os.OS
+	 * @public
+	 */
+	
+	/**
+	 * The name of the operating system.
+	 * 
+	 * @see sap.ui.Device.os#OS
+	 * @name sap.ui.Device.os#name
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as string. Might be empty if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.os#versionStr
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as float. Might be -1 if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.os#version
+	 * @type float
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Windows operating system.
+	 * 
+	 * @name sap.ui.Device.os#windows
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Linux operating system.
+	 * 
+	 * @name sap.ui.Device.os#linux
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the MAC operating system.
+	 * 
+	 * @name sap.ui.Device.os#macintosh
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the iOS operating system.
+	 * 
+	 * @name sap.ui.Device.os#ios
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Android operating system.
+	 * 
+	 * @name sap.ui.Device.os#android
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Blackberry operating system.
+	 * 
+	 * @name sap.ui.Device.os#blackberry
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Windows Phone operating system.
+	 * 
+	 * @name sap.ui.Device.os#windows_phone
+	 * @type boolean
+	 * @public
+	 */
+	
+	/**
+	 * Windows operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#WINDOWS
+	 * @public
+	 */
+	/**
+	 * MAC operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#MACINTOSH
+	 * @public
+	 */
+	/**
+	 * Linux operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#LINUX
+	 * @public
+	 */
+	/**
+	 * iOS operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#IOS
+	 * @public
+	 */
+	/**
+	 * Android operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#ANDROID
+	 * @public
+	 */
+	/**
+	 * Blackberry operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#BLACKBERRY
+	 * @public
+	 */
+	/**
+	 * Windows Phone operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#WINDOWS_PHONE
+	 * @public
+	 */
+	
+	var OS = {
+		"WINDOWS": "win",
+		"MACINTOSH": "mac",
+		"LINUX": "linux",
+		"IOS": "iOS",
+		"ANDROID": "Android",
+		"BLACKBERRY": "bb",
+		"WINDOWS_PHONE": "winphone"
+	};
+
+	function getOS(userAgent){
+		function getDesktopOS(){
+			var pf = navigator.platform;
+			if(pf.indexOf("Win") != -1 ){
+				return {"name": OS.WINDOWS, "versionStr": ""};
+			}else if(pf.indexOf("Mac") != -1){
+				return {"name": OS.MACINTOSH, "versionStr": ""};
+			}else if(pf.indexOf("Linux") != -1){
+				return {"name": OS.LINUX, "versionStr": ""};
+			}
+			return null;
+		}
+
+		userAgent = userAgent || navigator.userAgent;
+		var platform = /\(([a-zA-Z ]+);\s(?:[U]?[;]?)([\D]+)((?:[\d._]*))(?:.*[\)][^\d]*)([\d.]*)\s/;
+		var result = userAgent.match(platform);
+		if (result){
+			var appleDevices = /iPhone|iPad|iPod/;
+			var bbDevices = /PlayBook|BlackBerry/;
+			if (result[0].match(appleDevices)){
+				result[3] = result[3].replace(/_/g, ".");
+				//result[1] contains info of devices
+				return({"name": OS.IOS, "versionStr": result[3]});
+			} else if (result[2].match(/Android/)) {
+				result[2] = result[2].replace(/\s/g, "");
+				return({"name": OS.ANDROID, "versionStr": result[3]});
+			} else if (result[0].match(bbDevices)) {
+				return({"name": OS.BLACKBERRY, "versionStr": result[4]});
+			} else {
+				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
+				return getDesktopOS();
+			} 
+
+		} else if (userAgent.indexOf("(BB10;") > 0) { 
+			// BlackBery 10 has a different structure...
+			platform = /\sVersion\/([\d.]+)\s/;
+			result = userAgent.match(platform);
+			if (result){
+				return {"name": OS.BLACKBERRY, "versionStr": result[1]};
+			} else {
+				return {"name": OS.BLACKBERRY, "versionStr": '10'};
+			}
+
+		} else {
+			// Windows phone has a different structure, so we need to check with another regExp.
+			platform = /Windows Phone (?:OS )?([\d.]*)/;
+			result = userAgent.match(platform);
+			if (result){
+				return({"name": OS.WINDOWS_PHONE, "versionStr": result[1]});
+			} else {
+				return getDesktopOS();
+			}
+		}
+	};
+
+	device.os = getOS();
+	device.os.OS = OS;
+	device.os.version = device.os.versionStr ? parseFloat(device.os.versionStr) : -1;
+
+	if(device.os.name){
+		for(var b in OS){
+			if(OS[b] === device.os.name){
+				device.os[b.toLowerCase()] = true;
+			}
+		}
+	}
+
+//******** Browser Detection ********
+	
+	/** 
+	 * Contains information about the used browser.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.browser
+	 * @public
+	 */
+	
+	/**
+	 * Enumeration containing the names of known browsers.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.browser.BROWSER
+	 * @public
+	 */
+	
+	/**
+	 * The name of the browser.
+	 * 
+	 * @see sap.ui.Device.browser#BROWSER
+	 * @name sap.ui.Device.browser#name
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as string. Might be empty if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.browser#versionStr
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as float. Might be -1 if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.browser#version
+	 * @type float
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether the mobile variant of the browser is used.
+	 * 
+	 * @name sap.ui.Device.browser#mobile
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Internet Explorer browser.
+	 * 
+	 * @name sap.ui.Device.browser#internet_explorer
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Firefox browser.
+	 * 
+	 * @name sap.ui.Device.browser#firefox
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Chrome browser.
+	 * 
+	 * @name sap.ui.Device.browser#chrome
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Safari browser.
+	 * 
+	 * @name sap.ui.Device.browser#safari
+	 * @type boolean
+	 * @public
+	 */
+	
+	/**
+	 * Internet Explorer browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#INTERNET_EXPLORER
+	 * @public
+	 */
+	/**
+	 * Firefox browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#FIREFOX
+	 * @public
+	 */
+	/**
+	 * Chrome browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#CHROME
+	 * @public
+	 */
+	/**
+	 * Safari browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#SAFARI
+	 * @public
+	 */
+	
+	var BROWSER = {
+		"INTERNET_EXPLORER": "ie",
+		"FIREFOX": "ff",
+		"CHROME": "cr",
+		"SAFARI": "sf"
+	};
+
+	var ua = navigator.userAgent;
+
+	/*!
+	 * Taken from jQuery JavaScript Library v1.7.1
+	 * http://jquery.com/
+	 *
+	 * Copyright 2011, John Resig
+	 * Dual licensed under the MIT or GPL Version 2 licenses.
+	 * http://jquery.org/license
+	 *
+	 * Includes Sizzle.js
+	 * http://sizzlejs.com/
+	 * Copyright 2011, The Dojo Foundation
+	 * Released under the MIT, BSD, and GPL Licenses.
+	 *
+	 * Date: Mon Nov 21 21:11:03 2011 -0500
+	 */
+	function calcBrowser(){
+		var _ua = ua.toLowerCase();
+
+		var rwebkit = /(webkit)[ \/]([\w.]+)/;
+		var ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/;
+		var rmsie = /(msie) ([\w.]+)/;
+		var rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
+
+		var match = rwebkit.exec( _ua ) ||
+					ropera.exec( _ua ) ||
+					rmsie.exec( _ua ) ||
+					_ua.indexOf("compatible") < 0 && rmozilla.exec( _ua ) ||
+					[];
+
+		var res = { browser: match[1] || "", version: match[2] || "0" };
+		res[res.browser] = true;
+		return res;
+	};
+
+	function getBrowser() {
+		var b = calcBrowser();
+
+		// jQuery checks for user agent strings. We differentiate between browsers
+		if ( b.mozilla ) {
+			if ( ua.match(/Firefox\/(\d+\.\d+)/) ) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: ""+version,
+					version: version,
+					mobile: false
+				}
+			}
+		} else if ( b.webkit ) {
+			var oExpMobile = /Mobile/;
+			if ( ua.match(/Chrome\/(\d+\.\d+).\d+/) ) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.CHROME,
+					versionStr: ""+version,
+					version: version,
+					mobile: oExpMobile.test(ua),
+					webkit: true
+				}
+			} else { // Safari might have an issue with ua.match(...); thus changing
+				var oExp = /Version\/(\d+\.\d+).*Safari/;
+				if(oExp.test(ua)) {
+					var version = parseFloat(oExp.exec(ua)[1]);
+					return {
+						name: BROWSER.SAFARI,
+						versionStr: ""+version,
+						version: version,
+						mobile: oExpMobile.test(ua),
+						webkit: true
+					}
+				}
+			}
+		} else if ( b.msie ) {
+			var version;
+			// recognize IE8 when running in compat mode (only then the documentMode property is there)
+			if (document.documentMode) {
+				if(document.documentMode === 7) { // OK, obviously we are IE and seem to be 7... but as documentMode is there this cannot be IE7!
+					version = 8.0;
+				}else{
+					version = parseFloat(document.documentMode);
+				}
+			} else {
+				version = parseFloat(b.version);
+			}
+			return {
+				name: BROWSER.INTERNET_EXPLORER,
+				versionStr: ""+version,
+				version: version,
+				mobile: false
+			}
+		}
+		return {
+			name: "",
+			versionStr: "",
+			version: -1,
+			mobile: false
+		}
+	};
+
+	device.browser = getBrowser();
+	device.browser.BROWSER = BROWSER;
+	
+	if(device.browser.name){
+		for(var b in BROWSER){
+			if(BROWSER[b] === device.browser.name){
+				device.browser[b.toLowerCase()] = true;
+			}
+		}
+	}
+	
+
+//******** Support Detection ********
+	
+	/** 
+	 * Contains information about detected capabilities of the used browser or device.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.support
+	 * @public
+	 */
+	
+	/**
+	 * Flag indicating whether touch events are supported.
+	 * 
+	 * @name sap.ui.Device.support#touch
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether media queries via JavaScript are supported.
+	 * 
+	 * @name sap.ui.Device.support#matchmedia
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether events on JavaScript media queries are supported.
+	 * 
+	 * @name sap.ui.Device.support#matchmedialistener
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether the native orientationchange event is supported.
+	 * 
+	 * @name sap.ui.Device.support#orientation
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether the device has a Retina display.
+	 * 
+	 * @name sap.ui.Device.support#retina
+	 * @type boolean
+	 * @public
+	 */
+	
+	device.support = {};
+
+	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
+	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
+
+	device.support.matchmedia = !!window.matchMedia;
+	device.support.matchmedialistener = !!(device.support.matchmedia && !!window.matchMedia("screen and (max-width:0px)").addListener); //IE10 doesn't like empty string as argument for matchMedia
+	if(device.browser.safari && device.browser.version < 6){
+		//Safari seems to have addListener but no events are fired ?!
+		device.support.matchmedialistener = false;
+	}
+
+	device.support.orientation = !!("orientation" in window && "onorientationchange" in window);
+
+	device.support.retina = (window.retina||window.devicePixelRatio >= 2);	
+
+//******** Match Media ********
+	
+	/** 
+	 * Event API for Screen width media queries.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.media
+	 * @public
+	 */
+	device.media = {};
+	
+	/**
+	 * Enumeration containing the names of predefined Screen width media query range sets.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.media.RANGESETS
+	 * @public
+	 */
+	
+	/**
+	 * A 3 step range set (S-L).
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_3STEPS
+	 * @public
+	 */
+	/**
+	 * A 4 step range set (S-XL).
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_4STEPS
+	 * @public
+	 */
+	/**
+	 * A 6 step range set (XS-XXL).
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_6STEPS
+	 * @public
+	 */
+	/**
+	 * A 3 step range set (Phone, Tablet, Desktop).
+	 * 
+	 * This range set is initialized always by default.
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_STANDARD
+	 * @public
+	 */
+	
+	var RANGESETS = {
+		"SAP_3STEPS": "3Step",
+		"SAP_4STEPS": "4Step",
+		"SAP_6STEPS": "6Step",
+		"SAP_STANDARD": "Std"
+	};
+	device.media.RANGESETS = RANGESETS;
+	
+	device.media._predefinedRangeSets = {};
+	device.media._predefinedRangeSets[RANGESETS.SAP_3STEPS] = {points: [520, 960], unit: "px", name: RANGESETS.SAP_3STEPS, names: ["S", "M", "L"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_4STEPS] = {points: [520, 760, 960], unit: "px", name: RANGESETS.SAP_4STEPS, names: ["S", "M", "L", "XL"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_6STEPS] = {points: [241, 400, 541, 768, 960], unit: "px", name: RANGESETS.SAP_6STEPS, names: ["XS", "S", "M", "L", "XL", "XXL"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD] = {points: [600, 1024], unit: "px", name: RANGESETS.SAP_STANDARD, names: ["Phone", "Tablet", "Desktop"]};
+	
+	var _defaultRangeSet = RANGESETS.SAP_STANDARD;
+	var media_timeout = device.support.matchmedialistener ? 0 : 100;
+	var _querysets = {};
+	var media_currentwidth = null;
+	
+	function getQuery(from, to, unit){
+		unit = unit || "px";
+		var q = "screen";
+		if(from > 0){
+			q = q + " and (min-width:"+from+unit+")";
+		}
+		if(to > 0){
+			q = q + " and (max-width:"+to+unit+")";
+		}
+		return q;
+	};
+	
+	function handleChange(name){
+		if(!device.support.matchmedialistener && media_currentwidth == windowSize()[0]){
+			return; //Skip unnecessary resize events
+		}
+		
+		if(_querysets[name].timer){
+			clearTimeout(_querysets[name].timer);
+			_querysets[name].timer = null;
+		}
+		
+		_querysets[name].timer = setTimeout(function() {
+			var mParams = checkQueries(name, false);
+			if(mParams){
+				fireEvent("media_"+name, mParams);
+			}
+		}, media_timeout);
+	};
+	
+	function getRangeInfo(sSetName, iRangeIdx){
+		var q = _querysets[sSetName].queries[iRangeIdx];
+		var info = {from: q.from, unit: _querysets[sSetName].unit};
+		if(q.to >= 0){
+			info.to = q.to;
+		}
+		if(_querysets[sSetName].names){
+			info.name = _querysets[sSetName].names[iRangeIdx];
+		}
+		return info;
+	};
+	
+	function checkQueries(name, infoOnly){
+		if(_querysets[name]){
+			var aQueries = _querysets[name].queries;
+			for(var i=0, len = aQueries.length; i < len; i++){
+				var q = aQueries[i];
+				if((q != _querysets[name].currentquery || infoOnly) && window.sap.ui.Device.media.matches(q.from, q.to, _querysets[name].unit)){
+					if(!infoOnly){
+						_querysets[name].currentquery = q;
+					}
+					if(!_querysets[name].noClasses && _querysets[name].names && !infoOnly){
+						refreshCSSClasses(name, _querysets[name].names[i]);
+					}
+					return getRangeInfo(name, i);
+				}
+			}
+		}
+		return null;
+	};
+	
+	function refreshCSSClasses(sSetName, sRangeName, bRemove){
+		 var oRoot = document.documentElement;
+		 var sClassPrefix = "sapUiMedia-"+sSetName+"-";
+		 var sNewClass = sClassPrefix+sRangeName;
+		 
+		 if (oRoot.className.length == 0){
+			 if(!bRemove){
+				 oRoot.className = sNewClass;
+			 }
+		 }else{
+			 var aCurrentClasses = oRoot.className.split(" ");
+			 var sNewClasses = "";
+			 for(var i=0; i<aCurrentClasses.length; i++){
+				 if(aCurrentClasses[i].indexOf(sClassPrefix) != 0){
+					 sNewClasses = sNewClasses + aCurrentClasses[i] + " ";
+				 }
+			 }
+			 if(!bRemove){
+				 sNewClasses = sNewClasses + sNewClass;
+			 }
+			 oRoot.className = sNewClasses;
+		 }
+	};
+	
+	function windowSize(){
+		return [document.documentElement.clientWidth, document.documentElement.clientHeight];
+	};
+	
+	function convertToPx(val, unit){
+		if(unit === "em" || unit === "rem"){
+			var s = window.getComputedStyle || function(e) {
+	  			return e.currentStyle;
+	  		}
+	  		var x = s(document.documentElement).fontSize;
+	  		var f = (x && x.indexOf("px") >= 0) ? parseFloat(x, 10) : 16;
+	  		return val*f;
+		}
+		return val;
+	};
+
+	function match_legacy(from, to, unit){
+		from = convertToPx(from, unit);
+		to = convertToPx(to, unit);
+		
+		var width = windowSize()[0];
+		var a = from < 0 || from <= width;
+		var b = to < 0 || width <= to;
+		return a && b;
+	};
+
+	function match(from, to, unit){
+		var q = getQuery(from, to, unit);
+		return window.matchMedia(q).matches;
+	};
+
+	device.media.matches = device.support.matchmedia ? match : match_legacy;
+	
+	/**
+	 * Registers the given handler to the range change event, which is fired when a new range of the set is entered.
+	 * 
+	 * The handler has one map parameter <code>mParams</code>:
+	 * <ul>
+	 * <li>mParams.from: the range start value</li>
+	 * <li>mParams.to: the range end value, not defined for the last range (INFINITY)</li>
+	 * <li>mParams.unit: the used unit, e.g. px</li>
+	 * <li>mParams.name: the range name if defined</li>
+	 * </ul>
+	 * 
+	 * @param {Function} fnFunction The function to call, when the range change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {String} sName The name of the range set to listen to.
+	 * @name sap.ui.Device.media#attachHandler
+	 * @function
+	 * @public
+	 */
+	device.media.attachHandler = function(fnFunction, oListener, sName){
+		var name = sName || _defaultRangeSet;
+		attachEvent("media_"+name, fnFunction, oListener);
+	};
+
+	/**
+	 * Deregisters a previously registered handler from the range change event.
+	 * 
+	 * @param {Function} fnFunction The function to call, when the range change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {String} sName The name of the range set to listen to.
+	 * @name sap.ui.Device.media#detachHandler
+	 * @function
+	 * @public
+	 */
+	device.media.detachHandler = function(fnFunction, oListener, sName){
+		var name = sName || _defaultRangeSet;
+		detachEvent("media_"+name, fnFunction, oListener);
+	};
+	
+	/** 
+	 * Initializes a Screen width media query range set.
+	 * 
+	 * This function can either be called only with the name parameter to initialize a predefined range set,
+	 * e.g. <code>sap.ui.Device.media.initRangeSet(sap.ui.Device.media.RANGESETS.SAP_3STEPS)</code>.
+	 * 
+	 * Or it is possible to define a custom range set as in the following example:
+	 * <code>sap.ui.Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"])</code> defines 3 ranges:
+	 * <ul>
+	 * <li>0px-199.999px with name "Small"</li>
+	 * <li>200px-399.999px with name "Medium"</li>
+	 * <li>400px-INFINITY with name "Large"</li>
+	 * </ul>
+	 * 
+	 * The range names are optional. If they are specified also a CSS class (e.g. sapUiMedia-MyRangeSet-Small) is added to the document root
+	 * depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
+	 * 
+	 * @param {String} sName The name of the range set. Either a predefined or custom one. The name must be a valid id (consist of letters and digits).
+	 * @param {int[]} aRangeBorders The range borders
+	 * @param {String} [sUnit] The unit which should be used. Allowed values are px (default), em or rem.
+	 * @param {String[]} [aRangeNames] The names of the ranges. The names must be a valid id (consist of letters and digits).
+	 * @param {boolean} [bSuppressClasses] Whether writing CSS classes to the document root should be suppressed
+	 * @name sap.ui.Device.media#initRangeSet
+	 * @function
+	 * @public
+	 */
+	device.media.initRangeSet = function(sName, aRangeBorders, sUnit, aRangeNames, bSuppressClasses){	
+		//TODO Do some Assertions and parameter checking
+		var oConfig;
+		if(!sName){
+			oConfig = device.media._predefinedRangeSets[_defaultRangeSet];
+		}else if(sName && device.media._predefinedRangeSets[sName]){
+			oConfig = device.media._predefinedRangeSets[sName];
+		}else{
+			oConfig = {name: sName, unit: (sUnit || "px").toLowerCase(), points: aRangeBorders || [], names: aRangeNames, noClasses: !!bSuppressClasses};
+		}
+		
+		if(device.media.hasRangeSet(oConfig.name)){
+			return;
+		}
+		
+		sName = oConfig.name;
+		oConfig.queries = [];
+		oConfig.timer = null;
+		oConfig.currentquery = null;
+		oConfig.listener = function(){
+			return handleChange(sName);
+		};
+			
+		var from, to, query;
+		var aPoints = oConfig.points;
+		for(var i=0, len = aPoints.length; i <= len; i++){
+			from = (i == 0) ? 0 : aPoints[i-1];
+			to = (i == aPoints.length) ? -1 : aPoints[i]-0.001;
+			query = getQuery(from, to, oConfig.unit);
+			oConfig.queries.push({
+				query: query,
+				from: from,
+				to: to
+			});
+		};
+		
+		if(oConfig.names && oConfig.names.length != oConfig.queries.length){
+			oConfig.names = null;
+		}
+		
+		_querysets[oConfig.name] = oConfig;
+			
+		if(device.support.matchmedialistener){ //FF, Safari, Chrome, IE10?
+			var queries = oConfig.queries;
+			for(var i=0; i<queries.length; i++){
+				var q = queries[i];
+				q.media = window.matchMedia(q.query);
+				q.media.addListener(oConfig.listener);
+			}
+		}else{ //IE, Safari (<6?)	
+			if (window.addEventListener) {
+				window.addEventListener("resize", oConfig.listener, false);
+				window.addEventListener("orientationchange", oConfig.listener, false);
+			}else{ //IE8
+				window.attachEvent("onresize", oConfig.listener);
+			}
+		}
+		
+		oConfig.listener();
+	};
+	
+	/**
+	 * Ruturns information about the current active range of the range set with the given name.
+	 * 
+	 * @param {String} sName The name of the range set.
+	 * @name sap.ui.Device.media#getCurrentRange
+	 * @return {Map} the information about the current active range (same structure like the handler parameters (@see sap.ui.Device.media#attachHandler))
+	 * @function
+	 * @public
+	 */
+	device.media.getCurrentRange = function(sName){
+		if(!device.media.hasRangeSet(sName)){
+			return null;
+		}
+		return checkQueries(sName, true);
+	};
+	
+	/**
+	 * Returns whether a range set with the given name is initialized.
+	 * 
+	 * @param {String} sName The name of the range set.
+	 * @name sap.ui.Device.media#hasRangeSet
+	 * @return {boolean}
+	 * @function
+	 * @public
+	 */
+	device.media.hasRangeSet = function(sName){
+		return sName && !!_querysets[sName];
+	};
+	
+	/**
+	 * Removes a previously initialized range set and detaches all registered handlers.
+	 * 
+	 * Initialized predefined range sets (@see sap.ui.Device.media#RANGESETS) cannot be removed.
+	 * 
+	 * @param {String} sName The name of the range set.
+	 * @name sap.ui.Device.media#removeRangeSet
+	 * @function
+	 * @protected
+	 */
+	device.media.removeRangeSet = function(sName){
+		if(!device.media.hasRangeSet(sName)){
+			return;
+		}
+
+		for(var x in RANGESETS){
+			if(sName === RANGESETS[x]){
+				return; 
+			}
+		}
+		
+		var oConfig = _querysets[sName];
+		if(device.support.matchmedialistener){ //FF, Safari, Chrome, IE10?
+			var queries = oConfig.queries;
+			for(var i=0; i<queries.length; i++){
+				queries[i].media.removeListener(oConfig.listener);
+			}
+		}else{ //IE, Safari (<6?)	
+			if (window.removeEventListener) {
+				window.removeEventListener("resize", oConfig.listener, false);
+				window.removeEventListener("orientationchange", oConfig.listener, false);
+			}else{ //IE8
+				window.detachEvent("onresize", oConfig.listener);
+			}
+		}
+		
+		refreshCSSClasses(sName, "", true);
+		delete mEventRegistry["media_"+sName];
+		delete _querysets[sName];
+	};
+
+	
+//******** Orientation Detection ********
+	
+	/** 
+	 * Orientation Change Event API.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.orientation
+	 * @public
+	 */
+
+	device.orientation = {};
+	
+	/**
+	 * Registers the given handler to the orientation change event.
+	 * 
+	 * The handler has one map parameter <code>mParams</code>:
+	 * <ul>
+	 * <li>mParams.landscape: whether the orientation is currently landscape</li>
+	 * </ul>
+	 * 
+	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @name sap.ui.Device.orientation#attachHandler
+	 * @function
+	 * @public
+	 */
+	device.orientation.attachHandler = function(fnFunction, oListener){
+		attachEvent("orientation", fnFunction, oListener);
+	};
+	
+	/**
+	 * Deregisters a previously registered handler from the orientation change event.
+	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @name sap.ui.Device.orientation#detachHandler
+	 * @function
+	 * @public
+	 */
+	device.orientation.detachHandler = function(fnFunction, oListener){
+		detachEvent("orientation", fnFunction, oListener);
+	};
+
+	function isLandscape(){
+		if(device.support.matchmedia && device.support.orientation){
+			return !!window.matchMedia("(orientation: landscape)").matches;
+		}else{
+			var size = windowSize();
+			return size[0] > size[1];
+		}
+	};
+	
+	function setOrientationInfo(oInfo){
+		oInfo.landscape = isLandscape();
+		oInfo.portrait = !oInfo.landscape;
+	};
+	
+	function handleOrientationChange(){
+		setOrientationInfo(window.sap.ui.Device.orientation);
+		fireEvent("orientation", {landscape: window.sap.ui.Device.orientation.landscape});
+	};
+	
+	function handleOrientationResizeChange(){
+		var wasL = window.sap.ui.Device.orientation.landscape;
+		var isL = isLandscape();
+		if(wasL != isL){
+			handleOrientationChange();
+		}
+	};
+	
+	setOrientationInfo(device.orientation);
+
+	if(!device.support.touch && "onorientationchange" in window){ 
+		window.addEventListener("orientationchange", handleOrientationChange, false);
+	}else{
+		if (window.addEventListener) {
+			window.addEventListener("resize", handleOrientationResizeChange, false);
+		}else{ //IE8
+			window.attachEvent("onresize", handleOrientationResizeChange);
+		}
+	};
+
+	
+//********************************************************
+	
+	//Add API to global namespace
+	window.sap.ui.Device = device;
+	
+	//Always initialize the default media range set
+	device.media.initRangeSet();
+
+}());
+}; // end of sap.ui.Device
 
 
 /**
@@ -26338,7 +32915,7 @@ sap.ui.core.UIArea.prototype._ondetach = function() {
  * @extends sap.ui.base.EventProvider
  * @final
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */
@@ -26418,6 +32995,17 @@ sap.ui.core.Core = function() {
 	this.mElements = {};
 
 	/**
+	 * Map of of created Components keyed by their id.
+	 *
+	 * Each component registers itself in its constructor and deregisters itself in its
+	 * destroy method.
+	 *
+	 * @private
+	 * TODO get rid of this collection as it represents a candidate for memory leaks
+	 */
+	this.mComponents = {};
+
+	/**
 	 * Ordered collection of initEvent listeners
 	 * Moved here (before boot()) so that the libraries can be registered for lazy load!!
 	 * @private
@@ -26437,14 +33025,32 @@ sap.ui.core.Core = function() {
 	 * Initialized from the global "sap-ui-config" object and from Url parameters
 	 * @private
 	 */
-	this.oConfiguration = new sap.ui.core.Configuration();
+	this.oConfiguration = new sap.ui.core.Configuration(this);
 
+	// enable complex bindings if configured
+	if ( this.oConfiguration["xx-bindingSyntax"] === "complex" ) {
+		sap.ui.base.ManagedObject.bindingParser = sap.ui.base.BindingParser.complexParser; 
+	}
+		
+	// grant ElementMetadata "friend" access to Core for registration
+	sap.ui.core.ElementMetadata.prototype.register = function(oMetadata) {
+		that.registerElementClass(oMetadata);
+	};
+	
 	// grant Element "friend" access to Core for (de-)registration
 	sap.ui.core.Element.prototype.register = function() {
 		that.registerElement(this);
 	};
 	sap.ui.core.Element.prototype.deregister = function() {
 		that.deregisterElement(this);
+	};
+
+	// grant Component "friend" access to Core for (de-)registration
+	sap.ui.core.Component.prototype.register = function() {
+		that.registerComponent(this);
+	};
+	sap.ui.core.Component.prototype.deregister = function() {
+		that.deregisterComponent(this);
 	};
 
 	// handle modules
@@ -26465,6 +33071,12 @@ sap.ui.core.Core = function() {
 	log.info("Declared modules: " + aModules, METHOD);
 
 	var oCfgData = window["sap-ui-config"];
+	// Configuration might have a themeRoot, if so integrate it in themeroots
+	if ( this.oConfiguration.themeRoot ) {
+		oCfgData = oCfgData || {};
+		oCfgData.themeroots = oCfgData.themeroots || {};
+		oCfgData.themeroots[this.oConfiguration.getTheme()] = this.oConfiguration.themeRoot;
+	}
 	if (oCfgData) {
 		// read themeRoots configuration
 		if (oCfgData.themeroots) {
@@ -26495,100 +33107,53 @@ sap.ui.core.Core = function() {
 		log.info("RTL mode activated",null,METHOD);
 	}
 
-	function calcBrowserId() {
-
-		var b = jQuery.browser,
-			ua = navigator.userAgent,
-			browserVersion = parseFloat(b.version);
-
-		// jQuery checks for user agent strings. We differentiate between browsers
-		if ( b.mozilla ) {
-			if ( ua.match(/Firefox\/(\d+\.\d+)/) ) {
-				browserVersion = parseFloat(RegExp.$1);
-				b.fVersion = browserVersion;
-				return "ff" + Math.floor(browserVersion);
-			}
-		} else if ( b.webkit ) {
-			if ( ua.match(/Chrome\/(\d+\.\d+).\d+/) ) {
-				b.chrome = true;
-				b.safari = false;
-				browserVersion = parseFloat(RegExp.$1);
-				b.fVersion = browserVersion;
-				return "cr" + browserVersion;
-			} else { // I do not know why but Safari might have an issue with ua.match(...); thus changing
-				var oExp = /Version\/(\d+\.\d+).*Safari/;
-				var oExpMobile = /Mobile/;
-				if(oExp.test(ua)) {
-					b.safari = true;
-					browserVersion = parseFloat(oExp.exec(ua)[1]);
-					b.fVersion = browserVersion;
-					b.mobile = oExpMobile.test(ua);
-					return (b.mobile ? "msf" : "sf") + Math.floor(browserVersion);
-				}
-			}
-		} else if ( b.msie ) {
-			// recognize IE8 when running in compat mode (only then the documentMode property is there)
-			if (document.documentMode) {
-				if(document.documentMode === 7) {
-					// OK, obviously we are IE and seem to be 7... but as documentMode is there this cannot be IE7!
-					log.warning("Browser running in IE7 document mode.", null, METHOD);
-					b.fVersion = 8.0;
-					return "ie8"; // how do we solve this in higher versions? Where do we get this information from?
-				}
-				b.fVersion = parseFloat(document.documentMode);
-				return "ie" + document.documentMode;
-			} else {
-				b.fVersion = browserVersion;
-				return "ie" + browserVersion;
-			}
-		}
-
-		// otherwise not recognized...
-	}
-
-	function getOS(userAgent){
-		userAgent = userAgent || navigator.userAgent;
-		var platform = /\(([a-zA-Z ]+);\s(?:[U]?[;]?)([\D]+)((?:[\d._]*))(?:.*[\)][^\d]*)([\d.]*)\s/;
-		var result = userAgent.match(platform);
-		if (result){
-			var appleDevices = /iPhone|iPad|iPod/;
-			var bbDevices = /PlayBook|BlackBerry/;
-			if (result[0].match(appleDevices)){
-				result[3] = result[3].replace(/_/g, ".");
-				//result[1] contains info of devices
-				return({"version": 'iOS'+result[3] , "css": "sap-ios"});
-			} else if (result[2].match(/Android/)) {
-				result[2] = result[2].replace(/\s/g, "");
-				return({"version": result[2]+result[3] , "css": "sap-android"});
-			} else if (result[0].match(bbDevices)) {
-				return({"version": 'bb'+result[4] , "css": "sap-bb"});
-			} else {
-				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
-				return;
-			} 
-		} else {
-			// Windows phone has a different structure, so we need to check with another regExp.
-			platform = /Windows Phone (?:OS )?([\d.]*)/;
-			result = userAgent.match(platform);
-			if (result){
-				return({"version": "winPhone"+result[1] , "css": "sap-winphone"});
-			} else {
-				return;
-			}
-		}
-	}
 
 	//set the browser for css attribute selectors. do not move this to the onload function because sf and ie do not
 	//use the classes
-	var id = calcBrowserId();
-	if ( id ) {
-		jQuery("html").attr("data-sap-ui-browser", id);
+	var $html = jQuery("html");
+	
+	var b = sap.ui.Device.browser;
+	var id = b.name;
+	
+	if(id === b.BROWSER.CHROME){
+		jQuery.browser.safari = false;
+		jQuery.browser.chrome = true;
+	}else if(id === b.BROWSER.SAFARI){
+		jQuery.browser.safari = true;
+		jQuery.browser.chrome = false;
+		if(b.mobile){
+			id = "m"+id;
+		}
+	}
+	
+	if(id){
+		jQuery.browser.fVersion = b.version;
+		jQuery.browser.mobile = b.mobile;
+		
+		id = id + Math.floor(b.version);
+		$html.attr("data-sap-ui-browser", id);
 		log.debug("Browser-Id: " + id, null, METHOD);
 	}
+	
 
-	var os = getOS();
-	if ( os ){
-		jQuery("html").attr("data-sap-ui-os", os.version).addClass(os.css);
+	$html.attr("data-sap-ui-os", sap.ui.Device.os.name + sap.ui.Device.os.versionStr);
+	var osCSS = null;
+	switch(sap.ui.Device.os.name){
+		case sap.ui.Device.os.OS.IOS:
+			osCSS = "sap-ios";
+			break;
+		case sap.ui.Device.os.OS.ANDROID:
+			osCSS = "sap-android";
+			break;
+		case sap.ui.Device.os.OS.BLACKBERRY:
+			osCSS = "sap-bb";
+			break;
+		case sap.ui.Device.os.OS.WINDOWS_PHONE:
+			osCSS = "sap-winphone";
+			break;
+	}
+	if(osCSS){
+		$html.addClass(osCSS);
 	}
 
 	//if weinre id is set, load weinre target script
@@ -26633,6 +33198,15 @@ sap.ui.core.Core = function() {
 		oSyncPoint1.finishTask(iCoreBootTask);
 	});
 
+	// when a boot task is configured, add it to syncpoint2
+	var fnCustomBootTask = this.oConfiguration["xx-bootTask"]; 
+	if ( fnCustomBootTask ) {
+    var iCustomBootTask = oSyncPoint2.startTask("custom boot task");
+    fnCustomBootTask( function(bSuccess) { 
+			oSyncPoint2.finishTask(iCustomBootTask, typeof bSuccess === "undefined" || bSuccess === true );
+    });
+	}
+	
 	// when the bootstrap script has finished, it calls sap.ui.getCore().boot() 
 	var iBootstrapScriptTask = oSyncPoint2.startTask("bootstrap script");
 	this.boot = function() {
@@ -26669,20 +33243,28 @@ sap.ui.base.Object.defineClass("sap.ui.core.Core", {
 		baseType : "sap.ui.base.EventProvider",
 		publicMethods : ["boot", "isInitialized","attachInitEvent","getRenderManager","createRenderManager",
 						 "getConfiguration", "setRoot", "createUIArea", "getUIArea", "getUIDirty", "getElementById",
-						 "getCurrentFocusedControlId", "getControl", "lock", "unlock","isLocked",
+						 "getCurrentFocusedControlId", "getControl", "getComponent", "lock", "unlock","isLocked",
 						 "attachEvent","detachEvent","applyChanges", "getEventBus",
 						 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
 						 "registerPlugin","unregisterPlugin","getLibraryResourceBundle", "byId",
-						 "getLoadedLibraries", "attachControlEvent", "detachControlEvent", "loadLibrary", "initLibrary",
-						 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile", "attachParseError", "detachParseError",
-						 "attachValidationError", "detachValidationError", "attachFormatError", "detachFormatError", "attachValidationSuccess",
-						 "detachValidationSuccess", "fireFormatError", "fireParseError", "fireValidationError", "fireValidationSuccess", "isStaticAreaRef"]
+						 "getLoadedLibraries", "loadLibrary", "initLibrary",
+						 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile", 
+						 "attachControlEvent", "detachControlEvent", 
+						 "attachParseError", "detachParseError", "fireParseError",  
+						 "attachValidationError", "detachValidationError", "fireValidationError",
+						 "attachFormatError", "detachFormatError", "fireFormatError", 
+						 "attachValidationSuccess", "detachValidationSuccess", "fireValidationSuccess",
+						 "attachLocalizationChanged", "detachLocalizationChanged", 
+						 "attachLibraryChanged", "detachLibraryChanged", 
+						 "isStaticAreaRef", "createComponent"]
 	});
+
 /**
  * Map of event names and ids, that are provided by this class
  * @private
  */
-sap.ui.core.Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged",
+sap.ui.core.Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", LocalizationChanged: "localizationChanged",
+		LibraryChanged : "libraryChanged", 
 		ValidationError : "validationError", ParseError : "parseError", FormatError : "formatError", ValidationSuccess : "validationSuccess"};
 
 /**
@@ -26696,8 +33278,33 @@ sap.ui.core.Core.prototype._boot = function() {
 	//do not allow any event processing until the Core is booting
 	this.lock();
 
-	// initialize the application cachebuster mechanism if configured 
-	if (this.oConfiguration.getAppCacheBuster()) {
+	// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)  
+	var aCSSLibs = this.oConfiguration['xx-preloadLibCss'];
+	if ( aCSSLibs.length > 0 ) {
+		// a leading "!" denotes that the application has loaded the file already 
+		var bAppManaged = aCSSLibs[0].slice(0,1) === "!";
+		if ( bAppManaged ) {
+			aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in this.oConfiguration!
+		}
+		if ( aCSSLibs[0] === "*" ) {
+			// replace with configured libs
+			aCSSLibs.splice(0,1); // remove *
+			var pos=0;
+			jQuery.each(this.oConfiguration.modules, function(i,mod) {
+				var m = mod.match(/^(.*)\.library$/);
+				if ( m ) {
+					aCSSLibs.splice(pos,0,m[1]);
+				}
+			});
+		}
+		if ( !bAppManaged ) {
+			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
+		}
+	}
+
+  // initialize the application cachebuster mechanism if configured 
+	var aACBConfig = this.oConfiguration.getAppCacheBuster();
+	if (aACBConfig && aACBConfig.length > 0) {
 		jQuery.sap.require("sap.ui.core.AppCacheBuster");
 	}
 
@@ -26748,32 +33355,54 @@ sap.ui.core.Core.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
 
 	// only apply the theme if it is different from the active one
 	if (sThemeName && this.sTheme != sThemeName) {
-		var sCurrentTheme = this.sTheme,
-			that = this;
-		// select "our" stylesheets
-		jQuery("link[id^=sap-ui-theme-]").each(function() {
-			// modify style sheet URL to point to the new theme
-			// be aware of custom css included with the colon (see includeLibraryTheme) // TODO: what is this??
-			var sLibName = this.id.substr(13); // length of "sap-ui-theme-"
-			var pos;
-			if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
-				sLibName = sLibName.substr(0, pos);
-			}
-			var sBaseUrl = that._getThemePath(sLibName, sThemeName);
-			var fileName = this.href.substr(this.href.lastIndexOf("/") + 1);
-			this.href = sBaseUrl + fileName;
-		});
+		var sCurrentTheme = this.sTheme;
+
+		this._updateThemeUrls(sThemeName);
 		this.sTheme = sThemeName;
 		this.getConfiguration()._setTheme(sThemeName);
-
+		
 		// modify the <html> tag's CSS class with the theme name
 		jQuery(document.documentElement).removeClass("sapUiTheme-" + sCurrentTheme).addClass("sapUiTheme-" + sThemeName);
 
 		// notify the listeners
-		jQuery.sap.delayedCall(500, this, "fireThemeChanged", [{theme: sThemeName}]); // TODO: only fire once we are sure the theme has been loaded. E.g. have a certain off-screen element with a width that can be derived from the theme name and is unique. And wait until the element has changed size.
+		if ( this.oThemeCheck ) {
+			this.oThemeCheck.fireThemeChangedEvent(false, true);
+		}
 	}
 };
 
+// modify style sheet URLs to point to the given theme, using the current RTL mode
+sap.ui.core.Core.prototype._updateThemeUrls = function(sThemeName) {
+	var that = this,
+	sRTL = this.oConfiguration.getRTL() ? "-RTL" : "";
+
+	// select "our" stylesheets
+	jQuery("link[id^=sap-ui-theme-]").each(function() {
+		var sLibName = this.id.slice(13), // length of "sap-ui-theme-"
+			sLibFileName = this.href.slice(this.href.lastIndexOf("/") + 1),
+			sStandardLibFilePrefix = "library", 
+			sHref,
+			pos;
+		
+		// handle 'variants'
+		if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
+			sStandardLibFilePrefix += sLibName.slice(pos+2, -1); // 2=length of "-]" 
+			sLibName = sLibName.slice(0, pos);
+		}
+		
+		// try to distinguish "our" library css from custom css included with the ':' notation in includeLibraryTheme
+		if ( sLibFileName === (sStandardLibFilePrefix + ".css") || sLibFileName === (sStandardLibFilePrefix + "-RTL.css") ) {
+			sLibFileName = sStandardLibFilePrefix + sRTL + ".css"; 
+		}
+		
+		// set new URL
+		sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName
+		if ( sHref != this.href ) {
+			this.href = sHref;
+			jQuery(this).removeAttr("sap-ui-ready");
+		}
+	});
+};
 
 /**
  * Returns the URL of the folder in which the CSS file for the given theme and the given library is located .
@@ -26800,11 +33429,35 @@ sap.ui.core.Core.prototype._getThemePath = function(sLibName, sThemeName) {
 
 
 /**
+ * Defines the root directory from below which UI5 should load the theme with the given name. 
+ * Optionally allows restricting the setting to parts of a theme covering specific control libraries.
  *
+ * Example:
+ * <code>
+ *   core.setThemeRoot("my_theme", "http://mythemeserver.com/allThemes");
+ *   core.applyTheme("my_theme");
+ * </code>
+ * will cause the following file to be loaded:
+ * <code>http://mythemeserver.com/allThemes/sap/ui/core/themes/my_theme/library.css</code>
+ * (and the respective files for all used control libraries, like <code>http://mythemeserver.com/allThemes/sap/ui/commons/themes/my_theme/library.css</code>
+ * if the sap.ui.commons library is used)
  *
- * @param sThemeName
- * @param aLibraryNames
- * @param sThemeBaseUrl
+ * If parts of the theme are at different locations (e.g. because you provide a standard theme like "sap_goldreflection" for a custom control library and
+ * this self-made part of the standard theme is at a different location than the UI5 resources), you can also specify for which control libraries the setting
+ * should be used, by giving an array with the names of the respective control libraries as second parameter:
+ * <code>core.setThemeRoot("sap_goldreflection", ["my.own.library"], "http://mythemeserver.com/allThemes");</code>
+ * This will cause the Gold Reflection theme to be loaded normally from the UI5 location, but the part for styling the "my.own.library" controls will be loaded from:
+ * <code>http://mythemeserver.com/allThemes/my/own/library/themes/sap_goldreflection/library.css</code>
+ *
+ * If the custom theme should be loaded initially (via bootstrap attribute), the "themeRoots" property of the window["sap-ui-config"] object must be used instead
+ * of Core.setThemeRoot(...) in order to configure the theme location early enough.
+ *
+ * @param {string} sThemeName the name of the theme for which to configure the location
+ * @param {string[]} [aLibraryNames] the optional library names to which the configuration should be restricted
+ * @param {string} sThemeBaseUrl the base URL below which the CSS file(s) will be loaded from
+ * @return {sap.ui.core.Core} the Core, to allow method chaining
+ * @since 1.10
+ * @public
  */
 sap.ui.core.Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
 	jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
@@ -26815,7 +33468,7 @@ sap.ui.core.Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sT
 	}
 
 	// normalize parameters
-	if (!sThemeBaseUrl) {
+	if (sThemeBaseUrl === undefined) {
 		sThemeBaseUrl = aLibraryNames;
 		aLibraryNames = undefined;
 	}
@@ -26832,7 +33485,8 @@ sap.ui.core.Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sT
 		// registration of theme default base URL
 		this._mThemeRoots[sThemeName] = sThemeBaseUrl;
 	}
-
+	
+	return this;
 };
 
 
@@ -26856,6 +33510,7 @@ sap.ui.core.Core.prototype.init = function() {
 
 	this.oFocusHandler = new sap.ui.core.FocusHandler(document.body, this);
 	this.oResizeHandler = new sap.ui.core.ResizeHandler(this);
+	this.oThemeCheck = new sap.ui.core.ThemeCheck(this);
 
 	log.info("Initialized",null,METHOD);
 
@@ -26896,6 +33551,8 @@ sap.ui.core.Core.prototype.init = function() {
 	}
 
 	this._rerenderAllUIAreas(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+	
+	this.oThemeCheck.fireThemeChangedEvent(true);
 };
 
 /**
@@ -27062,10 +33719,56 @@ sap.ui.core.Core.prototype.loadLibrary = function(sLibrary, sUrl) {
 			jQuery.sap.log.warning("library " + sLibrary + " didn't initialize itself");
 			this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
 		}
+		
+		if ( this.oThemeCheck && this.isInitialized() ) {
+			this.oThemeCheck.fireThemeChangedEvent(true);
+		}
 
 	}
 
 	return this.mLibraries[sLibrary];
+};
+
+/**
+ * Creates a component with the provided id and settings
+ *
+ * When the optional parameter <code>sUrl</code> is given, then all request for resources of the
+ * library will be redirected to the given Url. This is convenience for a call to
+ * <pre>
+ *   jQuery.sap.registerModulePath(sLibrary, sUrl);
+ * </pre>
+ *
+ * @param {string|object} sComponent name of the component to import or object containng all needed parameters
+ * @param {string} [sUrl] the URL to load the component from
+ * @param {string} [sId] the ID for the component instance
+ * @param {object} [mSettings] the settings object for the component
+ * @public
+ */
+sap.ui.core.Core.prototype.createComponent = function(sName, sUrl, sId, mSettings) {
+	// Support object parameter instead of single parameters
+	if (typeof sName == "object") {
+		var oObject = sName;
+		sName = oObject.name;
+		sUrl = oObject.url;
+		sId = oObject.id;
+		mSettings = oObject.settings;
+	}
+
+	jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+
+	if (sUrl) {
+		jQuery.sap.registerModulePath(sName, sUrl);
+	}
+	
+	var sController = sName + ".Component";
+
+	// require the component
+	jQuery.sap.require(sController);
+	var oClass = jQuery.sap.getObject(sController);
+	var oInstance = new oClass(sId, mSettings);
+	jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
+	
+	return oInstance;
 };
 
 /**
@@ -27151,14 +33854,19 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
 		}
 	}
 
+	// register interface types
+	sap.ui.base.DataType.registerInterfaceTypes(oLibInfo.interfaces);
+	
 	// create lazy imports for all controls and elements
 	var aElements = oLibInfo.controls.concat(oLibInfo.elements);
 	for(var i=0; i<aElements.length; i++) {
-		sap.ui.lazyRequire(aElements[i], "new extend"); // TODO don't create an 'extend' stub for final classes
+		sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
 	}
 
 	// include the library theme
-	this.includeLibraryTheme(sLibName);
+	if ( jQuery.inArray(sLibName, this.oConfiguration['xx-preloadLibCss']) < 0 ) {
+		this.includeLibraryTheme(sLibName);
+	}
 
 	// expose some legacy names
 	oLibInfo.sName = oLibInfo.name;
@@ -27171,6 +33879,7 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
 		jQuery.sap.require(sLibName + ".library");
 	}
 
+	this.fireLibraryChanged({name : sLibName, stereotype : "library", operation: "add", metadata : oLibInfo});
 };
 
 /**
@@ -27178,9 +33887,10 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
  * will include the variant library theme)
  * @param {string} sLibName the name of the UI library
  * @param {string} [sVariant] the variant to include (optional)
+ * @param {string} [sQuery] to be used only by the Core
  * @public
  */
-sap.ui.core.Core.prototype.includeLibraryTheme = function(sLibName, sVariant) {
+sap.ui.core.Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
 	jQuery.sap.assert(typeof sLibName === "string", "sLibName must be a string");
 	jQuery.sap.assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
 
@@ -27211,7 +33921,7 @@ sap.ui.core.Core.prototype.includeLibraryTheme = function(sLibName, sVariant) {
 		}
 
 		// log and include
-		var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css";
+		var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
 		jQuery.sap.log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
 		jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
 
@@ -27264,6 +33974,7 @@ sap.ui.core.Core.prototype.setRoot = function(oDomRef, oControl) {
  * @deprecated Use <code>setRoot()</code> instead!
  */
 sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
+	var that = this;
 	jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
 
 	if (!oDomRef) {
@@ -27288,15 +33999,19 @@ sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
 	var sId = oDomRef.id;
 	if (!this.mUIAreas[sId]) {
 		this.mUIAreas[sId] = new sap.ui.core.UIArea(this, oDomRef);
+		// propagate Models to newly created UIArea
+		jQuery.each(this.oModels, function (sName, oModel){
+			that.mUIAreas[sId].oPropagatedProperties.oModels[sName] = oModel;
+		});
+		this.mUIAreas[sId].propagateProperties(true);
 	} else {
 		// this should solve the issue of 'recreation' of a UIArea
 		// e.g. via setRoot with a new domRef
 		this.mUIAreas[sId].setRootNode(oDomRef);
 	}
 	return this.mUIAreas[sId];
-
 };
-
+ 
 /**
  * Returns a UIArea if the given ID/Element belongs to one
  *
@@ -27304,7 +34019,7 @@ sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
  * @param {String,DomRef} o a DOM Reference or ID String of the UIArea
  * @return a UIArea with a given id or dom ref.
  * @type sap.ui.core.UIArea
- */
+ */ 
 sap.ui.core.Core.prototype.getUIArea = function(o) {
 	jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
 
@@ -27415,7 +34130,7 @@ sap.ui.core.Core.prototype.getUIDirty = function() {
 };
 
 /**
- * @name sap.ui.core.Core.prototype.UIUpdated
+ * @name sap.ui.core.Core#UIUpdated
  * @event
  * @param {string} a
  * @param {object} source
@@ -27435,7 +34150,7 @@ sap.ui.core.Core.prototype.fireUIUpdated = function(mParameters) {
 };
 
 /**
- * @name sap.ui.core.Core.prototype.ThemeChanged
+ * @name sap.ui.core.Core#ThemeChanged
  * @event
  * @param {string} a
  * @param {object} source
@@ -27470,6 +34185,156 @@ sap.ui.core.Core.prototype.fireThemeChanged = function(mParameters) {
 };
 
 /**
+ * Fired when any of the localization relevant configuration settings has changed
+ * (e.g. language, rtl, formatLocale, datePattern, timePattern, numberSymbol, legacy formats).
+ * 
+ * The parameter <code>changes</code> contains additional information about the change. 
+ * It is a plain object that can contain one or more of the following properties 
+ * <ul>
+ *   <li>language - the language setting has changed</li>
+ *   <li>rtl - the character orientation mode (aka 'LTR/RTL mode') has changed</li>
+ *   <li>formatLocale - the format locale has changed</li>
+ * </ul>
+ * (there might be other, currently undocumented settings)
+ *  
+ * The value for each property will be the new corresponding setting.
+ * 
+ * @name sap.ui.core.Core#localizationChanged
+ * @event
+ * @param {sap.ui.base.Event} oEvent
+ * @param {sap.ui.base.EventProvider} oEvent.getSource
+ * @param {object} oEvent.getParameters
+ * @param {object} oEvent.getParameters.changes a map of the changed localization properties
+ * @public
+ */
+
+/**
+ * Register a listener for the <code>localizationChanged</code> event.
+ * 
+ * @public
+ */
+sap.ui.core.Core.prototype.attachLocalizationChanged = function(fFunction, oListener) {
+	this.attachEvent(sap.ui.core.Core.M_EVENTS.LocalizationChanged, fFunction, oListener);
+};
+
+/**
+ * Unregister a listener from the <code>localizationChanged</code> event.
+ * 
+ * @public
+ */
+sap.ui.core.Core.prototype.detachLocalizationChanged = function(fFunction, oListener) {
+	this.detachEvent(sap.ui.core.Core.M_EVENTS.LocalizationChanged, fFunction, oListener);
+};
+
+/**
+ * @private
+ */
+sap.ui.core.Core.prototype.fireLocalizationChanged = function(mChanges) {
+	var that=this,
+		sEventId = sap.ui.core.Core.M_EVENTS.LocalizationChanged,
+		oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
+		fnAdapt = sap.ui.base.ManagedObject._handleLocalizationChange,
+		changedSettings = [];
+
+	jQuery.each(mChanges, function(key,value) { changedSettings.push(key); } );
+	jQuery.sap.log.info("localization settings changed: " + changedSettings.join(","), null, "sap.ui.core.Core");
+	
+	/*
+	 * Notify models that are able to handle a localization change
+	 */
+	jQuery.each(this.oModels, function(sName, oModel) {
+		if ( oModel && oModel._handleLocalizationChange ) {
+			oModel._handleLocalizationChange(); 
+		}
+	});
+
+	/*
+	 * Notify all UIAreas, Components, Elements to first update their models (phase 1) 
+	 * and then to update their bindings and corresponding data types (phase 2) 
+	 */
+	function notifyAll(iPhase) {
+		jQuery.each(this.mUIAreas, function() {
+			fnAdapt.call(this, iPhase);
+		});
+		jQuery.each(this.mComponents, function() {
+			fnAdapt.call(this, iPhase);
+		});
+		jQuery.each(this.mElements, function() {
+			fnAdapt.call(this, iPhase);
+		});
+	}
+	
+	notifyAll.call(this,1);
+	notifyAll.call(this,2);
+	
+	// special handling for changes of the RTL mode
+	if ( mChanges.rtl != undefined ) {
+		// update the dir attribute of the document
+		jQuery(document.documentElement).attr("dir", mChanges.rtl ? "rtl" : "ltr");
+		// modify style sheet URLs
+		this._updateThemeUrls(this.sTheme);
+		// invalidate all UIAreas
+		jQuery.each(this.mUIAreas, function() {
+			this.invalidate();
+		});
+		jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
+	}
+
+	// notify Elements via a pseudo browser event (onLocalizationChanged)
+	jQuery.each(this.mElements, function(sId, oElement) {
+		this._handleEvent(oBrowserEvent);
+	});
+
+	// notify registered Core listeners 
+	this.fireEvent(sEventId, {changes : mChanges});
+};
+
+/**
+ * Fired when the set of controls, elements etc. for a library has changed
+ * or when the set of libraries has changed.
+ * 
+ * Note: while the parameters of this event could already describe <i>any</i> type of change,
+ * the set of reported changes is currently restricted to the addition of libraries, 
+ * controls and elements. Future implementations might extend the set of reported 
+ * changes. Therefore applications should already check the operation and stereotype 
+ * parameters.
+ * 
+ * @name sap.ui.core.Core#libraryChanged
+ * @event
+ * @param {sap.ui.base.Event} oEvent
+ * @param {sap.ui.base.EventProvider} oEvent.getSource
+ * @param {object} oEvent.getParameters
+ * @param {string} oEvent.getParameters.name name of the newly added entity
+ * @param {string} [oEvent.getParameters.stereotype] stereotype of the newly added entity type ("control", "element")
+ * @param {string} [oEvent.getParameters.operation] type of operation ("add")
+ * @param {sap.ui.base.Metadata|object} [oEvent.getParameters.metadata] metadata for the added entity type. 
+ *         Either an instance of sap.ui.core.ElementMetadata if it is a Control or Element, or a library info object
+ *         if it is a library. Note that the API of all metadata objects is not public yet and might change. 
+ */
+
+/**
+ * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
+ */
+sap.ui.core.Core.prototype.attachLibraryChanged = function(fFunction, oListener) {
+	this.attachEvent(sap.ui.core.Core.M_EVENTS.LibraryChanged, fFunction, oListener);
+};
+
+/**
+ * Unregister a listener from the {@link sap.ui.core.Core#event:libraryChanged} event.
+ */
+sap.ui.core.Core.prototype.detachLibraryChanged = function(fFunction, oListener) {
+	this.detachEvent(sap.ui.core.Core.M_EVENTS.LibraryChanged, fFunction, oListener);
+};
+
+/**
+ * @private
+ */
+sap.ui.core.Core.prototype.fireLibraryChanged = function(oParams) {
+	// notify registered Core listeners 
+	this.fireEvent(sap.ui.core.Core.M_EVENTS.LibraryChanged, oParams);
+};
+
+/**
  * Enforces an immediate update of the visible UI (aka "rendering").
  *
  * In general, applications should avoid calling this method and
@@ -27478,6 +34343,44 @@ sap.ui.core.Core.prototype.fireThemeChanged = function(mParameters) {
  */
 sap.ui.core.Core.prototype.applyChanges = function() {
 	this._rerenderAllUIAreas();
+};
+
+/**
+ * @private
+ */
+sap.ui.core.Core.prototype.registerElementClass = function(oMetadata) {
+	var sName = oMetadata.getName(),
+		sLibraryName = oMetadata.getLibraryName() || "",
+		oLibrary = this.mLibraries[sLibraryName],
+		bControl = sap.ui.core.Control.prototype.isPrototypeOf(oMetadata.getClass().prototype),
+		bChanged = false;
+	
+	if ( !oLibrary ) {
+		oLibrary = this.mLibraries[sLibraryName] = {
+			dependencies : [],
+			types : [],
+			interfaces : [],
+			controls: [],
+			elements : []
+		}
+	}
+	
+	if ( bControl ) {
+		if ( jQuery.inArray(sName, oLibrary.controls) < 0 ) {
+			oLibrary.controls.push(sName);
+			bChanged=true;
+		}
+	} else {
+		if ( jQuery.inArray(sName, oLibrary.elements) < 0 ) {
+			oLibrary.elements.push(sName);
+			bChanged=true;
+		}
+	}
+	
+	if ( bChanged ) {
+		jQuery.sap.log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
+		this.fireLibraryChanged({name : oMetadata.getName(), stereotype : oMetadata.getStereotype(), operation: "add", metadata : oMetadata});
+	}
 };
 
 /**
@@ -27508,6 +34411,31 @@ sap.ui.core.Core.prototype.registerElement = function(oElement) {
 sap.ui.core.Core.prototype.deregisterElement = function(oElement) {
 	delete this.mElements[oElement.getId()];
 };
+
+/**
+ * Registers the given component. Must be called once during construction.
+ * @param {sap.ui.core.Component} oComponent
+ * @private
+ */
+sap.ui.core.Core.prototype.registerComponent = function(oComponent) {
+	var oldComponent = this.getComponent(oComponent.getId());
+	if ( oldComponent && oldComponent !== oComponent ) {
+		jQuery.sap.log.error("adding component with duplicate id '" + oComponent.getId() + "'");
+		throw new Error("Error: adding component with duplicate id '" + oComponent.getId() + "'");
+	}
+
+	this.mComponents[oComponent.getId()] = oComponent;
+};
+
+/**
+ * Deregisters the given Component. Must be called once during destruction.
+ * @param {sap.ui.core.Component} oComponent
+ * @private
+ */
+sap.ui.core.Core.prototype.deregisterComponent = function(oComponent) {
+	delete this.mComponents[oComponent.getId()];
+};
+
 
 /**
  * Returns the registered element for the given id, if any.
@@ -27583,6 +34511,17 @@ sap.ui.core.Core.prototype.getControl = sap.ui.core.Core.prototype.byId;
 sap.ui.core.Core.prototype.getElementById = sap.ui.core.Core.prototype.byId;
 
 /**
+ * Returns the registered component for the given id, if any.
+ * @param {string} sId
+ * @return {sap.ui.core.Component} the component for the given id
+ * @public
+ */
+sap.ui.core.Core.prototype.getComponent = function(sId) {
+	jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
+	return sId == null ? undefined : this.mComponents[sId];
+};
+
+/**
  * Returns the static, hidden area reference belonging to this core instance.<br/> It can be used e.g. for hiding
  * elements like Popups, Shadow, Blocklayer etc.<br/> If it is not yet available, creates one HTML element and attaches
  * it to the body.
@@ -27626,7 +34565,7 @@ sap.ui.core.Core.prototype.isStaticAreaRef = function(oDomRef) {
  * @public
  */
 sap.ui.core.Core.prototype.attachControlEvent = function(fFunction, oListener) {
-	this.attachEvent(sap.ui.core.UIArea.M_EVENTS.ControlEvent, fFunction, oListener);
+	this.attachEvent(sap.ui.core.Core.M_EVENTS.ControlEvent, fFunction, oListener);
 };
 
 /**
@@ -27636,7 +34575,7 @@ sap.ui.core.Core.prototype.attachControlEvent = function(fFunction, oListener) {
  * @public
  */
 sap.ui.core.Core.prototype.detachControlEvent = function(fFunction, oListener) {
-	this.detachEvent(sap.ui.core.UIArea.M_EVENTS.ControlEvent, fFunction, oListener);
+	this.detachEvent(sap.ui.core.Core.M_EVENTS.ControlEvent, fFunction, oListener);
 };
 
 /**
@@ -27645,7 +34584,7 @@ sap.ui.core.Core.prototype.detachControlEvent = function(fFunction, oListener) {
  * @private
  */
 sap.ui.core.Core.prototype.fireControlEvent = function(mParameters) {
-	this.fireEvent(sap.ui.core.UIArea.M_EVENTS.ControlEvent, mParameters);
+	this.fireEvent(sap.ui.core.Core.M_EVENTS.ControlEvent, mParameters);
 };
 
 /**
@@ -27769,27 +34708,56 @@ sap.ui.core.Core.prototype.stopPlugins = function() {
 };
 
 /**
- * Set the model for databinding
- * @param {sap.ui.model.Model} oModel
- * @param {string} [sName]
+ * Sets or unsets a model for the given model name. 
+ * 
+ * The <code>sName</code> must either be <code>undefined</code> (or omitted) or a non-empty string.
+ * When the name is omitted, the default model is set/unset. 
+ * 
+ * When <code>oModel</code> is <code>null</code> or <code>undefined</code>, a previously set model 
+ * with that name is removed from the Core.
+ *  
+ * Any change (new model, removed model) is propagated to all existing UIAreas and their descendants
+ * as long as a descendant doesn't have its own model set for the given name.
+ * 
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ *  
+ * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
+ * @param {string} [sName] the name of the model or <code>undefined</code>
+ * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
  * @public
  */
 sap.ui.core.Core.prototype.setModel = function(oModel, sName) {
-	jQuery.sap.assert(typeof oModel === "object", "oModel must be an object");
+	jQuery.sap.assert(typeof oModel === "object" || !oModel, "oModel must be an object or undefined");
 	jQuery.sap.assert(sName === undefined || typeof sName === "string", "sName must be a string or omitted");
-
-	this.oModels[sName] = oModel;
-
-	// notify all UI areas to update their bindings
-	jQuery.each(this.mUIAreas, function (i, oUIArea){
-		oUIArea.updateBindings(sName);
-	});
-
+	if (!oModel && this.oModels[sName]) {
+		delete this.oModels[sName];
+		// propagate Models to all UI areas 
+		jQuery.each(this.mUIAreas, function (i, oUIArea){
+			delete oUIArea.oPropagatedProperties.oModels[sName];
+			oUIArea.propagateProperties(sName);
+		});
+	} else if (oModel && oModel !== this.oModels[sName] ) { 
+		this.oModels[sName] = oModel;
+		// propagate Models to all UI areas 
+		jQuery.each(this.mUIAreas, function (i, oUIArea){
+			oUIArea.oPropagatedProperties.oModels[sName] = oModel;
+			oUIArea.propagateProperties(sName);
+		});
+	} else {
+		// nothing to do
+	}  
 };
 
 /**
- * Get the model for databinding
- * @param {string} [sName]
+ * Get the model with the given model name.
+ * 
+ * The name can be omitted to reference the default model or it must be a non-empty string.
+ * 
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ * 
+ * @param {string|undefined} [sName] name of the model to be retrieved
  * @return {sap.ui.model.Model} oModel
  * @public
  */
@@ -28127,7 +35095,7 @@ sap.ui.core.Core.prototype.fireValidationSuccess = function(mArguments) {
  * @public
  */
 sap.ui.core.Core.prototype.isMobile = function() {
-	return !!window.orientation;
+	return jQuery.browser.mobile;
 };
 
 /**

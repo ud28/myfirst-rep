@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,7 +31,8 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getNumberFormat numberFormat} : string</li></ul>
+ * <li>{@link #getNumberFormat numberFormat} : string (default: '')</li>
+ * <li>{@link #getFormatString formatString} : string (default: 'null')</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -56,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -73,7 +74,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"numberFormat" : {type : "string", group : "", defaultValue : null}
+		"numberFormat" : {type : "string", group : "", defaultValue : ''},
+		"formatString" : {type : "string", group : "", defaultValue : 'null'}
 	}
 }});
 
@@ -107,7 +109,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -119,6 +120,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @name sap.viz.ui5.types.Axis_label#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>numberFormat</code>.
@@ -132,7 +134,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>numberFormat</code>.
  *
@@ -144,5 +145,31 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @name sap.viz.ui5.types.Axis_label#setNumberFormat
  * @function
  */
+
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of value axis. If number format and format string are both set, number format will be ignored.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {string} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Axis_label#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string} sFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Axis_label} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Axis_label#setFormatString
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Axis_label.js

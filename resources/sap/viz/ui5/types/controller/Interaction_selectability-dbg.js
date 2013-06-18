@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -30,7 +30,8 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getMode mode} : sap.viz.ui5.types.controller.Interaction_selectability_mode (default: sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple)</li></ul>
+ * <li>{@link #getMode mode} : sap.viz.ui5.types.controller.Interaction_selectability_mode (default: sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple)</li>
+ * <li>{@link #getLassoWithCtrlKey lassoWithCtrlKey} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -55,7 +56,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -71,7 +72,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"mode" : {type : "sap.viz.ui5.types.controller.Interaction_selectability_mode", group : "", defaultValue : sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple}
+		"mode" : {type : "sap.viz.ui5.types.controller.Interaction_selectability_mode", group : "", defaultValue : sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple},
+		"lassoWithCtrlKey" : {type : "boolean", group : "", defaultValue : false, deprecated: true}
 	}
 }});
 
@@ -105,7 +107,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
-
 /**
  * Setter for property <code>mode</code>.
  *
@@ -117,5 +118,35 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @name sap.viz.ui5.types.controller.Interaction_selectability#setMode
  * @function
  */
+
+
+/**
+ * Getter for property <code>lassoWithCtrlKey</code>.
+ * Set whether lasso selection needs ctrl key pressed.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>lassoWithCtrlKey</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction_selectability#getLassoWithCtrlKey
+ * @function
+ */
+
+/**
+ * Setter for property <code>lassoWithCtrlKey</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bLassoWithCtrlKey  new value for property <code>lassoWithCtrlKey</code>
+ * @return {sap.viz.ui5.types.controller.Interaction_selectability} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction_selectability#setLassoWithCtrlKey
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/controller/Interaction_selectability.js

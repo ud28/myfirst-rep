@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
  
 // Provides default renderer for control sap.m.Image
@@ -35,6 +35,9 @@ sap.m.ImageRenderer.render = function(rm, oImage){
 	rm.writeControlData(oImage);
 	
 	rm.addClass("sapMImg");
+	if(oImage.hasListeners("press") || oImage.hasListeners("tap")){
+		rm.addClass("sapMPointer");
+	}
 	rm.writeClasses();
 	
 	//TODO need further discussion to decide if tooltip is still needed for mobile
@@ -76,6 +79,11 @@ sap.m.ImageRenderer.render = function(rm, oImage){
 		rm.addStyle("height", oImage.getHeight());
 	}
 	rm.writeStyles();
+	
+	var sTooltip = oImage.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
 	
 	rm.write(" />"); // close the <img> element
 };

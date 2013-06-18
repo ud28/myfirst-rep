@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.makit (1.8.4)
+ * Initialization Code and shared classes of library sap.makit (1.12.1)
  */
 jQuery.sap.declare("sap.makit.library");
 jQuery.sap.require("sap.ui.core.Core");
@@ -39,25 +39,28 @@ sap.ui.getCore().initLibrary({
   ],
   interfaces: [],
   controls: [
-    "sap.makit.Chart"
+    "sap.makit.Chart",
+    "sap.makit.CombinationChart"
   ],
   elements: [
     "sap.makit.Axis",
     "sap.makit.Category",
     "sap.makit.CategoryAxis",
     "sap.makit.Column",
+    "sap.makit.Layer",
+    "sap.makit.MakitLib",
     "sap.makit.Row",
     "sap.makit.Series",
     "sap.makit.Value",
     "sap.makit.ValueAxis",
     "sap.makit.ValueBubble"
   ],
-  version: "1.8.4"});
+  version: "1.12.1"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -71,11 +74,10 @@ jQuery.sap.declare("sap.makit.ChartType");
 /**
  * @class Enumeration for chart type
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  */
 sap.makit.ChartType = {
   
@@ -125,14 +127,26 @@ sap.makit.ChartType = {
      * 100% stacked column chart 
      * @public
      */
-    HundredPercentStackedColumn : "HundredPercentStackedColumn"
+    HundredPercentStackedColumn : "HundredPercentStackedColumn",
+
+    /**
+     * Waterfall Column chart 
+     * @public
+     */
+    WaterfallColumn : "WaterfallColumn",
+
+    /**
+     * Waterfall Bar chart 
+     * @public
+     */
+    WaterfallBar : "WaterfallBar"
 
   };
   
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -146,7 +160,7 @@ jQuery.sap.declare("sap.makit.LegendPosition");
 /**
  * @class Enumeration for legend position.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @experimental Since version 1.8. 
@@ -189,7 +203,7 @@ sap.makit.LegendPosition = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -203,11 +217,10 @@ jQuery.sap.declare("sap.makit.SortOrder");
 /**
  * @class Enumeration for sort order
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  */
 sap.makit.SortOrder = {
   
@@ -240,7 +253,7 @@ sap.makit.SortOrder = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -254,9 +267,10 @@ jQuery.sap.declare("sap.makit.ValueBubblePosition");
 /**
  * @class Position for Value Bubble only applies to Pie/Donut Chart.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  */
@@ -279,7 +293,7 @@ sap.makit.ValueBubblePosition = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -293,9 +307,10 @@ jQuery.sap.declare("sap.makit.ValueBubbleStyle");
 /**
  * @class Enumeration for Value Bubble's positioning style. This applies all chart types except Pie/Donut/HBar chart.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  */

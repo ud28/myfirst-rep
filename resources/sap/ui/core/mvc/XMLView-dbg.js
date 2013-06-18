@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.mvc.View");
  * @extends sap.ui.core.mvc.View
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -99,7 +99,7 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 	 * The <code>viewName</code> must either correspond to an XML module that can be loaded
 	 * via the module system (viewName + suffix ".view.xml") and which defines the view or must
 	 * be a configuration object for a view.
-	 * The configuration object can have a vieName, viewContent and a controller property. The viewName
+	 * The configuration object can have a viewName, viewContent and a controller property. The viewName
 	 * behaves as described above. ViewContent can hold the view description as XML string. The controller
 	 * property can hold an controller instance. If a controller instance is given it overrides the
 	 * controller defined in the view.
@@ -110,6 +110,7 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 	 * @param {string | object} vView name of the view or view configuration as described above.
 	 * @public
 	 * @static
+	 * @return {sap.ui.core.mvc.XMLView} the created XMLView instance
 	 */
 	sap.ui.xmlview = function(sId, vView) {
 		var mSettings = {};
@@ -180,7 +181,7 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 			delete mSettings.controller;
 		}
 
-		if(this._resourceBundleName || this._resourceBundleUrl) {
+		if((this._resourceBundleName || this._resourceBundleUrl) && (!mSettings.models || !mSettings.models[this._resourceBundleAlias])) {
 			var model = new sap.ui.model.resource.ResourceModel({bundleName:this._resourceBundleName, bundleUrl:this._resourceBundleUrl, bundleLocale:this._resourceBundleLocale});
 			this.setModel(model,this._resourceBundleAlias);
 		}
@@ -189,10 +190,10 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 	sap.ui.core.mvc.XMLView.prototype.onControllerConnected = function(oController) {
 		var that=this;
 		// unset any preprocessors (e.g. from an enclosing JSON view)
-		sap.ui.core.Element.runWithPreprocessors(function() {
+		sap.ui.base.ManagedObject.runWithPreprocessors(function() {
 			// parse the XML tree
 			that._aParsedContent = parseView(that._xContent, that);
-		})
+		});
 	};
 
 	sap.ui.core.mvc.XMLView.prototype.getControllerName = function() {
@@ -247,12 +248,13 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 
 	//************* PARSING *************
 
-	function parseScalarType(sType, sValue, sName) {
+	function parseScalarType(sType, sValue, sName, oController) {
 		// check for a binding expression (string)
-		// TODO factor out and move to Element or ExpressionLanguage to guarantee that the check is in sync with the data binding
-		if ( sValue && sValue.slice(0,1) === '{' && sValue.slice(-1) === '}' ) {
-			return sValue;
+		var oBinding = sap.ui.base.ManagedObject.bindingParser(sValue, oController);
+		if ( oBinding ) {
+			return oBinding;
 		}
+
 		var oType = sap.ui.base.DataType.getType(sType);
 		if (oType) {
 			if (oType instanceof sap.ui.base.DataType) {
@@ -291,7 +293,7 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 			} else if (attr.name === 'resourceBundleAlias') {
 				oView._resourceBundleAlias =  attr.value;
 			} else if (!mSettings[attr.name] && mAllProperties[attr.name]) {
-				mSettings[attr.name] = parseScalarType(mAllProperties[attr.name].type, attr.value, attr.name);
+				mSettings[attr.name] = parseScalarType(mAllProperties[attr.name].type, attr.value, attr.name, oView._oContainingView.oController);
 			}
 		}
 	}
@@ -330,10 +332,10 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 						if (attr.name === "id") {
 							value = oView._oContainingView.createId(value);
 						}
-						aResult.push(attr.name + "='" + value + "' ");
+						aResult.push(attr.name + "=\"" + jQuery.sap.encodeHTML(value) + "\" ");
 					}
 					if ( bRoot === true ) {
-						aResult.push("data-sap-ui-preserve" + "='" + oView.getId() + "' ");
+						aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
 					}
 					aResult.push(">");
 
@@ -355,8 +357,12 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 
 			} else if (xmlNode.nodeType === 3 /* TEXT_NODE */ ) {
 
-				var text = xmlNode.textContent || xmlNode.text;
+				var text = xmlNode.textContent || xmlNode.text,
+					parentName = localName(xmlNode.parentNode);
 				if (text) {
+					if (parentName != "style") {
+						text = jQuery.sap.encodeHTML(text);
+					}
 					aResult.push(text);
 				}
 
@@ -446,11 +452,11 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 
 				} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
 					if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
-						aCustomData.push({
-							Type:"sap.ui.core.CustomData",
-							key:localName(attr),
-							value:sValue
-						});
+						var sLocalName = localName(attr);
+						aCustomData.push(new sap.ui.core.CustomData({
+							key:sLocalName,
+							value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
+						}));
 					} else { // other, unknown namespace
 						jQuery.sap.log.warning("XMLView parser encountered and ignored attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace");
 						// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
@@ -458,16 +464,19 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 
 				} else if (oInfo && oInfo._iKind === 0 /* PROPERTY */ ) {
 					// other PROPERTY
-					mSettings[sName] = parseScalarType(oInfo.type, sValue, sName);
+					mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
 
 				} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
 					// AGGREGATION with scalar type (altType)
-					mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName);
+					mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController);
 
 				} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
-					jQuery.sap.assert(sValue && sValue.slice(0,1) === '{' && sValue.slice(-1) === '}', "aggregations with cardinality 0..n only allow binding paths as attribute value");
-					if ( sValue && sValue.slice(0,1) === '{' && sValue.slice(-1) === '}' ) {
-						mSettings[sName] = { path : sValue.slice(1,-1), template : null };
+					var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+					if ( oBindingInfo ) {
+						mSettings[sName] = oBindingInfo;
+					} else {
+						// TODO we now in theory allow more than just a binding path. Update message?
+						jQuery.sap.error("XMLView: aggregations with cardinality 0..n only allow binding paths as attribute value");
 					}
 				} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
 					// ASSOCIATION
@@ -485,7 +494,7 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 				}
 			}
 			if (aCustomData.length > 0) {
-				mSettings["customData"] = aCustomData;
+				mSettings.customData = aCustomData;
 			}
 
 			function handleChildren(node, oAggregation, mAggregations) {

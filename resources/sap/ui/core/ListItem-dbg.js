@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ jQuery.sap.require("sap.ui.core.Item");
  * @extends sap.ui.core.Item
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -106,7 +106,6 @@ sap.ui.core.Item.extend("sap.ui.core.ListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>icon</code>.
  *
@@ -118,6 +117,7 @@ sap.ui.core.Item.extend("sap.ui.core.ListItem", { metadata : {
  * @name sap.ui.core.ListItem#setIcon
  * @function
  */
+
 
 /**
  * Getter for property <code>additionalText</code>.
@@ -132,7 +132,6 @@ sap.ui.core.Item.extend("sap.ui.core.ListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>additionalText</code>.
  *
@@ -144,5 +143,6 @@ sap.ui.core.Item.extend("sap.ui.core.ListItem", { metadata : {
  * @name sap.ui.core.ListItem#setAdditionalText
  * @function
  */
+
 
 // Start of sap/ui/core/ListItem.js

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides functionality related to eventing.
@@ -9,157 +9,197 @@ jQuery.sap.declare("jquery.sap.events");
 jQuery.sap.require("jquery.sap.keycodes");
 
 
-(function(){
+(function() {
 
 	jQuery.sap._touchToMouseEvent = true;
 
-	if ("ontouchend" in document) {
+	var onTouchStart,
+		onTouchMove,
+		onTouchEnd,
+		onTouchCancel,
+		onMouseEvent,
+		aMouseEvents,
+		bIsSimulatingTouchToMouseEvent = false;
 
-		var bHandleEvent = false;
-		var oTarget = null;
-		var bIsMoved = false;
-		var iStartX = null;
-		var iStartY = null;
+	if (jQuery.browser.webkit && /Mobile/.test(navigator.userAgent) && "ontouchend" in document) {
 
-		/**
-		 * Fires a synthetic mouse event for a given type and native touch event.
-		 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var fireMouseEvent = function(sType, oEvent) {
+		bIsSimulatingTouchToMouseEvent = true;
 
-			if (!bHandleEvent || !jQuery.sap._touchToMouseEvent) {
-				return;
-			}
-			
-			// we need mapping of the different event types to get the correct target
-			var oMappedEvent = oEvent.type == "touchend" ? oEvent.changedTouches[0] : oEvent.touches[0]; 
+		var simulateTouchToMouseEvent = (function() {
+			var document = window.document,
+				bHandleEvent = false,
+				oTarget = null,
+				bIsMoved = false,
+				iStartX,
+				iStartY,
+				i = 0;
 
-		    // create the synthetic event
-			var newEvent = document.createEvent('MouseEvent');  // trying to create an actual TouchEvent will create an error
-		    newEvent.initMouseEvent(sType, true, true, window, oEvent.detail,
-		    		oMappedEvent.screenX, oMappedEvent.screenY, oMappedEvent.clientX, oMappedEvent.clientY,
-		    		oEvent.ctrlKey, oEvent.shiftKey, oEvent.altKey, oEvent.metaKey,
-		    		oEvent.button, oEvent.relatedTarget);
-		    
-		    newEvent.isSynthetic = true;
+			aMouseEvents = ["mousedown", "mouseover", "mouseup", "mouseout", "click"];
 
-		    // Timeout needed. Do not interrupt the native event handling.
-		    window.setTimeout(function() {
-		    	oTarget.dispatchEvent(newEvent);
-		    },0);
-		};
+			/**
+			 * Fires a synthetic mouse event for a given type and native touch event.
+			 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			var fireMouseEvent = function(sType, oEvent) {
 
-
-		/**
-		 * Checks if the target of the event is an input field.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @return {Boolean} whether the target of the event is an input field.
-		 */
-		var isInputField = function(oEvent) {
-			return oEvent.target.tagName.match(/input|textarea|select/i);
-		};
-
-		
-		/**
-		 * Mouse event handler. Prevents propagation for native events. 
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onMouseEvent = function(oEvent) {
-			if (!oEvent.isSynthetic && !isInputField(oEvent) && jQuery.sap._touchToMouseEvent) {
-				oEvent.stopPropagation();
-				oEvent.preventDefault();
-			}
-		};
-
-
-		/**
-		 * Touch start event handler. Called whenever a finger is added to the surface. Fires mouse start event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchStart = function(oEvent) {
-			var oTouches = oEvent.touches;
-
-			bHandleEvent = (oTouches.length == 1 && !isInputField(oEvent));
-
-			if (bHandleEvent) {
-				bIsMoved = false;
-				var oTouch = oTouches[0];
-
-				// As we are only interested in the first touch target, we remember it
-				oTarget = oTouch.target;
-			    if(oTarget.nodeType == 3) {
-			    	// no text node
-			    	oTarget = oTarget.parentNode;
-			    }
-
-			    // Remember the start position of the first touch to determine if a click was performed or not.
-				iStartX = oTouch.clientX;
-				iStartY = oTouch.clientY;
-				fireMouseEvent("mousedown", oEvent);
-			}
-		};
-
-
-		/**
-		 * Touch move event handler. Fires mouse move event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchMove = function(oEvent) {
-			if (bHandleEvent) {
-				var oTouch = oEvent.touches[0];
-				// Check if the finger is moved. When the finger was moved, no "click" event is fired.
-				if (Math.abs(oTouch.clientX - iStartX) > 10 || Math.abs(oTouch.clientY - iStartY) > 10) {
-					bIsMoved = true;
+				if (!bHandleEvent) {
+					return;
 				}
-				if (bIsMoved) {
-					// Fire "mousemove" event only when the finger was moved. This is to prevent unwanted movements. 
-					fireMouseEvent("mousemove", oEvent);
+
+				// we need mapping of the different event types to get the correct target
+				var oMappedEvent = oEvent.type == "touchend" ? oEvent.changedTouches[0] : oEvent.touches[0]; 
+
+				// create the synthetic event
+				var newEvent = document.createEvent('MouseEvent');  // trying to create an actual TouchEvent will create an error
+				newEvent.initMouseEvent(sType, true, true, window, oEvent.detail,
+						oMappedEvent.screenX, oMappedEvent.screenY, oMappedEvent.clientX, oMappedEvent.clientY,
+						oEvent.ctrlKey, oEvent.shiftKey, oEvent.altKey, oEvent.metaKey,
+						oEvent.button, oEvent.relatedTarget);
+
+				newEvent.isSynthetic = true;
+
+				// Timeout needed. Do not interrupt the native event handling.
+				window.setTimeout(function() {
+						oTarget.dispatchEvent(newEvent);
+				}, 0);
+			};
+
+			/**
+			 * Checks if the target of the event is an input field.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @return {Boolean} whether the target of the event is an input field.
+			 */
+			var isInputField = function(oEvent) {
+				return oEvent.target.tagName.match(/input|textarea|select/i);
+			};
+
+			/**
+			 * Mouse event handler. Prevents propagation for native events. 
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onMouseEvent = function(oEvent) {
+				if (!oEvent.isSynthetic && !isInputField(oEvent)) {
+					oEvent.stopPropagation();
+					oEvent.preventDefault();
 				}
+			};
+
+			/**
+			 * Touch start event handler. Called whenever a finger is added to the surface. Fires mouse start event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchStart = function(oEvent) {
+				var oTouches = oEvent.touches,
+					oTouch;
+
+				bHandleEvent = (oTouches.length == 1 && !isInputField(oEvent));
+
+				if (bHandleEvent) {
+					bIsMoved = false;
+					oTouch = oTouches[0];
+
+					// As we are only interested in the first touch target, we remember it
+					oTarget = oTouch.target;
+					if(oTarget.nodeType == 3) {
+
+						// no text node
+						oTarget = oTarget.parentNode;
+					}
+
+					// Remember the start position of the first touch to determine if a click was performed or not.
+					iStartX = oTouch.clientX;
+					iStartY = oTouch.clientY;
+					fireMouseEvent("mousedown", oEvent);
+				}
+			};
+
+			/**
+			 * Touch move event handler. Fires mouse move event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchMove = function(oEvent) {
+				var oTouch;
+
+				if (bHandleEvent) {
+					oTouch = oEvent.touches[0];
+
+					// Check if the finger is moved. When the finger was moved, no "click" event is fired.
+					if (Math.abs(oTouch.clientX - iStartX) > 10 || Math.abs(oTouch.clientY - iStartY) > 10) {
+						bIsMoved = true;
+					}
+
+					if (bIsMoved) {
+
+						// Fire "mousemove" event only when the finger was moved. This is to prevent unwanted movements. 
+						fireMouseEvent("mousemove", oEvent);
+					}
+				}
+			};
+
+			/**
+			 * Touch end event handler. Fires mouse up and click event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchEnd = function(oEvent) {
+				fireMouseEvent("mouseup", oEvent);
+				if (!bIsMoved) {
+					fireMouseEvent("click", oEvent);
+				}
+			};
+
+			/**
+			 * Touch cancel event handler. Fires mouse up event.
+			 * @param {jQuery.Event} oEvent the event object
+			 * @private
+			 */
+			onTouchCancel = function(oEvent) {
+				fireMouseEvent("mouseup", oEvent);
+			};
+
+			// Bind mouse events
+			for (; i < aMouseEvents.length; i++) {
+
+				// Add click on capturing phase to prevent propagation if necessary
+				document.addEventListener(aMouseEvents[i], onMouseEvent, true);
 			}
-		};
 
-
-		/**
-		 * Touch end event handler. Fires mouse up and click event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchEnd = function(oEvent) {
-			fireMouseEvent("mouseup", oEvent);
-			if (!bIsMoved) {
-				fireMouseEvent("click", oEvent);
-			}
-		};
-
-		
-		/**
-		 * Touch cancel event handler. Fires mouse up event.
-		 * @param {jQuery.Event} oEvent the event object
-		 * @private
-		 */
-		var onTouchCancel = function(oEvent) {
-			fireMouseEvent("mouseup", oEvent);
-		};
-
-		// Add click on capturing phase to prevent propagation if necessary
-		document.addEventListener('mousedown', onMouseEvent, true);
-		document.addEventListener('mouseover', onMouseEvent, true);
-		document.addEventListener('mouseup', onMouseEvent, true);
-		document.addEventListener('mouseout', onMouseEvent, true);
-		document.addEventListener('click', onMouseEvent, true);
-		// Bind touch events
-		document.addEventListener('touchstart', onTouchStart, true);
-		document.addEventListener('touchmove', onTouchMove, true);
-		document.addEventListener('touchend', onTouchEnd, true);
-		document.addEventListener('touchcancel', onTouchCancel, true);
+			// Bind touch events
+			document.addEventListener('touchstart', onTouchStart, true);
+			document.addEventListener('touchmove', onTouchMove, true);
+			document.addEventListener('touchend', onTouchEnd, true);
+			document.addEventListener('touchcancel', onTouchCancel, true);
+		}());
 	}
-	
 
+	/**
+	 * Disable touch to mouse handling
+	 *
+	 * @public
+	 */
+	jQuery.sap.disableTouchToMouseHandling = function() {
+		var i = 0;
+
+		if (!bIsSimulatingTouchToMouseEvent) {
+			return;
+		}
+
+		// unbind touch events
+		document.removeEventListener('touchstart', onTouchStart, true);
+		document.removeEventListener('touchmove', onTouchMove, true);
+		document.removeEventListener('touchend', onTouchEnd, true);
+		document.removeEventListener('touchcancel', onTouchCancel, true);
+
+		// unbind mouse events
+		for (; i < aMouseEvents.length; i++) {
+			document.removeEventListener(aMouseEvents[i], onMouseEvent, true);
+		}
+	};
 
 	/**
 	 * List of DOM events that a UIArea automatically takes care of.
@@ -190,7 +230,8 @@ jQuery.sap.require("jquery.sap.keycodes");
 		"dragleave",
 		"dragend",
 		"drop",
-		"paste"
+		"paste",
+		"cut"
 	];
 
 
@@ -643,6 +684,10 @@ jQuery.sap.require("jquery.sap.keycodes");
 			// also simulate touch events when sap-ui-xx-fakeOS is set (independently of the value and the current browser)
 			bSimulate = bSimulate || (document.location.search.indexOf("sap-ui-xx-fakeOS") > -1 || !!jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS")); // only allowed as URL parameter or in the bootstrap tag
 			
+			// always simulate touch events when the mobile lib is involved (FIXME: hack for Kelley, this does currently not work with dynamic library loading)
+			var sLibs = jQuery.sap.byId("sap-ui-bootstrap").attr("data-sap-ui-libs");
+			bSimulate = bSimulate || (sLibs && sLibs.match(/sap.m\b/));
+
 			return bSimulate;
 		}
 
@@ -651,7 +696,7 @@ jQuery.sap.require("jquery.sap.keycodes");
 		var aAdditionalControlEvents = [];
 		var aAdditionalPseudoEvents = [];
 
-		if("ontouchend" in document){ //Touch events natively supported
+		if(jQuery.support.touch){ //Touch events natively supported
 			jQuery.sap.touchEventMode = "ON";
 
 			//ensure that "oEvent.touches", ... works (and not only "oEvent.originalEvent.touches", ...)
@@ -678,14 +723,25 @@ jQuery.sap.require("jquery.sap.keycodes");
 						$this = jQuery(this);
 						var fHandler = function(oEvent) {
 							if(!(oEvent.type != "mouseout" || (oEvent.type === "mouseout" && jQuery.sap.checkMouseEnterOrLeave(oEvent, that)))){
-								return;
+								var bSkip = true;
+								var sControlId = $this.data("__touchstart_control");
+								if(sControlId){
+									var oCtrlDom = jQuery.sap.domById(sControlId);
+									if(oCtrlDom && jQuery.sap.checkMouseEnterOrLeave(oEvent, oCtrlDom)){
+										bSkip = false;
+									}
+								}
+								if(bSkip){
+									return;
+								}
 							}
-
 							var oNewEvent = jQuery.event.fix(oEvent.originalEvent);
 							oNewEvent.type = sSapName;
+							//reset the _sapui_handledByUIArea flag
+							if (oNewEvent.originalEvent._sapui_firstUIArea) {
+								oNewEvent.originalEvent._sapui_handledByUIArea = false;
+							}
 
-							//TODO Extend if necessary
-							//Extended by adding changedTouches and targetTouches which equal to touches
 							var aTouches = [{
 								identifier: 1,
 								pageX: oNewEvent.pageX,
@@ -694,23 +750,36 @@ jQuery.sap.require("jquery.sap.keycodes");
 								clientY: oNewEvent.clientY,
 								screenX: oNewEvent.screenX,
 								screenY: oNewEvent.screenY,
+								target: oNewEvent.target,
 								radiusX: 1,
 								radiusY: 1,
 								rotationAngle: 0
 							}];
-							
-							oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
-							
-							//when touchend, the touches and targetTouches should be empty array
-							if(sName === "touchend"){
-								oNewEvent.touches = oNewEvent.targetTouches = [];
+
+							switch (sName) {
+								case "touchstart":
+								case "touchmove":
+									oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
+									break;
+	
+								case "touchend":
+									oNewEvent.changedTouches = aTouches;
+									oNewEvent.touches = oNewEvent.targetTouches = [];
+									break;
+
+								// no default
 							}
-							
+
 							if(sName === "touchstart" || $this.data("__touch_in_progress")){
 								$this.data("__touch_in_progress", "X");
+								var oControl = jQuery.fn.control ? jQuery(oEvent.target).control(0) : null;
+								if(oControl){
+									$this.data("__touchstart_control", oControl.getId());
+								}
 								oHandle.handler.call(that, oNewEvent);
 								if(sName === "touchend"){
 									$this.removeData("__touch_in_progress");
+									$this.removeData("__touchstart_control");
 								}
 							}
 						};

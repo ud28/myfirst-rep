@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -109,7 +109,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -121,6 +120,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @name sap.viz.ui5.types.Line_marker#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>shape</code>.
@@ -134,7 +134,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>shape</code>.
  *
@@ -146,6 +145,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @name sap.viz.ui5.types.Line_marker#setShape
  * @function
  */
+
 
 /**
  * Getter for property <code>size</code>.
@@ -159,7 +159,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>size</code>.
  *
@@ -171,5 +170,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @name sap.viz.ui5.types.Line_marker#setSize
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Line_marker.js

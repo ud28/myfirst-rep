@@ -1,77 +1,92 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.PageRenderer");
 
 /**
- * @class Page renderer. 
+ * @class Page renderer.
  * @static
  */
-sap.m.PageRenderer = {
-};
-
+sap.m.PageRenderer = {};
 
 /**
  * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
- * 
+ *
  * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
  * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
  */
 sap.m.PageRenderer.render = function(rm, oPage) {
-	var hdr = null;
+	var oHeader = null,
+		sEnableScrolling = oPage.getEnableScrolling() ? " sapMPageScrollEnabled" : "";
+
 	if (oPage.getShowHeader()) {
-		hdr = oPage._getAnyHeader();
+		oHeader = oPage._getAnyHeader();
 	}
+
 	var oSubHeader = oPage.getSubHeader();
-	
+
 	var oFooter = oPage.getFooter();
 	rm.write("<div");
 	rm.writeControlData(oPage);
 	rm.addClass("sapMPage");
-	if (oFooter){
-		rm.addClass("sapMPageWithFooter"); //it is used in the PopOver to remove additional margin bottom for page with footer 
+
+	if (oHeader) {
+		rm.addClass("sapMPageWithHeader");
 	}
-	rm.writeClasses(); 
+
+	if (oSubHeader) {
+		rm.addClass("sapMPageWithSubHeader");
+	}
+
+	if (oFooter) {
+
+		// it is used in the PopOver to remove additional margin bottom for page with footer
+		rm.addClass("sapMPageWithFooter");
+	}
+
+	rm.writeClasses();
+
+	var sTooltip = oPage.getTooltip_AsString();
+
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
+
 	rm.write(">");
 
 	// render header
-	if (hdr){
-		rm.renderControl(hdr);
+	if (oHeader) {
+		rm.renderControl(oHeader);
 	}
-	
-	if (oSubHeader){
+
+	if (oSubHeader) {
 		oSubHeader._context = 'header';
 		rm.renderControl(oSubHeader.addStyleClass('sapMPageSubHeader'));
 	}
-	// render child controls
-	var bScrolling = oPage._hasScrolling();
-	var sBgDesign = oPage.getBackgroundDesign();
-	var sPageBgOuter = bScrolling ? "" : " class='sapMPageBg" + sBgDesign +"'";
-	var sPageBgInner = bScrolling ? " sapMPageBg" + sBgDesign : "";
-	rm.write("<section id='" + oPage.getId() + "-cont'" + sPageBgOuter + ">");
-	if (bScrolling) {
-		rm.write("<div id='" + oPage.getId() + "-scroll' class='sapMPageScroll" + sPageBgInner + "'>");
-	}
 
 	// render child controls
+	rm.write('<section id="' + oPage.getId() + '-cont" class="sapMPageBg' + oPage.getBackgroundDesign() + '">');
+	rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
+
 	var aContent = oPage.getContent();
 	var l = aContent.length;
+
 	for (var i = 0; i < l; i++) {
 		rm.renderControl(aContent[i]);
 	}
 
-	if (bScrolling) {
-		rm.write("</div>");
-	}
+	rm.write("</div>");
+
 	rm.write("</section>");
-	
+
 	// render footer Element
 	if (oFooter) {
 		oFooter._context = 'footer';
 		rm.renderControl(oFooter);
 	}
+
 	rm.write("</div>");
 };

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -38,7 +38,12 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getValueBubble valueBubble} : object</li>
  * <li>{@link #getShowRangeSelector showRangeSelector} : boolean (default: true)</li>
  * <li>{@link #getShowTableView showTableView} : boolean (default: false)</li>
- * <li>{@link #getLegendPosition legendPosition} : sap.makit.LegendPosition (default: sap.makit.LegendPosition.Left)</li></ul>
+ * <li>{@link #getLegendPosition legendPosition} : sap.makit.LegendPosition</li>
+ * <li>{@link #getLineThickness lineThickness} : float (default: 1)</li>
+ * <li>{@link #getShowTableValue showTableValue} : boolean (default: true)</li>
+ * <li>{@link #getMaxSliceCount maxSliceCount} : int (default: 12)</li>
+ * <li>{@link #getPrimaryColorPalette primaryColorPalette} : any</li>
+ * <li>{@link #getShowTotalValue showTotalValue} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -46,6 +51,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getColumns columns} : sap.makit.Column[]</li>
  * <li>{@link #getSeries series} : sap.makit.Series</li>
  * <li>{@link #getValues values} : sap.makit.Value[]</li>
+ * <li>{@link #getCategoryRegions categoryRegions} : sap.makit.Category[]</li>
  * <li>{@link #getCategory category} : sap.makit.Category</li></ul>
  * </li>
  * <li>Associations
@@ -54,7 +60,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>Events
  * <ul>
  * <li>{@link sap.makit.Chart#event:doubletap doubletap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.makit.Chart#event:tap tap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.makit.Chart#event:tap tap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.makit.Chart#event:init init} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
 
@@ -67,12 +74,11 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.Chart
  */
 sap.ui.core.Control.extend("sap.makit.Chart", { metadata : {
@@ -80,7 +86,7 @@ sap.ui.core.Control.extend("sap.makit.Chart", { metadata : {
 	// ---- object ----
 	publicMethods : [
 		// methods
-		"getSelectedCategory", "getSelectedSeries", "getNumberOfCategories"
+		"getSelectedCategory", "getSelectedSeries", "getNumberOfCategories", "getSelectedCategoryGroup"
 	],
 
 	// ---- control specific ----
@@ -94,18 +100,25 @@ sap.ui.core.Control.extend("sap.makit.Chart", { metadata : {
 		"valueBubble" : {type : "object", group : "Misc", defaultValue : null},
 		"showRangeSelector" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"showTableView" : {type : "boolean", group : "Misc", defaultValue : false},
-		"legendPosition" : {type : "sap.makit.LegendPosition", group : "Misc", defaultValue : sap.makit.LegendPosition.Left}
+		"legendPosition" : {type : "sap.makit.LegendPosition", group : "Misc", defaultValue : null},
+		"lineThickness" : {type : "float", group : "Misc", defaultValue : 1},
+		"showTableValue" : {type : "boolean", group : "Misc", defaultValue : true},
+		"maxSliceCount" : {type : "int", group : "Misc", defaultValue : 12},
+		"primaryColorPalette" : {type : "any", group : "Misc", defaultValue : null},
+		"showTotalValue" : {type : "boolean", group : "Misc", defaultValue : false}
 	},
 	aggregations : {
     	"rows" : {type : "sap.makit.Row", multiple : true, singularName : "row", bindable : "bindable"}, 
     	"columns" : {type : "sap.makit.Column", multiple : true, singularName : "column", bindable : "bindable"}, 
     	"series" : {type : "sap.makit.Series", multiple : false}, 
     	"values" : {type : "sap.makit.Value", multiple : true, singularName : "value"}, 
-    	"category" : {type : "sap.makit.Category", multiple : false}
+    	"categoryRegions" : {type : "sap.makit.Category", multiple : true, singularName : "categoryRegion"}, 
+    	"category" : {type : "sap.makit.Category", multiple : false, deprecated: true}
 	},
 	events : {
 		"doubletap" : {}, 
-		"tap" : {}
+		"tap" : {}, 
+		"init" : {}
 	}
 }});
 
@@ -126,7 +139,7 @@ sap.ui.core.Control.extend("sap.makit.Chart", { metadata : {
  * @function
  */
 
-sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
+sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap','init':'init'};
 
 
 /**
@@ -141,7 +154,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -153,6 +165,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>height</code>.
@@ -166,7 +179,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -178,6 +190,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>type</code>.
@@ -191,7 +204,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>type</code>.
  *
@@ -203,6 +215,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setType
  * @function
  */
+
 
 /**
  * Getter for property <code>categoryAxis</code>.
@@ -216,7 +229,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>categoryAxis</code>.
  *
@@ -228,6 +240,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setCategoryAxis
  * @function
  */
+
 
 /**
  * Getter for property <code>valueAxis</code>.
@@ -241,7 +254,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>valueAxis</code>.
  *
@@ -253,6 +265,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setValueAxis
  * @function
  */
+
 
 /**
  * Getter for property <code>valueBubble</code>.
@@ -266,7 +279,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>valueBubble</code>.
  *
@@ -278,6 +290,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setValueBubble
  * @function
  */
+
 
 /**
  * Getter for property <code>showRangeSelector</code>.
@@ -291,7 +304,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>showRangeSelector</code>.
  *
@@ -303,6 +315,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setShowRangeSelector
  * @function
  */
+
 
 /**
  * Getter for property <code>showTableView</code>.
@@ -316,7 +329,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>showTableView</code>.
  *
@@ -329,11 +341,13 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
+
 /**
  * Getter for property <code>legendPosition</code>.
- * Legend position for Pie /Donut chart only.
+ * Legend position all chart types except Bar chart.
+ * Default position for Pie/Donut chart is Left. All other chart's default position is None. Note: the default legend position is set when the chart type is set first time, subsequent change to the chart type will keep using initial legend position unless it is changed explicitly by user.
  *
- * Default value is <code>Left</code>
+ * Default value is empty/<code>undefined</code>
  *
  * @return {sap.makit.LegendPosition} the value of property <code>legendPosition</code>
  * @public
@@ -341,11 +355,10 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>legendPosition</code>.
  *
- * Default value is <code>Left</code> 
+ * Default value is empty/<code>undefined</code> 
  *
  * @param {sap.makit.LegendPosition} oLegendPosition  new value for property <code>legendPosition</code>
  * @return {sap.makit.Chart} <code>this</code> to allow method chaining
@@ -353,7 +366,137 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#setLegendPosition
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>lineThickness</code>.
+ * Specify the line thickness of the line graph. Only applies to Line chart type.
+ *
+ * Default value is <code>1</code>
+ *
+ * @return {float} the value of property <code>lineThickness</code>
+ * @public
+ * @name sap.makit.Chart#getLineThickness
+ * @function
+ */
+
+/**
+ * Setter for property <code>lineThickness</code>.
+ *
+ * Default value is <code>1</code> 
+ *
+ * @param {float} fLineThickness  new value for property <code>lineThickness</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setLineThickness
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showTableValue</code>.
+ * Toggle to display the table value on a Bar chart. Only applies to Bar chart.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showTableValue</code>
+ * @public
+ * @name sap.makit.Chart#getShowTableValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>showTableValue</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowTableValue  new value for property <code>showTableValue</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setShowTableValue
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>maxSliceCount</code>.
+ * Set the maximum number of slices in a Pie/Donut chart. If exceeding the specified value, the rest will be categorised into a single slice. Only applies to Pie/Donut.
+ *
+ * Default value is <code>12</code>
+ *
+ * @return {int} the value of property <code>maxSliceCount</code>
+ * @public
+ * @name sap.makit.Chart#getMaxSliceCount
+ * @function
+ */
+
+/**
+ * Setter for property <code>maxSliceCount</code>.
+ *
+ * Default value is <code>12</code> 
+ *
+ * @param {int} iMaxSliceCount  new value for property <code>maxSliceCount</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setMaxSliceCount
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>primaryColorPalette</code>.
+ * Allow a chart’s color palette to be modified without affecting the other charts’ in the same screen. If not set, the chart will use the default color palette defined in the theme.
+ * Accept an array of color in string format or hex format. e.g.
+ * 0xff0000
+ * "red"
+ * "rgb(255,0,0)"
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {any} the value of property <code>primaryColorPalette</code>
+ * @public
+ * @name sap.makit.Chart#getPrimaryColorPalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>primaryColorPalette</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {any} oPrimaryColorPalette  new value for property <code>primaryColorPalette</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setPrimaryColorPalette
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showTotalValue</code>.
+ * Specify whether to show the sum of the value for Waterfall/Waterfall Bar chart. Only applies to Waterfall/WaterfallBar chart.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>showTotalValue</code>
+ * @public
+ * @name sap.makit.Chart#getShowTotalValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>showTotalValue</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bShowTotalValue  new value for property <code>showTotalValue</code>
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#setShowTotalValue
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>rows</code>.<br/>
  * The data rows of the chart. User should bind these to their data source
@@ -363,6 +506,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#getRows
  * @function
  */
+
 
 /**
  * Inserts a row into the aggregation named <code>rows</code>.
@@ -380,7 +524,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Adds some row <code>oRow</code> 
  * to the aggregation named <code>rows</code>.
@@ -393,7 +536,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Removes an row from the aggregation named <code>rows</code>.
  *
@@ -404,7 +546,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>rows</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -413,7 +554,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#removeAllRows
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.makit.Row</code> in the aggregation named <code>rows</code> 
@@ -426,7 +566,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#indexOfRow
  * @function
  */
-
+	
 
 /**
  * Destroys all the rows in the aggregation 
@@ -436,6 +576,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#destroyRows
  * @function
  */
+
 
 /**
  * Binder for aggregation <code>rows</code>.
@@ -450,7 +591,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Unbinder for aggregation <code>rows</code>.
  *
@@ -459,7 +599,8 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#unbindRows
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>columns</code>.<br/>
  * The data column map of the chart.
@@ -469,6 +610,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#getColumns
  * @function
  */
+
 
 /**
  * Inserts a column into the aggregation named <code>columns</code>.
@@ -486,7 +628,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Adds some column <code>oColumn</code> 
  * to the aggregation named <code>columns</code>.
@@ -499,7 +640,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Removes an column from the aggregation named <code>columns</code>.
  *
@@ -510,7 +650,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>columns</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -519,7 +658,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#removeAllColumns
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.makit.Column</code> in the aggregation named <code>columns</code> 
@@ -532,7 +670,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#indexOfColumn
  * @function
  */
-
+	
 
 /**
  * Destroys all the columns in the aggregation 
@@ -542,6 +680,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#destroyColumns
  * @function
  */
+
 
 /**
  * Binder for aggregation <code>columns</code>.
@@ -556,7 +695,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Unbinder for aggregation <code>columns</code>.
  *
@@ -565,7 +703,8 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#unbindColumns
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>series</code>.<br/>
  * Data region property of the chart's Series
@@ -576,25 +715,27 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>series</code>.
  * @param oSeries {sap.makit.Series}
  * @return {sap.makit.Chart} <code>this</code> to allow method chaining
  * @public
- * @name sap.makit.Chart#setSery
+ * @name sap.makit.Chart#setSeries
  * @function
  */
-
+	
 
 /**
- * Destroys the sery in the aggregation 
+ * Destroys the series in the aggregation 
  * named <code>series</code>.
  * @return {sap.makit.Chart} <code>this</code> to allow method chaining
  * @public
  * @name sap.makit.Chart#destroySeries
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>values</code>.<br/>
  * Data region property of the chart's Values
@@ -604,6 +745,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#getValues
  * @function
  */
+
 
 /**
  * Inserts a value into the aggregation named <code>values</code>.
@@ -621,7 +763,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Adds some value <code>oValue</code> 
  * to the aggregation named <code>values</code>.
@@ -634,7 +775,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Removes an value from the aggregation named <code>values</code>.
  *
@@ -645,7 +785,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>values</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -654,7 +793,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#removeAllValues
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.makit.Value</code> in the aggregation named <code>values</code> 
@@ -667,7 +805,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#indexOfValue
  * @function
  */
-
+	
 
 /**
  * Destroys all the values in the aggregation 
@@ -677,35 +815,125 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#destroyValues
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>categoryRegions</code>.<br/>
+ * Data region property of the chart's Categories
+ * 
+ * @return {sap.makit.Category[]}
+ * @public
+ * @name sap.makit.Chart#getCategoryRegions
+ * @function
+ */
+
+
+/**
+ * Inserts a categoryRegion into the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {sap.makit.Category}
+ *          oCategoryRegion the categoryRegion to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the categoryRegion should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the categoryRegion is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the categoryRegion is inserted at 
+ *             the last position        
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#insertCategoryRegion
+ * @function
+ */
+
+/**
+ * Adds some categoryRegion <code>oCategoryRegion</code> 
+ * to the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {sap.makit.Category}
+ *            oCategoryRegion the categoryRegion to add; if empty, nothing is inserted
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#addCategoryRegion
+ * @function
+ */
+
+/**
+ * Removes an categoryRegion from the aggregation named <code>categoryRegions</code>.
+ *
+ * @param {int | string | sap.makit.Category} vCategoryRegion the categoryRegion to remove or its index or id
+ * @return {sap.makit.Category} the removed categoryRegion or null
+ * @public
+ * @name sap.makit.Chart#removeCategoryRegion
+ * @function
+ */
+
+/**
+ * Removes all the controls in the aggregation named <code>categoryRegions</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.makit.Category[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.makit.Chart#removeAllCategoryRegions
+ * @function
+ */
+
+/**
+ * Checks for the provided <code>sap.makit.Category</code> in the aggregation named <code>categoryRegions</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.makit.Category}
+ *            oCategoryRegion the categoryRegion whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.makit.Chart#indexOfCategoryRegion
+ * @function
+ */
 	
+
+/**
+ * Destroys all the categoryRegions in the aggregation 
+ * named <code>categoryRegions</code>.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#destroyCategoryRegions
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>category</code>.<br/>
  * Data region property of the chart's Category
  * 
  * @return {sap.makit.Category}
  * @public
+ * @deprecated Since version 7.30.0. 
+ * This aggregation is deprecated, please use categoryRegions aggregation instead.
  * @name sap.makit.Chart#getCategory
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>category</code>.
  * @param oCategory {sap.makit.Category}
  * @return {sap.makit.Chart} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 7.30.0. 
+ * This aggregation is deprecated, please use categoryRegions aggregation instead.
  * @name sap.makit.Chart#setCategory
  * @function
  */
-
+	
 
 /**
  * Destroys the category in the aggregation 
  * named <code>category</code>.
  * @return {sap.makit.Chart} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 7.30.0. 
+ * This aggregation is deprecated, please use categoryRegions aggregation instead.
  * @name sap.makit.Chart#destroyCategory
  * @function
  */
+
 
 /**
  * Double tap event on chart 
@@ -739,7 +967,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'doubletap' event of this <code>sap.makit.Chart</code>.<br/>
  *
@@ -755,7 +982,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Fire event doubletap to attached listeners.
 
@@ -765,6 +991,7 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#fireDoubletap
  * @function
  */
+
 
 /**
  * Single tap event on the chart 
@@ -798,7 +1025,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'tap' event of this <code>sap.makit.Chart</code>.<br/>
  *
@@ -814,7 +1040,6 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @function
  */
 
-
 /**
  * Fire event tap to attached listeners.
 
@@ -824,6 +1049,65 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  * @name sap.makit.Chart#fireTap
  * @function
  */
+
+
+/**
+ * init event 
+ *
+ * @name sap.makit.Chart#init
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'init' event of this <code>sap.makit.Chart</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.makit.Chart</code>.<br/> itself. 
+ *  
+ * init event 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.makit.Chart</code>.<br/> itself.
+ *
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#attachInit
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'init' event of this <code>sap.makit.Chart</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.Chart#detachInit
+ * @function
+ */
+
+/**
+ * Fire event init to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.makit.Chart} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.makit.Chart#fireInit
+ * @function
+ */
+
 
 /**
  * Get the value of the currently highlighted category
@@ -858,35 +1142,23 @@ sap.makit.Chart.M_EVENTS = {'doubletap':'doubletap','tap':'tap'};
  */
 
 
+/**
+ * Return an array of categories value that is currently selected.
+ *
+ * @name sap.makit.Chart.prototype.getSelectedCategoryGroup
+ * @function
+
+ * @type object
+ * @public
+ */
+
+
 // Start of sap/makit/Chart.js
 /*!
  * @copyright@
  */
 
-jQuery.sap.require("sap.makit.js.SybaseMA");
-jQuery.sap.declare("sap.makit.js.SybaseMA");
-
-/*
- * Static function to handle theme change event.
- * We only need to do getStyles once because it is applied globally
- * 
- * @private
- * */
-sap.makit.Chart._onThemeChanged = function (oEvent){
-	window.$MA.Chart.getStyles();
-};
-
-//Static init function to prepare the Makit library
-// Immediately executed when this library is loaded
-sap.makit.Chart._libraryInit = function () {
-	//Set the images folder
-	var imgName = "popup_tt_left.png"; // Use one the image's filename from chart range selector
-	var path = sap.ui.resource("sap.makit", "themes/base/images/"+imgName); //Get the correct resource path
-	path = path.substring(0, path.length - imgName.length); //We don't need the filename.
-	window.$MA.setImagesFolder(path);
-	sap.ui.getCore().attachThemeChanged(sap.makit.Chart._onThemeChanged);
-	window.$MA.Chart.getStyles(); //Ideally we should call this function whenever styles has changed 
-}();
+jQuery.sap.require("sap.makit.MakitLib");
 
 /**
  * @override
@@ -894,6 +1166,10 @@ sap.makit.Chart._libraryInit = function () {
 sap.makit.Chart.prototype.init = function() {
 	//Private variable
 	this._makitChart = null;
+	this._parentCurrentHeight = 0;
+	this._selectedCatIdx = 0;
+	this._chartTypeDefined = false;
+	this._legendPosDefined = false;
 	
 	this._datarows = []; //This is the placeholder for the Chart's data row it's a 1-to-1 mapping to rows aggregation.
 	this._styleClasses = []; //workaround for custom classes
@@ -901,6 +1177,15 @@ sap.makit.Chart.prototype.init = function() {
 	this.setCategoryAxis(new sap.makit.CategoryAxis());
 	this.setValueAxis(new sap.makit.ValueAxis());
 	this.setValueBubble(new sap.makit.ValueBubble());
+	this.setPrimaryColorPalette(null);
+	
+	
+	if(this.getType() === sap.makit.ChartType.Pie || this.getType() === sap.makit.ChartType.Donut) {
+		this.setLegendPosition(sap.makit.LegendPosition.Left);	
+	}
+	else {
+		this.setLegendPosition(sap.makit.LegendPosition.None);
+	}
 	
 	this.attachEvent("_change", this._onPropertyChanged);
 	sap.ui.getCore().attachThemeChanged(this._applyCSS, this);
@@ -911,6 +1196,7 @@ sap.makit.Chart.prototype.init = function() {
  * @override
  */
 sap.makit.Chart.prototype.onBeforeRendering = function(oEvent) {
+	this.fireEvent("_beforeRendering", this);
 	if(this.getDomRef() && !sap.ui.core.RenderManager.isPreservedContent(this.getDomRef())){
 		sap.ui.core.RenderManager.preserveContent(this.getDomRef(), /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
 	}
@@ -922,30 +1208,40 @@ sap.makit.Chart.prototype.onBeforeRendering = function(oEvent) {
  * @override
  */
 sap.makit.Chart.prototype.onAfterRendering = function(oEvent) {
+	this.fireEvent("_afterRendering", this);
 	var $placeholder = jQuery(jQuery.sap.domById("sap-ui-dummy-" + this.getId()));
 	var $oldContent = sap.ui.core.RenderManager.findPreservedContent(this.getId());
 	var $newContent = null;
 	
 	if ($oldContent.size() == 0) {
+		this.fireEvent("_createMAKitObject", this);
 		this._createChartObject();
 		$newContent = new jQuery(this.getDomRef());
 		$placeholder.replaceWith($newContent);
 		var parent = this.getParent();
 		var parentId = parent.getId();
 		var parentDom = jQuery.sap.domById(parentId);
+		this._parentCurrentHeight = parentDom.offsetHeight;
 		sap.ui.core.ResizeHandler.register(parentDom, jQuery.proxy(this._onResize, this));
 	} else if ( $oldContent.size() > 0 ) {
+		this.fireEvent("_restoreMAKitObject", this);
 		// replace dummy with old content
 		$placeholder.replaceWith($oldContent);
 	} else {
 		$placeholder.remove();
 	}
 	
-	this._setDataTable();
 	if($newContent) {
 		this._makitChart.showRangeSelectorView(this.getShowRangeSelector());
 		this._makitChart.showTableView(this.getShowTableView());
+		this._makitChart.setGraphLineWidth(this.getLineThickness());
+		this._makitChart.showTableValue(this.getShowTableValue());
+		this._makitChart.setMaxPies(this.getMaxSliceCount());
+		this._makitChart.setPalette(this.getPrimaryColorPalette());
+		this._makitChart.setProperty("ShowTotal", this.getShowTotalValue());
 	}
+	
+	this._setDataTable();
 };
 
 
@@ -1047,10 +1343,12 @@ sap.makit.Chart.prototype.destroyRows = function(vRow){
  * @override
  */
 sap.makit.Chart.prototype.updateRows = function(){
+	this.fireEvent("_startUpdateRows", this);
 	this._createRows();
 	if (this._makitChart) {
 		this._setDataTable();
 	}
+	this.fireEvent("_endUpdateRows", this);
 };
 
 /**
@@ -1078,9 +1376,72 @@ sap.makit.Chart.prototype.setValueBubble = function(oValueBubble){
  * @override
  */
 sap.makit.Chart.prototype.setCategory = function(oCategory){
-	sap.ui.core.Element.prototype.setAggregation.call(this, "category", oCategory, false);
-	oCategory.attachEvent("_change", {type: "category"}, this._onDataRegionPropChanged, this);
+	//sap.ui.core.Element.prototype.setAggregation.call(this, "category", oCategory, false);
+	//oCategory.attachEvent("_change", {type: "category"}, this._onDataRegionPropChanged, this);
+	var categories = this.getCategoryRegions();
+	if (categories.length > 0){
+		this.removeCategoryRegion(0);
+	}
+	this.insertCategoryRegion(oCategory, 0);
 	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.getCategory = function(oCategory){
+	var categories = this.getCategoryRegions();
+	return categories[0];
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.destroyCategory = function(){
+	this.removeCategoryRegion(0);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.addCategoryRegion= function(oCategory){
+	sap.ui.core.Element.prototype.addAggregation.call(this, "categoryRegions", oCategory, false);
+	oCategory.attachEvent("_change", {type: "categories"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.insertCategoryRegion= function(oCategory, iIndex){
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "categoryRegions", oCategory, iIndex, false);
+	oCategory.attachEvent("_change", {type: "categories"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeCategoryRegion= function(oCategory){
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "categoryRegions", oCategory, false);
+	if(removedObj != null) {
+		oCategory.detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeAllCategoryRegions = function(){
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "categoryRegions", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObjs;
 };
 
 /**
@@ -1090,6 +1451,39 @@ sap.makit.Chart.prototype.addValue= function(oValue){
 	sap.ui.core.Element.prototype.addAggregation.call(this, "values", oValue, false);
 	oValue.attachEvent("_change", {type: "values"}, this._onDataRegionPropChanged, this);
 	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.insertValue= function(oValue, iIndex){
+	sap.ui.core.Element.prototype.insertAggregation.call(this, "values", oValue, iIndex, false);
+	oValue.attachEvent("_change", {type: "values"}, this._onDataRegionPropChanged, this);
+	return this;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeValue= function(oValue){
+	var removedObj = sap.ui.core.Element.prototype.removeAggregation.call(this, "values", oValue, false);
+	if(removedObj != null) {
+		removedObj.detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObj;
+};
+
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.removeAllValues = function(){
+	var removedObjs = sap.ui.core.Element.prototype.removeAllAggregation.call(this, "values", false);
+	var len = removedObjs.length;
+	var i;
+	for( i = 0; i < len; i++){ 
+		removedObjs[i].detachEvent("_change", this._onDataRegionPropChanged, this);
+	}
+	return removedObjs;
 };
 
 /**
@@ -1129,6 +1523,23 @@ sap.makit.Chart.prototype.setCategoryAxis = function (oCategoryAxis){
 	return this;
 };
 
+/**
+ * @override
+ */
+sap.makit.Chart.prototype.setPrimaryColorPalette = function(oColorPalette) {
+	if (oColorPalette == null || (oColorPalette instanceof Array && oColorPalette.length > 0)) {
+		sap.ui.core.Element.prototype.setProperty.call(this, "primaryColorPalette", oColorPalette, false);
+		if (this._makitChart) {
+			this._makitChart.setPalette(oColorPalette);
+		}
+	}
+	else {
+		throw new Error("primaryColorPalette property must be an array");
+	}
+	return this;
+};
+
+
 /*=================================================================================
  *== PRIVATE METHODS
  *=================================================================================
@@ -1145,19 +1556,28 @@ sap.makit.Chart.prototype.setCategoryAxis = function (oCategoryAxis){
  * */
 sap.makit.Chart.prototype._setRealHeight = function(height){
 	var elem = this.getDomRef();
+	var prevHeight = elem.style.height;
+	var newHeight = "0px";
 	if(height.indexOf("%") > -1) {
+		var domref = this.getDomRef();
+		var parentDom = domref.offsetParent;
+		if (!parentDom) {
+			var parent = this.getParent();
+			var parentId = parent.getId();
+			var parentDom = jQuery.sap.domById(parentId);
+		}
+		
 		var intHeight = parseInt(height, 10);
-		var parent = this.getParent();
-		var parentId = parent.getId();
-		var parentDom = jQuery.sap.domById(parentId);
 		var realHeight = Math.ceil(parentDom.offsetHeight * (intHeight / 100));
-		elem.style.height = realHeight + "px";
-		return true;
+		newHeight = realHeight + "px";
 	}
 	else {
-		elem.style.height = height;
+		newHeight = height;
 	}
-	return false;
+	
+	if (prevHeight != newHeight){
+		elem.style.height = newHeight;
+	}
 };
 
 /**
@@ -1167,6 +1587,7 @@ sap.makit.Chart.prototype._setRealHeight = function(height){
  * 
  * */
 sap.makit.Chart.prototype._createRows = function() {
+	this.fireEvent("_startCreateRows", this);
 	var oTemplate = new sap.makit.Row(this.getId() + "-dummyrows");
 	var aCols = this.getColumns();
 	for (var i = 0, l = aCols.length; i < l; i++) {
@@ -1178,8 +1599,9 @@ sap.makit.Chart.prototype._createRows = function() {
 			oTemplate.addAggregation("cells",oClone);
 		}
 	}
-
+	this.fireEvent("_endColumn", this);
 	this.destroyAggregation("rows");
+	this.fireEvent("_endDestroyRows", this);
 	var aContexts = undefined;
 	var oBinding = this.getBinding("rows");
 	if (oBinding) {
@@ -1187,6 +1609,7 @@ sap.makit.Chart.prototype._createRows = function() {
 	}
 	var totalRows = oBinding.getLength();
 	this._datarows = [];
+	this.fireEvent("_endPrepareRows", this);
 	for (var i = 0; i < totalRows; i++) {
 		if (aContexts && aContexts[i]) {
 			var oClone = oTemplate.clone("row" + i);
@@ -1195,7 +1618,7 @@ sap.makit.Chart.prototype._createRows = function() {
 			this._datarows.push(oClone._datarow);
 		}
 	}
-
+	this.fireEvent("_endCreateRows", this);
 	// destroy the template
 	oTemplate.destroy();
 };
@@ -1215,19 +1638,42 @@ sap.makit.Chart.prototype._createChartObject = function (){
 
 	this._makitChart = new window.$MA.Chart(this.getId(), true);
 	var that = this;
+	
+	this._makitChart.bind("initialized", function() {
+		that._makitChart.showToolBar(false);
+		that._setMakitChartProperties();
+	});
+	
+	this._makitChart.bind("beforerender", function() {
+		that.fireEvent("_makitBeforeRender", that);
+	});
+	
+	this._makitChart.bind("renderstart", function() {
+		that.fireEvent("_makitRenderStart", that);
+	});
+	
+	this._makitChart.bind("renderend", function() {
+		that.fireEvent("_makitRenderEnd", that);
+	});
+	
+	this._makitChart.bind("animationend", function() {
+		that.fireEvent("_makitAnimationEnd", that);
+	});
 
 	var syntax = this._getChartSyntax();
-	console.log(syntax);
 
 	this._makitChart.create(syntax);
-	this._makitChart.showToolBar(false);
-	this._setMakitChartProperties();
 
 	this._makitChart.bind("tap", function() {
+		that._selectedCatIdx = that._makitChart.getSelectedCategoryIndex();
 		that.fireTap({/* no parameters */});
 	});
 	this._makitChart.bind("doubletap", function() {
 		that.fireEvent("doubletap", that);
+	});
+	this._makitChart.bind("longpress", function() {
+		that._selectedCatIdx = that._makitChart.getSelectedCategoryIndex();
+		that.fireEvent("longpress", that);
 	});
 
 	//workaround for overwritten classes
@@ -1237,7 +1683,6 @@ sap.makit.Chart.prototype._createChartObject = function (){
 	}
 	
 	this._applyCSS();
-	
 };
 
 /**
@@ -1250,13 +1695,16 @@ sap.makit.Chart.prototype._setMakitChartProperties = function() {
 	if (!this._makitChart) {
 		return;
 	}
-	if(this.getType() === sap.makit.ChartType.Pie || this.getType() === sap.makit.ChartType.Donut) {
-		this._makitChart.setLegend(this.getLegendPosition().toLowerCase());
-	}
+	this._makitChart.setLegend(this.getLegendPosition().toLowerCase());
+	
 	// We should only apply this if the chart's data has been initialised at least once
 	if(this._dataInitialized){
 		this._makitChart.showTableView(this.getShowTableView());
 		this._makitChart.showRangeSelectorView(this.getShowRangeSelector());
+		this._makitChart.setGraphLineWidth(this.getLineThickness());
+		this._makitChart.showTableValue(this.getShowTableValue());
+		this._makitChart.setPalette(this.getPrimaryColorPalette());
+		this._makitChart.setProperty("ShowTotal", this.getShowTotalValue());
 	}
 
 	var valueBubble = this.getValueBubble();
@@ -1278,25 +1726,47 @@ sap.makit.Chart.prototype._setMakitChartProperties = function() {
  * */
 sap.makit.Chart.prototype._getChartSyntax = function() {
 	var categoryAxisObj = this.getCategoryAxis();
-	var categoryObj = this.getCategory();
-	if (categoryObj){
-		var categorySyntax = '<Category column="' + categoryObj.getColumn() + '"';
-		if (categoryObj.getFormat()) {
-				categorySyntax += ' format="' + categoryObj.getFormat() + '"';
+	var categoryObjs = this.getCategoryRegions();
+	var catLen = categoryObjs.length;
+	if (catLen > 0){
+		var i;
+		var categorySyntax = "<Categories";
+		if(categoryAxisObj) { 
+			if(categoryAxisObj.getDisplayAll()) {
+				categorySyntax += ' display="' + categoryAxisObj.getDisplayAll() + '"';
+			}
 		}
-		if (categoryObj.getDisplayName()) {
-			categorySyntax += ' displayname="' + categoryObj.getDisplayName() + '"';
+		categorySyntax += ">";
+		var displayNames = "";
+		for (i = catLen - 1; i >= 0; i--) {
+			var temp = categoryObjs[i].getDisplayName();
+			if(temp && temp.length > 0 ){
+				displayNames += temp + " | ";
+			}
 		}
-		if(categoryAxisObj) {
-			categorySyntax += ' showprimaryline="'+ categoryAxisObj.getShowPrimaryLine() +'"';
-			categorySyntax += ' showgrid="'+ categoryAxisObj.getShowGrid() +'"';
-			categorySyntax += ' showlabel="'+ categoryAxisObj.getShowLabel() +'"';
-			categorySyntax += ' thickness="'+ categoryAxisObj.getThickness() +'"';
-			categorySyntax += ' color="'+ categoryAxisObj.getColor() +'"';
-			categorySyntax += ' sortorder="'+ categoryAxisObj.getSortOrder().toLowerCase() +'"';
-			categorySyntax += ' displaylastlabel="'+ categoryAxisObj.getDisplayLastLabel() +'"';
+		displayNames = displayNames.substr(0, displayNames.length - 3);
+		
+		for (i = 0; i < catLen; i++){
+			var categoryObj = categoryObjs[i];
+			categorySyntax += '<Category column="' + categoryObj.getColumn() + '"';
+			if (categoryObj.getFormat()) {
+					categorySyntax += ' format="' + categoryObj.getFormat() + '"';
+			}
+			if (i == 0) {
+				categorySyntax += ' displayname="' + displayNames + '"';
+			}
+			if(categoryAxisObj) {
+				categorySyntax += ' showprimaryline="'+ categoryAxisObj.getShowPrimaryLine() +'"';
+				categorySyntax += ' showgrid="'+ categoryAxisObj.getShowGrid() +'"';
+				categorySyntax += ' showlabel="'+ categoryAxisObj.getShowLabel() +'"';
+				categorySyntax += ' thickness="'+ categoryAxisObj.getThickness() +'"';
+				categorySyntax += ' color="'+ categoryAxisObj.getColor() +'"';
+				categorySyntax += ' sortorder="'+ categoryAxisObj.getSortOrder().toLowerCase() +'"';
+				categorySyntax += ' displaylastlabel="'+ categoryAxisObj.getDisplayLastLabel() +'"';
+			}
+			categorySyntax += ' />';
 		}
-		categorySyntax += ' />';
+		categorySyntax += "</Categories>";
 	}
 	else {
 		throw new Error("Chart '"+ this.getId() +"' needs at least one Category data region");
@@ -1385,6 +1855,7 @@ sap.makit.Chart.prototype._setDataTable = function() {
 	this._setDataTableTimer = this._setDataTableTimer || jQuery.sap.delayedCall(150, this, function(){
 		jQuery.sap.assert(this._makitChart, "_makitChart is not initialized");
 		if(this._datarows && this._datarows.length > 0){
+			this.fireEvent("_createDataTable", this);
 			var data = this._datarows;
 			var dataTable = new window.$MA.DataTable();
 			var columns = this.getColumns();
@@ -1398,6 +1869,7 @@ sap.makit.Chart.prototype._setDataTable = function() {
 			}
 
 			dataTable.addRows(data);
+			this.fireEvent("_beforeSetDataTable", this);
 			this._makitChart.setDataTable(dataTable);
 			this._dataInitialized = true;
 		}
@@ -1430,11 +1902,18 @@ sap.makit.Chart.prototype._applyCSS = function(oEvent) {
  * 
  * */
 sap.makit.Chart.prototype._onResize = function(oEvent) {
-	var needRefresh = this._setRealHeight(this.getHeight());
-	if (needRefresh && this._makitChart != null){
-		this._setMakitChartProperties();
-		this._setDataTable();
-		//this._makitChart.refresh();
+	var parent = this.getParent();
+	var parentId = parent.getId();
+	var parentDom = jQuery.sap.domById(parentId);
+	var parentDomCurHeight = parentDom.offsetHeight;
+	var parentDomCurWidth = parentDom.offsetWidth;
+	
+	if (this._parentCurrentHeight != parentDomCurHeight && parentDomCurHeight > 0 ) {
+		this._setRealHeight(this.getHeight());
+		this._parentCurrentHeight = parentDom.offsetHeight;
+	}
+	if(this._makitChart != null && parentDomCurHeight > 0 && parentDomCurWidth > 0) {
+		this._makitChart.refresh();
 	}
 };
 
@@ -1445,23 +1924,34 @@ sap.makit.Chart.prototype._onResize = function(oEvent) {
  * 
  * */
 sap.makit.Chart.prototype._onPropertyChanged = function(oEvent){
-	if (!this._makitChart) {
-		return;
-	}
 	var name = oEvent.mParameters["name"];
 	var newVal = oEvent.mParameters["newValue"];
+	
+	if (name === "type" && !this._chartTypeDefined) {
+		this._chartTypeDefined = true;
+		if(!this._legendPosDefined){
+			if(newVal === sap.makit.ChartType.Pie || newVal === sap.makit.ChartType.Donut) {
+				this.setLegendPosition(sap.makit.LegendPosition.Left);	
+			}
+			else {
+				this.setLegendPosition(sap.makit.LegendPosition.None);
+			}
+		}
+	}
+	else if (name === "legendPosition" && !this._legendPosDefined) {
+		this._legendPosDefined = true;
+	}
+	
 	if(this._makitChart){
 		if (name === "type") {
 			var type = newVal.toLowerCase();
 			var pieStyle = null;
+			this._makitChart.setProperty("ChartType", type);
 			if (type === "donut" || type === "pie"){
 				pieStyle = type; // it's the pieStyle that can be pie or donut
 				type = "pie"; // in MAKit the chart's type is always pie for Pie/Donut chart
-				this._makitChart.setProperty("PieStyle", pieStyle); //Must make sure this is called before set ChartType
+				this._makitChart.setProperty("PieStyle", pieStyle);
 			}
-			this._makitChart.setProperty("ChartType", type);
-			this._makitChart.showToolBar(false);
-			this._setMakitChartProperties();
 		} else if (name === "showRangeSelector") {
 			this._makitChart.showRangeSelectorView(newVal);
 		}
@@ -1469,9 +1959,7 @@ sap.makit.Chart.prototype._onPropertyChanged = function(oEvent){
 			this._makitChart.showTableView(newVal);
 		}
 		else if (name === "legendPosition") {
-			if(this.getType() === sap.makit.ChartType.Pie || this.getType() === sap.makit.ChartType.Donut) {
-				this._makitChart.setLegend(newVal.toLowerCase());
-			}
+			this._makitChart.setLegend(newVal.toLowerCase());
 		}
 		else if(name === "width") {
 			this.getDomRef().style.width = this.getWidth();
@@ -1479,8 +1967,26 @@ sap.makit.Chart.prototype._onPropertyChanged = function(oEvent){
 		else if(name === "height") {
 			this._setRealHeight(newVal);
 		}
+		else if(name === "lineThickness") {
+			this._makitChart.setGraphLineWidth(newVal);
+		}
+		else if(name === "maxSliceCount") {
+			this._makitChart.setMaxPies(newVal);
+		}
+		else if(name === "showTableValue") {
+			this._makitChart.showTableValue(newVal);
+		}
+		else if(name === "primaryColorPalette") {
+			this._makitChart.setPalette(newVal);
+		}
+		else if(name === "showTotalValue") {
+			this._makitChart.setProperty("ShowTotal", newVal);
+		}
+		
+		this._makitChart.setSelectedCategoryIndex(this._selectedCatIdx);
+		this._makitChart.refresh();
 	}
-}
+};
 
 /**
  * Handler for Category, Value and Series data region property change 
@@ -1501,7 +2007,27 @@ sap.makit.Chart.prototype._onDataRegionPropChanged = function(oEvent, oData){
 			this._makitChart.setProperty(oData["type"] + "["+idx+"]." + oParams["name"], oParams["newValue"]);
 		}
 	}
-	else {
+	else if (oData["type"] == "categories") {
+		var catObj = oEvent.oSource;
+		var idx = this.indexOfCategoryRegion(catObj);
+		var propName = oParams["name"];
+		if(idx > -1){
+			if(propName == "displayName") {
+				var cats = this.getCategoryRegions();
+				var i, value = "", len = cats.length;
+				for(i = 0; i < len; i ++){
+					value += cats[i].getDisplayName();
+					if (i != len -1) {
+						value +=  " | ";
+					}
+				}
+				this._makitChart.setProperty("category." + propName, oParams["newValue"]);
+			}
+			else {
+				this._makitChart.setProperty(oData["type"] + "["+idx+"]." + propName, oParams["newValue"]);
+			}
+		}
+	} else {
 		this._makitChart.setProperty(oData["type"] + "." + oParams["name"], oParams["newValue"]);
 	}
 };
@@ -1520,11 +2046,20 @@ sap.makit.Chart.prototype._onAxisPropChanged = function(oEvent, oData){
 	var oParams = oEvent.mParameters;
 	var sName =  oParams["name"].toLowerCase();
 	var value =  oParams["newValue"];
-	// Sortorder in makit only accepts lowercase value 
+	// Sortorder in makit only accepts lowercase value
+	var axis = oData["axis"];
 	if (sName === "sortorder") {
 		value = value.toLowerCase();
 	}
-	this._makitChart.setProperty(oData["axis"] + "." + sName, value);
+	else if (sName === "displayall") {
+		axis = "categories";
+		sName = "display";
+		if(!value){
+			value = "";
+		}
+	}
+	
+	this._makitChart.setProperty(axis + "." + sName, value);
 	if (sName === "sortorder") {
 		this._setDataTable();
 	}
@@ -1593,3 +2128,15 @@ sap.makit.Chart.prototype.getNumberOfCategories = function() {
 	return numOfCat;
 };
 
+/**
+ * See the generated JSDoc for the documentation of this public function
+ * 
+ * @public
+ * */
+sap.makit.Chart.prototype.getSelectedCategoryGroup = function() {
+	var selectedCategoryGroup = undefined;
+	if (this._makitChart){
+		selectedCategoryGroup = this._makitChart.getSelectedCategoryGroup();
+	}
+	return selectedCategoryGroup;
+};

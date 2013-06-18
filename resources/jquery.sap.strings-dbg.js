@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides useful string operations not available in pure JavaScript.
@@ -169,12 +169,27 @@ jQuery.sap.declare("jquery.sap.strings", false);
      * @type {string}
      * @since 1.7.0
      * @public
-     * @SecPassthrough {0 1|return}
+     * @SecPassthrough {0|return}
      */
 	jQuery.sap.camelCase = function camelCase(sString) { 
 		return sString.replace( rCamelCase, function( sMatch, sChar ) {
 			return sChar.toUpperCase();
 		});
 	};
+	
+	var rEscapeRegExp = /[-[\]{}()*+?.,\\^$|#\s]/g;
 
+	/**
+	 * This function escapes the reserved letters in Regular Expression
+   * @param {string} sString string to escape
+   * @return The escaped string
+   * @type {string}
+   * @since 1.9.3
+   * @public
+   * @SecPassthrough {0|return}
+	 */
+	jQuery.sap.escapeRegExp = function escapeRegExp(sString) {
+		return sString.replace(rEscapeRegExp, "\\$&");
+	};
+	
 }());

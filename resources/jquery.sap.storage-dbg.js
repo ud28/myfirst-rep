@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /*
@@ -49,7 +49,7 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 * when a global erasing of data is required.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.11.0
 	 * @public
 	 * @name jQuery.sap.storage.Storage
@@ -213,9 +213,10 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 *
 	 * @param {jQuery.sap.storage.Type | Storage} 
 	 *     oStorage the type specifying the storage to use or an object implementing the browser's Storage API.
+	 * @param {string} [sIdPrefix] Prefix used for the Ids. If not set a default prefix is used.    
 	 * @returns {jQuery.sap.storage.Storage}
 	 * 
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.11.0
 	 * @namespace
 	 * @public
@@ -226,19 +227,24 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 * @borrows jQuery.sap.storage.Storage.clear as clear
 	 * @borrows jQuery.sap.storage.Storage.getType as getType
 	 */
-	jQuery.sap.storage = function(oStorage){
+	jQuery.sap.storage = function(oStorage, sIdPrefix){
 		// if nothing or the default was passed in, simply return ourself
 		if(!oStorage) {
 			oStorage = jQuery.sap.storage.Type.session;
 		}
 
 		if(typeof(oStorage) === "string" && jQuery.sap.storage.Type[oStorage]) {
-			return mStorages[oStorage] || (mStorages[oStorage] = new fnStorage(oStorage));
+			var sKey = oStorage;
+			if(sIdPrefix && sIdPrefix != sStateStorageKeyPrefix){
+				sKey = oStorage+"_"+sIdPrefix;
+			}
+			
+			return mStorages[sKey] || (mStorages[sKey] = new fnStorage(oStorage, sIdPrefix));
 		}
 
 		// OK, tough but probably good for issue identification. As something was passed in, let's at least ensure our used API is fulfilled.
 		jQuery.sap.assert(oStorage instanceof Object && oStorage.clear && oStorage.setItem && oStorage.getItem && oStorage.removeItem, "storage: duck typing the storage");
-		return new fnStorage(oStorage);
+		return new fnStorage(oStorage, sIdPrefix);
 	};
 
 	/**
@@ -246,7 +252,7 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 * @class
 	 * @static
 	 * @public
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.11.0
 	 */
 	jQuery.sap.storage.Type = {

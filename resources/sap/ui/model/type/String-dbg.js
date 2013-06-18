@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base implementation for all model implementations
@@ -18,32 +18,47 @@ jQuery.sap.require("sap.ui.core.format.NumberFormat");
  * @extends sap.ui.model.SimpleType
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
  * @public
+ * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
+ * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid  
+ * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have  
+ * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with  
+ * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case  
+ * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with  
+ * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case  
+ * @param {string} [oConstraints.contains] an infix that must be contained in any valid value  
+ * @param {string} [oConstraints.equals] only value that is allowed  
+ * @param {RegExp} [oConstraints.search] a regular expression that the value must match  
+ * @name sap.ui.model.type.String
  */
-sap.ui.model.type.String = function () {
-	sap.ui.model.SimpleType.apply(this, arguments);
-	this.sName = "String";
-};
-
-// chain the prototypes
-sap.ui.model.type.String.prototype = jQuery.sap.newObject(sap.ui.model.SimpleType.prototype);
-
-/*
- * Describe the sap.ui.model.type.String.
- * Resulting metadata can be obtained via sap.ui.model.type.String.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.type.String", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.SimpleType",
-  publicMethods : [
-    // methods
-  ]
+sap.ui.model.SimpleType.extend("sap.ui.model.type.String", /** @lends sap.ui.model.type.String */ {
+	
+	constructor : function () {
+		sap.ui.model.SimpleType.apply(this, arguments);
+		this.sName = "String";
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.type.String with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.type.String.extend
+ * @function
+ */
 
 /**
  * @see sap.ui.model.SimpleType.prototype.formatValue

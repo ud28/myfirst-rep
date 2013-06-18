@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -109,7 +109,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>group</code>.
  *
@@ -121,6 +120,7 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @name sap.viz.ui5.data.MeasureDefinition#setGroup
  * @function
  */
+
 
 /**
  * Getter for property <code>value</code>.
@@ -134,7 +134,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>value</code>.
  *
@@ -146,6 +145,7 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @name sap.viz.ui5.data.MeasureDefinition#setValue
  * @function
  */
+
 
 /**
  * Getter for property <code>name</code>.
@@ -159,7 +159,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
@@ -172,4 +171,47 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
+
 // Start of sap/viz/ui5/data/MeasureDefinition.js
+sap.viz.ui5.data.MeasureDefinition.prototype._getAdapter = function() {
+	var that = this,
+	  oBindingInfo = this.getBindingInfo("value"),
+	  oValue, sPath, oType, fnFormatter;
+	
+	// if there is no binding info, then the value is constant
+	if ( !oBindingInfo ) {
+		oValue = this.getValue();
+		return function() { 
+			return oValue; 
+		};
+	}
+	
+	// otherwise ensure a simple property binding for now
+	if ( oBindingInfo.parts.length > 1 ) {
+		throw new Error("MeasureDefinition doesn't support calculated bindings yet");
+	}
+	
+	sPath = oBindingInfo.parts[0].path;
+	oType = oBindingInfo.parts[0].type;
+	fnFormatter = oBindingInfo.formatter;
+	
+	// for simple binding just resolve the value
+	if ( !(oType || fnFormatter) ) {
+		return function(oContext) {
+			return oContext.getProperty(sPath);
+		}
+	}
+
+	// else apply type and/or formatter
+	return function(oContext) {
+		var oValue = oContext.getProperty(sPath);
+		if (oType) {
+			oValue = oType.formatValue(oValue, "string"); //TODO discuss internal type
+		}
+		if (fnFormatter) {
+			oValue = fnFormatter.call(that, oValue, oContext);
+		}
+		return oValue;
+	};
+
+}

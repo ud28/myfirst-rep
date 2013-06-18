@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.plugin.DeclarativeSupport
@@ -18,7 +18,7 @@ jQuery.sap.require("sap.ui.core.Core");
  * @see sap.ui.core.DeclarativeSupport
  * @public
  * @since 1.7.0
- * @version 1.8.4
+ * @version 1.12.1
  */
 sap.ui.core.plugin.DeclarativeSupport = function() {
 };

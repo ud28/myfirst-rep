@@ -68,5 +68,33 @@
 		"licenseUrl" : "http://www.apache.org/licenses/LICENSE-2.0",
 		"licenseType" : "Apache License Version 2.0",
 		"licenseFile" : "Caja-Apache-LICENSE.txt"
-	}	
+	},
+	{
+		"title" : "MobiScroll",
+		"homepage" : "http://mobiscroll.com",
+		"licenseUrl" : "http://opensource.org/licenses/mit-license.php",
+		"licenseType" : "MIT License",
+		"licenseFile" : "MobiScroll-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "SinonJS",
+		"homepage" : "http://sinonjs.org",
+		"licenseUrl" : "https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE",
+		"licenseType" : "BSD License",
+		"licenseFile" : "SinonJS-BSD-LICENSE.txt"
+	},
+	{
+		"title" : "URI.js",
+		"homepage" : "http://medialize.github.com/URI.js/",
+		"licenseUrl" : "https://github.com/medialize/URI.js",
+		"licenseType" : "MIT License",
+		"licenseFile" : "URI-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "Flexis.js",
+		"homepage" : "https://github.com/doctyper/flexie/",
+		"licenseUrl" : "https://github.com/doctyper/flexie/blob/master/README.md",
+		"licenseType" : "MIT License",
+		"licenseFile" : "Flexie-MIT-LICENSE.txt"
+	}
 ]

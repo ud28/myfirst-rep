@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.m.DisplayListItemRenderer");jQuery.sap.require("sap.ui.core.Renderer");jQuery.sap.require("sap.m.ListItemBaseRenderer");sap.m.DisplayListItemRenderer=sap.ui.core.Renderer.extend(sap.m.ListItemBaseRenderer);
 sap.m.DisplayListItemRenderer.renderLIAttributes=function(r,l){r.addClass("sapMDLI")};

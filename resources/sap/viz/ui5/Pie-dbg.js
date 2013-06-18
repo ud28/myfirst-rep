@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -33,20 +33,26 @@ jQuery.sap.require("sap.viz.ui5.core.BaseChart");
  * </li>
  * <li>Aggregations
  * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Pie</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
- * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Pie</li></ul>
+ * <li>{@link #getDataTransform dataTransform} : sap.viz.ui5.types.Datatransform</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Pie#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Pie#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Pie#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Pie#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Pie#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Pie#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Pie#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -62,7 +68,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseChart");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -78,16 +84,22 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Pie", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.Pie", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
-    	"plotArea" : {type : "sap.viz.ui5.types.Pie", multiple : false}
+    	"dataTransform" : {type : "sap.viz.ui5.types.Datatransform", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -108,9 +120,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Pie", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Pie.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.Pie#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#setGeneral
+ * @function
+ */
 	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyGeneral
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Module sap.viz.modules.title
@@ -121,6 +164,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Title}
@@ -129,7 +173,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -139,26 +183,59 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#destroyTitle
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>legend</code>.<br/>
+ * Getter for aggregation <code>legendGroup</code>.<br/>
  * Module sap.viz.modules.legend
  * 
  * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Pie#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
  * @public
  * @name sap.viz.ui5.Pie#getLegend
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Pie#setLegend
  * @function
  */
-
+	
 
 /**
  * Destroys the legend in the aggregation 
@@ -168,36 +245,39 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#destroyLegend
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>interaction</code>.<br/>
- * Module sap.viz.modules.controller.interaction
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
  * 
- * @return {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.types.XYContainer}
  * @public
- * @name sap.viz.ui5.Pie#getInteraction
- * @function
- */
-
-/**
- * Setter for the aggregated <code>interaction</code>.
- * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
- * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Pie#setInteraction
+ * @name sap.viz.ui5.Pie#getXyContainer
  * @function
  */
 
 
 /**
- * Destroys the interaction in the aggregation 
- * named <code>interaction</code>.
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#destroyInteraction
+ * @name sap.viz.ui5.Pie#setXyContainer
  * @function
  */
 	
+
+/**
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyXyContainer
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.pie
@@ -208,6 +288,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Pie}
@@ -216,7 +297,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -227,142 +308,102 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Pie#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
 
- * @public
- */
- 
 /**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
  * @public
- * @name sap.viz.ui5.Pie#attachShowTooltip
+ * @name sap.viz.ui5.Pie#getDataLabel
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#detachShowTooltip
+ * @name sap.viz.ui5.Pie#setDataLabel
  * @function
  */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Pie#fireShowTooltip
- * @function
- */
+	
 
 /**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Pie#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
- *
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#attachHideTooltip
+ * @name sap.viz.ui5.Pie#destroyDataLabel
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.Pie#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#detachHideTooltip
+ * @name sap.viz.ui5.Pie#setInteraction
  * @function
  */
-
+	
 
 /**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Pie#fireHideTooltip
+ * @public
+ * @name sap.viz.ui5.Pie#destroyInteraction
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Getter for aggregation <code>dataTransform</code>.<br/>
+ * Module sap.viz.modules.datatransform
+ * 
+ * @return {sap.viz.ui5.types.Datatransform}
+ * @public
+ * @name sap.viz.ui5.Pie#getDataTransform
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataTransform</code>.
+ * @param oDataTransform {sap.viz.ui5.types.Datatransform}
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#setDataTransform
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataTransform in the aggregation 
+ * named <code>dataTransform</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyDataTransform
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -401,7 +442,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -439,7 +480,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Pie</code>.<br/>
  *
@@ -455,7 +495,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -466,8 +505,9 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Pie#deselectData
  * @event
@@ -483,7 +523,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -497,7 +537,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Pie</code>.<br/>
@@ -514,7 +553,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -525,23 +563,245 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Pie#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Pie#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Pie#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Pie#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Pie#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Pie</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Pie#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Pie.js
 sap.viz.ui5.Pie.prototype.getVIZChartType = function() {
   return "viz/pie";
 };
 
+sap.viz.ui5.Pie.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
 sap.viz.ui5.Pie.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Pie.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Pie.prototype.getLegend = function() {
   return this._getOrCreate("legend");
 }
-sap.viz.ui5.Pie.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Pie.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
 }
 sap.viz.ui5.Pie.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
+sap.viz.ui5.Pie.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.Pie.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.Pie.prototype.getDataTransform = function() {
+  return this._getOrCreate("dataTransform");
+}
+sap.viz.ui5.Pie.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
 sap.viz.ui5.Pie.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
 };
@@ -558,19 +818,11 @@ sap.viz.ui5.Pie.prototype.detachHideTooltip = function(fnHandler, oListener) {
   return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
 };
 
-sap.viz.ui5.Pie.prototype.attachSelectData = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+sap.viz.ui5.Pie.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
 };
 
-sap.viz.ui5.Pie.prototype.detachSelectData = function(fnHandler, oListener) {
-  return this._detachVIZEvent("selectData", fnHandler, oListener);
-};
-
-sap.viz.ui5.Pie.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Pie.prototype.detachDeselectData = function(fnHandler, oListener) {
-  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+sap.viz.ui5.Pie.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
 };
 

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides (optional) base class for all renderers
@@ -11,7 +11,7 @@ jQuery.sap.declare("sap.ui.core.Renderer");
  * @class Base Class for Renderer.
  *
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */

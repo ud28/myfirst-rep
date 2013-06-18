@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author Frank Weigel 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -119,7 +119,6 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @function
  */
 
-
 /**
  * Setter for property <code>content</code>.
  *
@@ -134,6 +133,7 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @name sap.ui.core.HTML#setContent
  * @function
  */
+
 
 /**
  * Getter for property <code>preferDOM</code>.
@@ -155,7 +155,6 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @function
  */
 
-
 /**
  * Setter for property <code>preferDOM</code>.
  *
@@ -167,6 +166,7 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @name sap.ui.core.HTML#setPreferDOM
  * @function
  */
+
 
 /**
  * Getter for property <code>sanitizeContent</code>.
@@ -180,7 +180,6 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @function
  */
 
-
 /**
  * Setter for property <code>sanitizeContent</code>.
  *
@@ -192,6 +191,7 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @name sap.ui.core.HTML#setSanitizeContent
  * @function
  */
+
 
 /**
  * Fired after the HTML control has been rendered. Allows to manipulate the resulting DOM.
@@ -232,7 +232,6 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'afterRendering' event of this <code>sap.ui.core.HTML</code>.<br/>
  *
@@ -248,7 +247,6 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @function
  */
 
-
 /**
  * Fire event afterRendering to attached listeners.
  * 
@@ -263,6 +261,7 @@ sap.ui.core.HTML.M_EVENTS = {'afterRendering':'afterRendering'};
  * @name sap.ui.core.HTML#fireAfterRendering
  * @function
  */
+
 
 // Start of sap/ui/core/HTML.js
 /**

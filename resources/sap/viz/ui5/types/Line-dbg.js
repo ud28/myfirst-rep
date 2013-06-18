@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -86,7 +86,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
 		"width" : {type : "int", group : "", defaultValue : 2}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Line_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Line_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.Line_animation", multiple : false}, 
     	"hoverline" : {type : "sap.viz.ui5.types.Line_hoverline", multiple : false}, 
     	"marker" : {type : "sap.viz.ui5.types.Line_marker", multiple : false}
@@ -113,7 +113,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -122,7 +122,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -136,6 +135,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -147,7 +147,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -161,6 +160,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -172,7 +172,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -186,6 +185,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -197,7 +197,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getDrawingEffect
  * @function
  */
-
 
 /**
  * Setter for property <code>drawingEffect</code>.
@@ -211,6 +210,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>width</code>.
  * Set width of line, range[1,7]. When beyond the range, the line width is default size 2.
@@ -223,7 +223,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -235,45 +234,55 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setWidth
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.Line_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Line_tooltip}
  * @return {sap.viz.ui5.types.Line} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.Line} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
- * Settings for tooltip related properties.
+ * Settings for animation related properties.
  * 
  * @return {sap.viz.ui5.types.Line_animation}
  * @public
  * @name sap.viz.ui5.types.Line#getAnimation
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>animation</code>.
@@ -283,7 +292,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -293,7 +302,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#destroyAnimation
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>hoverline</code>.<br/>
  * Settings for hoverline properties.
@@ -304,6 +314,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>hoverline</code>.
  * @param oHoverline {sap.viz.ui5.types.Line_hoverline}
@@ -312,7 +323,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setHoverline
  * @function
  */
-
+	
 
 /**
  * Destroys the hoverline in the aggregation 
@@ -322,7 +333,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#destroyHoverline
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>marker</code>.<br/>
  * Settings for marker/data point graphics
@@ -333,6 +345,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>marker</code>.
  * @param oMarker {sap.viz.ui5.types.Line_marker}
@@ -341,7 +354,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setMarker
  * @function
  */
-
+	
 
 /**
  * Destroys the marker in the aggregation 
@@ -351,6 +364,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#destroyMarker
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Line.js
 sap.viz.ui5.types.Line.prototype.getToolTip = function() {

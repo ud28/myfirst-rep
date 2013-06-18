@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.core.Renderer");sap.ui.core.Renderer={};
 sap.ui.core.Renderer.extend=function(p){var c={_super:p};for(var f in p){if(typeof(p[f])=="function"){c[f]=(function(){var m=f,t=c;return function(){return t._super[m].apply(this,arguments)}}())}}return c};

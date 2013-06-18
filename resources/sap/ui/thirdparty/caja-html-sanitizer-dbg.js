@@ -3581,10 +3581,4 @@ if (typeof window !== 'undefined') {
   window['html_sanitize'] = html_sanitize;
 }
 
-jQuery.sap.declare('caja-html-sanitizer');
-jQuery.sap.declare('com.google.caja.plugin.css-defs'); // raw module, declared by SAPUI5 CreateModule Ant-Task
-jQuery.sap.declare('com.google.caja.plugin.csslexer'); // raw module, declared by SAPUI5 CreateModule Ant-Task
-jQuery.sap.declare('com.google.caja.plugin.sanitizecss'); // raw module, declared by SAPUI5 CreateModule Ant-Task
-jQuery.sap.declare('com.google.caja.plugin.cssparser'); // raw module, declared by SAPUI5 CreateModule Ant-Task
-jQuery.sap.declare('sap.ui.core.caja.html5-defs'); // raw module, declared by SAPUI5 CreateModule Ant-Task
-jQuery.sap.declare('com.google.caja.plugin.html-sanitizer'); // raw module, declared by SAPUI5 CreateModule Ant-Task
+jQuery.sap.declare('sap.ui.thirdparty.caja-html-sanitizer');

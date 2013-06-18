@@ -1,12 +1,12 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides default renderer for XMLView
 jQuery.sap.declare("sap.ui.core.mvc.XMLViewRenderer");
-
+jQuery.sap.require("sap.ui.core.mvc.ViewRenderer");
 
 sap.ui.core.mvc.XMLViewRenderer = {
 };
@@ -30,6 +30,7 @@ sap.ui.core.mvc.XMLViewRenderer.render = function(rm, oControl) {
 			rm.writeControlData(oControl);
 			rm.addClass("sapUiView");
 			rm.addClass("sapUiXMLView");
+			sap.ui.core.mvc.ViewRenderer.addDisplayClass(rm, oControl);
 			rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
 
 			if (oControl.getWidth()) {
@@ -47,7 +48,7 @@ sap.ui.core.mvc.XMLViewRenderer.render = function(rm, oControl) {
 		for (var i = 0; i < oControl._aParsedContent.length; i++) {
 			var fragment = oControl._aParsedContent[i];
 			if(fragment && typeof(fragment) === "string") {
-				rm.write(fragment); // TODO: escaping
+				rm.write(fragment);
 			} else {
 				rm.renderControl(fragment);
 			}

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides encoding functions for JavaScript.
@@ -145,7 +145,7 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 	/**
 	 * RegExp and escape function for URL escaping
 	 */
-	var rURL = /[\x00-\x29\x2b\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
+	var rURL = /[\x00-\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
 		mURLLookup = {};
 
 	var fURL = function(sChar) {
@@ -450,7 +450,9 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 			jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 			jQuery.sap.assert(window.html && window.html.sanitize, "Sanitizer should have been loaded");
 		}
-		return window.html.sanitize(sHTML, mOptions.uriRewriter, mOptions.tokenPolicy);
+		
+		var oTagPolicy = mOptions.tagPolicy || window.html.makeTagPolicy(mOptions.uriRewriter, mOptions.tokenPolicy);
+		return window.html.sanitizeWithPolicy(sHTML, oTagPolicy);
 	}
 	
 	/**

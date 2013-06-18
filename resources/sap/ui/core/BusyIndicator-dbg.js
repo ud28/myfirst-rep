@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // A static class to show a busy indicator
@@ -13,7 +13,7 @@ jQuery.sap.require("sap.ui.core.Popup");
  * This class is used to display a waiting animation covering the whole page and blocking user interaction.
  *
  * @class sap.ui.core.BusyIndicator
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -109,7 +109,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -121,6 +120,7 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @name sap.m.Text#setText
  * @function
  */
+
 
 /**
  * Binder for property <code>text</code>.
@@ -134,7 +134,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Unbinder for property <code>text</code>.
  *
@@ -142,8 +141,8 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @public
  * @name sap.m.Text#unbindText
  * @function
-
  */
+
 
 /**
  * Getter for property <code>textDirection</code>.
@@ -157,7 +156,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>textDirection</code>.
  *
@@ -169,6 +167,7 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @name sap.m.Text#setTextDirection
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -182,7 +181,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -194,6 +192,7 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @name sap.m.Text#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>wrapping</code>.
@@ -207,7 +206,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>wrapping</code>.
  *
@@ -219,6 +217,7 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @name sap.m.Text#setWrapping
  * @function
  */
+
 
 /**
  * Getter for property <code>textAlign</code>.
@@ -232,7 +231,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>textAlign</code>.
  *
@@ -244,6 +242,7 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @name sap.m.Text#setTextAlign
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -257,7 +256,6 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -269,6 +267,7 @@ sap.ui.core.Control.extend("sap.m.Text", { metadata : {
  * @name sap.m.Text#setWidth
  * @function
  */
+
 
 // Start of sap/m/Text.js
 /*

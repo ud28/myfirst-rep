@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.debug.PropertyList");jQuery.sap.require("jquery.sap.strings");jQuery.sap.require("sap.ui.base.EventProvider");jQuery.sap.require("sap.ui.base.DataType");jQuery.sap.require("sap.ui.core.Element");jQuery.sap.require("sap.ui.core.Core");
 sap.ui.debug.PropertyList=function(c,w,p){sap.ui.base.EventProvider.apply(this,arguments);this.oWindow=w;this.oParentDomRef=p;this.oCore=c;this.bEmbedded=top.window==w;this.mProperties={};var t=this;jQuery(p).bind("click",function(e){t.onclick(e)}).bind("focusin",function(e){t.onfocus(e)}).bind("keydown",function(e){t.onkeydown(e)});if(!this.bEmbedded){jQuery(p).bind("mouseover",function(e){t.onmouseover(e)}).bind("mouseout",function(e){t.onmouseout(e)})}this.oParentDomRef.style.border="solid 1px gray";this.oParentDomRef.style.padding="2px"};

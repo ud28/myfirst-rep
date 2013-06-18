@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -56,10 +56,11 @@ jQuery.sap.require("sap.makit.Axis");
  * @extends sap.makit.Axis
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
+ * @since 1.8
  * @experimental Since version 1.8. 
  * API is not yet finished and might change completely
  * @name sap.makit.ValueAxis
@@ -96,7 +97,7 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
 
 /**
  * Getter for property <code>min</code>.
- * Highest displayed value on the Value Axis (this value will be automatically adjusted to nearest major tick value depending on the value's range)
+ * Highest displayed value on the Value Axis (this value will be automatically adjusted to nearest major tick value depending on the value's range). Set to empty string to switch back to automatic calculation.
  *
  * Default value is empty/<code>undefined</code>
  *
@@ -105,7 +106,6 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @name sap.makit.ValueAxis#getMin
  * @function
  */
-
 
 /**
  * Setter for property <code>min</code>.
@@ -119,6 +119,7 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>max</code>.
  * Highest displayed value on the Value Axis (this value will be automatically adjusted to nearest major tick value depending on the value's range)
@@ -131,7 +132,6 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>max</code>.
  *
@@ -143,6 +143,7 @@ sap.makit.Axis.extend("sap.makit.ValueAxis", { metadata : {
  * @name sap.makit.ValueAxis#setMax
  * @function
  */
+
 
 // Start of sap/makit/ValueAxis.js
 /*!

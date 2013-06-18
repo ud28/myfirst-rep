@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -113,7 +113,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -125,6 +124,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -138,7 +138,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -151,9 +150,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
+
 /**
  * Getter for property <code>direction</code>.
- * Set gradient direction of background.
+ * Set gradient direction of background, only taking effect when drawingEffect of background has been set to 'golossy'.
  *
  * Default value is <code>vertical</code>
  *
@@ -162,7 +162,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#getDirection
  * @function
  */
-
 
 /**
  * Setter for property <code>direction</code>.
@@ -175,7 +174,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#setDirection
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>border</code>.<br/>
  * Settings for border property.
@@ -186,6 +186,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>border</code>.
  * @param oBorder {sap.viz.ui5.types.Background_border}
@@ -194,7 +195,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#setBorder
  * @function
  */
-
+	
 
 /**
  * Destroys the border in the aggregation 
@@ -204,6 +205,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#destroyBorder
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Background.js
 sap.viz.ui5.types.Background.prototype.getBorder = function() {

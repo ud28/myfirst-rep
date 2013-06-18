@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.core.BaseChartRenderer");
@@ -22,11 +22,15 @@ sap.viz.ui5.core.BaseChartRenderer = {
  */
 sap.viz.ui5.core.BaseChartRenderer.render = function(oRm, oControl){
 	
-	var bIsEmpty = 	!oControl.getDataset() || !oControl.getDataset().getVIZDataset();
-
+	var bIsEmpty = 	!oControl.getDataset() || !oControl.getDataset().getVIZDataset(),
+		oBundle=sap.ui.getCore().getLibraryResourceBundle("sap.viz.ui5.messages"); // TODO relies on undocumented behavior?
+	
 	// write the HTML into the render manager
 	oRm.write("<DIV");
 	oRm.writeControlData(oControl);
+	if(oControl.getTooltip_AsString()) {
+		oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
+	}
 	oRm.addClass("sapVizChart");
 	if ( bIsEmpty ) {
 		oRm.addClass("sapVizNoData");
@@ -36,13 +40,17 @@ sap.viz.ui5.core.BaseChartRenderer.render = function(oRm, oControl){
 	oRm.addStyle("height", oControl.getHeight());
 	oRm.writeStyles();
 	oRm.write(">");
-	if ( bIsEmpty ) {
+	if ( !sap.viz.__svg_support ) {
+		oRm.write('<DIV class="sapVizNoDataDefault">');
+		oRm.writeEscaped(oBundle.getText("NO_SVG_SUPPORT"));
+		oRm.write('</DIV>');
+	} else if ( bIsEmpty ) {
 		var oNoData = oControl.getNoData();
 		if ( oNoData ) {
 			oRm.renderControl(oNoData);
 		} else {
 			oRm.write('<DIV class="sapVizNoDataDefault">');
-			oRm.writeEscaped(sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("NO_DATA")); // TODO for > 1.8 this needs to be changed to sap.viz
+			oRm.writeEscaped(oBundle.getText("NO_DATA")); 
 			oRm.write('</DIV>');
 		}
 	}

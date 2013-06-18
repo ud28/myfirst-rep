@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -29,7 +29,14 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * The supported settings are:
  * <ul>
  * <li>Properties
- * <ul></ul>
+ * <ul>
+ * <li>{@link #getSupportedEventNames supportedEventNames} : string[] (default: ['mouseup','mousedown','mousemove','mouseout','mouseover','touchstart'])</li>
+ * <li>{@link #getEnableMouseMove enableMouseMove} : boolean (default: true)</li>
+ * <li>{@link #getEnableMouseOver enableMouseOver} : boolean (default: true)</li>
+ * <li>{@link #getEnableMouseOut enableMouseOut} : boolean (default: true)</li>
+ * <li>{@link #getSupportLassoEvent supportLassoEvent} : boolean (default: true)</li>
+ * <li>{@link #getHoldSelection holdSelection} : boolean (default: false)</li>
+ * <li>{@link #getPreserveSelectionWhenDragging preserveSelectionWhenDragging} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -55,7 +62,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -70,6 +77,15 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
 
 	// ---- control specific ----
 	library : "sap.viz",
+	properties : {
+		"supportedEventNames" : {type : "string[]", group : "", defaultValue : ['mouseup','mousedown','mousemove','mouseout','mouseover','touchstart'], deprecated: true},
+		"enableMouseMove" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"enableMouseOver" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"enableMouseOut" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"supportLassoEvent" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"holdSelection" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"preserveSelectionWhenDragging" : {type : "boolean", group : "", defaultValue : false, deprecated: true}
+	},
 	aggregations : {
     	"selectability" : {type : "sap.viz.ui5.types.controller.Interaction_selectability", multiple : false}
 	}
@@ -92,7 +108,210 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
-	
+
+/**
+ * Getter for property <code>supportedEventNames</code>.
+ * Set supported event names.
+ *
+ * Default value is <code>mouseup,mousedown,mousemove,mouseout,mouseover,touchstart</code>
+ *
+ * @return {string[]} the value of property <code>supportedEventNames</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getSupportedEventNames
+ * @function
+ */
+
+/**
+ * Setter for property <code>supportedEventNames</code>.
+ *
+ * Default value is <code>mouseup,mousedown,mousemove,mouseout,mouseover,touchstart</code> 
+ *
+ * @param {string[]} aSupportedEventNames  new value for property <code>supportedEventNames</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setSupportedEventNames
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enableMouseMove</code>.
+ * Set whether mouse move is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>enableMouseMove</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getEnableMouseMove
+ * @function
+ */
+
+/**
+ * Setter for property <code>enableMouseMove</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bEnableMouseMove  new value for property <code>enableMouseMove</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setEnableMouseMove
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enableMouseOver</code>.
+ * Set whether mouse over is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>enableMouseOver</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getEnableMouseOver
+ * @function
+ */
+
+/**
+ * Setter for property <code>enableMouseOver</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bEnableMouseOver  new value for property <code>enableMouseOver</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setEnableMouseOver
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enableMouseOut</code>.
+ * Set whether mouse out is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>enableMouseOut</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getEnableMouseOut
+ * @function
+ */
+
+/**
+ * Setter for property <code>enableMouseOut</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bEnableMouseOut  new value for property <code>enableMouseOut</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setEnableMouseOut
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>supportLassoEvent</code>.
+ * Set whether support lasso event is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>supportLassoEvent</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getSupportLassoEvent
+ * @function
+ */
+
+/**
+ * Setter for property <code>supportLassoEvent</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bSupportLassoEvent  new value for property <code>supportLassoEvent</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setSupportLassoEvent
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>holdSelection</code>.
+ * Set whether hold selection is enabled.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>holdSelection</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getHoldSelection
+ * @function
+ */
+
+/**
+ * Setter for property <code>holdSelection</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bHoldSelection  new value for property <code>holdSelection</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setHoldSelection
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>preserveSelectionWhenDragging</code>.
+ * Set whether preserve selection when dragging is enabled.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>preserveSelectionWhenDragging</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getPreserveSelectionWhenDragging
+ * @function
+ */
+
+/**
+ * Setter for property <code>preserveSelectionWhenDragging</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bPreserveSelectionWhenDragging  new value for property <code>preserveSelectionWhenDragging</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setPreserveSelectionWhenDragging
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>selectability</code>.<br/>
  * Settings for selectability.
@@ -103,6 +322,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>selectability</code>.
  * @param oSelectability {sap.viz.ui5.types.controller.Interaction_selectability}
@@ -111,7 +331,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @name sap.viz.ui5.types.controller.Interaction#setSelectability
  * @function
  */
-
+	
 
 /**
  * Destroys the selectability in the aggregation 
@@ -121,6 +341,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @name sap.viz.ui5.types.controller.Interaction#destroySelectability
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/controller/Interaction.js
 sap.viz.ui5.types.controller.Interaction.prototype.getSelectability = function() {

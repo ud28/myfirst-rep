@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
 <library name="sap.viz">
-  <module name="sap.viz.library" size="32601" compressedSize="8925">
-    <description>Initialization Code and shared classes of library sap.viz (1.8.4)</description>
+  <module name="sap.viz.library" size="39108" compressedSize="10890">
+    <description>Initialization Code and shared classes of library sap.viz (1.12.1)</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.ui.core.Core"/>
       <module name="sap.ui.core.library"/>
       <module name="sap.ui.thirdparty.d3"/>
       <module name="sap.viz.libs.canvg"/>
       <module name="sap.viz.libs.rgbcolor"/>
       <module name="sap.viz.libs.sap-viz"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
       <module name="sap.viz.ui5.types.Axis_gridline_type"/>
@@ -20,10 +20,10 @@
       <module name="sap.viz.ui5.types.Bar_drawingEffect"/>
       <module name="sap.viz.ui5.types.Bubble_drawingEffect"/>
       <module name="sap.viz.ui5.types.Combination_drawingEffect"/>
-      <module name="sap.viz.ui5.types.Legend_alignment"/>
-      <module name="sap.viz.ui5.types.Legend_drawingEffect"/>
-      <module name="sap.viz.ui5.types.Legend_position"/>
-      <module name="sap.viz.ui5.types.Legend_type"/>
+      <module name="sap.viz.ui5.types.Datalabel_orientation"/>
+      <module name="sap.viz.ui5.types.Datalabel_outsidePosition"/>
+      <module name="sap.viz.ui5.types.Datalabel_paintingMode"/>
+      <module name="sap.viz.ui5.types.Datalabel_position"/>
       <module name="sap.viz.ui5.types.Line_drawingEffect"/>
       <module name="sap.viz.ui5.types.Line_marker_shape"/>
       <module name="sap.viz.ui5.types.Pie_drawingEffect"/>
@@ -35,660 +35,1023 @@
       <module name="sap.viz.ui5.types.Tooltip_drawingEffect"/>
       <module name="sap.viz.ui5.types.VerticalBar_drawingEffect"/>
       <module name="sap.viz.ui5.types.controller.Interaction_selectability_mode"/>
+      <module name="sap.viz.ui5.types.legend.Common_alignment"/>
+      <module name="sap.viz.ui5.types.legend.Common_drawingEffect"/>
+      <module name="sap.viz.ui5.types.legend.Common_position"/>
+      <module name="sap.viz.ui5.types.legend.Common_type"/>
     </includes>
-  </module>  <module name="sap.viz.ui5.Bar" size="24509" compressedSize="2676">
+  </module>
+  <module name="sap.viz.ui5.Bar" size="31463" compressedSize="3571">
     <description>Provides control sap.viz.ui5.Bar.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.BarRenderer" size="384" compressedSize="279">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Bubble" size="25819" compressedSize="2899">
+  </module>
+  <module name="sap.viz.ui5.BarRenderer" size="384" compressedSize="279">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Bubble" size="32924" compressedSize="3819">
     <description>Provides control sap.viz.ui5.Bubble.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.BubbleRenderer" size="390" compressedSize="285">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Column" size="24897" compressedSize="2747">
+  </module>
+  <module name="sap.viz.ui5.BubbleRenderer" size="390" compressedSize="285">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Column" size="30978" compressedSize="3495">
     <description>Provides control sap.viz.ui5.Column.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.ColumnRenderer" size="390" compressedSize="285">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Combination" size="25477" compressedSize="2852">
+  </module>
+  <module name="sap.viz.ui5.ColumnRenderer" size="390" compressedSize="285">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Combination" size="31718" compressedSize="3625">
     <description>Provides control sap.viz.ui5.Combination.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.CombinationRenderer" size="400" compressedSize="295">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Donut" size="21145" compressedSize="2132">
+  </module>
+  <module name="sap.viz.ui5.CombinationRenderer" size="400" compressedSize="295">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Donut" size="29180" compressedSize="3211">
     <description>Provides control sap.viz.ui5.Donut.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.DonutRenderer" size="388" compressedSize="283">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Line" size="24630" compressedSize="2698">
+  </module>
+  <module name="sap.viz.ui5.DonutRenderer" size="388" compressedSize="283">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualBar" size="32973" compressedSize="3824">
+    <description>Provides control sap.viz.ui5.DualBar.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualBarRenderer" size="392" compressedSize="287">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualColumn" size="32482" compressedSize="3747">
+    <description>Provides control sap.viz.ui5.DualColumn.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualColumnRenderer" size="398" compressedSize="293">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualCombination" size="33252" compressedSize="3882">
+    <description>Provides control sap.viz.ui5.DualCombination.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualCombinationRenderer" size="408" compressedSize="303">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualLine" size="32139" compressedSize="3686">
+    <description>Provides control sap.viz.ui5.DualLine.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualLineRenderer" size="394" compressedSize="289">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualStackedColumn" size="33596" compressedSize="3944">
+    <description>Provides control sap.viz.ui5.DualStackedColumn.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualStackedColumn100" size="34059" compressedSize="4026">
+    <description>Provides control sap.viz.ui5.DualStackedColumn100.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualStackedColumn100Renderer" size="418" compressedSize="313">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.DualStackedColumnRenderer" size="412" compressedSize="307">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Line" size="30647" compressedSize="3436">
     <description>Provides control sap.viz.ui5.Line.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.LineRenderer" size="386" compressedSize="281">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Pie" size="20961" compressedSize="2098">
+  </module>
+  <module name="sap.viz.ui5.LineRenderer" size="386" compressedSize="281">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Pie" size="28908" compressedSize="3163">
     <description>Provides control sap.viz.ui5.Pie.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.PieRenderer" size="384" compressedSize="279">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.Scatter" size="24993" compressedSize="2764">
+  </module>
+  <module name="sap.viz.ui5.PieRenderer" size="384" compressedSize="279">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.Scatter" size="33128" compressedSize="3857">
     <description>Provides control sap.viz.ui5.Scatter.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.ScatterRenderer" size="392" compressedSize="287">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.StackedColumn" size="25745" compressedSize="2902">
+  </module>
+  <module name="sap.viz.ui5.ScatterRenderer" size="392" compressedSize="287">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.StackedColumn" size="32050" compressedSize="3685">
     <description>Provides control sap.viz.ui5.StackedColumn.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.StackedColumn100" size="26094" compressedSize="2966">
+  </module>
+  <module name="sap.viz.ui5.StackedColumn100" size="32495" compressedSize="3764">
     <description>Provides control sap.viz.ui5.StackedColumn100.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseChart"/>
-    </requires>
-    <includes>
-    </includes>
-  </module>  <module name="sap.viz.ui5.StackedColumn100Renderer" size="410" compressedSize="305">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
-    <requires>
       <module name="jquery.sap.global"/>
-      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.StackedColumnRenderer" size="404" compressedSize="299">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
+  </module>
+  <module name="sap.viz.ui5.StackedColumn100Renderer" size="410" compressedSize="305">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.core.BaseChart" size="11555" compressedSize="2377">
+  </module>
+  <module name="sap.viz.ui5.StackedColumnRenderer" size="404" compressedSize="299">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
+    <requires>
+      <module name="sap.viz.ui5.core.BaseChartRenderer"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.core.BaseChart" size="14092" compressedSize="3544">
     <description>Provides control sap.viz.ui5.core.BaseChart.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.ui.core.Control"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.core.BaseChartRenderer" size="1464" compressedSize="769">
-    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2012 SAP AG. All rights reserved</description>
+  </module>
+  <module name="sap.viz.ui5.core.BaseChartRenderer" size="1813" compressedSize="1005">
+    <description>! SAP UI development toolkit for HTML5 (SAPUI5)  (c) Copyright 2009-2013 SAP AG. All rights reserved</description>
     <requires>
       <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.core.BaseStructuredType" size="5089" compressedSize="1081">
+  </module>
+  <module name="sap.viz.ui5.core.BaseStructuredType" size="5557" compressedSize="1301">
     <description>Provides control sap.viz.ui5.core.BaseStructuredType.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.data.Dataset" size="3046" compressedSize="346">
+  </module>
+  <module name="sap.viz.ui5.data.Dataset" size="3047" compressedSize="346">
     <description>Provides control sap.viz.ui5.data.Dataset.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.data.DimensionDefinition" size="5426" compressedSize="524">
+  </module>
+  <module name="sap.viz.ui5.data.DimensionDefinition" size="6535" compressedSize="1012">
     <description>Provides control sap.viz.ui5.data.DimensionDefinition.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.data.FlattenedDataset" size="18128" compressedSize="3037">
+  </module>
+  <module name="sap.viz.ui5.data.FlattenedDataset" size="20038" compressedSize="4031">
     <description>Provides control sap.viz.ui5.data.FlattenedDataset.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.data.Dataset"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.data.MeasureDefinition" size="5386" compressedSize="518">
+  </module>
+  <module name="sap.viz.ui5.data.MeasureDefinition" size="6491" compressedSize="1002">
     <description>Provides control sap.viz.ui5.data.MeasureDefinition.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.ui.core.Element"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Axis" size="11586" compressedSize="1450">
+  </module>
+  <module name="sap.viz.ui5.types.Axis" size="16731" compressedSize="1927">
     <description>Provides control sap.viz.ui5.types.Axis.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Axis_axisline" size="3912" compressedSize="443">
+  </module>
+  <module name="sap.viz.ui5.types.Axis_axisline" size="3913" compressedSize="443">
     <description>Provides control sap.viz.ui5.types.Axis_axisline.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Axis_gridline" size="7881" compressedSize="786">
+  </module>
+  <module name="sap.viz.ui5.types.Axis_gridline" size="8554" compressedSize="818">
     <description>Provides control sap.viz.ui5.types.Axis_gridline.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Axis_label" size="4671" compressedSize="495">
+  </module>
+  <module name="sap.viz.ui5.types.Axis_label" size="5550" compressedSize="553">
     <description>Provides control sap.viz.ui5.types.Axis_label.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Axis_title" size="5445" compressedSize="554">
+  </module>
+  <module name="sap.viz.ui5.types.Axis_layoutInfo" size="5406" compressedSize="536">
+    <description>Provides control sap.viz.ui5.types.Axis_layoutInfo.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Axis_scale" size="6514" compressedSize="605">
+    <description>Provides control sap.viz.ui5.types.Axis_scale.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Axis_title" size="5780" compressedSize="572">
     <description>Provides control sap.viz.ui5.types.Axis_title.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Background" size="6915" compressedSize="887">
+  </module>
+  <module name="sap.viz.ui5.types.Background" size="6997" compressedSize="887">
     <description>Provides control sap.viz.ui5.types.Background.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Background_border" size="7372" compressedSize="1094">
+  </module>
+  <module name="sap.viz.ui5.types.Background_border" size="7381" compressedSize="1094">
     <description>Provides control sap.viz.ui5.types.Background_border.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Background_border_bottom" size="4040" compressedSize="465">
+  </module>
+  <module name="sap.viz.ui5.types.Background_border_bottom" size="4041" compressedSize="465">
     <description>Provides control sap.viz.ui5.types.Background_border_bottom.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Background_border_left" size="4016" compressedSize="461">
+  </module>
+  <module name="sap.viz.ui5.types.Background_border_left" size="4017" compressedSize="461">
     <description>Provides control sap.viz.ui5.types.Background_border_left.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Background_border_right" size="4028" compressedSize="463">
+  </module>
+  <module name="sap.viz.ui5.types.Background_border_right" size="4029" compressedSize="463">
     <description>Provides control sap.viz.ui5.types.Background_border_right.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Background_border_top" size="4004" compressedSize="459">
+  </module>
+  <module name="sap.viz.ui5.types.Background_border_top" size="4005" compressedSize="459">
     <description>Provides control sap.viz.ui5.types.Background_border_top.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Bar" size="11434" compressedSize="1649">
+  </module>
+  <module name="sap.viz.ui5.types.Bar" size="14325" compressedSize="1869">
     <description>Provides control sap.viz.ui5.types.Bar.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Bar_animation" size="4813" compressedSize="506">
+  </module>
+  <module name="sap.viz.ui5.types.Bar_animation" size="5588" compressedSize="561">
     <description>Provides control sap.viz.ui5.types.Bar_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Bar_tooltip" size="3910" compressedSize="439">
+  </module>
+  <module name="sap.viz.ui5.types.Bar_tooltip" size="3987" compressedSize="455">
     <description>Provides control sap.viz.ui5.types.Bar_tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Bubble" size="9208" compressedSize="1401">
+  </module>
+  <module name="sap.viz.ui5.types.Bubble" size="10282" compressedSize="1583">
     <description>Provides control sap.viz.ui5.types.Bubble.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Bubble_animation" size="4853" compressedSize="512">
+  </module>
+  <module name="sap.viz.ui5.types.Bubble_animation" size="5635" compressedSize="567">
     <description>Provides control sap.viz.ui5.types.Bubble_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Bubble_tooltip" size="3930" compressedSize="445">
-    <description>Provides control sap.viz.ui5.types.Bubble_tooltip.</description>
+  </module>
+  <module name="sap.viz.ui5.types.Bubble_axisTooltip" size="4873" compressedSize="517">
+    <description>Provides control sap.viz.ui5.types.Bubble_axisTooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Combination" size="12956" compressedSize="1968">
+  </module>
+  <module name="sap.viz.ui5.types.Bubble_hoverline" size="3972" compressedSize="449">
+    <description>Provides control sap.viz.ui5.types.Bubble_hoverline.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Combination" size="14528" compressedSize="2164">
     <description>Provides control sap.viz.ui5.types.Combination.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Combination_animation" size="4084" compressedSize="463">
+  </module>
+  <module name="sap.viz.ui5.types.Combination_animation" size="5724" compressedSize="577">
     <description>Provides control sap.viz.ui5.types.Combination_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Combination_bar" size="4016" compressedSize="454">
+  </module>
+  <module name="sap.viz.ui5.types.Combination_bar" size="4017" compressedSize="454">
     <description>Provides control sap.viz.ui5.types.Combination_bar.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Combination_line" size="5054" compressedSize="632">
+  </module>
+  <module name="sap.viz.ui5.types.Combination_dataShape" size="4967" compressedSize="557">
+    <description>Provides control sap.viz.ui5.types.Combination_dataShape.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Combination_line" size="5057" compressedSize="632">
     <description>Provides control sap.viz.ui5.types.Combination_line.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Combination_line_marker" size="5529" compressedSize="567">
+  </module>
+  <module name="sap.viz.ui5.types.Combination_line_marker" size="5601" compressedSize="567">
     <description>Provides control sap.viz.ui5.types.Combination_line_marker.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Combination_tooltip" size="3998" compressedSize="455">
+  </module>
+  <module name="sap.viz.ui5.types.Combination_tooltip" size="4075" compressedSize="471">
     <description>Provides control sap.viz.ui5.types.Combination_tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Legend" size="9403" compressedSize="1136">
+  </module>
+  <module name="sap.viz.ui5.types.Datalabel" size="20279" compressedSize="1764">
+    <description>Provides control sap.viz.ui5.types.Datalabel.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Datatransform" size="5444" compressedSize="778">
+    <description>Provides control sap.viz.ui5.types.Datatransform.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Datatransform_autoBinning" size="4825" compressedSize="517">
+    <description>Provides control sap.viz.ui5.types.Datatransform_autoBinning.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Datatransform_dataSampling" size="6947" compressedSize="784">
+    <description>Provides control sap.viz.ui5.types.Datatransform_dataSampling.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Datatransform_dataSampling_grid" size="4827" compressedSize="514">
+    <description>Provides control sap.viz.ui5.types.Datatransform_dataSampling_grid.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Legend" size="4086" compressedSize="534">
     <description>Provides control sap.viz.ui5.types.Legend.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Legend_title" size="4620" compressedSize="492">
-    <description>Provides control sap.viz.ui5.types.Legend_title.</description>
+  </module>
+  <module name="sap.viz.ui5.types.Legend_layout" size="5033" compressedSize="510">
+    <description>Provides control sap.viz.ui5.types.Legend_layout.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Line" size="13368" compressedSize="1961">
+  </module>
+  <module name="sap.viz.ui5.types.Line" size="13883" compressedSize="1977">
     <description>Provides control sap.viz.ui5.types.Line.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Line_animation" size="4009" compressedSize="449">
+  </module>
+  <module name="sap.viz.ui5.types.Line_animation" size="5611" compressedSize="563">
     <description>Provides control sap.viz.ui5.types.Line_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Line_hoverline" size="3949" compressedSize="445">
+  </module>
+  <module name="sap.viz.ui5.types.Line_hoverline" size="3950" compressedSize="445">
     <description>Provides control sap.viz.ui5.types.Line_hoverline.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Line_marker" size="5564" compressedSize="602">
+  </module>
+  <module name="sap.viz.ui5.types.Line_marker" size="5565" compressedSize="602">
     <description>Provides control sap.viz.ui5.types.Line_marker.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Line_tooltip" size="3921" compressedSize="441">
+  </module>
+  <module name="sap.viz.ui5.types.Line_tooltip" size="3998" compressedSize="457">
     <description>Provides control sap.viz.ui5.types.Line_tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Pie" size="9472" compressedSize="1363">
+  </module>
+  <module name="sap.viz.ui5.types.Pie" size="11912" compressedSize="1518">
     <description>Provides control sap.viz.ui5.types.Pie.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Pie_animation" size="3996" compressedSize="447">
+  </module>
+  <module name="sap.viz.ui5.types.Pie_animation" size="5588" compressedSize="561">
     <description>Provides control sap.viz.ui5.types.Pie_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Pie_tooltip" size="5543" compressedSize="558">
+  </module>
+  <module name="sap.viz.ui5.types.Pie_tooltip" size="6420" compressedSize="622">
     <description>Provides control sap.viz.ui5.types.Pie_tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Scatter" size="10020" compressedSize="1460">
+  </module>
+  <module name="sap.viz.ui5.types.RootContainer" size="4201" compressedSize="562">
+    <description>Provides control sap.viz.ui5.types.RootContainer.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.RootContainer_layout" size="10491" compressedSize="855">
+    <description>Provides control sap.viz.ui5.types.RootContainer_layout.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Scatter" size="11104" compressedSize="1644">
     <description>Provides control sap.viz.ui5.types.Scatter.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Scatter_animation" size="4867" compressedSize="514">
+  </module>
+  <module name="sap.viz.ui5.types.Scatter_animation" size="5652" compressedSize="569">
     <description>Provides control sap.viz.ui5.types.Scatter_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Scatter_tooltip" size="3941" compressedSize="447">
-    <description>Provides control sap.viz.ui5.types.Scatter_tooltip.</description>
+  </module>
+  <module name="sap.viz.ui5.types.Scatter_axisTooltip" size="4887" compressedSize="519">
+    <description>Provides control sap.viz.ui5.types.Scatter_axisTooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.StackedVerticalBar" size="13167" compressedSize="1902">
+  </module>
+  <module name="sap.viz.ui5.types.Scatter_hoverline" size="3983" compressedSize="451">
+    <description>Provides control sap.viz.ui5.types.Scatter_hoverline.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.StackedVerticalBar" size="13676" compressedSize="1918">
     <description>Provides control sap.viz.ui5.types.StackedVerticalBar.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.StackedVerticalBar_animation" size="5023" compressedSize="536">
+  </module>
+  <module name="sap.viz.ui5.types.StackedVerticalBar_animation" size="5843" compressedSize="591">
     <description>Provides control sap.viz.ui5.types.StackedVerticalBar_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.StackedVerticalBar_tooltip" size="4075" compressedSize="469">
+  </module>
+  <module name="sap.viz.ui5.types.StackedVerticalBar_tooltip" size="4152" compressedSize="485">
     <description>Provides control sap.viz.ui5.types.StackedVerticalBar_tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Title" size="5428" compressedSize="596">
+  </module>
+  <module name="sap.viz.ui5.types.Title" size="6893" compressedSize="784">
     <description>Provides control sap.viz.ui5.types.Title.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.Tooltip" size="4848" compressedSize="565">
+  </module>
+  <module name="sap.viz.ui5.types.Title_layout" size="5077" compressedSize="524">
+    <description>Provides control sap.viz.ui5.types.Title_layout.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.Tooltip" size="5923" compressedSize="628">
     <description>Provides control sap.viz.ui5.types.Tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.VerticalBar" size="11834" compressedSize="1713">
+  </module>
+  <module name="sap.viz.ui5.types.VerticalBar" size="12343" compressedSize="1729">
     <description>Provides control sap.viz.ui5.types.VerticalBar.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.VerticalBar_animation" size="4925" compressedSize="522">
+  </module>
+  <module name="sap.viz.ui5.types.VerticalBar_animation" size="5724" compressedSize="577">
     <description>Provides control sap.viz.ui5.types.VerticalBar_animation.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.VerticalBar_tooltip" size="3998" compressedSize="455">
+  </module>
+  <module name="sap.viz.ui5.types.VerticalBar_tooltip" size="4075" compressedSize="471">
     <description>Provides control sap.viz.ui5.types.VerticalBar_tooltip.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.XYContainer" size="3143" compressedSize="372">
+  </module>
+  <module name="sap.viz.ui5.types.XYContainer" size="3144" compressedSize="372">
     <description>Provides control sap.viz.ui5.types.XYContainer.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.controller.Interaction" size="4498" compressedSize="626">
+  </module>
+  <module name="sap.viz.ui5.types.controller.Interaction" size="13298" compressedSize="1272">
     <description>Provides control sap.viz.ui5.types.controller.Interaction.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module>  <module name="sap.viz.ui5.types.controller.Interaction_selectability" size="4619" compressedSize="602">
+  </module>
+  <module name="sap.viz.ui5.types.controller.Interaction_selectability" size="5883" compressedSize="682">
     <description>Provides control sap.viz.ui5.types.controller.Interaction_selectability.</description>
     <requires>
-      <module name="jquery.sap.global"/>
       <module name="sap.viz.library"/>
       <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
     </requires>
     <includes>
     </includes>
-  </module></library>
+  </module>
+  <module name="sap.viz.ui5.types.layout.Dock" size="3144" compressedSize="372">
+    <description>Provides control sap.viz.ui5.types.layout.Dock.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.layout.Stack" size="3153" compressedSize="374">
+    <description>Provides control sap.viz.ui5.types.layout.Stack.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.legend.Common" size="11632" compressedSize="1328">
+    <description>Provides control sap.viz.ui5.types.legend.Common.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+  <module name="sap.viz.ui5.types.legend.Common_title" size="4717" compressedSize="508">
+    <description>Provides control sap.viz.ui5.types.legend.Common_title.</description>
+    <requires>
+      <module name="sap.viz.library"/>
+      <module name="sap.viz.ui5.core.BaseStructuredType"/>
+      <module name="jquery.sap.global"/>
+    </requires>
+    <includes>
+    </includes>
+  </module>
+</library>

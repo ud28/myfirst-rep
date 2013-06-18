@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,6 +31,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
+ * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '')</li>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '')</li>
  * <li>{@link #getDisplayInline displayInline} : boolean (default: false)</li>
  * <li>{@link #getDirection direction} : sap.m.FlexDirection (default: sap.m.FlexDirection.Row)</li>
  * <li>{@link #getFitContainer fitContainer} : boolean (default: false)</li>
@@ -59,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -73,6 +75,8 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
 	library : "sap.m",
 	properties : {
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
+		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 		"displayInline" : {type : "boolean", group : "Appearance", defaultValue : false},
 		"direction" : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : sap.m.FlexDirection.Row},
 		"fitContainer" : {type : "boolean", group : "Appearance", defaultValue : false},
@@ -116,7 +120,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -128,6 +131,61 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#setVisible
  * @function
  */
+
+
+/**
+ * Getter for property <code>height</code>.
+ * The height of the FlexBox. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>height</code>
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#getHeight
+ * @function
+ */
+
+/**
+ * Setter for property <code>height</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sHeight  new value for property <code>height</code>
+ * @return {sap.m.FlexBox} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#setHeight
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>width</code>.
+ * The width of the FlexBox. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#getWidth
+ * @function
+ */
+
+/**
+ * Setter for property <code>width</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
+ * @return {sap.m.FlexBox} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#setWidth
+ * @function
+ */
+
 
 /**
  * Getter for property <code>displayInline</code>.
@@ -141,7 +199,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayInline</code>.
  *
@@ -153,6 +210,7 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#setDisplayInline
  * @function
  */
+
 
 /**
  * Getter for property <code>direction</code>.
@@ -166,7 +224,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>direction</code>.
  *
@@ -179,9 +236,10 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>fitContainer</code>.
- * Determines whether the flexbox will be sized to completely fill its container
+ * Determines whether the flexbox will be sized to completely fill its container. If the FlexBox is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
  *
  * Default value is <code>false</code>
  *
@@ -190,7 +248,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#getFitContainer
  * @function
  */
-
 
 /**
  * Setter for property <code>fitContainer</code>.
@@ -204,6 +261,7 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>renderType</code>.
  * Determines whether the layout is rendered as a series of divs or as an unordered list (ul)
@@ -215,7 +273,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#getRenderType
  * @function
  */
-
 
 /**
  * Setter for property <code>renderType</code>.
@@ -229,9 +286,10 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>justifyContent</code>.
- * Determines the layout behavior along the main axis
+ * Determines the layout behavior along the main axis. "SpaceAround" is currently not supported in most non-Webkit browsers.
  *
  * Default value is <code>Start</code>
  *
@@ -240,7 +298,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#getJustifyContent
  * @function
  */
-
 
 /**
  * Setter for property <code>justifyContent</code>.
@@ -254,9 +311,10 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
+
 /**
  * Getter for property <code>alignItems</code>.
- * Determines the layout behavior of items along the cross-axis
+ * Determines the layout behavior of items along the cross-axis. "Baseline" is not supported in Internet Explorer <10.
  *
  * Default value is <code>Stretch</code>
  *
@@ -265,7 +323,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#getAlignItems
  * @function
  */
-
 
 /**
  * Setter for property <code>alignItems</code>.
@@ -278,7 +335,8 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#setAlignItems
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>items</code>.<br/>
  * Flex items within the FlexBox layout
@@ -288,6 +346,7 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#getItems
  * @function
  */
+
 
 /**
  * Inserts a item into the aggregation named <code>items</code>.
@@ -305,7 +364,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some item <code>oItem</code> 
  * to the aggregation named <code>items</code>.
@@ -318,7 +376,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an item from the aggregation named <code>items</code>.
  *
@@ -329,7 +386,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>items</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -338,7 +394,6 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#removeAllItems
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>items</code> 
@@ -351,7 +406,7 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @name sap.m.FlexBox#indexOfItem
  * @function
  */
-
+	
 
 /**
  * Destroys all the items in the aggregation 
@@ -362,11 +417,9 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @function
  */
 
-// Start of sap/m/FlexBox.js
-jQuery.sap.require("sap.ui.core.EnabledPropagator");
-jQuery.sap.require("sap.m.FlexBoxStylingHelper");
 
-sap.ui.core.EnabledPropagator.apply(sap.m.FlexBox.prototype, [true]);
+// Start of sap/m/FlexBox.js
+jQuery.sap.require("sap.m.FlexBoxStylingHelper");
 
 sap.m.FlexBox.prototype.init = function() {
 	// Make sure that HBox and VBox have a valid direction
@@ -381,7 +434,7 @@ sap.m.FlexBox.prototype.init = function() {
 sap.m.FlexBox.prototype.setDisplayInline = function(bInline) {
 	var sDisplay = "";
 
-	this.setProperty("displayInline", bInline, true);
+	this.setProperty("displayInline", bInline, false);
 	if(bInline) {
 		sDisplay = "inline-flex";
 	} else {
@@ -392,14 +445,21 @@ sap.m.FlexBox.prototype.setDisplayInline = function(bInline) {
 };
 
 sap.m.FlexBox.prototype.setDirection = function(sValue) {
-	this.setProperty("direction", sValue, true);
+	this.setProperty("direction", sValue, false);
 	sap.m.FlexBoxStylingHelper.setStyle(null, this, "flex-direction", sValue);
 	return this;
 };
 
 sap.m.FlexBox.prototype.setFitContainer = function(sValue) {
-	this.setProperty("fitContainer", sValue, true);
-	//TODO sap.m.FlexBoxStylingHelper.setStyle(null, this, "flex-direction", sValue);
+	if(sValue && !(this.getParent() instanceof sap.m.FlexBox)) {
+		jQuery.sap.log.info("FlexBox fitContainer set to true. Remember, if the FlexBox is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.");
+		var $flexContainer = jQuery.sap.byId(this.getId());
+		$flexContainer.css("width", "auto");
+		$flexContainer.css("height", "100%");
+	}
+	
+	this.setProperty("fitContainer", sValue, false);
+
 	return this;
 };
 
@@ -411,19 +471,114 @@ sap.m.FlexBox.prototype.setFitContainer = function(sValue) {
 }*/
 
 sap.m.FlexBox.prototype.setJustifyContent = function(sValue) {
-	this.setProperty("justifyContent", sValue, true);
+	this.setProperty("justifyContent", sValue, false);
 	sap.m.FlexBoxStylingHelper.setStyle(null, this, "justify-content", sValue);
 	return this;
 };
 
 sap.m.FlexBox.prototype.setAlignItems = function(sValue) {
-	this.setProperty("alignItems", sValue, true);
+	this.setProperty("alignItems", sValue, false);
 	sap.m.FlexBoxStylingHelper.setStyle(null, this, "align-items", sValue);
 	return this;
 };
 
 sap.m.FlexBox.prototype.setAlignContent = function(sValue) {
-	this.setProperty("alignContent", sValue, true);
+	this.setProperty("alignContent", sValue, false);
 	sap.m.FlexBoxStylingHelper.setStyle(null, this, "align-content", sValue);
 	return this;
+};
+
+sap.m.FlexBox.prototype.onAfterRendering = function() {
+	if(jQuery.support.useFlexBoxPolyfill) {
+		// Check for parent FlexBoxes. Size calculations need to be made from top to bottom
+		// while the renderer goes from bottom to top.
+		var currentElement = this;
+		var parent = null;
+		jQuery.sap.log.info("Check #"+currentElement.getId()+" for nested FlexBoxes");
+
+		for (parent = currentElement.getParent();
+			parent !== null && parent !== undefined && 
+			(parent instanceof sap.m.FlexBox
+			|| (parent.getLayoutData() !== null && parent.getLayoutData() instanceof sap.m.FlexItemData));
+			) {
+			currentElement = parent;
+			parent = currentElement.getParent();
+		}
+
+		this.sanitizeChildren(this);
+		this.renderFlexBoxPolyFill();
+	}
+};
+
+/*
+ * @private
+ */
+sap.m.FlexBox.prototype.sanitizeChildren = function(oControl) {
+	// Check the flex items
+	var aChildren = oControl.getItems();
+	for (var i = 0; i < aChildren.length; i++) {
+		if(aChildren[i].getVisible === undefined || aChildren[i].getVisible()) {
+			var $child = "";
+			if(aChildren[i] instanceof sap.m.FlexBox) {
+				$child = jQuery.sap.byId(aChildren[i].getId());
+			} else {
+				$child = jQuery.sap.byId(aChildren[i].getId()).parent();	// Get wrapper <div>
+			}
+			var domchild =  jQuery.sap.domById(aChildren[i].getId());
+			$child.width("auto");
+			//$child.height("100%");
+			if(aChildren[i] instanceof sap.m.FlexBox) {
+				this.sanitizeChildren(aChildren[i]);
+			}
+		}
+	}
+};
+
+/*
+ * @private
+ */
+sap.m.FlexBox.prototype.renderFlexBoxPolyFill = function() {
+	var flexMatrix = [];
+	var ordinalMatrix = [];
+
+	// Prepare flex and ordinal matrix
+	var aChildren = this.getItems();
+	for (var i = 0; i < aChildren.length; i++) {
+		// If no visible property or if visible
+		if(aChildren[i].getVisible === undefined || aChildren[i].getVisible()) {
+			// Get layout properties
+			var oLayoutData = aChildren[i].getLayoutData();
+
+			if(oLayoutData !== "undefined" && oLayoutData !== null && oLayoutData instanceof sap.m.FlexItemData) {
+				if(oLayoutData.getGrowFactor() !== 1) {
+					flexMatrix.push(oLayoutData.getGrowFactor());
+				} else {
+					flexMatrix.push(1);		// default value
+				}
+				if(oLayoutData.getOrder() != 0) {
+					ordinalMatrix.push(oLayoutData.getOrder());
+				} else {
+					ordinalMatrix.push(0);	// default value
+				}
+			}
+		}
+	}
+
+	if(flexMatrix.length === 0) flexMatrix = null;
+	if(ordinalMatrix.length === 0) ordinalMatrix = null;
+
+	if(this.getFitContainer()) {
+		// Call setter for fitContainer to apply the appropriate styles which are normally applied by the FlexBoxStylingHelper
+		this.setFitContainer(true);
+	}
+
+	var oSettings = {
+	    direction : this.getDirection(),
+	    alignItems : this.getAlignItems(),
+	    justifyContent : this.getJustifyContent(),
+	    flexMatrix : flexMatrix,
+	    ordinalMatrix : ordinalMatrix
+	};
+
+	sap.m.FlexBoxStylingHelper.applyFlexBoxPolyfill(this.getId(), oSettings);
 };

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.model.SelectionModel
@@ -17,29 +17,29 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @extends sap.ui.base.Object
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @param {int} iSelectionMode <code>sap.ui.model.SelectionModel.SINGLE_SELECTION</code> or <code>sap.ui.model.SelectionModel.MULTI_SELECTION</code>
  *
  * @constructor
  * @public
+ * @name sap.ui.model.SelectionModel
  */
-sap.ui.model.SelectionModel = function(iSelectionMode) {
-	sap.ui.base.EventProvider.apply(this);
-
-	this.iSelectionMode = iSelectionMode || sap.ui.model.SelectionModel.SINGLE_SELECTION;
-
-	this.aSelectedIndices = [];
-	this.iLeadIndex = -1;
+sap.ui.base.EventProvider.extend("sap.ui.model.SelectionModel", /** @lends sap.ui.model.SelectionModel */ {
 	
-	this.fnSort = function(a, b) { return a - b; };
-	this.fnSortReverse = function(a, b) { return b - a; };
+	constructor : function(iSelectionMode) {
+		sap.ui.base.EventProvider.apply(this);
 	
-};
-sap.ui.model.SelectionModel.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
+		this.iSelectionMode = iSelectionMode || sap.ui.model.SelectionModel.SINGLE_SELECTION;
+	
+		this.aSelectedIndices = [];
+		this.iLeadIndex = -1;
+		
+		this.fnSort = function(a, b) { return a - b; };
+		this.fnSortReverse = function(a, b) { return b - a; };
+		
+	}
 
-sap.ui.base.Object.defineClass("sap.ui.model.SelectionModel", {
-	baseType : "sap.ui.base.EventProvider"
 });
 
 /**

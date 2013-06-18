@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the JSON model implementation of a property binding
@@ -15,20 +15,15 @@ jQuery.sap.require("sap.ui.model.PropertyBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.control.ControlPropertyBinding
+ * @extends sap.ui.model.PropertyBinding
  */
-sap.ui.model.control.ControlPropertyBinding = function(oModel, sPath, oContext){
-	sap.ui.model.PropertyBinding.apply(this, arguments);
-	this.oValue = this._getValue();
-};
-sap.ui.model.control.ControlPropertyBinding.prototype = jQuery.sap.newObject(sap.ui.model.PropertyBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.control.ControlPropertyBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.PropertyBinding",
-  publicMethods : [
-	// methods
-  ]
+sap.ui.model.PropertyBinding.extend("sap.ui.model.control.ControlPropertyBinding", /** @lends sap.ui.model.control.ControlPropertyBinding */ {
+	
+	constructor : function(oModel, sPath, oContext){
+		sap.ui.model.PropertyBinding.apply(this, arguments);
+		this.oValue = this._getValue();
+	}
 
 });
 
@@ -38,6 +33,14 @@ sap.ui.base.Object.defineClass("sap.ui.model.control.ControlPropertyBinding", {
  */
 sap.ui.model.control.ControlPropertyBinding.prototype.getValue = function(){
 	return this.oValue;
+};
+
+/**
+ * Sets the current value on the control
+ */
+sap.ui.model.control.ControlPropertyBinding.prototype.setValue = function(oValue){
+	this.oValue = oValue;
+	this.oContext.setProperty(this.sPath, oValue);
 };
 
 /**

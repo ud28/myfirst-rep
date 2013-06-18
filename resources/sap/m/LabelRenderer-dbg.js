@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
  
@@ -42,15 +42,20 @@ sap.m.LabelRenderer.render = function(rm, oLabel){
 	if (oLabel.getDesign() == sap.m.LabelDesign.Bold) {
 		rm.addClass("sapMLabelBold");
 	}
+
+	if (oLabel.getRequired()){
+		rm.addClass("sapMLabelRequired");
+	}
+
 	
-	if (oLabel.getLabelFor()) {
-		var oFor = sap.ui.getCore().byId(oLabel.getLabelFor());
+	if (oLabel.getLabelForRendering()) {
+		var oFor = sap.ui.getCore().byId(oLabel.getLabelForRendering());
 		rm.write(" for=\"");
 		// for some controls the label must point to a special HTML element, not the outer one.
 		if ( oFor && oFor.getIdForLabel) {
 			rm.write(oFor.getIdForLabel());
 		} else{
-			rm.write(oLabel.getLabelFor());
+			rm.write(oLabel.getLabelForRendering());
 		}
 		rm.write("\"");
 	}
@@ -75,8 +80,14 @@ sap.m.LabelRenderer.render = function(rm, oLabel){
 	
 	rm.writeAttribute("style", myStyles);
 	rm.writeClasses();
-	rm.write(">"); 
 	
+	var sTooltip = oLabel.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
+	
+	rm.write(">"); 
+
 	// Write the label text
 	if (oLabel.getText()) {
 		rm.writeEscaped(oLabel.getText());

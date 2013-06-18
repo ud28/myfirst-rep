@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -57,10 +57,11 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
+ * @since 1.8
  * @name sap.makit.Column
  */
 sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
@@ -106,7 +107,6 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
@@ -118,6 +118,7 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @name sap.makit.Column#setName
  * @function
  */
+
 
 /**
  * Getter for property <code>value</code>.
@@ -131,7 +132,6 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>value</code>.
  *
@@ -143,6 +143,7 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @name sap.makit.Column#setValue
  * @function
  */
+
 
 /**
  * Getter for property <code>type</code>.
@@ -159,7 +160,6 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>type</code>.
  *
@@ -171,6 +171,7 @@ sap.ui.core.Element.extend("sap.makit.Column", { metadata : {
  * @name sap.makit.Column#setType
  * @function
  */
+
 
 // Start of sap/makit/Column.js
 /*!

@@ -4,7 +4,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.library') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.library') ) {
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.viz (1.8.4)
+ * Initialization Code and shared classes of library sap.viz (1.12.1)
  */
 jQuery.sap.declare("sap.viz.library");
 jQuery.sap.require('sap.ui.core.Core'); // unlisted dependency retained
@@ -44,10 +44,10 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Bar_drawingEffect",
     "sap.viz.ui5.types.Bubble_drawingEffect",
     "sap.viz.ui5.types.Combination_drawingEffect",
-    "sap.viz.ui5.types.Legend_alignment",
-    "sap.viz.ui5.types.Legend_drawingEffect",
-    "sap.viz.ui5.types.Legend_position",
-    "sap.viz.ui5.types.Legend_type",
+    "sap.viz.ui5.types.Datalabel_orientation",
+    "sap.viz.ui5.types.Datalabel_outsidePosition",
+    "sap.viz.ui5.types.Datalabel_paintingMode",
+    "sap.viz.ui5.types.Datalabel_position",
     "sap.viz.ui5.types.Line_drawingEffect",
     "sap.viz.ui5.types.Line_marker_shape",
     "sap.viz.ui5.types.Pie_drawingEffect",
@@ -58,7 +58,11 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Title_alignment",
     "sap.viz.ui5.types.Tooltip_drawingEffect",
     "sap.viz.ui5.types.VerticalBar_drawingEffect",
-    "sap.viz.ui5.types.controller.Interaction_selectability_mode"
+    "sap.viz.ui5.types.controller.Interaction_selectability_mode",
+    "sap.viz.ui5.types.legend.Common_alignment",
+    "sap.viz.ui5.types.legend.Common_drawingEffect",
+    "sap.viz.ui5.types.legend.Common_position",
+    "sap.viz.ui5.types.legend.Common_type"
   ],
   interfaces: [],
   controls: [
@@ -67,6 +71,12 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.Column",
     "sap.viz.ui5.Combination",
     "sap.viz.ui5.Donut",
+    "sap.viz.ui5.DualBar",
+    "sap.viz.ui5.DualColumn",
+    "sap.viz.ui5.DualCombination",
+    "sap.viz.ui5.DualLine",
+    "sap.viz.ui5.DualStackedColumn",
+    "sap.viz.ui5.DualStackedColumn100",
     "sap.viz.ui5.Line",
     "sap.viz.ui5.Pie",
     "sap.viz.ui5.Scatter",
@@ -84,6 +94,8 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Axis_axisline",
     "sap.viz.ui5.types.Axis_gridline",
     "sap.viz.ui5.types.Axis_label",
+    "sap.viz.ui5.types.Axis_layoutInfo",
+    "sap.viz.ui5.types.Axis_scale",
     "sap.viz.ui5.types.Axis_title",
     "sap.viz.ui5.types.Background",
     "sap.viz.ui5.types.Background_border",
@@ -96,15 +108,22 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Bar_tooltip",
     "sap.viz.ui5.types.Bubble",
     "sap.viz.ui5.types.Bubble_animation",
-    "sap.viz.ui5.types.Bubble_tooltip",
+    "sap.viz.ui5.types.Bubble_axisTooltip",
+    "sap.viz.ui5.types.Bubble_hoverline",
     "sap.viz.ui5.types.Combination",
     "sap.viz.ui5.types.Combination_animation",
     "sap.viz.ui5.types.Combination_bar",
+    "sap.viz.ui5.types.Combination_dataShape",
     "sap.viz.ui5.types.Combination_line",
     "sap.viz.ui5.types.Combination_line_marker",
     "sap.viz.ui5.types.Combination_tooltip",
+    "sap.viz.ui5.types.Datalabel",
+    "sap.viz.ui5.types.Datatransform",
+    "sap.viz.ui5.types.Datatransform_autoBinning",
+    "sap.viz.ui5.types.Datatransform_dataSampling",
+    "sap.viz.ui5.types.Datatransform_dataSampling_grid",
     "sap.viz.ui5.types.Legend",
-    "sap.viz.ui5.types.Legend_title",
+    "sap.viz.ui5.types.Legend_layout",
     "sap.viz.ui5.types.Line",
     "sap.viz.ui5.types.Line_animation",
     "sap.viz.ui5.types.Line_hoverline",
@@ -113,27 +132,35 @@ sap.ui.getCore().initLibrary({
     "sap.viz.ui5.types.Pie",
     "sap.viz.ui5.types.Pie_animation",
     "sap.viz.ui5.types.Pie_tooltip",
+    "sap.viz.ui5.types.RootContainer",
+    "sap.viz.ui5.types.RootContainer_layout",
     "sap.viz.ui5.types.Scatter",
     "sap.viz.ui5.types.Scatter_animation",
-    "sap.viz.ui5.types.Scatter_tooltip",
+    "sap.viz.ui5.types.Scatter_axisTooltip",
+    "sap.viz.ui5.types.Scatter_hoverline",
     "sap.viz.ui5.types.StackedVerticalBar",
     "sap.viz.ui5.types.StackedVerticalBar_animation",
     "sap.viz.ui5.types.StackedVerticalBar_tooltip",
     "sap.viz.ui5.types.Title",
+    "sap.viz.ui5.types.Title_layout",
     "sap.viz.ui5.types.Tooltip",
     "sap.viz.ui5.types.VerticalBar",
     "sap.viz.ui5.types.VerticalBar_animation",
     "sap.viz.ui5.types.VerticalBar_tooltip",
     "sap.viz.ui5.types.XYContainer",
     "sap.viz.ui5.types.controller.Interaction",
-    "sap.viz.ui5.types.controller.Interaction_selectability"
+    "sap.viz.ui5.types.controller.Interaction_selectability",
+    "sap.viz.ui5.types.layout.Dock",
+    "sap.viz.ui5.types.layout.Stack",
+    "sap.viz.ui5.types.legend.Common",
+    "sap.viz.ui5.types.legend.Common_title"
   ],
-  version: "1.8.4"});
+  version: "1.12.1"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -147,7 +174,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_gridline_type");
 /**
  * @class List (Enum) type ui5/types/Axis_gridline_type
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -179,7 +206,7 @@ sap.viz.ui5.types.Axis_gridline_type = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -193,7 +220,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_position");
 /**
  * @class List (Enum) type ui5/types/Axis_position
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -231,7 +258,7 @@ sap.viz.ui5.types.Axis_position = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -245,7 +272,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_type");
 /**
  * @class List (Enum) type ui5/types/Axis_type
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -271,7 +298,7 @@ sap.viz.ui5.types.Axis_type = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -285,7 +312,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_direction");
 /**
  * @class List (Enum) type ui5/types/Background_direction
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -311,7 +338,7 @@ sap.viz.ui5.types.Background_direction = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -325,7 +352,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Background_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -351,7 +378,7 @@ sap.viz.ui5.types.Background_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -365,7 +392,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Bar_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -391,7 +418,7 @@ sap.viz.ui5.types.Bar_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -405,7 +432,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Bubble_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -431,7 +458,7 @@ sap.viz.ui5.types.Bubble_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -445,7 +472,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Combination_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -471,7 +498,7 @@ sap.viz.ui5.types.Combination_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -479,45 +506,39 @@ sap.viz.ui5.types.Combination_drawingEffect = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.viz.ui5.types.Legend_alignment.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_alignment");
+// Provides enumeration sap.viz.ui5.types.Datalabel_orientation.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_orientation");
 
 /**
- * @class List (Enum) type ui5/types/Legend_alignment
+ * @class List (Enum) type ui5/types/Datalabel_orientation
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
  */
-sap.viz.ui5.types.Legend_alignment = {
+sap.viz.ui5.types.Datalabel_orientation = {
   
     /**
-     * Value start 
+     * Value horizontal 
      * @public
      */
-    start : "start",
+    horizontal : "horizontal",
 
     /**
-     * Value middle 
+     * Value vertical 
      * @public
      */
-    middle : "middle",
-
-    /**
-     * Value end 
-     * @public
-     */
-    end : "end"
+    vertical : "vertical"
 
   };
   
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -525,61 +546,39 @@ sap.viz.ui5.types.Legend_alignment = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.viz.ui5.types.Legend_drawingEffect.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_drawingEffect");
+// Provides enumeration sap.viz.ui5.types.Datalabel_outsidePosition.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_outsidePosition");
 
 /**
- * @class List (Enum) type ui5/types/Legend_drawingEffect
+ * @class List (Enum) type ui5/types/Datalabel_outsidePosition
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
  */
-sap.viz.ui5.types.Legend_drawingEffect = {
+sap.viz.ui5.types.Datalabel_outsidePosition = {
   
     /**
-     * Value normal 
+     * Value up 
      * @public
      */
-    normal : "normal",
+    up : "up",
 
     /**
-     * Value glossy 
+     * Value down 
      * @public
      */
-    glossy : "glossy"
+    down : "down",
 
-  };
-  
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5)
- * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
- */
+    /**
+     * Value left 
+     * @public
+     */
+    left : "left",
 
-/* ----------------------------------------------------------------------------------
- * Hint: This is a derived (generated) file. Changes should be done in the underlying 
- * source files only (*.type, *.js) or they will be lost after the next generation.
- * ---------------------------------------------------------------------------------- */
-
-// Provides enumeration sap.viz.ui5.types.Legend_position.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_position");
-
-/**
- * @class List (Enum) type ui5/types/Legend_position
- *
- * @version 1.8.4
- * @static
- * @public
- * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
- */
-sap.viz.ui5.types.Legend_position = {
-  
     /**
      * Value right 
      * @public
@@ -591,7 +590,7 @@ sap.viz.ui5.types.Legend_position = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -599,51 +598,79 @@ sap.viz.ui5.types.Legend_position = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.viz.ui5.types.Legend_type.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_type");
+// Provides enumeration sap.viz.ui5.types.Datalabel_paintingMode.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_paintingMode");
 
 /**
- * @class List (Enum) type ui5/types/Legend_type
+ * @class List (Enum) type ui5/types/Datalabel_paintingMode
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
  */
-sap.viz.ui5.types.Legend_type = {
+sap.viz.ui5.types.Datalabel_paintingMode = {
   
     /**
-     * Value ColorLegend 
+     * Value rectCoordinate 
      * @public
      */
-    ColorLegend : "ColorLegend",
+    rectCoordinate : "rectCoordinate",
 
     /**
-     * Value BubbleColorLegend 
+     * Value polarCoordinate 
      * @public
      */
-    BubbleColorLegend : "BubbleColorLegend",
-
-    /**
-     * Value SizeLegend 
-     * @public
-     */
-    SizeLegend : "SizeLegend",
-
-    /**
-     * Value MeasureBasedColoringLegend 
-     * @public
-     */
-    MeasureBasedColoringLegend : "MeasureBasedColoringLegend"
+    polarCoordinate : "polarCoordinate"
 
   };
   
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.Datalabel_position.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel_position");
+
+/**
+ * @class List (Enum) type ui5/types/Datalabel_position
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.Datalabel_position = {
+  
+    /**
+     * Value inside 
+     * @public
+     */
+    inside : "inside",
+
+    /**
+     * Value outside 
+     * @public
+     */
+    outside : "outside"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -657,7 +684,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Line_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -683,7 +710,7 @@ sap.viz.ui5.types.Line_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -697,7 +724,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_marker_shape");
 /**
  * @class List (Enum) type ui5/types/Line_marker_shape
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -759,7 +786,7 @@ sap.viz.ui5.types.Line_marker_shape = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -773,7 +800,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Pie_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -799,7 +826,7 @@ sap.viz.ui5.types.Pie_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -813,7 +840,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_valign");
 /**
  * @class List (Enum) type ui5/types/Pie_valign
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -839,7 +866,7 @@ sap.viz.ui5.types.Pie_valign = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -853,7 +880,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Scatter_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -879,7 +906,7 @@ sap.viz.ui5.types.Scatter_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -893,7 +920,7 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/StackedVerticalBar_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -919,7 +946,7 @@ sap.viz.ui5.types.StackedVerticalBar_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -933,7 +960,7 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_mode");
 /**
  * @class List (Enum) type ui5/types/StackedVerticalBar_mode
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -959,7 +986,7 @@ sap.viz.ui5.types.StackedVerticalBar_mode = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -973,7 +1000,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Title_alignment");
 /**
  * @class List (Enum) type ui5/types/Title_alignment
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1005,7 +1032,7 @@ sap.viz.ui5.types.Title_alignment = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1019,7 +1046,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Tooltip_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/Tooltip_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1045,7 +1072,7 @@ sap.viz.ui5.types.Tooltip_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1059,7 +1086,7 @@ jQuery.sap.declare("sap.viz.ui5.types.VerticalBar_drawingEffect");
 /**
  * @class List (Enum) type ui5/types/VerticalBar_drawingEffect
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1085,7 +1112,7 @@ sap.viz.ui5.types.VerticalBar_drawingEffect = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1099,7 +1126,7 @@ jQuery.sap.declare("sap.viz.ui5.types.controller.Interaction_selectability_mode"
 /**
  * @class List (Enum) type ui5/types/controller/Interaction_selectability_mode
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  * @since 1.7.2
@@ -1128,106 +1155,295 @@ sap.viz.ui5.types.controller.Interaction_selectability_mode = {
 
   };
   
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_alignment.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_alignment");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_alignment
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_alignment = {
+  
+    /**
+     * Value start 
+     * @public
+     */
+    start : "start",
+
+    /**
+     * Value middle 
+     * @public
+     */
+    middle : "middle",
+
+    /**
+     * Value end 
+     * @public
+     */
+    end : "end"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_drawingEffect.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_drawingEffect");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_drawingEffect
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_drawingEffect = {
+  
+    /**
+     * Value normal 
+     * @public
+     */
+    normal : "normal",
+
+    /**
+     * Value glossy 
+     * @public
+     */
+    glossy : "glossy"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_position.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_position");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_position
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_position = {
+  
+    /**
+     * Value right 
+     * @public
+     */
+    right : "right",
+
+    /**
+     * Value left 
+     * @public
+     */
+    left : "left"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.viz.ui5.types.legend.Common_type.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_type");
+
+/**
+ * @class List (Enum) type ui5/types/legend/Common_type
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.types.legend.Common_type = {
+  
+    /**
+     * Value ColorLegend 
+     * @public
+     */
+    ColorLegend : "ColorLegend",
+
+    /**
+     * Value BubbleColorLegend 
+     * @public
+     */
+    BubbleColorLegend : "BubbleColorLegend",
+
+    /**
+     * Value SizeLegend 
+     * @public
+     */
+    SizeLegend : "SizeLegend",
+
+    /**
+     * Value MeasureBasedColoringLegend 
+     * @public
+     */
+    MeasureBasedColoringLegend : "MeasureBasedColoringLegend"
+
+  };
+  
 
 // -----------------------------------------------------------------------------
 // Begin of Library Initialization coding, copied from shared.js
 // -----------------------------------------------------------------------------
 
-//enforce early loading of D3 and Charting lib to load sap.viz.core early 
-jQuery.sap.require('sap.ui.thirdparty.d3'); // unlisted dependency retained
+// check whether browser supports svg
+sap.viz.__svg_support = !!document.createElementNS && !!document.createElementNS("http://www.w3.org/2000/svg","svg").createSVGRect;
 
-jQuery.sap.require('sap.viz.libs.canvg'); // unlisted dependency retained
+if ( sap.viz.__svg_support ) {
+	//enforce early loading of D3 and Charting lib to load sap.viz.core early 
+	jQuery.sap.require('sap.ui.thirdparty.d3'); // unlisted dependency retained
 
-jQuery.sap.require('sap.viz.libs.rgbcolor'); // unlisted dependency retained
+	jQuery.sap.require('sap.viz.libs.canvg'); // unlisted dependency retained
 
-jQuery.sap.require('sap.viz.libs.sap-viz'); // unlisted dependency retained
+	jQuery.sap.require('sap.viz.libs.rgbcolor'); // unlisted dependency retained
 
+	jQuery.sap.require('sap.viz.libs.sap-viz'); // unlisted dependency retained
+
+}
 
 (function() {
 
-	function initLegacySupport() {
-		
-		var LEGACY_NAMES = {
-				"sap.viz.core.BaseChart" : "sap.viz.ui5.core.BaseChart",
-				"sap.viz.core.BaseStructuredType" : "sap.viz.ui5.core.BaseStructuredType",
-				"sap.viz.core.Dataset" : "sap.viz.ui5.data.Dataset",
-				"sap.viz.core.DimensionDefinition" : "sap.viz.ui5.data.DimensionDefinition",
-				"sap.viz.core.FlattenedDataset" : "sap.viz.ui5.data.FlattenedDataset",			
-				"sap.viz.core.MeasureDefinition" : "sap.viz.ui5.data.MeasureDefinition",			
-				"sap.viz.Bar" : "sap.viz.ui5.Bar",
-				"sap.viz.Bubble" : "sap.viz.ui5.Bubble",
-				"sap.viz.VerticalBar" : "sap.viz.ui5.Column",
-				"sap.viz.Combination" : "sap.viz.ui5.Combination",
-				"sap.viz.Donut" : "sap.viz.ui5.Donut",
-				"sap.viz.Line" : "sap.viz.ui5.Line",
-				"sap.viz.Pie" : "sap.viz.ui5.Pie",
-				"sap.viz.Scatter" : "sap.viz.ui5.Scatter",
-				"sap.viz.StackedVerticalBar" : "sap.viz.ui5.StackedColumn",
-				"sap.viz.PercentageStackedVerticalBar" : "sap.viz.ui5.StackedColumn100"
-		};
-	
-		// create stubs for the most important legacy class names
-		jQuery.each(LEGACY_NAMES, function(sOld,sNew) {
-			// delegate constructor
-			jQuery.sap.setObject(sOld, function() {
-				var oNewClass = jQuery.sap.getObject(sNew);
-				var oInstance = jQuery.sap.newObject(oNewClass.prototype);
-				return oNewClass.apply(oInstance, arguments) || oInstance;
-			});
-			// delegate extend
-			jQuery.sap.setObject(sOld + ".extend", function() {
-				return jQuery.sap.getObject(sNew).extend.apply(this, arguments);
-			});
-		});
-		
-		// create stubs for the enum types (static classes)
-		var oLibrary = sap.ui.getCore().getLoadedLibraries()["sap.viz"];
-		if ( oLibrary && oLibrary.types ) {
-			jQuery.each(oLibrary.types, function(idx, sName) {
-				if ( sName.indexOf("sap.viz.ui5.types.") === 0 ) {
-					jQuery.sap.setObject("sap.viz.types." + sName.slice("sap.viz.ui5.types.".length), jQuery.sap.getObject(sName));
-				}
-			});
-		}
-	}
-	
-	initLegacySupport();
-	
-	var bInitialized = false;
+  function initLegacySupport() {
+    
+    var LEGACY_NAMES = {
+        "sap.viz.core.BaseChart" : "sap.viz.ui5.core.BaseChart",
+        "sap.viz.core.BaseStructuredType" : "sap.viz.ui5.core.BaseStructuredType",
+        "sap.viz.core.Dataset" : "sap.viz.ui5.data.Dataset",
+        "sap.viz.core.DimensionDefinition" : "sap.viz.ui5.data.DimensionDefinition",
+        "sap.viz.core.FlattenedDataset" : "sap.viz.ui5.data.FlattenedDataset",      
+        "sap.viz.core.MeasureDefinition" : "sap.viz.ui5.data.MeasureDefinition",      
+        "sap.viz.Bar" : "sap.viz.ui5.Bar",
+        "sap.viz.Bubble" : "sap.viz.ui5.Bubble",
+        "sap.viz.VerticalBar" : "sap.viz.ui5.Column",
+        "sap.viz.Combination" : "sap.viz.ui5.Combination",
+        "sap.viz.Donut" : "sap.viz.ui5.Donut",
+        "sap.viz.Line" : "sap.viz.ui5.Line",
+        "sap.viz.Pie" : "sap.viz.ui5.Pie",
+        "sap.viz.Scatter" : "sap.viz.ui5.Scatter",
+        "sap.viz.StackedVerticalBar" : "sap.viz.ui5.StackedColumn",
+        "sap.viz.PercentageStackedVerticalBar" : "sap.viz.ui5.StackedColumn100"
+    };
+  
+    // create stubs for the most important legacy class names
+    jQuery.each(LEGACY_NAMES, function(sOld,sNew) {
+      // delegate constructor
+      jQuery.sap.setObject(sOld, function() {
+        var oNewClass = jQuery.sap.getObject(sNew);
+        var oInstance = jQuery.sap.newObject(oNewClass.prototype);
+        return oNewClass.apply(oInstance, arguments) || oInstance;
+      });
+      // delegate extend
+      jQuery.sap.setObject(sOld + ".extend", function() {
+        return jQuery.sap.getObject(sNew).extend.apply(this, arguments);
+      });
+    });
+    
+    // create stubs for the enum types (static classes)
+    var oLibrary = sap.ui.getCore().getLoadedLibraries()["sap.viz"];
+    if ( oLibrary && oLibrary.types ) {
+      jQuery.each(oLibrary.types, function(idx, sName) {
+        if ( sName.indexOf("sap.viz.ui5.types.") === 0 ) {
+          jQuery.sap.setObject("sap.viz.types." + sName.slice("sap.viz.ui5.types.".length), jQuery.sap.getObject(sName));
+        }
+      });
+    }
+  }
+  
+  initLegacySupport();
+  
+  var bInitialized = false;
 
 	sap.viz._initializeVIZ = function() {
 		
-		if ( !bInitialized ) {
+		if ( !bInitialized && sap.viz.__svg_support ) {
 
-			if ( sap.viz.lang && sap.viz.lang.langManager && jQuery.isArray(sap.viz.lang.langManager.loadPath) ) {
-				var sPath = jQuery.sap.getModulePath("sap.viz.resources.langs", "/");
-				sap.viz.lang.langManager.loadPath = [sPath];
-				jQuery.sap.log.info("VIZ: load path for lang manager set to " + sPath);
-			}
+      if ( sap.viz.lang && sap.viz.lang.langManager && jQuery.isArray(sap.viz.lang.langManager.loadPath) ) {
+        var sPath = jQuery.sap.getModulePath("sap.viz.resources.langs", "/");
+        sap.viz.lang.langManager.loadPath = [sPath];
+        jQuery.sap.log.info("VIZ: load path for lang manager set to " + sPath);
+      }
 
-		  // initialize the environment
-			sap.viz.env.initialize({
-				'locale': sap.ui.getCore().getConfiguration().getLanguage(),
-				'log' : 'debug' // TODO translate levels, attach to logging to be notified about level changes
-			});
-			jQuery.sap.log.info("VIZ: env initialized (locale=" + sap.ui.getCore().getConfiguration().getLanguage() + ")");
+      // initialize the environment
+      var oLocale = sap.ui.getCore().getConfiguration().getLocale();
+      var sVIZLanguageId = oLocale.getLanguage(); // + (oLocale.getRegion() ? "_" + oLocale.getRegion() : "");
+      if(sVIZLanguageId === 'zh'){
+        sVIZLanguageId = oLocale.getLanguage() + (oLocale.getRegion() ? "_" + oLocale.getRegion() : "");
+      }
+      sap.viz.env.initialize({
+        'locale': sVIZLanguageId,
+        'log' : 'debug' // TODO translate levels, attach to logging to be notified about level changes
+      });
+      jQuery.sap.log.info("VIZ: env initialized (locale=" + sap.ui.getCore().getConfiguration().getLanguage() + ")");
 
-			// attach to theme changes
-			sap.ui.getCore().attachThemeChanged(function(evt) {
-				// TODO propagate CSS content to VIZ TemplateManager
-			});
+      // attach to theme changes
+      sap.ui.getCore().attachThemeChanged(function(evt) {
+        // TODO propagate CSS content to VIZ TemplateManager
+      });
 
-			bInitialized = true;
-		}
-	};
+      bInitialized = true;
+    }
+  };
 
 }());
+
 }; // end of sap.viz.library
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.core.BaseChartRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.core.BaseChartRenderer");
@@ -1248,11 +1464,15 @@ sap.viz.ui5.core.BaseChartRenderer = {
  */
 sap.viz.ui5.core.BaseChartRenderer.render = function(oRm, oControl){
 	
-	var bIsEmpty = 	!oControl.getDataset() || !oControl.getDataset().getVIZDataset();
-
+	var bIsEmpty = 	!oControl.getDataset() || !oControl.getDataset().getVIZDataset(),
+		oBundle=sap.ui.getCore().getLibraryResourceBundle("sap.viz.ui5.messages"); // TODO relies on undocumented behavior?
+	
 	// write the HTML into the render manager
 	oRm.write("<DIV");
 	oRm.writeControlData(oControl);
+	if(oControl.getTooltip_AsString()) {
+		oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
+	}
 	oRm.addClass("sapVizChart");
 	if ( bIsEmpty ) {
 		oRm.addClass("sapVizNoData");
@@ -1262,13 +1482,17 @@ sap.viz.ui5.core.BaseChartRenderer.render = function(oRm, oControl){
 	oRm.addStyle("height", oControl.getHeight());
 	oRm.writeStyles();
 	oRm.write(">");
-	if ( bIsEmpty ) {
+	if ( !sap.viz.__svg_support ) {
+		oRm.write('<DIV class="sapVizNoDataDefault">');
+		oRm.writeEscaped(oBundle.getText("NO_SVG_SUPPORT"));
+		oRm.write('</DIV>');
+	} else if ( bIsEmpty ) {
 		var oNoData = oControl.getNoData();
 		if ( oNoData ) {
 			oRm.renderControl(oNoData);
 		} else {
 			oRm.write('<DIV class="sapVizNoDataDefault">');
-			oRm.writeEscaped(sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("NO_DATA")); // TODO for > 1.8 this needs to be changed to sap.viz
+			oRm.writeEscaped(oBundle.getText("NO_DATA")); 
 			oRm.write('</DIV>');
 		}
 	}
@@ -1280,7 +1504,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.core.BaseStructuredType') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1334,7 +1558,7 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -1390,8 +1614,28 @@ sap.viz.ui5.core.BaseStructuredType.prototype._getOptions = function() {
 			mProps,mDefaults,mAggrs,n,oValue;
 	
 	// HACK: convert UI5 wrapper names back to VIZ names
-	function toviz(n) {
-		return n === 'toolTip' ? 'tooltip' : n;
+	function tovizKey(n) {
+	  n = (n === 'toolTip' ? 'tooltip' : n);
+		return n;
+	}
+	
+	function tovizValue(n){
+	  var result = n;
+	  switch(n){
+	  case 'triangleUp' : 
+	    result = 'triangle-up';
+	    break;
+	  case 'triangleDown' :
+	    result = 'triangle-down';
+	    break;
+	  case 'triangleLeft' :
+	    result = 'triangle-left';
+	    break;
+	  case 'triangleRight' :
+	    result = 'triangle-right';
+	    break;
+	  }
+    return result;
 	}
 	
 	// enforce enrichment of metadata 
@@ -1407,7 +1651,7 @@ sap.viz.ui5.core.BaseStructuredType.prototype._getOptions = function() {
 	    oValue = this.getProperty(n);
 	    // use values only for non-default values
 	    if ( oValue !== mDefaults[n] ) {
-	    	mOptions[toviz(n)] = oValue;
+	    	mOptions[tovizKey(n)] = tovizValue(oValue);
 	    }
 		}
 	}
@@ -1421,7 +1665,7 @@ sap.viz.ui5.core.BaseStructuredType.prototype._getOptions = function() {
 	    oValue = this.getAggregation(n, null);
 	    if ( oValue !== null ) {
 	    	// transitively retrieve options 
-	    	mOptions[toviz(n)] = oValue._getOptions();
+	    	mOptions[tovizKey(n)] = oValue._getOptions();
 	    }
 		}
 	}
@@ -1433,7 +1677,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.data.Dataset') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1487,7 +1731,7 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -1530,7 +1774,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.data.DimensionDefinition') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1587,7 +1831,7 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -1639,7 +1883,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.DimensionDefinition", { metadata : 
  * @function
  */
 
-
 /**
  * Setter for property <code>axis</code>.
  *
@@ -1651,6 +1894,7 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.DimensionDefinition", { metadata : 
  * @name sap.viz.ui5.data.DimensionDefinition#setAxis
  * @function
  */
+
 
 /**
  * Getter for property <code>value</code>.
@@ -1664,7 +1908,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.DimensionDefinition", { metadata : 
  * @function
  */
 
-
 /**
  * Setter for property <code>value</code>.
  *
@@ -1676,6 +1919,7 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.DimensionDefinition", { metadata : 
  * @name sap.viz.ui5.data.DimensionDefinition#setValue
  * @function
  */
+
 
 /**
  * Getter for property <code>name</code>.
@@ -1689,7 +1933,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.DimensionDefinition", { metadata : 
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
@@ -1702,14 +1945,57 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.DimensionDefinition", { metadata : 
  * @function
  */
 
+
 // Start of sap/viz/ui5/data/DimensionDefinition.js
+sap.viz.ui5.data.DimensionDefinition.prototype._getAdapter = function() {
+	var that = this,
+	  oBindingInfo = this.getBindingInfo("value"),
+	  oValue, sPath, oType, fnFormatter;
+	
+	// if there is no binding info, then the value is constant
+	if ( !oBindingInfo ) {
+		oValue = this.getValue();
+		return function() { 
+			return oValue; 
+		};
+	}
+	
+	// otherwise ensure a simple property binding for now
+	if ( oBindingInfo.parts.length > 1 ) {
+		throw new Error("DimensionDefinition doesn't support calculated bindings yet");
+	}
+	
+	sPath = oBindingInfo.parts[0].path;
+	oType = oBindingInfo.parts[0].type;
+	fnFormatter = oBindingInfo.formatter;
+	
+	// for simple binding just resolve the value
+	if ( !(oType || fnFormatter) ) {
+		return function(oContext) {
+			return oContext.getProperty(sPath);
+		}
+	}
+
+	// else apply type and/or formatter
+	return function(oContext) {
+		var oValue = oContext.getProperty(sPath);
+		if (oType) {
+			oValue = oType.formatValue(oValue, "string"); //TODO discuss internal type
+		}
+		if (fnFormatter) {
+			oValue = fnFormatter.call(that, oValue, oContext);
+		}
+		return oValue;
+	};
+
+}
 
 }; // end of sap.viz.ui5.data.DimensionDefinition
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.data.FlattenedDataset') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1765,7 +2051,7 @@ jQuery.sap.declare("sap.viz.ui5.data.FlattenedDataset");
  * @extends sap.viz.ui5.data.Dataset
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -1804,7 +2090,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-	
+
 /**
  * Getter for aggregation <code>dimensions</code>.<br/>
  * List of definitions of all dimensions in this dataset
@@ -1814,6 +2100,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#getDimensions
  * @function
  */
+
 
 /**
  * Inserts a dimension into the aggregation named <code>dimensions</code>.
@@ -1831,7 +2118,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Adds some dimension <code>oDimension</code> 
  * to the aggregation named <code>dimensions</code>.
@@ -1844,7 +2130,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes an dimension from the aggregation named <code>dimensions</code>.
  *
@@ -1855,7 +2140,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>dimensions</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -1864,7 +2148,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#removeAllDimensions
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.viz.ui5.data.DimensionDefinition</code> in the aggregation named <code>dimensions</code> 
@@ -1877,7 +2160,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#indexOfDimension
  * @function
  */
-
+	
 
 /**
  * Destroys all the dimensions in the aggregation 
@@ -1887,7 +2170,8 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#destroyDimensions
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>measures</code>.<br/>
  * list of definitions of all measures in this dataset
@@ -1897,6 +2181,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#getMeasures
  * @function
  */
+
 
 /**
  * Inserts a measure into the aggregation named <code>measures</code>.
@@ -1914,7 +2199,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Adds some measure <code>oMeasure</code> 
  * to the aggregation named <code>measures</code>.
@@ -1927,7 +2211,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes an measure from the aggregation named <code>measures</code>.
  *
@@ -1938,7 +2221,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>measures</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -1947,7 +2229,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#removeAllMeasures
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.viz.ui5.data.MeasureDefinition</code> in the aggregation named <code>measures</code> 
@@ -1960,7 +2241,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#indexOfMeasure
  * @function
  */
-
+	
 
 /**
  * Destroys all the measures in the aggregation 
@@ -1970,16 +2251,21 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#destroyMeasures
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>data</code>.<br/>
- * Data containing dimensions and measures
+ * Data containing dimensions and measures.
+ * 
+ * <b>Note:</b> This aggregation can only be bound against a model, it cannot be managed
+ * programmatically using the aggregation mutator methods like addData.
  * 
  * @return {sap.ui.core.Element[]}
  * @public
  * @name sap.viz.ui5.data.FlattenedDataset#getData
  * @function
  */
+
 
 /**
  * Inserts a data into the aggregation named <code>data</code>.
@@ -1997,7 +2283,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Adds some data <code>oData</code> 
  * to the aggregation named <code>data</code>.
@@ -2010,7 +2295,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes an data from the aggregation named <code>data</code>.
  *
@@ -2021,7 +2305,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>data</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -2030,7 +2313,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#removeAllData
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Element</code> in the aggregation named <code>data</code> 
@@ -2043,7 +2325,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#indexOfData
  * @function
  */
-
+	
 
 /**
  * Destroys all the data in the aggregation 
@@ -2053,6 +2335,7 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @name sap.viz.ui5.data.FlattenedDataset#destroyData
  * @function
  */
+
 
 /**
  * Binder for aggregation <code>data</code>.
@@ -2067,7 +2350,6 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
-
 /**
  * Unbinder for aggregation <code>data</code>.
  *
@@ -2077,51 +2359,37 @@ sap.viz.ui5.data.Dataset.extend("sap.viz.ui5.data.FlattenedDataset", { metadata 
  * @function
  */
 
+
 // Start of sap/viz/ui5/data/FlattenedDataset.js
+// enable calling 'bindAggregation("data")' without a factory
+sap.viz.ui5.data.FlattenedDataset.getMetadata().getAllAggregations()["data"]._doesNotRequireFactory = true;
+
 sap.viz.ui5.data.FlattenedDataset.prototype.init = function() {
 };
 
-sap.viz.ui5.data.FlattenedDataset.prototype.bindAggregation = function(sName, oBindingInfo) {
-	// TODO the whole implementation has been copied from sap.ui.table.Table. Find a way to share it.
-	// only purpose is to add a factory as the core implementation otherwise complains
-	
-	// special handling for the rows aggregation
-	if (sName === "data") {
-		// old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
-		if (typeof oBindingInfo == "string") {
-			oBindingInfo = {
-				path: arguments[1],
-				template: arguments[2],
-				sorter: arguments[3], 
-				filters: arguments[4]
-			};
-			// ensure old Table API compatibility (sName, sPath, [oSorter], [aFilters])
-			if (oBindingInfo.template instanceof sap.ui.model.Sorter ||
-				jQuery.isArray(oBindingInfo.sorter) && 
-					oBindingInfo.sorter.length > 0 && 
-					oBindingInfo.sorter[0] instanceof sap.ui.model.Filter) {
-				oBindingInfo.filters = oBindingInfo.sorter;
-				oBindingInfo.sorter = oBindingInfo.template;
-			} 
-		}
-		// the rows aggregation has neither a template nor a factory function!
-		oBindingInfo.template = undefined;
-		oBindingInfo.factory = function() {};
-		// call the real bindAggregation method
-		return sap.ui.core.Element.prototype.bindAggregation.call(this, sName, oBindingInfo);
-	}
-	// call the real bindAggregation method
-	return sap.ui.core.Element.prototype.bindAggregation.apply(this, arguments);
+sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
+	this.invalidate();
 };
 
-sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
+// override standard aggregation methods for 'data' and report an error when they are used
+jQuery.each("add destroy get indexOf insert remove removeAll".split(" "), function(i,sMethod) {
+	var sMessage = "FlattenedDataset manages the 'data' aggregation only via data binding. The method '" + sMethod + "Data' therefore cannot be used programmatically!";
+	sap.viz.ui5.data.FlattenedDataset.prototype[sMethod + "Data"] = function() {
+		jQuery.sap.log.error(sMessage);
+	};
+});
 
+sap.viz.ui5.data.FlattenedDataset.prototype._createVIZCrosstab = function() {
+	
 	var oBinding = this.getBinding("data"),
 			aContexts = oBinding && oBinding.getContexts(0, oBinding.getLength());
 
-	// if there is no data, then there is no crosstab. Charts will render "no data" then. 
+	// if there is no data, then there must be no crosstab. Charts will render "no data" then. 
 	if ( !aContexts || aContexts.length === 0 ) {
-		delete this._oVIZCrosstab;
+		if ( this._oVIZCrosstab ) {
+			delete this._oVIZCrosstab;
+			this.invalidate();
+		}
 		return;
 	}
 	
@@ -2130,48 +2398,46 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 			aMeasures=[],
 			data=[];
 
-	// transform dimension definitions to a format more suitable for our transformation
+	// transform dimension definitions into a format more suitable for our transformation
 	jQuery.each(this.getDimensions(), function(i,oColumn) {
 	  if ( oColumn.getAxis() === 1 ) {
-	  	aAxis1.push(oColumn);
+	  	aAxis1.push({def: oColumn, adapter : oColumn._getAdapter()});
 	  } else if ( oColumn.getAxis() === 2 ) {
-	  	aAxis2.push(oColumn);
+	  	aAxis2.push({def: oColumn, adapter : oColumn._getAdapter()});
 	  } else {
-	  	throw new Error();
-	  	aMeasures.push(oColumn);
-	  	data.push([]);
+	  	throw new Error("currently, only axis 1 and 2 are supported");
 	  }	
 	});
 
 	// create empty data array for each measure
 	jQuery.each(this.getMeasures(), function(i,oColumn) {
-  	aMeasures.push(oColumn);
+  	aMeasures.push({def: oColumn, adapter : oColumn._getAdapter()});
   	data.push([]);
 	});
 
-	// extracts the value for one dimension based on the given set of dimension components
-	function get(oContext, aColumns) {
-		if ( aColumns.length === 0 ) 
-			return null;
+	function getAxisIndex(aAxisDef, aAxisValues, oContext) {
+		var l=aAxisDef.length,
+			aValues,i;
 		
-		var r=[];
-	  for(var i=0; i<aColumns.length; i++) {
-	  	r.push(oContext.getProperty(aColumns[i].getBindingInfo("value").path));
-	  }
-	  return r;
-	}
-
-	function findOrAdd(aData, oData) {
-		if ( !oData ) {
+		if ( l === 0 ) {
 			return 0;
 		}
-		for(var i=0; i<aData.length; i++) {
-			if ( jQuery.sap.equal(aData[i], oData) ) {
+		
+		// extracts the key value for one dimension based on the given set of dimension components
+		aValues=[];
+	  for(i=0; i<l; i++) {
+	  	aValues.push(aAxisDef[i].adapter(oContext));
+	  }
+
+	  // search the key value in the list of already known values
+	  for(i=0,l=aAxisValues.length; i<l; i++) {
+			if ( jQuery.sap.equal(aAxisValues[i], aValues) ) {
 				return i;
 			}
 		}
-		aData.push(oData);
-		return aData.length-1;
+	  // if not found, add it
+	  aAxisValues.push(aValues);
+		return aAxisValues.length-1;
 	}
 	
 	var aAxis1DataSet=[];
@@ -2179,22 +2445,48 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 	
 	// analyze data 
 	jQuery.each(aContexts, function(iIndex, oContext) {
-		var iAxis1Index = findOrAdd(aAxis1DataSet, get(oContext, aAxis1));
-		var iAxis2Index = findOrAdd(aAxis2DataSet, get(oContext, aAxis2));
+		var iAxis1Index = getAxisIndex(aAxis1, aAxis1DataSet, oContext);
+		var iAxis2Index = getAxisIndex(aAxis2, aAxis2DataSet, oContext);
 		for(var i=0; i<aMeasures.length; i++) {
-			var value = oContext.getProperty(aMeasures[i].getBindingInfo("value").path);
-			(data[i][iAxis2Index] = (data[i][iAxis2Index] || []))[iAxis1Index] = value;
+			var value = aMeasures[i].adapter(oContext);
+			//If both aa1 and aa2 is empty, viz dataset should be created correctly and only with measure values.
+			if(aAxis1.length === 0 && aAxis2.length === 0){
+			  if(data[i][0] === undefined){
+			    data[i][0] = [];
+			  }
+			  data[i][0].push(value);
+			}else{
+			  (data[i][iAxis2Index] = (data[i][iAxis2Index] || []))[iAxis1Index] = value;
+			}
 		}
 	});
 	
-	// start creating the dataset
-	var dataset = {
-			analysisAxis : [],
-			measureValuesGroup : []
-	};
+	// fill any gaps
+	var iLengthAxis1 = aAxis1DataSet.length;
+	var iLengthAxis2 = Math.max(aAxis2DataSet.length,1);
+	for(var i=0; i<aMeasures.length; i++) {
+		for(var j=0; j<iLengthAxis2; j++) {
+			// first ensure that a data array exists for each value of axis2 
+			var d = data[i][j];
+			if ( !d ) {
+				d = data[i][j] = [];
+			}
+			// then ensure that each array has the length of axis1 
+			if ( d.length < iLengthAxis1 ) {
+				d[iLengthAxis1-1] = undefined;
+			}
+		}
+	}
 	
+	// start creating the dataset
+	//If no dimension or no measure definition, viz dataset should also no 'analysisAxis' or 'measureValuesGroup'.
+	var dataset = { };
+	  
 	// convert data for axis1
 	if ( aAxis1.length > 0 ) {
+	  if(dataset.analysisAxis === undefined){
+	    dataset.analysisAxis = [];
+	  }
 		var axis = { index : 1, data : [] };
 		// process component by component for the axis1 dimension 
 		for(var i=0; i<aAxis1.length; i++) {
@@ -2205,17 +2497,20 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 			}
 			// create an axis component from the collected data and the specified label
 			axis.data.push({
-				name : aAxis1[i].getName(),
+				name : aAxis1[i].def.getName(),
 				values : values
 			});
 		}
 		// add axis to dataset
 		dataset.analysisAxis.push(axis);
 	}
-	
+  	
 	// do the same for axis2
 	// TODO generalize to N axes, will reduce code as well. But maybe throw error above for more than two axes (limit of crosstab?)
 	if ( aAxis2.length > 0 ) {
+	  if(dataset.analysisAxis === undefined){
+      dataset.analysisAxis = [];
+    }
 		var axis = { index : 2, data : [] };
 		for(var i=0; i<aAxis2.length; i++) {
 			var values=[];
@@ -2223,7 +2518,7 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 				values[j] = aAxis2DataSet[j][i];
 			}
 			axis.data.push({
-				name : aAxis2[i].getName(),
+				name : aAxis2[i].def.getName(),
 				values : values
 			});
 		}
@@ -2231,27 +2526,62 @@ sap.viz.ui5.data.FlattenedDataset.prototype.updateData = function() {
 	}
 
 	// now that the dimension lengths are known, transform measures to crosstable   
-	for(var i=0; i<aMeasures.length; i++) {
-		if ( !dataset.measureValuesGroup[aMeasures[i].getGroup()-1] ) {
-			dataset.measureValuesGroup[aMeasures[i].getGroup()-1] = { index: aMeasures[i].getGroup(), data: []};
-		}
-		dataset.measureValuesGroup[aMeasures[i].getGroup()-1].data.push({
-			name: aMeasures[i].getName(),
-			values: data[i]
-		})
+	if(aMeasures.length > 0){
+	  dataset.measureValuesGroup = [];
+	
+  	for(var i=0; i<aMeasures.length; i++) {
+  	  if ( !dataset.measureValuesGroup[aMeasures[i].def.getGroup()-1] ) {
+        dataset.measureValuesGroup[aMeasures[i].def.getGroup()-1] = { index: aMeasures[i].def.getGroup(), data: []};
+      }
+      dataset.measureValuesGroup[aMeasures[i].def.getGroup()-1].data.push({
+        name: aMeasures[i].def.getName(),
+        values: data[i]
+      });
+  	}
+  
+  	//Viz don't handle mg array with undefined.
+  	for(var i = 0, len = dataset.measureValuesGroup.length; i < len; i++){
+  	  if(dataset.measureValuesGroup[i] === undefined){
+  	    throw new Error("Measure Group " + (i + 1) + " is missing.");
+  	    break;
+  	  }
+  	}
 	}
 	
 	// finally create the VIZ crosstab from the transformed data 
 	this._oVIZCrosstab = new sap.viz.data.CrosstableDataset();
 	this._oVIZCrosstab.setData(dataset);
-	
-	// invalidate will make the chart re-render with the new dataset
-  this.invalidate();
-
+	if(this._defaultSelectionInfo){
+	  this._oVIZCrosstab.info(this._defaultSelectionInfo);
+	}
 };
 
 sap.viz.ui5.data.FlattenedDataset.prototype.getVIZDataset = function() {
+  if ( !this._oVIZCrosstab && sap.viz.__svg_support ) {
+  	this._createVIZCrosstab();
+  }
 	return this._oVIZCrosstab || null;
+};
+
+sap.viz.ui5.data.FlattenedDataset.prototype.invalidate = function(oOther) {
+	if ( this._oVIZCrosstab ) {
+		delete this._oVIZCrosstab;
+	}
+	sap.ui.core.Element.prototype.invalidate.apply(this, arguments);
+};
+
+/**
+ * Set chart's default selection.
+ * 
+ * @param {object[]} Array of default selection info 
+ * 
+ * @public
+ */
+sap.viz.ui5.data.FlattenedDataset.prototype.setDefaultSelection = function(selectionInfos) {
+  this._defaultSelectionInfo = {
+    'type' : 'defaultSelection',
+    'value' : selectionInfos
+  };
 };
 
 }; // end of sap.viz.ui5.data.FlattenedDataset
@@ -2259,7 +2589,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.data.MeasureDefinition') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -2316,7 +2646,7 @@ jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -2368,7 +2698,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>group</code>.
  *
@@ -2380,6 +2709,7 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @name sap.viz.ui5.data.MeasureDefinition#setGroup
  * @function
  */
+
 
 /**
  * Getter for property <code>value</code>.
@@ -2393,7 +2723,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>value</code>.
  *
@@ -2405,6 +2734,7 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @name sap.viz.ui5.data.MeasureDefinition#setValue
  * @function
  */
+
 
 /**
  * Getter for property <code>name</code>.
@@ -2418,7 +2748,6 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
@@ -2431,14 +2760,57 @@ sap.ui.core.Element.extend("sap.viz.ui5.data.MeasureDefinition", { metadata : {
  * @function
  */
 
+
 // Start of sap/viz/ui5/data/MeasureDefinition.js
+sap.viz.ui5.data.MeasureDefinition.prototype._getAdapter = function() {
+	var that = this,
+	  oBindingInfo = this.getBindingInfo("value"),
+	  oValue, sPath, oType, fnFormatter;
+	
+	// if there is no binding info, then the value is constant
+	if ( !oBindingInfo ) {
+		oValue = this.getValue();
+		return function() { 
+			return oValue; 
+		};
+	}
+	
+	// otherwise ensure a simple property binding for now
+	if ( oBindingInfo.parts.length > 1 ) {
+		throw new Error("MeasureDefinition doesn't support calculated bindings yet");
+	}
+	
+	sPath = oBindingInfo.parts[0].path;
+	oType = oBindingInfo.parts[0].type;
+	fnFormatter = oBindingInfo.formatter;
+	
+	// for simple binding just resolve the value
+	if ( !(oType || fnFormatter) ) {
+		return function(oContext) {
+			return oContext.getProperty(sPath);
+		}
+	}
+
+	// else apply type and/or formatter
+	return function(oContext) {
+		var oValue = oContext.getProperty(sPath);
+		if (oType) {
+			oValue = oType.formatValue(oValue, "string"); //TODO discuss internal type
+		}
+		if (fnFormatter) {
+			oValue = fnFormatter.call(that, oValue, oContext);
+		}
+		return oValue;
+	};
+
+}
 
 }; // end of sap.viz.ui5.data.MeasureDefinition
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -2468,6 +2840,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis");
  * <li>Properties
  * <ul>
  * <li>{@link #getIsIndependentMode isIndependentMode} : boolean (default: false)</li>
+ * <li>{@link #getIsPercentMode isPercentMode} : boolean (default: false)</li>
  * <li>{@link #getLineSize lineSize} : string (default: '1')</li>
  * <li>{@link #getColor color} : string (default: '#6c6c6c')</li>
  * <li>{@link #getType type} : sap.viz.ui5.types.Axis_type (default: sap.viz.ui5.types.Axis_type.value)</li>
@@ -2479,7 +2852,9 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis");
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Axis_title</li>
  * <li>{@link #getGridline gridline} : sap.viz.ui5.types.Axis_gridline</li>
  * <li>{@link #getAxisline axisline} : sap.viz.ui5.types.Axis_axisline</li>
- * <li>{@link #getLabel label} : sap.viz.ui5.types.Axis_label</li></ul>
+ * <li>{@link #getLabel label} : sap.viz.ui5.types.Axis_label</li>
+ * <li>{@link #getScale scale} : sap.viz.ui5.types.Axis_scale</li>
+ * <li>{@link #getLayoutInfo layoutInfo} : sap.viz.ui5.types.Axis_layoutInfo</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -2501,7 +2876,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -2517,18 +2892,21 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"isIndependentMode" : {type : "boolean", group : "", defaultValue : false},
+		"isIndependentMode" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"isPercentMode" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
 		"lineSize" : {type : "string", group : "", defaultValue : '1'},
 		"color" : {type : "string", group : "", defaultValue : '#6c6c6c'},
-		"type" : {type : "sap.viz.ui5.types.Axis_type", group : "", defaultValue : sap.viz.ui5.types.Axis_type.value},
+		"type" : {type : "sap.viz.ui5.types.Axis_type", group : "", defaultValue : sap.viz.ui5.types.Axis_type.value, deprecated: true},
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"position" : {type : "sap.viz.ui5.types.Axis_position", group : "", defaultValue : sap.viz.ui5.types.Axis_position.bottom}
+		"position" : {type : "sap.viz.ui5.types.Axis_position", group : "", defaultValue : sap.viz.ui5.types.Axis_position.bottom, deprecated: true}
 	},
 	aggregations : {
     	"title" : {type : "sap.viz.ui5.types.Axis_title", multiple : false}, 
     	"gridline" : {type : "sap.viz.ui5.types.Axis_gridline", multiple : false}, 
     	"axisline" : {type : "sap.viz.ui5.types.Axis_axisline", multiple : false}, 
-    	"label" : {type : "sap.viz.ui5.types.Axis_label", multiple : false}
+    	"label" : {type : "sap.viz.ui5.types.Axis_label", multiple : false}, 
+    	"scale" : {type : "sap.viz.ui5.types.Axis_scale", multiple : false, deprecated: true}, 
+    	"layoutInfo" : {type : "sap.viz.ui5.types.Axis_layoutInfo", multiple : false, deprecated: true}
 	}
 }});
 
@@ -2558,10 +2936,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  *
  * @return {boolean} the value of property <code>isIndependentMode</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#getIsIndependentMode
  * @function
  */
-
 
 /**
  * Setter for property <code>isIndependentMode</code>.
@@ -2571,9 +2950,41 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @param {boolean} bIsIndependentMode  new value for property <code>isIndependentMode</code>
  * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#setIsIndependentMode
  * @function
  */
+
+
+/**
+ * Getter for property <code>isPercentMode</code>.
+ * Show the label 0.1 as 10
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isPercentMode</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#getIsPercentMode
+ * @function
+ */
+
+/**
+ * Setter for property <code>isPercentMode</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsPercentMode  new value for property <code>isPercentMode</code>
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#setIsPercentMode
+ * @function
+ */
+
 
 /**
  * Getter for property <code>lineSize</code>.
@@ -2587,7 +2998,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>lineSize</code>.
  *
@@ -2599,6 +3009,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setLineSize
  * @function
  */
+
 
 /**
  * Getter for property <code>color</code>.
@@ -2612,7 +3023,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>color</code>.
  *
@@ -2625,6 +3035,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>type</code>.
  * Set type of axis.
@@ -2633,10 +3044,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  *
  * @return {sap.viz.ui5.types.Axis_type} the value of property <code>type</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#getType
  * @function
  */
-
 
 /**
  * Setter for property <code>type</code>.
@@ -2646,9 +3058,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @param {sap.viz.ui5.types.Axis_type} oType  new value for property <code>type</code>
  * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#setType
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -2662,7 +3077,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -2675,6 +3089,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>position</code>.
  * Set position of axis.
@@ -2683,10 +3098,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  *
  * @return {sap.viz.ui5.types.Axis_position} the value of property <code>position</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#getPosition
  * @function
  */
-
 
 /**
  * Setter for property <code>position</code>.
@@ -2696,10 +3112,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @param {sap.viz.ui5.types.Axis_position} oPosition  new value for property <code>position</code>
  * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis#setPosition
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Settings for axis title.
@@ -2710,6 +3129,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Axis_title}
@@ -2718,7 +3138,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -2728,7 +3148,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyTitle
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>gridline</code>.<br/>
  * Settings for axis gridline.
@@ -2739,6 +3160,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>gridline</code>.
  * @param oGridline {sap.viz.ui5.types.Axis_gridline}
@@ -2747,7 +3169,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setGridline
  * @function
  */
-
+	
 
 /**
  * Destroys the gridline in the aggregation 
@@ -2757,7 +3179,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyGridline
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>axisline</code>.<br/>
  * Settings for axisline.
@@ -2768,6 +3191,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>axisline</code>.
  * @param oAxisline {sap.viz.ui5.types.Axis_axisline}
@@ -2776,7 +3200,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setAxisline
  * @function
  */
-
+	
 
 /**
  * Destroys the axisline in the aggregation 
@@ -2786,7 +3210,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyAxisline
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>label</code>.<br/>
  * Settings for axis label.
@@ -2797,6 +3222,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>label</code>.
  * @param oLabel {sap.viz.ui5.types.Axis_label}
@@ -2805,7 +3231,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#setLabel
  * @function
  */
-
+	
 
 /**
  * Destroys the label in the aggregation 
@@ -2815,6 +3241,81 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis", { metadata 
  * @name sap.viz.ui5.types.Axis#destroyLabel
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>scale</code>.<br/>
+ * Set scale for value axis. this property just work on value type axis.
+ * 
+ * @return {sap.viz.ui5.types.Axis_scale}
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#getScale
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>scale</code>.
+ * @param oScale {sap.viz.ui5.types.Axis_scale}
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#setScale
+ * @function
+ */
+	
+
+/**
+ * Destroys the scale in the aggregation 
+ * named <code>scale</code>.
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#destroyScale
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>layoutInfo</code>.<br/>
+ * Settings layoutInfo for category axis. this property just work on category type axis
+ * 
+ * @return {sap.viz.ui5.types.Axis_layoutInfo}
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#getLayoutInfo
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>layoutInfo</code>.
+ * @param oLayoutInfo {sap.viz.ui5.types.Axis_layoutInfo}
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#setLayoutInfo
+ * @function
+ */
+	
+
+/**
+ * Destroys the layoutInfo in the aggregation 
+ * named <code>layoutInfo</code>.
+ * @return {sap.viz.ui5.types.Axis} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis#destroyLayoutInfo
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Axis.js
 sap.viz.ui5.types.Axis.prototype.getTitle = function() {
@@ -2829,13 +3330,19 @@ sap.viz.ui5.types.Axis.prototype.getAxisline = function() {
 sap.viz.ui5.types.Axis.prototype.getLabel = function() {
   return this._getOrCreate("label");
 }
+sap.viz.ui5.types.Axis.prototype.getScale = function() {
+  return this._getOrCreate("scale");
+}
+sap.viz.ui5.types.Axis.prototype.getLayoutInfo = function() {
+  return this._getOrCreate("layoutInfo");
+}
 
 }; // end of sap.viz.ui5.types.Axis
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis_axisline') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -2889,7 +3396,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_axisline");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -2939,7 +3446,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_axisline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -2952,6 +3458,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_axisline", { 
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Axis_axisline.js
 
 }; // end of sap.viz.ui5.types.Axis_axisline
@@ -2959,7 +3466,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis_gridline') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -3018,7 +3525,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_gridline");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -3035,8 +3542,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"showFirstLine" : {type : "boolean", group : "", defaultValue : false},
-		"showLastLine" : {type : "boolean", group : "", defaultValue : false},
+		"showFirstLine" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"showLastLine" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
 		"type" : {type : "sap.viz.ui5.types.Axis_gridline_type", group : "", defaultValue : sap.viz.ui5.types.Axis_gridline_type.line},
 		"color" : {type : "string", group : "", defaultValue : '#d8d8d8'},
 		"size" : {type : "string", group : "", defaultValue : '1'}
@@ -3073,7 +3580,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -3086,6 +3592,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
+
 /**
  * Getter for property <code>showFirstLine</code>.
  * Set enabled/disabled the first line of gridlines.
@@ -3094,10 +3601,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  *
  * @return {boolean} the value of property <code>showFirstLine</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#getShowFirstLine
  * @function
  */
-
 
 /**
  * Setter for property <code>showFirstLine</code>.
@@ -3107,9 +3615,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @param {boolean} bShowFirstLine  new value for property <code>showFirstLine</code>
  * @return {sap.viz.ui5.types.Axis_gridline} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#setShowFirstLine
  * @function
  */
+
 
 /**
  * Getter for property <code>showLastLine</code>.
@@ -3119,10 +3630,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  *
  * @return {boolean} the value of property <code>showLastLine</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#getShowLastLine
  * @function
  */
-
 
 /**
  * Setter for property <code>showLastLine</code>.
@@ -3132,9 +3644,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @param {boolean} bShowLastLine  new value for property <code>showLastLine</code>
  * @return {sap.viz.ui5.types.Axis_gridline} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#setShowLastLine
  * @function
  */
+
 
 /**
  * Getter for property <code>type</code>.
@@ -3148,7 +3663,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>type</code>.
  *
@@ -3160,6 +3674,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @name sap.viz.ui5.types.Axis_gridline#setType
  * @function
  */
+
 
 /**
  * Getter for property <code>color</code>.
@@ -3173,7 +3688,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>color</code>.
  *
@@ -3185,6 +3699,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @name sap.viz.ui5.types.Axis_gridline#setColor
  * @function
  */
+
 
 /**
  * Getter for property <code>size</code>.
@@ -3198,7 +3713,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>size</code>.
  *
@@ -3211,6 +3725,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Axis_gridline.js
 
 }; // end of sap.viz.ui5.types.Axis_gridline
@@ -3218,7 +3733,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis_label') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -3248,7 +3763,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_label");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getNumberFormat numberFormat} : string</li></ul>
+ * <li>{@link #getNumberFormat numberFormat} : string (default: '')</li>
+ * <li>{@link #getFormatString formatString} : string (default: 'null')</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -3273,7 +3789,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_label");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -3290,7 +3806,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"numberFormat" : {type : "string", group : "", defaultValue : null}
+		"numberFormat" : {type : "string", group : "", defaultValue : ''},
+		"formatString" : {type : "string", group : "", defaultValue : 'null'}
 	}
 }});
 
@@ -3324,7 +3841,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -3336,6 +3852,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @name sap.viz.ui5.types.Axis_label#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>numberFormat</code>.
@@ -3349,7 +3866,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>numberFormat</code>.
  *
@@ -3362,14 +3878,391 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_label", { met
  * @function
  */
 
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of value axis. If number format and format string are both set, number format will be ignored.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {string} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Axis_label#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string} sFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Axis_label} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Axis_label#setFormatString
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Axis_label.js
 
 }; // end of sap.viz.ui5.types.Axis_label
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis_layoutInfo') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Axis_layoutInfo.
+jQuery.sap.declare("sap.viz.ui5.types.Axis_layoutInfo");
+
+
+
+/**
+ * Constructor for a new ui5/types/Axis_layoutInfo.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getWidth width} : float (default: 0)</li>
+ * <li>{@link #getHeight height} : float (default: 0)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings layoutInfo for category axis. this property just work on category type axis
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_layoutInfo
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_layoutInfo", { metadata : {
+
+	// ---- object ----
+	deprecated : true,
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"width" : {type : "float", group : "", defaultValue : 0, deprecated: true},
+		"height" : {type : "float", group : "", defaultValue : 0, deprecated: true}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Axis_layoutInfo with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Axis_layoutInfo.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>width</code>.
+ * Set width of xAxis.
+ *
+ * Default value is <code>0</code>
+ *
+ * @return {float} the value of property <code>width</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_layoutInfo#getWidth
+ * @function
+ */
+
+/**
+ * Setter for property <code>width</code>.
+ *
+ * Default value is <code>0</code> 
+ *
+ * @param {float} fWidth  new value for property <code>width</code>
+ * @return {sap.viz.ui5.types.Axis_layoutInfo} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_layoutInfo#setWidth
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>height</code>.
+ * Set height of xAxis.
+ *
+ * Default value is <code>0</code>
+ *
+ * @return {float} the value of property <code>height</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_layoutInfo#getHeight
+ * @function
+ */
+
+/**
+ * Setter for property <code>height</code>.
+ *
+ * Default value is <code>0</code> 
+ *
+ * @param {float} fHeight  new value for property <code>height</code>
+ * @return {sap.viz.ui5.types.Axis_layoutInfo} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_layoutInfo#setHeight
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Axis_layoutInfo.js
+
+}; // end of sap.viz.ui5.types.Axis_layoutInfo
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis_scale') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Axis_scale.
+jQuery.sap.declare("sap.viz.ui5.types.Axis_scale");
+
+
+
+/**
+ * Constructor for a new ui5/types/Axis_scale.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getFixedRange fixedRange} : boolean (default: false)</li>
+ * <li>{@link #getMinValue minValue} : float (default: 0)</li>
+ * <li>{@link #getMaxValue maxValue} : float (default: 0)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Set scale for value axis. this property just work on value type axis.
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_scale", { metadata : {
+
+	// ---- object ----
+	deprecated : true,
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"fixedRange" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"minValue" : {type : "float", group : "", defaultValue : 0, deprecated: true},
+		"maxValue" : {type : "float", group : "", defaultValue : 0, deprecated: true}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Axis_scale with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Axis_scale.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>fixedRange</code>.
+ * Enable/disable fixed axis range according minValue and maxValue.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>fixedRange</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale#getFixedRange
+ * @function
+ */
+
+/**
+ * Setter for property <code>fixedRange</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bFixedRange  new value for property <code>fixedRange</code>
+ * @return {sap.viz.ui5.types.Axis_scale} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale#setFixedRange
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>minValue</code>.
+ * Set minValue of yAxis.
+ *
+ * Default value is <code>0</code>
+ *
+ * @return {float} the value of property <code>minValue</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale#getMinValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>minValue</code>.
+ *
+ * Default value is <code>0</code> 
+ *
+ * @param {float} fMinValue  new value for property <code>minValue</code>
+ * @return {sap.viz.ui5.types.Axis_scale} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale#setMinValue
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>maxValue</code>.
+ * Set maxValue of yAxis.
+ *
+ * Default value is <code>0</code>
+ *
+ * @return {float} the value of property <code>maxValue</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale#getMaxValue
+ * @function
+ */
+
+/**
+ * Setter for property <code>maxValue</code>.
+ *
+ * Default value is <code>0</code> 
+ *
+ * @param {float} fMaxValue  new value for property <code>maxValue</code>
+ * @return {sap.viz.ui5.types.Axis_scale} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Axis_scale#setMaxValue
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Axis_scale.js
+
+}; // end of sap.viz.ui5.types.Axis_scale
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Axis_title') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -3399,7 +4292,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_title");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: false)</li>
- * <li>{@link #getText text} : string</li>
+ * <li>{@link #getText text} : string (default: 'null')</li>
  * <li>{@link #getApplyAxislineColor applyAxislineColor} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
@@ -3425,7 +4318,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Axis_title");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -3442,8 +4335,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : false},
-		"text" : {type : "string", group : "", defaultValue : null},
-		"applyAxislineColor" : {type : "boolean", group : "", defaultValue : false}
+		"text" : {type : "string", group : "", defaultValue : 'null'},
+		"applyAxislineColor" : {type : "boolean", group : "", defaultValue : false, deprecated: true}
 	}
 }});
 
@@ -3477,7 +4370,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -3490,11 +4382,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @function
  */
 
+
 /**
  * Getter for property <code>text</code>.
  * Set text of axis title.
  *
- * Default value is empty/<code>undefined</code>
+ * Default value is <code>null</code>
  *
  * @return {string} the value of property <code>text</code>
  * @public
@@ -3502,11 +4395,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
- * Default value is empty/<code>undefined</code> 
+ * Default value is <code>null</code> 
  *
  * @param {string} sText  new value for property <code>text</code>
  * @return {sap.viz.ui5.types.Axis_title} <code>this</code> to allow method chaining
@@ -3514,6 +4406,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @name sap.viz.ui5.types.Axis_title#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>applyAxislineColor</code>.
@@ -3523,10 +4416,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  *
  * @return {boolean} the value of property <code>applyAxislineColor</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_title#getApplyAxislineColor
  * @function
  */
-
 
 /**
  * Setter for property <code>applyAxislineColor</code>.
@@ -3536,9 +4430,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_title", { met
  * @param {boolean} bApplyAxislineColor  new value for property <code>applyAxislineColor</code>
  * @return {sap.viz.ui5.types.Axis_title} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_title#setApplyAxislineColor
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Axis_title.js
 
@@ -3547,7 +4444,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Background') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -3604,7 +4501,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -3659,7 +4556,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -3671,6 +4567,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -3684,7 +4581,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -3697,9 +4593,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
+
 /**
  * Getter for property <code>direction</code>.
- * Set gradient direction of background.
+ * Set gradient direction of background, only taking effect when drawingEffect of background has been set to 'golossy'.
  *
  * Default value is <code>vertical</code>
  *
@@ -3708,7 +4605,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#getDirection
  * @function
  */
-
 
 /**
  * Setter for property <code>direction</code>.
@@ -3721,7 +4617,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#setDirection
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>border</code>.<br/>
  * Settings for border property.
@@ -3732,6 +4629,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>border</code>.
  * @param oBorder {sap.viz.ui5.types.Background_border}
@@ -3740,7 +4638,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#setBorder
  * @function
  */
-
+	
 
 /**
  * Destroys the border in the aggregation 
@@ -3750,6 +4648,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background", { met
  * @name sap.viz.ui5.types.Background#destroyBorder
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Background.js
 sap.viz.ui5.types.Background.prototype.getBorder = function() {
@@ -3761,7 +4660,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Background_border') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -3818,7 +4717,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_border");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -3858,7 +4757,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
-	
+
 /**
  * Getter for aggregation <code>left</code>.<br/>
  * Set left border property.
@@ -3869,6 +4768,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>left</code>.
  * @param oLeft {sap.viz.ui5.types.Background_border_left}
@@ -3877,7 +4777,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setLeft
  * @function
  */
-
+	
 
 /**
  * Destroys the left in the aggregation 
@@ -3887,7 +4787,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyLeft
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>right</code>.<br/>
  * Set right border property.
@@ -3898,6 +4799,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>right</code>.
  * @param oRight {sap.viz.ui5.types.Background_border_right}
@@ -3906,7 +4808,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setRight
  * @function
  */
-
+	
 
 /**
  * Destroys the right in the aggregation 
@@ -3916,7 +4818,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyRight
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>top</code>.<br/>
  * Set top border property.
@@ -3927,6 +4830,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>top</code>.
  * @param oTop {sap.viz.ui5.types.Background_border_top}
@@ -3935,7 +4839,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setTop
  * @function
  */
-
+	
 
 /**
  * Destroys the top in the aggregation 
@@ -3945,7 +4849,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyTop
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>bottom</code>.<br/>
  * Set bottom border property.
@@ -3956,6 +4861,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>bottom</code>.
  * @param oBottom {sap.viz.ui5.types.Background_border_bottom}
@@ -3964,7 +4870,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setBottom
  * @function
  */
-
+	
 
 /**
  * Destroys the bottom in the aggregation 
@@ -3974,6 +4880,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyBottom
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Background_border.js
 sap.viz.ui5.types.Background_border.prototype.getLeft = function() {
@@ -3994,7 +4901,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Background_border_bottom') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4048,7 +4955,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_border_bottom");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -4098,7 +5005,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -4111,6 +5017,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Background_border_bottom.js
 
 }; // end of sap.viz.ui5.types.Background_border_bottom
@@ -4118,7 +5025,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Background_border_left') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4172,7 +5079,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_border_left");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -4222,7 +5129,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -4235,6 +5141,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Background_border_left.js
 
 }; // end of sap.viz.ui5.types.Background_border_left
@@ -4242,7 +5149,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Background_border_right') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4296,7 +5203,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_border_right");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -4346,7 +5253,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -4359,6 +5265,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Background_border_right.js
 
 }; // end of sap.viz.ui5.types.Background_border_right
@@ -4366,7 +5273,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Background_border_top') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4420,7 +5327,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Background_border_top");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -4470,7 +5377,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -4483,6 +5389,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Background_border_top.js
 
 }; // end of sap.viz.ui5.types.Background_border_top
@@ -4490,7 +5397,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bar') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4523,7 +5430,9 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar");
  * <li>{@link #getPrimaryValuesColorPalette primaryValuesColorPalette} : string[] (default: ['#8FBADD','#B8D4E9','#7AAED6','#A3C7E3','#3D88C4','#66A1D0','#297CBE','#5295CA','#005BA3','#146FB7','#005395','#0063B1'])</li>
  * <li>{@link #getSecondaryValuesColorPalette secondaryValuesColorPalette} : string[] (default: ['#F6A09B','#F9C3C0','#F58E88','#F8B1AD','#F05B52','#F37D76','#EE4A40','#F16C64','#D92419','#ED382D','#C52117','#EB271B'])</li>
  * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Bar_drawingEffect (default: sap.viz.ui5.types.Bar_drawingEffect.normal)</li>
- * <li>{@link #getIsRoundCorner isRoundCorner} : boolean (default: false)</li></ul>
+ * <li>{@link #getIsRoundCorner isRoundCorner} : boolean (default: false)</li>
+ * <li>{@link #getImageFill imageFill} : boolean (default: false)</li>
+ * <li>{@link #getImagePalette imagePalette} : string[] (default: ['http://www.sap.com/global/ui/images/global/sap-logo.png'])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -4550,7 +5459,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -4570,10 +5479,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
 		"primaryValuesColorPalette" : {type : "string[]", group : "", defaultValue : ['#8FBADD','#B8D4E9','#7AAED6','#A3C7E3','#3D88C4','#66A1D0','#297CBE','#5295CA','#005BA3','#146FB7','#005395','#0063B1']},
 		"secondaryValuesColorPalette" : {type : "string[]", group : "", defaultValue : ['#F6A09B','#F9C3C0','#F58E88','#F8B1AD','#F05B52','#F37D76','#EE4A40','#F16C64','#D92419','#ED382D','#C52117','#EB271B']},
 		"drawingEffect" : {type : "sap.viz.ui5.types.Bar_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Bar_drawingEffect.normal},
-		"isRoundCorner" : {type : "boolean", group : "", defaultValue : false}
+		"isRoundCorner" : {type : "boolean", group : "", defaultValue : false},
+		"imageFill" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"imagePalette" : {type : "string[]", group : "", defaultValue : ['http://www.sap.com/global/ui/images/global/sap-logo.png'], deprecated: true}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Bar_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Bar_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.Bar_animation", multiple : false}
 	}
 }});
@@ -4598,7 +5509,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -4607,7 +5518,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -4621,6 +5531,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -4632,7 +5543,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -4646,6 +5556,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -4657,7 +5568,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -4671,6 +5581,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -4682,7 +5593,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getDrawingEffect
  * @function
  */
-
 
 /**
  * Setter for property <code>drawingEffect</code>.
@@ -4696,6 +5606,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>isRoundCorner</code>.
  * Set enable/disable round corner of bar.
@@ -4708,7 +5619,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>isRoundCorner</code>.
  *
@@ -4720,36 +5630,103 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#setIsRoundCorner
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>imageFill</code>.
+ * Set enabled/disabled image fill.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>imageFill</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#getImageFill
+ * @function
+ */
+
+/**
+ * Setter for property <code>imageFill</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bImageFill  new value for property <code>imageFill</code>
+ * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#setImageFill
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>imagePalette</code>.
+ * images to fill the bar
+ *
+ * Default value is <code>http://www.sap.com/global/ui/images/global/sap-logo.png</code>
+ *
+ * @return {string[]} the value of property <code>imagePalette</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#getImagePalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>imagePalette</code>.
+ *
+ * Default value is <code>http://www.sap.com/global/ui/images/global/sap-logo.png</code> 
+ *
+ * @param {string[]} aImagePalette  new value for property <code>imagePalette</code>
+ * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#setImagePalette
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.Bar_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Bar_tooltip}
  * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -4760,6 +5737,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Bar_animation}
@@ -4768,7 +5746,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -4778,6 +5756,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#destroyAnimation
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Bar.js
 sap.viz.ui5.types.Bar.prototype.getToolTip = function() {
@@ -4792,7 +5771,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bar_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4822,7 +5801,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar_animation");
  * <li>Properties
  * <ul>
  * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
- * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -4847,7 +5827,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -4864,7 +5844,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_animation", { 
 	library : "sap.viz",
 	properties : {
 		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
-		"dataUpdating" : {type : "boolean", group : "", defaultValue : true}
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -4898,7 +5879,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_animation", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>dataLoading</code>.
  *
@@ -4910,6 +5890,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_animation", { 
  * @name sap.viz.ui5.types.Bar_animation#setDataLoading
  * @function
  */
+
 
 /**
  * Getter for property <code>dataUpdating</code>.
@@ -4923,7 +5904,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_animation", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>dataUpdating</code>.
  *
@@ -4936,6 +5916,32 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_animation", { 
  * @function
  */
 
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Bar_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Bar_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bar_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Bar_animation.js
 
 }; // end of sap.viz.ui5.types.Bar_animation
@@ -4943,7 +5949,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bar_tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -4997,18 +6003,19 @@ jQuery.sap.declare("sap.viz.ui5.types.Bar_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar_tooltip
  */
 sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_tooltip", { metadata : {
 
 	// ---- object ----
+	deprecated : true,
 
 	// ---- control specific ----
 	library : "sap.viz",
@@ -5047,7 +6054,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -5060,6 +6066,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar_tooltip", { me
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Bar_tooltip.js
 
 }; // end of sap.viz.ui5.types.Bar_tooltip
@@ -5067,7 +6074,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bubble') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -5097,12 +6104,13 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble");
  * <li>Properties
  * <ul>
  * <li>{@link #getColorPalette colorPalette} : string[] (default: ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4'])</li>
- * <li>{@link #getShapePalette shapePalette} : string[] (default: ['circle','square','diamond','triangle-up','triangle-down','triangle-left','triangle-right','cross','intersection'])</li>
+ * <li>{@link #getShapePalette shapePalette} : string[] (default: ['circle','square','diamond','triangleUp','triangleDown','triangleLeft','triangleRight','cross','intersection'])</li>
  * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Bubble_drawingEffect (default: sap.viz.ui5.types.Bubble_drawingEffect.normal)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Bubble_tooltip</li>
+ * <li>{@link #getAxisTooltip axisTooltip} : sap.viz.ui5.types.Bubble_axisTooltip</li>
+ * <li>{@link #getHoverline hoverline} : sap.viz.ui5.types.Bubble_hoverline</li>
  * <li>{@link #getAnimation animation} : sap.viz.ui5.types.Bubble_animation</li></ul>
  * </li>
  * <li>Associations
@@ -5125,7 +6133,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -5142,11 +6150,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
 	library : "sap.viz",
 	properties : {
 		"colorPalette" : {type : "string[]", group : "", defaultValue : ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4']},
-		"shapePalette" : {type : "string[]", group : "", defaultValue : ['circle','square','diamond','triangle-up','triangle-down','triangle-left','triangle-right','cross','intersection']},
+		"shapePalette" : {type : "string[]", group : "", defaultValue : ['circle','square','diamond','triangleUp','triangleDown','triangleLeft','triangleRight','cross','intersection']},
 		"drawingEffect" : {type : "sap.viz.ui5.types.Bubble_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Bubble_drawingEffect.normal}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Bubble_tooltip", multiple : false}, 
+    	"axisTooltip" : {type : "sap.viz.ui5.types.Bubble_axisTooltip", multiple : false}, 
+    	"hoverline" : {type : "sap.viz.ui5.types.Bubble_hoverline", multiple : false}, 
     	"animation" : {type : "sap.viz.ui5.types.Bubble_animation", multiple : false}
 	}
 }});
@@ -5181,7 +6190,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @function
  */
 
-
 /**
  * Setter for property <code>colorPalette</code>.
  *
@@ -5194,11 +6202,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @function
  */
 
+
 /**
  * Getter for property <code>shapePalette</code>.
  * Set marker shape of bubble.
  *
- * Default value is <code>circle,square,diamond,triangle-up,triangle-down,triangle-left,triangle-right,cross,intersection</code>
+ * Default value is <code>circle,square,diamond,triangleUp,triangleDown,triangleLeft,triangleRight,cross,intersection</code>
  *
  * @return {string[]} the value of property <code>shapePalette</code>
  * @public
@@ -5206,11 +6215,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @function
  */
 
-
 /**
  * Setter for property <code>shapePalette</code>.
  *
- * Default value is <code>circle,square,diamond,triangle-up,triangle-down,triangle-left,triangle-right,cross,intersection</code> 
+ * Default value is <code>circle,square,diamond,triangleUp,triangleDown,triangleLeft,triangleRight,cross,intersection</code> 
  *
  * @param {string[]} aShapePalette  new value for property <code>shapePalette</code>
  * @return {sap.viz.ui5.types.Bubble} <code>this</code> to allow method chaining
@@ -5218,6 +6226,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @name sap.viz.ui5.types.Bubble#setShapePalette
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -5231,7 +6240,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -5243,36 +6251,70 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @name sap.viz.ui5.types.Bubble#setDrawingEffect
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>toolTip</code>.<br/>
+ * Getter for aggregation <code>axisTooltip</code>.<br/>
  * Set tooltip related properties.
  * 
- * @return {sap.viz.ui5.types.Bubble_tooltip}
+ * @return {sap.viz.ui5.types.Bubble_axisTooltip}
  * @public
- * @name sap.viz.ui5.types.Bubble#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Bubble_tooltip}
- * @return {sap.viz.ui5.types.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Bubble#setToolTip
+ * @name sap.viz.ui5.types.Bubble#getAxisTooltip
  * @function
  */
 
 
 /**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
+ * Setter for the aggregated <code>axisTooltip</code>.
+ * @param oAxisTooltip {sap.viz.ui5.types.Bubble_axisTooltip}
  * @return {sap.viz.ui5.types.Bubble} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Bubble#destroyToolTip
+ * @name sap.viz.ui5.types.Bubble#setAxisTooltip
  * @function
  */
 	
+
+/**
+ * Destroys the axisTooltip in the aggregation 
+ * named <code>axisTooltip</code>.
+ * @return {sap.viz.ui5.types.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble#destroyAxisTooltip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>hoverline</code>.<br/>
+ * Settings for hoverline properties.
+ * 
+ * @return {sap.viz.ui5.types.Bubble_hoverline}
+ * @public
+ * @name sap.viz.ui5.types.Bubble#getHoverline
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>hoverline</code>.
+ * @param oHoverline {sap.viz.ui5.types.Bubble_hoverline}
+ * @return {sap.viz.ui5.types.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble#setHoverline
+ * @function
+ */
+	
+
+/**
+ * Destroys the hoverline in the aggregation 
+ * named <code>hoverline</code>.
+ * @return {sap.viz.ui5.types.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble#destroyHoverline
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Set animation of bubble/scatter.
@@ -5283,6 +6325,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Bubble_animation}
@@ -5291,7 +6334,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @name sap.viz.ui5.types.Bubble#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -5302,9 +6345,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble", { metadat
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Bubble.js
-sap.viz.ui5.types.Bubble.prototype.getToolTip = function() {
-  return this._getOrCreate("toolTip");
+sap.viz.ui5.types.Bubble.prototype.getAxisTooltip = function() {
+  return this._getOrCreate("axisTooltip");
+}
+sap.viz.ui5.types.Bubble.prototype.getHoverline = function() {
+  return this._getOrCreate("hoverline");
 }
 sap.viz.ui5.types.Bubble.prototype.getAnimation = function() {
   return this._getOrCreate("animation");
@@ -5315,7 +6362,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bubble_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -5345,7 +6392,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble_animation");
  * <li>Properties
  * <ul>
  * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
- * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -5370,7 +6418,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -5387,7 +6435,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
 	library : "sap.viz",
 	properties : {
 		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
-		"dataUpdating" : {type : "boolean", group : "", defaultValue : true}
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -5411,7 +6460,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
 
 /**
  * Getter for property <code>dataLoading</code>.
- * enable/disable data loading animation of bubble/scatter.
+ * Set enable/disable data loading animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -5420,7 +6469,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @name sap.viz.ui5.types.Bubble_animation#getDataLoading
  * @function
  */
-
 
 /**
  * Setter for property <code>dataLoading</code>.
@@ -5434,9 +6482,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @function
  */
 
+
 /**
  * Getter for property <code>dataUpdating</code>.
- * enable/disable data updating animation of bubble/scatter.
+ * Set enable/disable data updating animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -5445,7 +6494,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @name sap.viz.ui5.types.Bubble_animation#getDataUpdating
  * @function
  */
-
 
 /**
  * Setter for property <code>dataUpdating</code>.
@@ -5459,14 +6507,40 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_animation",
  * @function
  */
 
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Bubble_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Bubble_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Bubble_animation.js
 
 }; // end of sap.viz.ui5.types.Bubble_animation
-if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bubble_tooltip') ) {
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bubble_axisTooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -5474,13 +6548,13 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bubble_tooltip') ) {
  * source files only (*.control, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides control sap.viz.ui5.types.Bubble_tooltip.
-jQuery.sap.declare("sap.viz.ui5.types.Bubble_tooltip");
+// Provides control sap.viz.ui5.types.Bubble_axisTooltip.
+jQuery.sap.declare("sap.viz.ui5.types.Bubble_axisTooltip");
 
 
 
 /**
- * Constructor for a new ui5/types/Bubble_tooltip.
+ * Constructor for a new ui5/types/Bubble_axisTooltip.
  * 
  * Accepts an object literal <code>mSettings</code> that defines initial 
  * property values, aggregated and associated objects as well as event handlers. 
@@ -5495,7 +6569,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble_tooltip");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getEnabled enabled} : boolean (default: true)</li></ul>
+ * <li>{@link #getVisible visible} : boolean (default: true)</li>
+ * <li>{@link #getFormatString formatString} : string[] (default: ['null'])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -5520,29 +6595,30 @@ jQuery.sap.declare("sap.viz.ui5.types.Bubble_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
- * @name sap.viz.ui5.types.Bubble_tooltip
+ * @name sap.viz.ui5.types.Bubble_axisTooltip
  */
-sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_tooltip", { metadata : {
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_axisTooltip", { metadata : {
 
 	// ---- object ----
 
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"enabled" : {type : "boolean", group : "", defaultValue : true}
+		"visible" : {type : "boolean", group : "", defaultValue : true},
+		"formatString" : {type : "string[]", group : "", defaultValue : ['null']}
 	}
 }});
 
 
 /**
- * Creates a new subclass of class sap.viz.ui5.types.Bubble_tooltip with name <code>sClassName</code> 
+ * Creates a new subclass of class sap.viz.ui5.types.Bubble_axisTooltip with name <code>sClassName</code> 
  * and enriches it with the information contained in <code>oClassInfo</code>.
  * 
  * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
@@ -5553,44 +6629,193 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_tooltip", {
  * @return {function} the created class / constructor function
  * @public
  * @static
- * @name sap.viz.ui5.types.Bubble_tooltip.extend
+ * @name sap.viz.ui5.types.Bubble_axisTooltip.extend
  * @function
  */
 
 
 /**
- * Getter for property <code>enabled</code>.
+ * Getter for property <code>visible</code>.
  * enabled/disabled tooltip.
  *
  * Default value is <code>true</code>
  *
- * @return {boolean} the value of property <code>enabled</code>
+ * @return {boolean} the value of property <code>visible</code>
  * @public
- * @name sap.viz.ui5.types.Bubble_tooltip#getEnabled
+ * @name sap.viz.ui5.types.Bubble_axisTooltip#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.Bubble_axisTooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble_axisTooltip#setVisible
  * @function
  */
 
 
 /**
- * Setter for property <code>enabled</code>.
+ * Getter for property <code>formatString</code>.
+ * Set format string for small tooltip.The first one is applied to xAxis and the second one is applied to yAxis
  *
- * Default value is <code>true</code> 
+ * Default value is <code>null</code>
  *
- * @param {boolean} bEnabled  new value for property <code>enabled</code>
- * @return {sap.viz.ui5.types.Bubble_tooltip} <code>this</code> to allow method chaining
+ * @return {string[]} the value of property <code>formatString</code>
  * @public
- * @name sap.viz.ui5.types.Bubble_tooltip#setEnabled
+ * @name sap.viz.ui5.types.Bubble_axisTooltip#getFormatString
  * @function
  */
 
-// Start of sap/viz/ui5/types/Bubble_tooltip.js
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string[]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Bubble_axisTooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble_axisTooltip#setFormatString
+ * @function
+ */
 
-}; // end of sap.viz.ui5.types.Bubble_tooltip
+
+// Start of sap/viz/ui5/types/Bubble_axisTooltip.js
+
+}; // end of sap.viz.ui5.types.Bubble_axisTooltip
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Bubble_hoverline') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Bubble_hoverline.
+jQuery.sap.declare("sap.viz.ui5.types.Bubble_hoverline");
+
+
+
+/**
+ * Constructor for a new ui5/types/Bubble_hoverline.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getVisible visible} : boolean (default: true)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings for hoverline properties.
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Bubble_hoverline
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bubble_hoverline", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"visible" : {type : "boolean", group : "", defaultValue : true}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Bubble_hoverline with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Bubble_hoverline.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>visible</code>.
+ * Set to enabled/disabled hoverline or not.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>visible</code>
+ * @public
+ * @name sap.viz.ui5.types.Bubble_hoverline#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.Bubble_hoverline} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Bubble_hoverline#setVisible
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Bubble_hoverline.js
+
+}; // end of sap.viz.ui5.types.Bubble_hoverline
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -5628,6 +6853,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination");
  * <ul>
  * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Combination_tooltip</li>
  * <li>{@link #getAnimation animation} : sap.viz.ui5.types.Combination_animation</li>
+ * <li>{@link #getDataShape dataShape} : sap.viz.ui5.types.Combination_dataShape</li>
  * <li>{@link #getBar bar} : sap.viz.ui5.types.Combination_bar</li>
  * <li>{@link #getLine line} : sap.viz.ui5.types.Combination_line</li></ul>
  * </li>
@@ -5651,7 +6877,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -5673,8 +6899,9 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
 		"drawingEffect" : {type : "sap.viz.ui5.types.Combination_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Combination_drawingEffect.normal}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Combination_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Combination_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.Combination_animation", multiple : false}, 
+    	"dataShape" : {type : "sap.viz.ui5.types.Combination_dataShape", multiple : false}, 
     	"bar" : {type : "sap.viz.ui5.types.Combination_bar", multiple : false}, 
     	"line" : {type : "sap.viz.ui5.types.Combination_line", multiple : false}
 	}
@@ -5700,7 +6927,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -5709,7 +6936,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -5723,6 +6949,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -5734,7 +6961,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -5748,6 +6974,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -5759,7 +6986,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -5773,6 +6999,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -5785,7 +7012,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -5797,36 +7023,45 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setDrawingEffect
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.Combination_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Combination_tooltip}
  * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -5837,6 +7072,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Combination_animation}
@@ -5845,7 +7081,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -5855,7 +7091,39 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#destroyAnimation
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>dataShape</code>.<br/>
+ * Set shape of measure data.
+ * 
+ * @return {sap.viz.ui5.types.Combination_dataShape}
+ * @public
+ * @name sap.viz.ui5.types.Combination#getDataShape
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataShape</code>.
+ * @param oDataShape {sap.viz.ui5.types.Combination_dataShape}
+ * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination#setDataShape
+ * @function
+ */
 	
+
+/**
+ * Destroys the dataShape in the aggregation 
+ * named <code>dataShape</code>.
+ * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination#destroyDataShape
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>bar</code>.<br/>
  * Settings for bar properties.
@@ -5866,6 +7134,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>bar</code>.
  * @param oBar {sap.viz.ui5.types.Combination_bar}
@@ -5874,7 +7143,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setBar
  * @function
  */
-
+	
 
 /**
  * Destroys the bar in the aggregation 
@@ -5884,7 +7153,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#destroyBar
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>line</code>.<br/>
  * Settings for line properties.
@@ -5895,6 +7165,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>line</code>.
  * @param oLine {sap.viz.ui5.types.Combination_line}
@@ -5903,7 +7174,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setLine
  * @function
  */
-
+	
 
 /**
  * Destroys the line in the aggregation 
@@ -5914,12 +7185,16 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Combination.js
 sap.viz.ui5.types.Combination.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
 sap.viz.ui5.types.Combination.prototype.getAnimation = function() {
   return this._getOrCreate("animation");
+}
+sap.viz.ui5.types.Combination.prototype.getDataShape = function() {
+  return this._getOrCreate("dataShape");
 }
 sap.viz.ui5.types.Combination.prototype.getBar = function() {
   return this._getOrCreate("bar");
@@ -5933,7 +7208,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -5962,7 +7237,9 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_animation");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -5987,7 +7264,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -6003,7 +7280,9 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"dataLoading" : {type : "boolean", group : "", defaultValue : true}
+		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -6027,7 +7306,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
 
 /**
  * Getter for property <code>dataLoading</code>.
- * Set enabled/disabled data loading animation of plot area.
+ * Set enable/disable data loading animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -6036,7 +7315,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
  * @name sap.viz.ui5.types.Combination_animation#getDataLoading
  * @function
  */
-
 
 /**
  * Setter for property <code>dataLoading</code>.
@@ -6050,6 +7328,57 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
  * @function
  */
 
+
+/**
+ * Getter for property <code>dataUpdating</code>.
+ * Set enable/disable data updating animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>dataUpdating</code>
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#getDataUpdating
+ * @function
+ */
+
+/**
+ * Setter for property <code>dataUpdating</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bDataUpdating  new value for property <code>dataUpdating</code>
+ * @return {sap.viz.ui5.types.Combination_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#setDataUpdating
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Combination_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Combination_animation.js
 
 }; // end of sap.viz.ui5.types.Combination_animation
@@ -6057,7 +7386,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination_bar') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -6111,7 +7440,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_bar");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -6161,7 +7490,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_bar", 
  * @function
  */
 
-
 /**
  * Setter for property <code>isRoundCorner</code>.
  *
@@ -6174,14 +7502,166 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_bar", 
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Combination_bar.js
 
 }; // end of sap.viz.ui5.types.Combination_bar
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination_dataShape') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Combination_dataShape.
+jQuery.sap.declare("sap.viz.ui5.types.Combination_dataShape");
+
+
+
+/**
+ * Constructor for a new ui5/types/Combination_dataShape.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getPrimaryAxis primaryAxis} : string[] (default: ['bar','line','line'])</li>
+ * <li>{@link #getSecondAxis secondAxis} : string[] (default: ['line','line','line'])</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Set shape of measure data.
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Combination_dataShape
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_dataShape", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"primaryAxis" : {type : "string[]", group : "", defaultValue : ['bar','line','line']},
+		"secondAxis" : {type : "string[]", group : "", defaultValue : ['line','line','line']}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Combination_dataShape with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Combination_dataShape.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>primaryAxis</code>.
+ * Set shape of measure index1 data.
+ *
+ * Default value is <code>bar,line,line</code>
+ *
+ * @return {string[]} the value of property <code>primaryAxis</code>
+ * @public
+ * @name sap.viz.ui5.types.Combination_dataShape#getPrimaryAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>primaryAxis</code>.
+ *
+ * Default value is <code>bar,line,line</code> 
+ *
+ * @param {string[]} aPrimaryAxis  new value for property <code>primaryAxis</code>
+ * @return {sap.viz.ui5.types.Combination_dataShape} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination_dataShape#setPrimaryAxis
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>secondAxis</code>.
+ * Set shape of measure index2 data.
+ *
+ * Default value is <code>line,line,line</code>
+ *
+ * @return {string[]} the value of property <code>secondAxis</code>
+ * @public
+ * @name sap.viz.ui5.types.Combination_dataShape#getSecondAxis
+ * @function
+ */
+
+/**
+ * Setter for property <code>secondAxis</code>.
+ *
+ * Default value is <code>line,line,line</code> 
+ *
+ * @param {string[]} aSecondAxis  new value for property <code>secondAxis</code>
+ * @return {sap.viz.ui5.types.Combination_dataShape} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination_dataShape#setSecondAxis
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Combination_dataShape.js
+
+}; // end of sap.viz.ui5.types.Combination_dataShape
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination_line') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -6236,7 +7716,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_line");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -6289,7 +7769,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -6301,7 +7780,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @name sap.viz.ui5.types.Combination_line#setWidth
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>marker</code>.<br/>
  * Set marker/data point graphics settings.
@@ -6312,6 +7792,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>marker</code>.
  * @param oMarker {sap.viz.ui5.types.Combination_line_marker}
@@ -6320,7 +7801,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @name sap.viz.ui5.types.Combination_line#setMarker
  * @function
  */
-
+	
 
 /**
  * Destroys the marker in the aggregation 
@@ -6330,6 +7811,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @name sap.viz.ui5.types.Combination_line#destroyMarker
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Combination_line.js
 sap.viz.ui5.types.Combination_line.prototype.getMarker = function() {
@@ -6341,7 +7823,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination_line_marker') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -6397,7 +7879,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_line_marker");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -6449,7 +7931,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line_m
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -6461,6 +7942,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line_m
  * @name sap.viz.ui5.types.Combination_line_marker#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>shape</code>.
@@ -6474,7 +7956,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line_m
  * @function
  */
 
-
 /**
  * Setter for property <code>shape</code>.
  *
@@ -6487,9 +7968,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line_m
  * @function
  */
 
+
 /**
  * Getter for property <code>size</code>.
- * Set marker size of data point.
+ * Set marker size of data point, range[4,32]. When beyond the range, the marker size is default size 6.
  *
  * Default value is <code>6</code>
  *
@@ -6498,7 +7980,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line_m
  * @name sap.viz.ui5.types.Combination_line_marker#getSize
  * @function
  */
-
 
 /**
  * Setter for property <code>size</code>.
@@ -6512,6 +7993,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line_m
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Combination_line_marker.js
 
 }; // end of sap.viz.ui5.types.Combination_line_marker
@@ -6519,7 +8001,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Combination_tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -6573,18 +8055,19 @@ jQuery.sap.declare("sap.viz.ui5.types.Combination_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination_tooltip
  */
 sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_tooltip", { metadata : {
 
 	// ---- object ----
+	deprecated : true,
 
 	// ---- control specific ----
 	library : "sap.viz",
@@ -6623,7 +8106,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_toolti
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -6636,14 +8118,1252 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_toolti
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Combination_tooltip.js
 
 }; // end of sap.viz.ui5.types.Combination_tooltip
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Datalabel') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Datalabel.
+jQuery.sap.declare("sap.viz.ui5.types.Datalabel");
+
+
+
+/**
+ * Constructor for a new ui5/types/Datalabel.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getVisible visible} : boolean (default: false)</li>
+ * <li>{@link #getIsDonut isDonut} : boolean (default: false)</li>
+ * <li>{@link #getType type} : string (default: 'value')</li>
+ * <li>{@link #getAutomaticInOutside automaticInOutside} : boolean (default: true)</li>
+ * <li>{@link #getShowZero showZero} : boolean (default: true)</li>
+ * <li>{@link #getIsGeoChart isGeoChart} : boolean (default: false)</li>
+ * <li>{@link #getIsStackMode isStackMode} : boolean (default: false)</li>
+ * <li>{@link #getIsPercentMode isPercentMode} : boolean (default: false)</li>
+ * <li>{@link #getPositionPreference positionPreference} : boolean (default: false)</li>
+ * <li>{@link #getOutsideVisible outsideVisible} : boolean (default: true)</li>
+ * <li>{@link #getOutsidePosition outsidePosition} : sap.viz.ui5.types.Datalabel_outsidePosition (default: sap.viz.ui5.types.Datalabel_outsidePosition.up)</li>
+ * <li>{@link #getPaintingMode paintingMode} : sap.viz.ui5.types.Datalabel_paintingMode (default: sap.viz.ui5.types.Datalabel_paintingMode.rectCoordinate)</li>
+ * <li>{@link #getPosition position} : sap.viz.ui5.types.Datalabel_position (default: sap.viz.ui5.types.Datalabel_position.inside)</li>
+ * <li>{@link #getOrientation orientation} : sap.viz.ui5.types.Datalabel_orientation (default: sap.viz.ui5.types.Datalabel_orientation.vertical)</li>
+ * <li>{@link #getFormatString formatString} : any[][] (default: [[null]])</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Module ui5/types/Datalabel
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Datalabel
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Datalabel", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"visible" : {type : "boolean", group : "", defaultValue : false},
+		"isDonut" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"type" : {type : "string", group : "", defaultValue : 'value', deprecated: true},
+		"automaticInOutside" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"showZero" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"isGeoChart" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"isStackMode" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"isPercentMode" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"positionPreference" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"outsideVisible" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"outsidePosition" : {type : "sap.viz.ui5.types.Datalabel_outsidePosition", group : "", defaultValue : sap.viz.ui5.types.Datalabel_outsidePosition.up, deprecated: true},
+		"paintingMode" : {type : "sap.viz.ui5.types.Datalabel_paintingMode", group : "", defaultValue : sap.viz.ui5.types.Datalabel_paintingMode.rectCoordinate, deprecated: true},
+		"position" : {type : "sap.viz.ui5.types.Datalabel_position", group : "", defaultValue : sap.viz.ui5.types.Datalabel_position.inside},
+		"orientation" : {type : "sap.viz.ui5.types.Datalabel_orientation", group : "", defaultValue : sap.viz.ui5.types.Datalabel_orientation.vertical, deprecated: true},
+		"formatString" : {type : "any[][]", group : "", defaultValue : [[null]]}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Datalabel with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Datalabel.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>visible</code>.
+ * Set whether data label is visible.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>visible</code>
+ * @public
+ * @name sap.viz.ui5.types.Datalabel#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datalabel#setVisible
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>isDonut</code>.
+ * Set for donut chart only.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isDonut</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getIsDonut
+ * @function
+ */
+
+/**
+ * Setter for property <code>isDonut</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsDonut  new value for property <code>isDonut</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setIsDonut
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>type</code>.
+ * Set the type of label
+ *
+ * Default value is <code>value</code>
+ *
+ * @return {string} the value of property <code>type</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getType
+ * @function
+ */
+
+/**
+ * Setter for property <code>type</code>.
+ *
+ * Default value is <code>value</code> 
+ *
+ * @param {string} sType  new value for property <code>type</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setType
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>automaticInOutside</code>.
+ * if it is true, the data label will be automatically placed outside when data label postion property is inside and vice versa.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>automaticInOutside</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getAutomaticInOutside
+ * @function
+ */
+
+/**
+ * Setter for property <code>automaticInOutside</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bAutomaticInOutside  new value for property <code>automaticInOutside</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setAutomaticInOutside
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>showZero</code>.
+ * if it is true, the value zero will be shown in data label.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showZero</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getShowZero
+ * @function
+ */
+
+/**
+ * Setter for property <code>showZero</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowZero  new value for property <code>showZero</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setShowZero
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>isGeoChart</code>.
+ * if it is true, it is a geo chart.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isGeoChart</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getIsGeoChart
+ * @function
+ */
+
+/**
+ * Setter for property <code>isGeoChart</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsGeoChart  new value for property <code>isGeoChart</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setIsGeoChart
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>isStackMode</code>.
+ * Set for stack chart only.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isStackMode</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getIsStackMode
+ * @function
+ */
+
+/**
+ * Setter for property <code>isStackMode</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsStackMode  new value for property <code>isStackMode</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setIsStackMode
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>isPercentMode</code>.
+ * Set for percent chart only.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isPercentMode</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getIsPercentMode
+ * @function
+ */
+
+/**
+ * Setter for property <code>isPercentMode</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsPercentMode  new value for property <code>isPercentMode</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setIsPercentMode
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>positionPreference</code>.
+ * If it is true, the data label position is defined by property outsidePosition no matter whether data label value is negative.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>positionPreference</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getPositionPreference
+ * @function
+ */
+
+/**
+ * Setter for property <code>positionPreference</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bPositionPreference  new value for property <code>positionPreference</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setPositionPreference
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>outsideVisible</code>.
+ * when data label is oustide, it can control whether it is visible or not.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>outsideVisible</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getOutsideVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>outsideVisible</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bOutsideVisible  new value for property <code>outsideVisible</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setOutsideVisible
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>outsidePosition</code>.
+ * when data label is oustide, its position is above the element.
+ *
+ * Default value is <code>up</code>
+ *
+ * @return {sap.viz.ui5.types.Datalabel_outsidePosition} the value of property <code>outsidePosition</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getOutsidePosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>outsidePosition</code>.
+ *
+ * Default value is <code>up</code> 
+ *
+ * @param {sap.viz.ui5.types.Datalabel_outsidePosition} oOutsidePosition  new value for property <code>outsidePosition</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setOutsidePosition
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>paintingMode</code>.
+ * Set painting mode of data labels.
+ *
+ * Default value is <code>rectCoordinate</code>
+ *
+ * @return {sap.viz.ui5.types.Datalabel_paintingMode} the value of property <code>paintingMode</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getPaintingMode
+ * @function
+ */
+
+/**
+ * Setter for property <code>paintingMode</code>.
+ *
+ * Default value is <code>rectCoordinate</code> 
+ *
+ * @param {sap.viz.ui5.types.Datalabel_paintingMode} oPaintingMode  new value for property <code>paintingMode</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setPaintingMode
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>position</code>.
+ * Set position of data labels.
+ *
+ * Default value is <code>inside</code>
+ *
+ * @return {sap.viz.ui5.types.Datalabel_position} the value of property <code>position</code>
+ * @public
+ * @name sap.viz.ui5.types.Datalabel#getPosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>position</code>.
+ *
+ * Default value is <code>inside</code> 
+ *
+ * @param {sap.viz.ui5.types.Datalabel_position} oPosition  new value for property <code>position</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datalabel#setPosition
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>orientation</code>.
+ * Set orientation of data labels.
+ *
+ * Default value is <code>vertical</code>
+ *
+ * @return {sap.viz.ui5.types.Datalabel_orientation} the value of property <code>orientation</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#getOrientation
+ * @function
+ */
+
+/**
+ * Setter for property <code>orientation</code>.
+ *
+ * Default value is <code>vertical</code> 
+ *
+ * @param {sap.viz.ui5.types.Datalabel_orientation} oOrientation  new value for property <code>orientation</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Datalabel#setOrientation
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of datalabel.As we may have dual axis with serveral measures,the first array is applied to primary axis and the second one is applied to the second axis.If the length of format string list is less than the length of data series, the last format string in the list will be applied to exceeded data series.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {any[][]} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Datalabel#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {any[][]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Datalabel} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datalabel#setFormatString
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Datalabel.js
+
+}; // end of sap.viz.ui5.types.Datalabel
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Datatransform') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Datatransform.
+jQuery.sap.declare("sap.viz.ui5.types.Datatransform");
+
+
+
+/**
+ * Constructor for a new ui5/types/Datatransform.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getAutoBinning autoBinning} : sap.viz.ui5.types.Datatransform_autoBinning</li>
+ * <li>{@link #getDataSampling dataSampling} : sap.viz.ui5.types.Datatransform_dataSampling</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Module ui5/types/Datatransform
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Datatransform
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Datatransform", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"autoBinning" : {type : "sap.viz.ui5.types.Datatransform_autoBinning", multiple : false}, 
+    	"dataSampling" : {type : "sap.viz.ui5.types.Datatransform_dataSampling", multiple : false}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Datatransform with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Datatransform.extend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>autoBinning</code>.<br/>
+ * Settings for auto-binning algorithm
+ * 
+ * @return {sap.viz.ui5.types.Datatransform_autoBinning}
+ * @public
+ * @name sap.viz.ui5.types.Datatransform#getAutoBinning
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>autoBinning</code>.
+ * @param oAutoBinning {sap.viz.ui5.types.Datatransform_autoBinning}
+ * @return {sap.viz.ui5.types.Datatransform} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform#setAutoBinning
+ * @function
+ */
+	
+
+/**
+ * Destroys the autoBinning in the aggregation 
+ * named <code>autoBinning</code>.
+ * @return {sap.viz.ui5.types.Datatransform} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform#destroyAutoBinning
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataSampling</code>.<br/>
+ * Settings for data sampling algorithm
+ * 
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling}
+ * @public
+ * @name sap.viz.ui5.types.Datatransform#getDataSampling
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataSampling</code>.
+ * @param oDataSampling {sap.viz.ui5.types.Datatransform_dataSampling}
+ * @return {sap.viz.ui5.types.Datatransform} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform#setDataSampling
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataSampling in the aggregation 
+ * named <code>dataSampling</code>.
+ * @return {sap.viz.ui5.types.Datatransform} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform#destroyDataSampling
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Datatransform.js
+sap.viz.ui5.types.Datatransform.prototype.getAutoBinning = function() {
+  return this._getOrCreate("autoBinning");
+}
+sap.viz.ui5.types.Datatransform.prototype.getDataSampling = function() {
+  return this._getOrCreate("dataSampling");
+}
+
+}; // end of sap.viz.ui5.types.Datatransform
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Datatransform_autoBinning') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Datatransform_autoBinning.
+jQuery.sap.declare("sap.viz.ui5.types.Datatransform_autoBinning");
+
+
+
+/**
+ * Constructor for a new ui5/types/Datatransform_autoBinning.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getEnable enable} : boolean (default: false)</li>
+ * <li>{@link #getBinNumber binNumber} : int (default: 10)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings for auto-binning algorithm
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Datatransform_autoBinning
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Datatransform_autoBinning", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"enable" : {type : "boolean", group : "", defaultValue : false},
+		"binNumber" : {type : "int", group : "", defaultValue : 10}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Datatransform_autoBinning with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Datatransform_autoBinning.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enable</code>.
+ * Set whether to enable data auto binning.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>enable</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_autoBinning#getEnable
+ * @function
+ */
+
+/**
+ * Setter for property <code>enable</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bEnable  new value for property <code>enable</code>
+ * @return {sap.viz.ui5.types.Datatransform_autoBinning} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_autoBinning#setEnable
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>binNumber</code>.
+ * Set bin number.
+ *
+ * Default value is <code>10</code>
+ *
+ * @return {int} the value of property <code>binNumber</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_autoBinning#getBinNumber
+ * @function
+ */
+
+/**
+ * Setter for property <code>binNumber</code>.
+ *
+ * Default value is <code>10</code> 
+ *
+ * @param {int} iBinNumber  new value for property <code>binNumber</code>
+ * @return {sap.viz.ui5.types.Datatransform_autoBinning} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_autoBinning#setBinNumber
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Datatransform_autoBinning.js
+
+}; // end of sap.viz.ui5.types.Datatransform_autoBinning
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Datatransform_dataSampling') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Datatransform_dataSampling.
+jQuery.sap.declare("sap.viz.ui5.types.Datatransform_dataSampling");
+
+
+
+/**
+ * Constructor for a new ui5/types/Datatransform_dataSampling.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getEnable enable} : boolean (default: false)</li>
+ * <li>{@link #getSizeFactor sizeFactor} : int (default: 1)</li>
+ * <li>{@link #getNumberPrecondition numberPrecondition} : int (default: 3000)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGrid grid} : sap.viz.ui5.types.Datatransform_dataSampling_grid</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings for data sampling algorithm
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Datatransform_dataSampling
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Datatransform_dataSampling", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"enable" : {type : "boolean", group : "", defaultValue : false},
+		"sizeFactor" : {type : "int", group : "", defaultValue : 1},
+		"numberPrecondition" : {type : "int", group : "", defaultValue : 3000}
+	},
+	aggregations : {
+    	"grid" : {type : "sap.viz.ui5.types.Datatransform_dataSampling_grid", multiple : false}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Datatransform_dataSampling with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Datatransform_dataSampling.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enable</code>.
+ * Set whether to enable data sampling.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>enable</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#getEnable
+ * @function
+ */
+
+/**
+ * Setter for property <code>enable</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bEnable  new value for property <code>enable</code>
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#setEnable
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>sizeFactor</code>.
+ * Set data point percentage in original dataset
+ *
+ * Default value is <code>1</code>
+ *
+ * @return {int} the value of property <code>sizeFactor</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#getSizeFactor
+ * @function
+ */
+
+/**
+ * Setter for property <code>sizeFactor</code>.
+ *
+ * Default value is <code>1</code> 
+ *
+ * @param {int} iSizeFactor  new value for property <code>sizeFactor</code>
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#setSizeFactor
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>numberPrecondition</code>.
+ * if data point is larger than this value, data sampling will be triggered.
+ *
+ * Default value is <code>3000</code>
+ *
+ * @return {int} the value of property <code>numberPrecondition</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#getNumberPrecondition
+ * @function
+ */
+
+/**
+ * Setter for property <code>numberPrecondition</code>.
+ *
+ * Default value is <code>3000</code> 
+ *
+ * @param {int} iNumberPrecondition  new value for property <code>numberPrecondition</code>
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#setNumberPrecondition
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>grid</code>.<br/>
+ * add documentation for aggregation grid
+ * 
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling_grid}
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#getGrid
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>grid</code>.
+ * @param oGrid {sap.viz.ui5.types.Datatransform_dataSampling_grid}
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#setGrid
+ * @function
+ */
+	
+
+/**
+ * Destroys the grid in the aggregation 
+ * named <code>grid</code>.
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling#destroyGrid
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Datatransform_dataSampling.js
+sap.viz.ui5.types.Datatransform_dataSampling.prototype.getGrid = function() {
+  return this._getOrCreate("grid");
+}
+
+}; // end of sap.viz.ui5.types.Datatransform_dataSampling
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Datatransform_dataSampling_grid') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Datatransform_dataSampling_grid.
+jQuery.sap.declare("sap.viz.ui5.types.Datatransform_dataSampling_grid");
+
+
+
+/**
+ * Constructor for a new ui5/types/Datatransform_dataSampling_grid.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getRow row} : int (default: 3)</li>
+ * <li>{@link #getColumn column} : int (default: 3)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Structured Type ui5/types/Datatransform_dataSampling_grid
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Datatransform_dataSampling_grid
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Datatransform_dataSampling_grid", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"row" : {type : "int", group : "", defaultValue : 3},
+		"column" : {type : "int", group : "", defaultValue : 3}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Datatransform_dataSampling_grid with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Datatransform_dataSampling_grid.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>row</code>.
+ * The row number of grid
+ *
+ * Default value is <code>3</code>
+ *
+ * @return {int} the value of property <code>row</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling_grid#getRow
+ * @function
+ */
+
+/**
+ * Setter for property <code>row</code>.
+ *
+ * Default value is <code>3</code> 
+ *
+ * @param {int} iRow  new value for property <code>row</code>
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling_grid} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling_grid#setRow
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>column</code>.
+ * The column number of grid
+ *
+ * Default value is <code>3</code>
+ *
+ * @return {int} the value of property <code>column</code>
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling_grid#getColumn
+ * @function
+ */
+
+/**
+ * Setter for property <code>column</code>.
+ *
+ * Default value is <code>3</code> 
+ *
+ * @param {int} iColumn  new value for property <code>column</code>
+ * @return {sap.viz.ui5.types.Datatransform_dataSampling_grid} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Datatransform_dataSampling_grid#setColumn
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Datatransform_dataSampling_grid.js
+
+}; // end of sap.viz.ui5.types.Datatransform_dataSampling_grid
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Legend') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -6671,17 +9391,11 @@ jQuery.sap.declare("sap.viz.ui5.types.Legend");
  * The supported settings are:
  * <ul>
  * <li>Properties
- * <ul>
- * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getIsHierarchical isHierarchical} : boolean (default: false)</li>
- * <li>{@link #getPosition position} : sap.viz.ui5.types.Legend_position (default: sap.viz.ui5.types.Legend_position.right)</li>
- * <li>{@link #getType type} : sap.viz.ui5.types.Legend_type (default: sap.viz.ui5.types.Legend_type.ColorLegend)</li>
- * <li>{@link #getAlignment alignment} : sap.viz.ui5.types.Legend_alignment (default: sap.viz.ui5.types.Legend_alignment.start)</li>
- * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Legend_drawingEffect (default: sap.viz.ui5.types.Legend_drawingEffect.normal)</li></ul>
+ * <ul></ul>
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Legend_title</li></ul>
+ * <li>{@link #getLayout layout} : sap.viz.ui5.types.Legend_layout</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -6703,7 +9417,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Legend");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -6718,16 +9432,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend", { metadat
 
 	// ---- control specific ----
 	library : "sap.viz",
-	properties : {
-		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"isHierarchical" : {type : "boolean", group : "", defaultValue : false},
-		"position" : {type : "sap.viz.ui5.types.Legend_position", group : "", defaultValue : sap.viz.ui5.types.Legend_position.right},
-		"type" : {type : "sap.viz.ui5.types.Legend_type", group : "", defaultValue : sap.viz.ui5.types.Legend_type.ColorLegend},
-		"alignment" : {type : "sap.viz.ui5.types.Legend_alignment", group : "", defaultValue : sap.viz.ui5.types.Legend_alignment.start},
-		"drawingEffect" : {type : "sap.viz.ui5.types.Legend_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Legend_drawingEffect.normal}
-	},
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Legend_title", multiple : false}
+    	"layout" : {type : "sap.viz.ui5.types.Legend_layout", multiple : false}
 	}
 }});
 
@@ -6750,195 +9456,47 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend", { metadat
 
 
 /**
- * Getter for property <code>visible</code>.
- * Set visibility of legend.
- *
- * Default value is <code>true</code>
- *
- * @return {boolean} the value of property <code>visible</code>
+ * Getter for aggregation <code>layout</code>.<br/>
+ * Settings for layout of legend area.
+ * 
+ * @return {sap.viz.ui5.types.Legend_layout}
  * @public
- * @name sap.viz.ui5.types.Legend#getVisible
+ * @name sap.viz.ui5.types.Legend#getLayout
  * @function
  */
 
 
 /**
- * Setter for property <code>visible</code>.
- *
- * Default value is <code>true</code> 
- *
- * @param {boolean} bVisible  new value for property <code>visible</code>
+ * Setter for the aggregated <code>layout</code>.
+ * @param oLayout {sap.viz.ui5.types.Legend_layout}
  * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Legend#setVisible
- * @function
- */
-
-/**
- * Getter for property <code>isHierarchical</code>.
- * Set hierarchy legend. Supported only when legend is located in the right of chart.
- *
- * Default value is <code>false</code>
- *
- * @return {boolean} the value of property <code>isHierarchical</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getIsHierarchical
- * @function
- */
-
-
-/**
- * Setter for property <code>isHierarchical</code>.
- *
- * Default value is <code>false</code> 
- *
- * @param {boolean} bIsHierarchical  new value for property <code>isHierarchical</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setIsHierarchical
- * @function
- */
-
-/**
- * Getter for property <code>position</code>.
- * Set legend position. Only support legend is located in the right side.
- *
- * Default value is <code>right</code>
- *
- * @return {sap.viz.ui5.types.Legend_position} the value of property <code>position</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getPosition
- * @function
- */
-
-
-/**
- * Setter for property <code>position</code>.
- *
- * Default value is <code>right</code> 
- *
- * @param {sap.viz.ui5.types.Legend_position} oPosition  new value for property <code>position</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setPosition
- * @function
- */
-
-/**
- * Getter for property <code>type</code>.
- * Set legend type of Bubble chart. Non-bubble chart is not supported.
- *
- * Default value is <code>ColorLegend</code>
- *
- * @return {sap.viz.ui5.types.Legend_type} the value of property <code>type</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getType
- * @function
- */
-
-
-/**
- * Setter for property <code>type</code>.
- *
- * Default value is <code>ColorLegend</code> 
- *
- * @param {sap.viz.ui5.types.Legend_type} oType  new value for property <code>type</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setType
- * @function
- */
-
-/**
- * Getter for property <code>alignment</code>.
- * Set alignment of legend.
- *
- * Default value is <code>start</code>
- *
- * @return {sap.viz.ui5.types.Legend_alignment} the value of property <code>alignment</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getAlignment
- * @function
- */
-
-
-/**
- * Setter for property <code>alignment</code>.
- *
- * Default value is <code>start</code> 
- *
- * @param {sap.viz.ui5.types.Legend_alignment} oAlignment  new value for property <code>alignment</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setAlignment
- * @function
- */
-
-/**
- * Getter for property <code>drawingEffect</code>.
- * Set drawing effect of legend.
- *
- * Default value is <code>normal</code>
- *
- * @return {sap.viz.ui5.types.Legend_drawingEffect} the value of property <code>drawingEffect</code>
- * @public
- * @name sap.viz.ui5.types.Legend#getDrawingEffect
- * @function
- */
-
-
-/**
- * Setter for property <code>drawingEffect</code>.
- *
- * Default value is <code>normal</code> 
- *
- * @param {sap.viz.ui5.types.Legend_drawingEffect} oDrawingEffect  new value for property <code>drawingEffect</code>
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#setDrawingEffect
+ * @name sap.viz.ui5.types.Legend#setLayout
  * @function
  */
 	
-/**
- * Getter for aggregation <code>title</code>.<br/>
- * Settings for legend title.
- * 
- * @return {sap.viz.ui5.types.Legend_title}
- * @public
- * @name sap.viz.ui5.types.Legend#getTitle
- * @function
- */
 
 /**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Legend_title}
+ * Destroys the layout in the aggregation 
+ * named <code>layout</code>.
  * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Legend#setTitle
+ * @name sap.viz.ui5.types.Legend#destroyLayout
  * @function
  */
 
-
-/**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
- * @return {sap.viz.ui5.types.Legend} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend#destroyTitle
- * @function
- */
 
 // Start of sap/viz/ui5/types/Legend.js
-sap.viz.ui5.types.Legend.prototype.getTitle = function() {
-  return this._getOrCreate("title");
+sap.viz.ui5.types.Legend.prototype.getLayout = function() {
+  return this._getOrCreate("layout");
 }
 
 }; // end of sap.viz.ui5.types.Legend
-if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Legend_title') ) {
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Legend_layout') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -6946,13 +9504,13 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Legend_title') ) {
  * source files only (*.control, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides control sap.viz.ui5.types.Legend_title.
-jQuery.sap.declare("sap.viz.ui5.types.Legend_title");
+// Provides control sap.viz.ui5.types.Legend_layout.
+jQuery.sap.declare("sap.viz.ui5.types.Legend_layout");
 
 
 
 /**
- * Constructor for a new ui5/types/Legend_title.
+ * Constructor for a new ui5/types/Legend_layout.
  * 
  * Accepts an object literal <code>mSettings</code> that defines initial 
  * property values, aggregated and associated objects as well as event handlers. 
@@ -6967,8 +9525,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Legend_title");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getVisible visible} : boolean (default: false)</li>
- * <li>{@link #getText text} : string</li></ul>
+ * <li>{@link #getPosition position} : string (default: 'right')</li>
+ * <li>{@link #getPriority priority} : int (default: 1)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -6989,34 +9547,34 @@ jQuery.sap.declare("sap.viz.ui5.types.Legend_title");
  * @param {object} [mSettings] initial settings for the new control
  *
  * @class
- * Settings for legend title.
+ * Settings for layout of legend area.
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
- * @name sap.viz.ui5.types.Legend_title
+ * @name sap.viz.ui5.types.Legend_layout
  */
-sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend_title", { metadata : {
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend_layout", { metadata : {
 
 	// ---- object ----
 
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"visible" : {type : "boolean", group : "", defaultValue : false},
-		"text" : {type : "string", group : "", defaultValue : null}
+		"position" : {type : "string", group : "", defaultValue : 'right'},
+		"priority" : {type : "int", group : "", defaultValue : 1, deprecated: true}
 	}
 }});
 
 
 /**
- * Creates a new subclass of class sap.viz.ui5.types.Legend_title with name <code>sClassName</code> 
+ * Creates a new subclass of class sap.viz.ui5.types.Legend_layout with name <code>sClassName</code> 
  * and enriches it with the information contained in <code>oClassInfo</code>.
  * 
  * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
@@ -7027,69 +9585,73 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Legend_title", { m
  * @return {function} the created class / constructor function
  * @public
  * @static
- * @name sap.viz.ui5.types.Legend_title.extend
+ * @name sap.viz.ui5.types.Legend_layout.extend
  * @function
  */
 
 
 /**
- * Getter for property <code>visible</code>.
- * Set visibility of legend title.
+ * Getter for property <code>position</code>.
+ * Set the position of the legend area.
  *
- * Default value is <code>false</code>
+ * Default value is <code>right</code>
  *
- * @return {boolean} the value of property <code>visible</code>
+ * @return {string} the value of property <code>position</code>
  * @public
- * @name sap.viz.ui5.types.Legend_title#getVisible
+ * @name sap.viz.ui5.types.Legend_layout#getPosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>position</code>.
+ *
+ * Default value is <code>right</code> 
+ *
+ * @param {string} sPosition  new value for property <code>position</code>
+ * @return {sap.viz.ui5.types.Legend_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Legend_layout#setPosition
  * @function
  */
 
 
 /**
- * Setter for property <code>visible</code>.
+ * Getter for property <code>priority</code>.
+ * Set the priority of the position for the legend area.
  *
- * Default value is <code>false</code> 
+ * Default value is <code>1</code>
  *
- * @param {boolean} bVisible  new value for property <code>visible</code>
- * @return {sap.viz.ui5.types.Legend_title} <code>this</code> to allow method chaining
+ * @return {int} the value of property <code>priority</code>
  * @public
- * @name sap.viz.ui5.types.Legend_title#setVisible
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Legend_layout#getPriority
  * @function
  */
 
 /**
- * Getter for property <code>text</code>.
- * Set text of legend title.
+ * Setter for property <code>priority</code>.
  *
- * Default value is empty/<code>undefined</code>
+ * Default value is <code>1</code> 
  *
- * @return {string} the value of property <code>text</code>
+ * @param {int} iPriority  new value for property <code>priority</code>
+ * @return {sap.viz.ui5.types.Legend_layout} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Legend_title#getText
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Legend_layout#setPriority
  * @function
  */
 
 
-/**
- * Setter for property <code>text</code>.
- *
- * Default value is empty/<code>undefined</code> 
- *
- * @param {string} sText  new value for property <code>text</code>
- * @return {sap.viz.ui5.types.Legend_title} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Legend_title#setText
- * @function
- */
+// Start of sap/viz/ui5/types/Legend_layout.js
 
-// Start of sap/viz/ui5/types/Legend_title.js
-
-}; // end of sap.viz.ui5.types.Legend_title
+}; // end of sap.viz.ui5.types.Legend_layout
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Line') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -7151,7 +9713,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -7174,7 +9736,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
 		"width" : {type : "int", group : "", defaultValue : 2}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Line_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Line_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.Line_animation", multiple : false}, 
     	"hoverline" : {type : "sap.viz.ui5.types.Line_hoverline", multiple : false}, 
     	"marker" : {type : "sap.viz.ui5.types.Line_marker", multiple : false}
@@ -7201,7 +9763,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -7210,7 +9772,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -7224,6 +9785,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -7235,7 +9797,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -7249,6 +9810,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -7260,7 +9822,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -7274,6 +9835,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -7285,7 +9847,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#getDrawingEffect
  * @function
  */
-
 
 /**
  * Setter for property <code>drawingEffect</code>.
@@ -7299,6 +9860,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Getter for property <code>width</code>.
  * Set width of line, range[1,7]. When beyond the range, the line width is default size 2.
@@ -7311,7 +9873,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -7323,45 +9884,55 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setWidth
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.Line_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Line_tooltip}
  * @return {sap.viz.ui5.types.Line} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.Line} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
- * Settings for tooltip related properties.
+ * Settings for animation related properties.
  * 
  * @return {sap.viz.ui5.types.Line_animation}
  * @public
  * @name sap.viz.ui5.types.Line#getAnimation
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>animation</code>.
@@ -7371,7 +9942,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -7381,7 +9952,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#destroyAnimation
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>hoverline</code>.<br/>
  * Settings for hoverline properties.
@@ -7392,6 +9964,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>hoverline</code>.
  * @param oHoverline {sap.viz.ui5.types.Line_hoverline}
@@ -7400,7 +9973,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setHoverline
  * @function
  */
-
+	
 
 /**
  * Destroys the hoverline in the aggregation 
@@ -7410,7 +9983,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#destroyHoverline
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>marker</code>.<br/>
  * Settings for marker/data point graphics
@@ -7421,6 +9995,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>marker</code>.
  * @param oMarker {sap.viz.ui5.types.Line_marker}
@@ -7429,7 +10004,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#setMarker
  * @function
  */
-
+	
 
 /**
  * Destroys the marker in the aggregation 
@@ -7439,6 +10014,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line", { metadata 
  * @name sap.viz.ui5.types.Line#destroyMarker
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Line.js
 sap.viz.ui5.types.Line.prototype.getToolTip = function() {
@@ -7459,7 +10035,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Line_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -7488,7 +10064,9 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_animation");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -7509,11 +10087,11 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_animation");
  * @param {object} [mSettings] initial settings for the new control
  *
  * @class
- * Settings for tooltip related properties.
+ * Settings for animation related properties.
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -7529,7 +10107,9 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_animation", {
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"dataLoading" : {type : "boolean", group : "", defaultValue : true}
+		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -7563,7 +10143,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_animation", {
  * @function
  */
 
-
 /**
  * Setter for property <code>dataLoading</code>.
  *
@@ -7576,6 +10155,57 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_animation", {
  * @function
  */
 
+
+/**
+ * Getter for property <code>dataUpdating</code>.
+ * Set enable/disable data updating animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>dataUpdating</code>
+ * @public
+ * @name sap.viz.ui5.types.Line_animation#getDataUpdating
+ * @function
+ */
+
+/**
+ * Setter for property <code>dataUpdating</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bDataUpdating  new value for property <code>dataUpdating</code>
+ * @return {sap.viz.ui5.types.Line_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Line_animation#setDataUpdating
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Line_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Line_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Line_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Line_animation.js
 
 }; // end of sap.viz.ui5.types.Line_animation
@@ -7583,7 +10213,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Line_hoverline') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -7637,7 +10267,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_hoverline");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -7687,7 +10317,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_hoverline", {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -7700,6 +10329,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_hoverline", {
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Line_hoverline.js
 
 }; // end of sap.viz.ui5.types.Line_hoverline
@@ -7707,7 +10337,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Line_marker') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -7763,7 +10393,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_marker");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -7815,7 +10445,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -7827,6 +10456,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @name sap.viz.ui5.types.Line_marker#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>shape</code>.
@@ -7840,7 +10470,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>shape</code>.
  *
@@ -7852,6 +10481,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @name sap.viz.ui5.types.Line_marker#setShape
  * @function
  */
+
 
 /**
  * Getter for property <code>size</code>.
@@ -7865,7 +10495,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>size</code>.
  *
@@ -7878,6 +10507,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_marker", { me
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Line_marker.js
 
 }; // end of sap.viz.ui5.types.Line_marker
@@ -7885,7 +10515,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Line_tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -7939,18 +10569,19 @@ jQuery.sap.declare("sap.viz.ui5.types.Line_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Line_tooltip
  */
 sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_tooltip", { metadata : {
 
 	// ---- object ----
+	deprecated : true,
 
 	// ---- control specific ----
 	library : "sap.viz",
@@ -7989,7 +10620,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_tooltip", { m
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -8002,6 +10632,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Line_tooltip", { m
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Line_tooltip.js
 
 }; // end of sap.viz.ui5.types.Line_tooltip
@@ -8009,7 +10640,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Pie') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -8040,8 +10671,10 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie");
  * <ul>
  * <li>{@link #getColorPalette colorPalette} : string[] (default: ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4'])</li>
  * <li>{@link #getIsDonut isDonut} : boolean (default: false)</li>
+ * <li>{@link #getIsGeoPie isGeoPie} : boolean (default: false)</li>
  * <li>{@link #getValign valign} : sap.viz.ui5.types.Pie_valign (default: sap.viz.ui5.types.Pie_valign.top)</li>
- * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Pie_drawingEffect (default: sap.viz.ui5.types.Pie_drawingEffect.normal)</li></ul>
+ * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Pie_drawingEffect (default: sap.viz.ui5.types.Pie_drawingEffect.normal)</li>
+ * <li>{@link #getPlotScale plotScale} : float (default: 1)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -8068,7 +10701,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -8086,8 +10719,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
 	properties : {
 		"colorPalette" : {type : "string[]", group : "", defaultValue : ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4']},
 		"isDonut" : {type : "boolean", group : "", defaultValue : false},
-		"valign" : {type : "sap.viz.ui5.types.Pie_valign", group : "", defaultValue : sap.viz.ui5.types.Pie_valign.top},
-		"drawingEffect" : {type : "sap.viz.ui5.types.Pie_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Pie_drawingEffect.normal}
+		"isGeoPie" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"valign" : {type : "sap.viz.ui5.types.Pie_valign", group : "", defaultValue : sap.viz.ui5.types.Pie_valign.top, deprecated: true},
+		"drawingEffect" : {type : "sap.viz.ui5.types.Pie_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Pie_drawingEffect.normal},
+		"plotScale" : {type : "float", group : "", defaultValue : 1, deprecated: true}
 	},
 	aggregations : {
     	"animation" : {type : "sap.viz.ui5.types.Pie_animation", multiple : false}, 
@@ -8125,7 +10760,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>colorPalette</code>.
  *
@@ -8137,6 +10771,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setColorPalette
  * @function
  */
+
 
 /**
  * Getter for property <code>isDonut</code>.
@@ -8150,7 +10785,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>isDonut</code>.
  *
@@ -8163,6 +10797,36 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
+
+/**
+ * Getter for property <code>isGeoPie</code>.
+ * Set whether is a geo pie.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isGeoPie</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#getIsGeoPie
+ * @function
+ */
+
+/**
+ * Setter for property <code>isGeoPie</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsGeoPie  new value for property <code>isGeoPie</code>
+ * @return {sap.viz.ui5.types.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#setIsGeoPie
+ * @function
+ */
+
+
 /**
  * Getter for property <code>valign</code>.
  * Set vertical aligment.
@@ -8171,10 +10835,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  *
  * @return {sap.viz.ui5.types.Pie_valign} the value of property <code>valign</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Pie#getValign
  * @function
  */
-
 
 /**
  * Setter for property <code>valign</code>.
@@ -8184,9 +10849,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @param {sap.viz.ui5.types.Pie_valign} oValign  new value for property <code>valign</code>
  * @return {sap.viz.ui5.types.Pie} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Pie#setValign
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -8200,7 +10868,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -8212,7 +10879,37 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setDrawingEffect
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>plotScale</code>.
+ * Set plot scale of Pie.
+ *
+ * Default value is <code>1</code>
+ *
+ * @return {float} the value of property <code>plotScale</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#getPlotScale
+ * @function
+ */
+
+/**
+ * Setter for property <code>plotScale</code>.
+ *
+ * Default value is <code>1</code> 
+ *
+ * @param {float} fPlotScale  new value for property <code>plotScale</code>
+ * @return {sap.viz.ui5.types.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#setPlotScale
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -8223,6 +10920,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Pie_animation}
@@ -8231,7 +10929,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -8241,7 +10939,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#destroyAnimation
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
@@ -8252,6 +10951,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Pie_tooltip}
@@ -8260,7 +10960,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
@@ -8270,6 +10970,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#destroyToolTip
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Pie.js
 sap.viz.ui5.types.Pie.prototype.getAnimation = function() {
@@ -8284,7 +10985,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Pie_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -8313,7 +11014,9 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_animation");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -8338,7 +11041,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -8354,7 +11057,9 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_animation", { 
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"dataLoading" : {type : "boolean", group : "", defaultValue : true}
+		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -8378,7 +11083,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_animation", { 
 
 /**
  * Getter for property <code>dataLoading</code>.
- * Set enabled/disabled data loading animation of plot area.
+ * Set enable/disable data loading animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -8387,7 +11092,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_animation", { 
  * @name sap.viz.ui5.types.Pie_animation#getDataLoading
  * @function
  */
-
 
 /**
  * Setter for property <code>dataLoading</code>.
@@ -8401,6 +11105,57 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_animation", { 
  * @function
  */
 
+
+/**
+ * Getter for property <code>dataUpdating</code>.
+ * Set enable/disable data updating animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>dataUpdating</code>
+ * @public
+ * @name sap.viz.ui5.types.Pie_animation#getDataUpdating
+ * @function
+ */
+
+/**
+ * Setter for property <code>dataUpdating</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bDataUpdating  new value for property <code>dataUpdating</code>
+ * @return {sap.viz.ui5.types.Pie_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Pie_animation#setDataUpdating
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Pie_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Pie_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Pie_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Pie_animation.js
 
 }; // end of sap.viz.ui5.types.Pie_animation
@@ -8408,7 +11163,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Pie_tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -8439,7 +11194,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_tooltip");
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getValueFormat valueFormat} : string (default: 'n')</li>
- * <li>{@link #getPercentageFormat percentageFormat} : string (default: '.0%')</li></ul>
+ * <li>{@link #getPercentageFormat percentageFormat} : string (default: '.0%')</li>
+ * <li>{@link #getFormatString formatString} : string[] (default: ['null'])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -8464,7 +11220,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Pie_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -8482,7 +11238,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
 		"valueFormat" : {type : "string", group : "", defaultValue : 'n'},
-		"percentageFormat" : {type : "string", group : "", defaultValue : '.0%'}
+		"percentageFormat" : {type : "string", group : "", defaultValue : '.0%'},
+		"formatString" : {type : "string[]", group : "", defaultValue : ['null']}
 	}
 }});
 
@@ -8516,7 +11273,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -8528,6 +11284,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @name sap.viz.ui5.types.Pie_tooltip#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>valueFormat</code>.
@@ -8541,7 +11298,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>valueFormat</code>.
  *
@@ -8553,6 +11309,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @name sap.viz.ui5.types.Pie_tooltip#setValueFormat
  * @function
  */
+
 
 /**
  * Getter for property <code>percentageFormat</code>.
@@ -8566,7 +11323,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>percentageFormat</code>.
  *
@@ -8579,14 +11335,498 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of tooltip. The first string is applied to value and the second is applied to percentage.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {string[]} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Pie_tooltip#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string[]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Pie_tooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Pie_tooltip#setFormatString
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Pie_tooltip.js
 
 }; // end of sap.viz.ui5.types.Pie_tooltip
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.RootContainer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.RootContainer.
+jQuery.sap.declare("sap.viz.ui5.types.RootContainer");
+
+
+
+/**
+ * Constructor for a new ui5/types/RootContainer.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getLayout layout} : sap.viz.ui5.types.RootContainer_layout</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Module ui5/types/RootContainer
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.RootContainer
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.RootContainer", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"layout" : {type : "sap.viz.ui5.types.RootContainer_layout", multiple : false}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.RootContainer with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.RootContainer.extend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>layout</code>.<br/>
+ * Layout properties
+ * 
+ * @return {sap.viz.ui5.types.RootContainer_layout}
+ * @public
+ * @name sap.viz.ui5.types.RootContainer#getLayout
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>layout</code>.
+ * @param oLayout {sap.viz.ui5.types.RootContainer_layout}
+ * @return {sap.viz.ui5.types.RootContainer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer#setLayout
+ * @function
+ */
+	
+
+/**
+ * Destroys the layout in the aggregation 
+ * named <code>layout</code>.
+ * @return {sap.viz.ui5.types.RootContainer} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer#destroyLayout
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/RootContainer.js
+sap.viz.ui5.types.RootContainer.prototype.getLayout = function() {
+  return this._getOrCreate("layout");
+}
+
+}; // end of sap.viz.ui5.types.RootContainer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.RootContainer_layout') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.RootContainer_layout.
+jQuery.sap.declare("sap.viz.ui5.types.RootContainer_layout");
+
+
+
+/**
+ * Constructor for a new ui5/types/RootContainer_layout.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getAdjustPolicy adjustPolicy} : string</li>
+ * <li>{@link #getPadding padding} : int (default: 24)</li>
+ * <li>{@link #getPaddingTop paddingTop} : int (default: 24)</li>
+ * <li>{@link #getPaddingLeft paddingLeft} : int (default: 24)</li>
+ * <li>{@link #getPaddingRight paddingRight} : int (default: 24)</li>
+ * <li>{@link #getPaddingBottom paddingBottom} : int (default: 24)</li>
+ * <li>{@link #getVgap vgap} : int (default: 8)</li>
+ * <li>{@link #getHgap hgap} : int (default: 8)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Layout properties
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.RootContainer_layout
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.RootContainer_layout", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"adjustPolicy" : {type : "string", group : "", defaultValue : null, deprecated: true},
+		"padding" : {type : "int", group : "", defaultValue : 24},
+		"paddingTop" : {type : "int", group : "", defaultValue : 24},
+		"paddingLeft" : {type : "int", group : "", defaultValue : 24},
+		"paddingRight" : {type : "int", group : "", defaultValue : 24},
+		"paddingBottom" : {type : "int", group : "", defaultValue : 24},
+		"vgap" : {type : "int", group : "", defaultValue : 8, deprecated: true},
+		"hgap" : {type : "int", group : "", defaultValue : 8, deprecated: true}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.RootContainer_layout with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.RootContainer_layout.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>adjustPolicy</code>.
+ * Indicates the layout adjust policy.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>adjustPolicy</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.RootContainer_layout#getAdjustPolicy
+ * @function
+ */
+
+/**
+ * Setter for property <code>adjustPolicy</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sAdjustPolicy  new value for property <code>adjustPolicy</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.RootContainer_layout#setAdjustPolicy
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>padding</code>.
+ * Universal padding value settings. The single value will be applied to all laterals of the chart area. Explicit settings for each edge are supported.
+ *
+ * Default value is <code>24</code>
+ *
+ * @return {int} the value of property <code>padding</code>
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#getPadding
+ * @function
+ */
+
+/**
+ * Setter for property <code>padding</code>.
+ *
+ * Default value is <code>24</code> 
+ *
+ * @param {int} iPadding  new value for property <code>padding</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#setPadding
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>paddingTop</code>.
+ * Padding value for the top side
+ *
+ * Default value is <code>24</code>
+ *
+ * @return {int} the value of property <code>paddingTop</code>
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#getPaddingTop
+ * @function
+ */
+
+/**
+ * Setter for property <code>paddingTop</code>.
+ *
+ * Default value is <code>24</code> 
+ *
+ * @param {int} iPaddingTop  new value for property <code>paddingTop</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#setPaddingTop
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>paddingLeft</code>.
+ * Padding value for the left side
+ *
+ * Default value is <code>24</code>
+ *
+ * @return {int} the value of property <code>paddingLeft</code>
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#getPaddingLeft
+ * @function
+ */
+
+/**
+ * Setter for property <code>paddingLeft</code>.
+ *
+ * Default value is <code>24</code> 
+ *
+ * @param {int} iPaddingLeft  new value for property <code>paddingLeft</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#setPaddingLeft
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>paddingRight</code>.
+ * Padding value for the right side
+ *
+ * Default value is <code>24</code>
+ *
+ * @return {int} the value of property <code>paddingRight</code>
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#getPaddingRight
+ * @function
+ */
+
+/**
+ * Setter for property <code>paddingRight</code>.
+ *
+ * Default value is <code>24</code> 
+ *
+ * @param {int} iPaddingRight  new value for property <code>paddingRight</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#setPaddingRight
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>paddingBottom</code>.
+ * Padding value for the bottom side
+ *
+ * Default value is <code>24</code>
+ *
+ * @return {int} the value of property <code>paddingBottom</code>
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#getPaddingBottom
+ * @function
+ */
+
+/**
+ * Setter for property <code>paddingBottom</code>.
+ *
+ * Default value is <code>24</code> 
+ *
+ * @param {int} iPaddingBottom  new value for property <code>paddingBottom</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.RootContainer_layout#setPaddingBottom
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>vgap</code>.
+ * Vertical gap value between UI components
+ *
+ * Default value is <code>8</code>
+ *
+ * @return {int} the value of property <code>vgap</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.RootContainer_layout#getVgap
+ * @function
+ */
+
+/**
+ * Setter for property <code>vgap</code>.
+ *
+ * Default value is <code>8</code> 
+ *
+ * @param {int} iVgap  new value for property <code>vgap</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.RootContainer_layout#setVgap
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>hgap</code>.
+ * Horizontal gap value between UI components
+ *
+ * Default value is <code>8</code>
+ *
+ * @return {int} the value of property <code>hgap</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.RootContainer_layout#getHgap
+ * @function
+ */
+
+/**
+ * Setter for property <code>hgap</code>.
+ *
+ * Default value is <code>8</code> 
+ *
+ * @param {int} iHgap  new value for property <code>hgap</code>
+ * @return {sap.viz.ui5.types.RootContainer_layout} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.RootContainer_layout#setHgap
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/RootContainer_layout.js
+
+}; // end of sap.viz.ui5.types.RootContainer_layout
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Scatter') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -8616,13 +11856,14 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter");
  * <li>Properties
  * <ul>
  * <li>{@link #getColorPalette colorPalette} : string[] (default: ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4'])</li>
- * <li>{@link #getShapePalette shapePalette} : string[] (default: ['circle','square','diamond','triangle-up','triangle-down','triangle-left','triangle-right','cross','intersection'])</li>
+ * <li>{@link #getShapePalette shapePalette} : string[] (default: ['circle','square','diamond','triangleUp','triangleDown','triangleLeft','triangleRight','cross','intersection'])</li>
  * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Scatter_drawingEffect (default: sap.viz.ui5.types.Scatter_drawingEffect.normal)</li>
  * <li>{@link #getMarkerSize markerSize} : int (default: 10)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Scatter_tooltip</li>
+ * <li>{@link #getAxisTooltip axisTooltip} : sap.viz.ui5.types.Scatter_axisTooltip</li>
+ * <li>{@link #getHoverline hoverline} : sap.viz.ui5.types.Scatter_hoverline</li>
  * <li>{@link #getAnimation animation} : sap.viz.ui5.types.Scatter_animation</li></ul>
  * </li>
  * <li>Associations
@@ -8645,7 +11886,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -8662,12 +11903,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
 	library : "sap.viz",
 	properties : {
 		"colorPalette" : {type : "string[]", group : "", defaultValue : ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4']},
-		"shapePalette" : {type : "string[]", group : "", defaultValue : ['circle','square','diamond','triangle-up','triangle-down','triangle-left','triangle-right','cross','intersection']},
+		"shapePalette" : {type : "string[]", group : "", defaultValue : ['circle','square','diamond','triangleUp','triangleDown','triangleLeft','triangleRight','cross','intersection']},
 		"drawingEffect" : {type : "sap.viz.ui5.types.Scatter_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Scatter_drawingEffect.normal},
 		"markerSize" : {type : "int", group : "", defaultValue : 10}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Scatter_tooltip", multiple : false}, 
+    	"axisTooltip" : {type : "sap.viz.ui5.types.Scatter_axisTooltip", multiple : false}, 
+    	"hoverline" : {type : "sap.viz.ui5.types.Scatter_hoverline", multiple : false}, 
     	"animation" : {type : "sap.viz.ui5.types.Scatter_animation", multiple : false}
 	}
 }});
@@ -8702,7 +11944,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>colorPalette</code>.
  *
@@ -8715,11 +11956,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
+
 /**
  * Getter for property <code>shapePalette</code>.
  * Set marker shape of bubble.
  *
- * Default value is <code>circle,square,diamond,triangle-up,triangle-down,triangle-left,triangle-right,cross,intersection</code>
+ * Default value is <code>circle,square,diamond,triangleUp,triangleDown,triangleLeft,triangleRight,cross,intersection</code>
  *
  * @return {string[]} the value of property <code>shapePalette</code>
  * @public
@@ -8727,11 +11969,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>shapePalette</code>.
  *
- * Default value is <code>circle,square,diamond,triangle-up,triangle-down,triangle-left,triangle-right,cross,intersection</code> 
+ * Default value is <code>circle,square,diamond,triangleUp,triangleDown,triangleLeft,triangleRight,cross,intersection</code> 
  *
  * @param {string[]} aShapePalette  new value for property <code>shapePalette</code>
  * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
@@ -8739,6 +11980,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setShapePalette
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -8752,7 +11994,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -8764,6 +12005,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setDrawingEffect
  * @function
  */
+
 
 /**
  * Getter for property <code>markerSize</code>.
@@ -8777,7 +12019,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>markerSize</code>.
  *
@@ -8789,36 +12030,70 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setMarkerSize
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>toolTip</code>.<br/>
+ * Getter for aggregation <code>axisTooltip</code>.<br/>
  * Set tooltip related properties.
  * 
- * @return {sap.viz.ui5.types.Scatter_tooltip}
+ * @return {sap.viz.ui5.types.Scatter_axisTooltip}
  * @public
- * @name sap.viz.ui5.types.Scatter#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Scatter_tooltip}
- * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.types.Scatter#setToolTip
+ * @name sap.viz.ui5.types.Scatter#getAxisTooltip
  * @function
  */
 
 
 /**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
+ * Setter for the aggregated <code>axisTooltip</code>.
+ * @param oAxisTooltip {sap.viz.ui5.types.Scatter_axisTooltip}
  * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.types.Scatter#destroyToolTip
+ * @name sap.viz.ui5.types.Scatter#setAxisTooltip
  * @function
  */
 	
+
+/**
+ * Destroys the axisTooltip in the aggregation 
+ * named <code>axisTooltip</code>.
+ * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter#destroyAxisTooltip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>hoverline</code>.<br/>
+ * Settings for hoverline properties.
+ * 
+ * @return {sap.viz.ui5.types.Scatter_hoverline}
+ * @public
+ * @name sap.viz.ui5.types.Scatter#getHoverline
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>hoverline</code>.
+ * @param oHoverline {sap.viz.ui5.types.Scatter_hoverline}
+ * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter#setHoverline
+ * @function
+ */
+	
+
+/**
+ * Destroys the hoverline in the aggregation 
+ * named <code>hoverline</code>.
+ * @return {sap.viz.ui5.types.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter#destroyHoverline
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Set animation of bubble/scatter.
@@ -8829,6 +12104,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Scatter_animation}
@@ -8837,7 +12113,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @name sap.viz.ui5.types.Scatter#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -8848,9 +12124,13 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter", { metada
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Scatter.js
-sap.viz.ui5.types.Scatter.prototype.getToolTip = function() {
-  return this._getOrCreate("toolTip");
+sap.viz.ui5.types.Scatter.prototype.getAxisTooltip = function() {
+  return this._getOrCreate("axisTooltip");
+}
+sap.viz.ui5.types.Scatter.prototype.getHoverline = function() {
+  return this._getOrCreate("hoverline");
 }
 sap.viz.ui5.types.Scatter.prototype.getAnimation = function() {
   return this._getOrCreate("animation");
@@ -8861,7 +12141,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Scatter_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -8891,7 +12171,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter_animation");
  * <li>Properties
  * <ul>
  * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
- * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -8916,7 +12197,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -8933,7 +12214,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_animation"
 	library : "sap.viz",
 	properties : {
 		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
-		"dataUpdating" : {type : "boolean", group : "", defaultValue : true}
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -8957,7 +12239,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_animation"
 
 /**
  * Getter for property <code>dataLoading</code>.
- * enable/disable data loading animation of bubble/scatter.
+ * Set enable/disable data loading animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -8966,7 +12248,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_animation"
  * @name sap.viz.ui5.types.Scatter_animation#getDataLoading
  * @function
  */
-
 
 /**
  * Setter for property <code>dataLoading</code>.
@@ -8980,9 +12261,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_animation"
  * @function
  */
 
+
 /**
  * Getter for property <code>dataUpdating</code>.
- * enable/disable data updating animation of bubble/scatter.
+ * Set enable/disable data updating animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -8991,7 +12273,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_animation"
  * @name sap.viz.ui5.types.Scatter_animation#getDataUpdating
  * @function
  */
-
 
 /**
  * Setter for property <code>dataUpdating</code>.
@@ -9005,14 +12286,40 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_animation"
  * @function
  */
 
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Scatter_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Scatter_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Scatter_animation.js
 
 }; // end of sap.viz.ui5.types.Scatter_animation
-if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Scatter_tooltip') ) {
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Scatter_axisTooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -9020,13 +12327,13 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Scatter_tooltip') ) {
  * source files only (*.control, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides control sap.viz.ui5.types.Scatter_tooltip.
-jQuery.sap.declare("sap.viz.ui5.types.Scatter_tooltip");
+// Provides control sap.viz.ui5.types.Scatter_axisTooltip.
+jQuery.sap.declare("sap.viz.ui5.types.Scatter_axisTooltip");
 
 
 
 /**
- * Constructor for a new ui5/types/Scatter_tooltip.
+ * Constructor for a new ui5/types/Scatter_axisTooltip.
  * 
  * Accepts an object literal <code>mSettings</code> that defines initial 
  * property values, aggregated and associated objects as well as event handlers. 
@@ -9041,7 +12348,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter_tooltip");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getEnabled enabled} : boolean (default: true)</li></ul>
+ * <li>{@link #getVisible visible} : boolean (default: true)</li>
+ * <li>{@link #getFormatString formatString} : string[] (default: ['null'])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -9066,29 +12374,30 @@ jQuery.sap.declare("sap.viz.ui5.types.Scatter_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
  * @experimental Since version 1.7.2. 
  * Charting API is not finished yet and might change completely
- * @name sap.viz.ui5.types.Scatter_tooltip
+ * @name sap.viz.ui5.types.Scatter_axisTooltip
  */
-sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_tooltip", { metadata : {
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_axisTooltip", { metadata : {
 
 	// ---- object ----
 
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"enabled" : {type : "boolean", group : "", defaultValue : true}
+		"visible" : {type : "boolean", group : "", defaultValue : true},
+		"formatString" : {type : "string[]", group : "", defaultValue : ['null']}
 	}
 }});
 
 
 /**
- * Creates a new subclass of class sap.viz.ui5.types.Scatter_tooltip with name <code>sClassName</code> 
+ * Creates a new subclass of class sap.viz.ui5.types.Scatter_axisTooltip with name <code>sClassName</code> 
  * and enriches it with the information contained in <code>oClassInfo</code>.
  * 
  * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
@@ -9099,44 +12408,193 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_tooltip", 
  * @return {function} the created class / constructor function
  * @public
  * @static
- * @name sap.viz.ui5.types.Scatter_tooltip.extend
+ * @name sap.viz.ui5.types.Scatter_axisTooltip.extend
  * @function
  */
 
 
 /**
- * Getter for property <code>enabled</code>.
+ * Getter for property <code>visible</code>.
  * enabled/disabled tooltip.
  *
  * Default value is <code>true</code>
  *
- * @return {boolean} the value of property <code>enabled</code>
+ * @return {boolean} the value of property <code>visible</code>
  * @public
- * @name sap.viz.ui5.types.Scatter_tooltip#getEnabled
+ * @name sap.viz.ui5.types.Scatter_axisTooltip#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.Scatter_axisTooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter_axisTooltip#setVisible
  * @function
  */
 
 
 /**
- * Setter for property <code>enabled</code>.
+ * Getter for property <code>formatString</code>.
+ * Set format string for small tooltip.The first one is applied to xAxis and the second one is applied to yAxis
  *
- * Default value is <code>true</code> 
+ * Default value is <code>null</code>
  *
- * @param {boolean} bEnabled  new value for property <code>enabled</code>
- * @return {sap.viz.ui5.types.Scatter_tooltip} <code>this</code> to allow method chaining
+ * @return {string[]} the value of property <code>formatString</code>
  * @public
- * @name sap.viz.ui5.types.Scatter_tooltip#setEnabled
+ * @name sap.viz.ui5.types.Scatter_axisTooltip#getFormatString
  * @function
  */
 
-// Start of sap/viz/ui5/types/Scatter_tooltip.js
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string[]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Scatter_axisTooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter_axisTooltip#setFormatString
+ * @function
+ */
 
-}; // end of sap.viz.ui5.types.Scatter_tooltip
+
+// Start of sap/viz/ui5/types/Scatter_axisTooltip.js
+
+}; // end of sap.viz.ui5.types.Scatter_axisTooltip
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Scatter_hoverline') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Scatter_hoverline.
+jQuery.sap.declare("sap.viz.ui5.types.Scatter_hoverline");
+
+
+
+/**
+ * Constructor for a new ui5/types/Scatter_hoverline.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getVisible visible} : boolean (default: true)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings for hoverline properties.
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.Scatter_hoverline
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Scatter_hoverline", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"visible" : {type : "boolean", group : "", defaultValue : true}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Scatter_hoverline with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Scatter_hoverline.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>visible</code>.
+ * Set to enabled/disabled hoverline or not.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>visible</code>
+ * @public
+ * @name sap.viz.ui5.types.Scatter_hoverline#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.Scatter_hoverline} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Scatter_hoverline#setVisible
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Scatter_hoverline.js
+
+}; // end of sap.viz.ui5.types.Scatter_hoverline
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.StackedVerticalBar') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -9197,7 +12655,7 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -9221,7 +12679,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
 		"mode" : {type : "sap.viz.ui5.types.StackedVerticalBar_mode", group : "", defaultValue : sap.viz.ui5.types.StackedVerticalBar_mode.comparison}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.StackedVerticalBar_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.StackedVerticalBar_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.StackedVerticalBar_animation", multiple : false}
 	}
 }});
@@ -9246,7 +12704,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -9255,7 +12713,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -9269,6 +12726,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -9280,7 +12738,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -9294,6 +12751,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -9305,7 +12763,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -9319,6 +12776,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -9330,7 +12788,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#getDrawingEffect
  * @function
  */
-
 
 /**
  * Setter for property <code>drawingEffect</code>.
@@ -9344,6 +12801,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 /**
  * Getter for property <code>isRoundCorner</code>.
  * Set enable/disable round corner of bar.
@@ -9355,7 +12813,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#getIsRoundCorner
  * @function
  */
-
 
 /**
  * Setter for property <code>isRoundCorner</code>.
@@ -9369,6 +12826,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 /**
  * Getter for property <code>mode</code>.
  * Set dispaly mode of stacked vertical bar.
@@ -9381,7 +12839,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
-
 /**
  * Setter for property <code>mode</code>.
  *
@@ -9393,36 +12850,45 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#setMode
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.StackedVerticalBar_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.StackedVerticalBar#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.StackedVerticalBar_tooltip}
  * @return {sap.viz.ui5.types.StackedVerticalBar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.StackedVerticalBar#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.StackedVerticalBar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.StackedVerticalBar#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -9433,6 +12899,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.StackedVerticalBar_animation}
@@ -9441,7 +12908,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -9451,6 +12918,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar#destroyAnimation
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/StackedVerticalBar.js
 sap.viz.ui5.types.StackedVerticalBar.prototype.getToolTip = function() {
@@ -9465,7 +12933,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.StackedVerticalBar_animation') ) 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -9495,7 +12963,8 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_animation");
  * <li>Properties
  * <ul>
  * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
- * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -9520,7 +12989,7 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -9537,7 +13006,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
 	library : "sap.viz",
 	properties : {
 		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
-		"dataUpdating" : {type : "boolean", group : "", defaultValue : true}
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -9571,7 +13041,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
-
 /**
  * Setter for property <code>dataLoading</code>.
  *
@@ -9583,6 +13052,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @name sap.viz.ui5.types.StackedVerticalBar_animation#setDataLoading
  * @function
  */
+
 
 /**
  * Getter for property <code>dataUpdating</code>.
@@ -9596,7 +13066,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
-
 /**
  * Setter for property <code>dataUpdating</code>.
  *
@@ -9609,6 +13078,32 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.StackedVerticalBar_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.StackedVerticalBar_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.StackedVerticalBar_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/StackedVerticalBar_animation.js
 
 }; // end of sap.viz.ui5.types.StackedVerticalBar_animation
@@ -9616,7 +13111,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.StackedVerticalBar_tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -9670,18 +13165,19 @@ jQuery.sap.declare("sap.viz.ui5.types.StackedVerticalBar_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.StackedVerticalBar_tooltip
  */
 sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar_tooltip", { metadata : {
 
 	// ---- object ----
+	deprecated : true,
 
 	// ---- control specific ----
 	library : "sap.viz",
@@ -9720,7 +13216,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -9733,6 +13228,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.StackedVerticalBar
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/StackedVerticalBar_tooltip.js
 
 }; // end of sap.viz.ui5.types.StackedVerticalBar_tooltip
@@ -9740,7 +13236,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Title') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -9770,11 +13266,12 @@ jQuery.sap.declare("sap.viz.ui5.types.Title");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: false)</li>
- * <li>{@link #getText text} : string</li>
+ * <li>{@link #getText text} : string (default: 'null')</li>
  * <li>{@link #getAlignment alignment} : sap.viz.ui5.types.Title_alignment (default: sap.viz.ui5.types.Title_alignment.center)</li></ul>
  * </li>
  * <li>Aggregations
- * <ul></ul>
+ * <ul>
+ * <li>{@link #getLayout layout} : sap.viz.ui5.types.Title_layout</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -9796,7 +13293,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Title");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -9813,8 +13310,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : false},
-		"text" : {type : "string", group : "", defaultValue : null},
+		"text" : {type : "string", group : "", defaultValue : 'null'},
 		"alignment" : {type : "sap.viz.ui5.types.Title_alignment", group : "", defaultValue : sap.viz.ui5.types.Title_alignment.center}
+	},
+	aggregations : {
+    	"layout" : {type : "sap.viz.ui5.types.Title_layout", multiple : false, deprecated: true}
 	}
 }});
 
@@ -9848,7 +13348,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -9861,11 +13360,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
+
 /**
  * Getter for property <code>text</code>.
  * Set chart title text.
  *
- * Default value is empty/<code>undefined</code>
+ * Default value is <code>null</code>
  *
  * @return {string} the value of property <code>text</code>
  * @public
@@ -9873,11 +13373,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
- * Default value is empty/<code>undefined</code> 
+ * Default value is <code>null</code> 
  *
  * @param {string} sText  new value for property <code>text</code>
  * @return {sap.viz.ui5.types.Title} <code>this</code> to allow method chaining
@@ -9885,6 +13384,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @name sap.viz.ui5.types.Title#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>alignment</code>.
@@ -9898,7 +13398,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
-
 /**
  * Setter for property <code>alignment</code>.
  *
@@ -9911,14 +13410,211 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
+
+/**
+ * Getter for aggregation <code>layout</code>.<br/>
+ * Settings for layout of title.
+ * 
+ * @return {sap.viz.ui5.types.Title_layout}
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title#getLayout
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>layout</code>.
+ * @param oLayout {sap.viz.ui5.types.Title_layout}
+ * @return {sap.viz.ui5.types.Title} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title#setLayout
+ * @function
+ */
+	
+
+/**
+ * Destroys the layout in the aggregation 
+ * named <code>layout</code>.
+ * @return {sap.viz.ui5.types.Title} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title#destroyLayout
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Title.js
+sap.viz.ui5.types.Title.prototype.getLayout = function() {
+  return this._getOrCreate("layout");
+}
 
 }; // end of sap.viz.ui5.types.Title
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Title_layout') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.Title_layout.
+jQuery.sap.declare("sap.viz.ui5.types.Title_layout");
+
+
+
+/**
+ * Constructor for a new ui5/types/Title_layout.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getPosition position} : string (default: 'right')</li>
+ * <li>{@link #getPriority priority} : int (default: 0)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings for layout of title.
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title_layout
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title_layout", { metadata : {
+
+	// ---- object ----
+	deprecated : true,
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"position" : {type : "string", group : "", defaultValue : 'right'},
+		"priority" : {type : "int", group : "", defaultValue : 0, deprecated: true}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.Title_layout with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.Title_layout.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>position</code>.
+ * Set the position of the title.
+ *
+ * Default value is <code>right</code>
+ *
+ * @return {string} the value of property <code>position</code>
+ * @public
+ * @name sap.viz.ui5.types.Title_layout#getPosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>position</code>.
+ *
+ * Default value is <code>right</code> 
+ *
+ * @param {string} sPosition  new value for property <code>position</code>
+ * @return {sap.viz.ui5.types.Title_layout} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Title_layout#setPosition
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>priority</code>.
+ * Set the priority of the position for the title.
+ *
+ * Default value is <code>0</code>
+ *
+ * @return {int} the value of property <code>priority</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title_layout#getPriority
+ * @function
+ */
+
+/**
+ * Setter for property <code>priority</code>.
+ *
+ * Default value is <code>0</code> 
+ *
+ * @param {int} iPriority  new value for property <code>priority</code>
+ * @return {sap.viz.ui5.types.Title_layout} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title_layout#setPriority
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/Title_layout.js
+
+}; // end of sap.viz.ui5.types.Title_layout
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.Tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -9948,7 +13644,8 @@ jQuery.sap.declare("sap.viz.ui5.types.Tooltip");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Tooltip_drawingEffect (default: sap.viz.ui5.types.Tooltip_drawingEffect.normal)</li></ul>
+ * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Tooltip_drawingEffect (default: sap.viz.ui5.types.Tooltip_drawingEffect.normal)</li>
+ * <li>{@link #getFormatString formatString} : any[][] (default: [[null]])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -9973,7 +13670,7 @@ jQuery.sap.declare("sap.viz.ui5.types.Tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -9990,7 +13687,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"drawingEffect" : {type : "sap.viz.ui5.types.Tooltip_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Tooltip_drawingEffect.normal}
+		"drawingEffect" : {type : "sap.viz.ui5.types.Tooltip_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Tooltip_drawingEffect.normal},
+		"formatString" : {type : "any[][]", group : "", defaultValue : [[null]]}
 	}
 }});
 
@@ -10024,7 +13722,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -10036,6 +13733,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @name sap.viz.ui5.types.Tooltip#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -10049,7 +13747,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -10062,6 +13759,32 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @function
  */
 
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of tooltip. As we may have dual axis with serveral measures, the first array is applied to primary axis and the second one is applied to the second one.If the length of format string list is less than the length of data series, the last format string in the list will be applied to exceeded data series.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {any[][]} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Tooltip#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {any[][]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Tooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Tooltip#setFormatString
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Tooltip.js
 
 }; // end of sap.viz.ui5.types.Tooltip
@@ -10069,7 +13792,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.VerticalBar') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -10129,7 +13852,7 @@ jQuery.sap.declare("sap.viz.ui5.types.VerticalBar");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -10152,7 +13875,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
 		"isRoundCorner" : {type : "boolean", group : "", defaultValue : false}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.VerticalBar_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.VerticalBar_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.VerticalBar_animation", multiple : false}
 	}
 }});
@@ -10177,7 +13900,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -10186,7 +13909,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -10200,6 +13922,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -10211,7 +13934,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -10225,6 +13947,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -10236,7 +13959,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -10250,6 +13972,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -10261,7 +13984,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#getDrawingEffect
  * @function
  */
-
 
 /**
  * Setter for property <code>drawingEffect</code>.
@@ -10275,6 +13997,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>isRoundCorner</code>.
  * Set enable/disable round corner of bar.
@@ -10287,7 +14010,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>isRoundCorner</code>.
  *
@@ -10299,36 +14021,45 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#setIsRoundCorner
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.VerticalBar_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.VerticalBar#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.VerticalBar_tooltip}
  * @return {sap.viz.ui5.types.VerticalBar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.VerticalBar#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.VerticalBar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.VerticalBar#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -10339,6 +14070,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.VerticalBar_animation}
@@ -10347,7 +14079,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -10357,6 +14089,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar", { me
  * @name sap.viz.ui5.types.VerticalBar#destroyAnimation
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/VerticalBar.js
 sap.viz.ui5.types.VerticalBar.prototype.getToolTip = function() {
@@ -10371,7 +14104,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.VerticalBar_animation') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -10401,7 +14134,8 @@ jQuery.sap.declare("sap.viz.ui5.types.VerticalBar_animation");
  * <li>Properties
  * <ul>
  * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
- * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -10426,7 +14160,7 @@ jQuery.sap.declare("sap.viz.ui5.types.VerticalBar_animation");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -10443,7 +14177,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_animat
 	library : "sap.viz",
 	properties : {
 		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
-		"dataUpdating" : {type : "boolean", group : "", defaultValue : true}
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -10477,7 +14212,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_animat
  * @function
  */
 
-
 /**
  * Setter for property <code>dataLoading</code>.
  *
@@ -10489,6 +14223,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_animat
  * @name sap.viz.ui5.types.VerticalBar_animation#setDataLoading
  * @function
  */
+
 
 /**
  * Getter for property <code>dataUpdating</code>.
@@ -10502,7 +14237,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_animat
  * @function
  */
 
-
 /**
  * Setter for property <code>dataUpdating</code>.
  *
@@ -10515,6 +14249,32 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_animat
  * @function
  */
 
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.VerticalBar_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.VerticalBar_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.VerticalBar_animation#setResizing
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/VerticalBar_animation.js
 
 }; // end of sap.viz.ui5.types.VerticalBar_animation
@@ -10522,7 +14282,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.VerticalBar_tooltip') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -10576,18 +14336,19 @@ jQuery.sap.declare("sap.viz.ui5.types.VerticalBar_tooltip");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.VerticalBar_tooltip
  */
 sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_tooltip", { metadata : {
 
 	// ---- object ----
+	deprecated : true,
 
 	// ---- control specific ----
 	library : "sap.viz",
@@ -10626,7 +14387,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_toolti
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -10639,6 +14399,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_toolti
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/VerticalBar_tooltip.js
 
 }; // end of sap.viz.ui5.types.VerticalBar_tooltip
@@ -10646,7 +14407,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.XYContainer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -10699,7 +14460,7 @@ jQuery.sap.declare("sap.viz.ui5.types.XYContainer");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -10741,7 +14502,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.controller.Interaction') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -10769,7 +14530,14 @@ jQuery.sap.declare("sap.viz.ui5.types.controller.Interaction");
  * The supported settings are:
  * <ul>
  * <li>Properties
- * <ul></ul>
+ * <ul>
+ * <li>{@link #getSupportedEventNames supportedEventNames} : string[] (default: ['mouseup','mousedown','mousemove','mouseout','mouseover','touchstart'])</li>
+ * <li>{@link #getEnableMouseMove enableMouseMove} : boolean (default: true)</li>
+ * <li>{@link #getEnableMouseOver enableMouseOver} : boolean (default: true)</li>
+ * <li>{@link #getEnableMouseOut enableMouseOut} : boolean (default: true)</li>
+ * <li>{@link #getSupportLassoEvent supportLassoEvent} : boolean (default: true)</li>
+ * <li>{@link #getHoldSelection holdSelection} : boolean (default: false)</li>
+ * <li>{@link #getPreserveSelectionWhenDragging preserveSelectionWhenDragging} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -10795,7 +14563,7 @@ jQuery.sap.declare("sap.viz.ui5.types.controller.Interaction");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -10810,6 +14578,15 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
 
 	// ---- control specific ----
 	library : "sap.viz",
+	properties : {
+		"supportedEventNames" : {type : "string[]", group : "", defaultValue : ['mouseup','mousedown','mousemove','mouseout','mouseover','touchstart'], deprecated: true},
+		"enableMouseMove" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"enableMouseOver" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"enableMouseOut" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"supportLassoEvent" : {type : "boolean", group : "", defaultValue : true, deprecated: true},
+		"holdSelection" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"preserveSelectionWhenDragging" : {type : "boolean", group : "", defaultValue : false, deprecated: true}
+	},
 	aggregations : {
     	"selectability" : {type : "sap.viz.ui5.types.controller.Interaction_selectability", multiple : false}
 	}
@@ -10832,7 +14609,210 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
-	
+
+/**
+ * Getter for property <code>supportedEventNames</code>.
+ * Set supported event names.
+ *
+ * Default value is <code>mouseup,mousedown,mousemove,mouseout,mouseover,touchstart</code>
+ *
+ * @return {string[]} the value of property <code>supportedEventNames</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getSupportedEventNames
+ * @function
+ */
+
+/**
+ * Setter for property <code>supportedEventNames</code>.
+ *
+ * Default value is <code>mouseup,mousedown,mousemove,mouseout,mouseover,touchstart</code> 
+ *
+ * @param {string[]} aSupportedEventNames  new value for property <code>supportedEventNames</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setSupportedEventNames
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enableMouseMove</code>.
+ * Set whether mouse move is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>enableMouseMove</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getEnableMouseMove
+ * @function
+ */
+
+/**
+ * Setter for property <code>enableMouseMove</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bEnableMouseMove  new value for property <code>enableMouseMove</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setEnableMouseMove
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enableMouseOver</code>.
+ * Set whether mouse over is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>enableMouseOver</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getEnableMouseOver
+ * @function
+ */
+
+/**
+ * Setter for property <code>enableMouseOver</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bEnableMouseOver  new value for property <code>enableMouseOver</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setEnableMouseOver
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>enableMouseOut</code>.
+ * Set whether mouse out is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>enableMouseOut</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getEnableMouseOut
+ * @function
+ */
+
+/**
+ * Setter for property <code>enableMouseOut</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bEnableMouseOut  new value for property <code>enableMouseOut</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setEnableMouseOut
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>supportLassoEvent</code>.
+ * Set whether support lasso event is enabled.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>supportLassoEvent</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getSupportLassoEvent
+ * @function
+ */
+
+/**
+ * Setter for property <code>supportLassoEvent</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bSupportLassoEvent  new value for property <code>supportLassoEvent</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setSupportLassoEvent
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>holdSelection</code>.
+ * Set whether hold selection is enabled.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>holdSelection</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getHoldSelection
+ * @function
+ */
+
+/**
+ * Setter for property <code>holdSelection</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bHoldSelection  new value for property <code>holdSelection</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setHoldSelection
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>preserveSelectionWhenDragging</code>.
+ * Set whether preserve selection when dragging is enabled.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>preserveSelectionWhenDragging</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#getPreserveSelectionWhenDragging
+ * @function
+ */
+
+/**
+ * Setter for property <code>preserveSelectionWhenDragging</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bPreserveSelectionWhenDragging  new value for property <code>preserveSelectionWhenDragging</code>
+ * @return {sap.viz.ui5.types.controller.Interaction} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction#setPreserveSelectionWhenDragging
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>selectability</code>.<br/>
  * Settings for selectability.
@@ -10843,6 +14823,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>selectability</code>.
  * @param oSelectability {sap.viz.ui5.types.controller.Interaction_selectability}
@@ -10851,7 +14832,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @name sap.viz.ui5.types.controller.Interaction#setSelectability
  * @function
  */
-
+	
 
 /**
  * Destroys the selectability in the aggregation 
@@ -10861,6 +14842,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @name sap.viz.ui5.types.controller.Interaction#destroySelectability
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/controller/Interaction.js
 sap.viz.ui5.types.controller.Interaction.prototype.getSelectability = function() {
@@ -10872,7 +14854,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.controller.Interaction_selectabil
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -10901,7 +14883,8 @@ jQuery.sap.declare("sap.viz.ui5.types.controller.Interaction_selectability");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getMode mode} : sap.viz.ui5.types.controller.Interaction_selectability_mode (default: sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple)</li></ul>
+ * <li>{@link #getMode mode} : sap.viz.ui5.types.controller.Interaction_selectability_mode (default: sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple)</li>
+ * <li>{@link #getLassoWithCtrlKey lassoWithCtrlKey} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -10926,7 +14909,7 @@ jQuery.sap.declare("sap.viz.ui5.types.controller.Interaction_selectability");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -10942,7 +14925,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"mode" : {type : "sap.viz.ui5.types.controller.Interaction_selectability_mode", group : "", defaultValue : sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple}
+		"mode" : {type : "sap.viz.ui5.types.controller.Interaction_selectability_mode", group : "", defaultValue : sap.viz.ui5.types.controller.Interaction_selectability_mode.multiple},
+		"lassoWithCtrlKey" : {type : "boolean", group : "", defaultValue : false, deprecated: true}
 	}
 }});
 
@@ -10976,7 +14960,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
-
 /**
  * Setter for property <code>mode</code>.
  *
@@ -10989,14 +14972,721 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.controller.Interac
  * @function
  */
 
+
+/**
+ * Getter for property <code>lassoWithCtrlKey</code>.
+ * Set whether lasso selection needs ctrl key pressed.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>lassoWithCtrlKey</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction_selectability#getLassoWithCtrlKey
+ * @function
+ */
+
+/**
+ * Setter for property <code>lassoWithCtrlKey</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bLassoWithCtrlKey  new value for property <code>lassoWithCtrlKey</code>
+ * @return {sap.viz.ui5.types.controller.Interaction_selectability} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.controller.Interaction_selectability#setLassoWithCtrlKey
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/controller/Interaction_selectability.js
 
 }; // end of sap.viz.ui5.types.controller.Interaction_selectability
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.layout.Dock') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.layout.Dock.
+jQuery.sap.declare("sap.viz.ui5.types.layout.Dock");
+
+
+
+/**
+ * Constructor for a new ui5/types/layout/Dock.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Module ui5/types/layout/Dock
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.layout.Dock
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.layout.Dock", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz"
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.layout.Dock with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.layout.Dock.extend
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/layout/Dock.js
+
+}; // end of sap.viz.ui5.types.layout.Dock
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.layout.Stack') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.layout.Stack.
+jQuery.sap.declare("sap.viz.ui5.types.layout.Stack");
+
+
+
+/**
+ * Constructor for a new ui5/types/layout/Stack.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Module ui5/types/layout/Stack
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.layout.Stack
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.layout.Stack", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz"
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.layout.Stack with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.layout.Stack.extend
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/layout/Stack.js
+
+}; // end of sap.viz.ui5.types.layout.Stack
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.legend.Common') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.legend.Common.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common");
+
+
+
+/**
+ * Constructor for a new ui5/types/legend/Common.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getVisible visible} : boolean (default: true)</li>
+ * <li>{@link #getFormatString formatString} : string (default: 'null')</li>
+ * <li>{@link #getIsHierarchical isHierarchical} : boolean (default: false)</li>
+ * <li>{@link #getPosition position} : sap.viz.ui5.types.legend.Common_position (default: sap.viz.ui5.types.legend.Common_position.right)</li>
+ * <li>{@link #getType type} : sap.viz.ui5.types.legend.Common_type (default: sap.viz.ui5.types.legend.Common_type.ColorLegend)</li>
+ * <li>{@link #getAlignment alignment} : sap.viz.ui5.types.legend.Common_alignment (default: sap.viz.ui5.types.legend.Common_alignment.start)</li>
+ * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.legend.Common_drawingEffect (default: sap.viz.ui5.types.legend.Common_drawingEffect.normal)</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.legend.Common_title</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Module ui5/types/legend/Common
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.legend.Common
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.legend.Common", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"visible" : {type : "boolean", group : "", defaultValue : true},
+		"formatString" : {type : "string", group : "", defaultValue : 'null', deprecated: true},
+		"isHierarchical" : {type : "boolean", group : "", defaultValue : false},
+		"position" : {type : "sap.viz.ui5.types.legend.Common_position", group : "", defaultValue : sap.viz.ui5.types.legend.Common_position.right},
+		"type" : {type : "sap.viz.ui5.types.legend.Common_type", group : "", defaultValue : sap.viz.ui5.types.legend.Common_type.ColorLegend, deprecated: true},
+		"alignment" : {type : "sap.viz.ui5.types.legend.Common_alignment", group : "", defaultValue : sap.viz.ui5.types.legend.Common_alignment.start, deprecated: true},
+		"drawingEffect" : {type : "sap.viz.ui5.types.legend.Common_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.legend.Common_drawingEffect.normal}
+	},
+	aggregations : {
+    	"title" : {type : "sap.viz.ui5.types.legend.Common_title", multiple : false}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.legend.Common with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.legend.Common.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>visible</code>.
+ * Set visibility of legend.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>visible</code>
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#setVisible
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of legend.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {string} the value of property <code>formatString</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.legend.Common#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string} sFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.legend.Common#setFormatString
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>isHierarchical</code>.
+ * Set hierarchy legend. Supported only when legend is located in the right of chart.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isHierarchical</code>
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#getIsHierarchical
+ * @function
+ */
+
+/**
+ * Setter for property <code>isHierarchical</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsHierarchical  new value for property <code>isHierarchical</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#setIsHierarchical
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>position</code>.
+ * Set legend position. Only support legend is located in the right side.
+ *
+ * Default value is <code>right</code>
+ *
+ * @return {sap.viz.ui5.types.legend.Common_position} the value of property <code>position</code>
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#getPosition
+ * @function
+ */
+
+/**
+ * Setter for property <code>position</code>.
+ *
+ * Default value is <code>right</code> 
+ *
+ * @param {sap.viz.ui5.types.legend.Common_position} oPosition  new value for property <code>position</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#setPosition
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>type</code>.
+ * Set legend type of Bubble chart. Non-bubble chart is not supported.
+ *
+ * Default value is <code>ColorLegend</code>
+ *
+ * @return {sap.viz.ui5.types.legend.Common_type} the value of property <code>type</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.legend.Common#getType
+ * @function
+ */
+
+/**
+ * Setter for property <code>type</code>.
+ *
+ * Default value is <code>ColorLegend</code> 
+ *
+ * @param {sap.viz.ui5.types.legend.Common_type} oType  new value for property <code>type</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.legend.Common#setType
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>alignment</code>.
+ * Set alignment of legend.
+ *
+ * Default value is <code>start</code>
+ *
+ * @return {sap.viz.ui5.types.legend.Common_alignment} the value of property <code>alignment</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.legend.Common#getAlignment
+ * @function
+ */
+
+/**
+ * Setter for property <code>alignment</code>.
+ *
+ * Default value is <code>start</code> 
+ *
+ * @param {sap.viz.ui5.types.legend.Common_alignment} oAlignment  new value for property <code>alignment</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.legend.Common#setAlignment
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>drawingEffect</code>.
+ * Set drawing effect of legend.
+ *
+ * Default value is <code>normal</code>
+ *
+ * @return {sap.viz.ui5.types.legend.Common_drawingEffect} the value of property <code>drawingEffect</code>
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#getDrawingEffect
+ * @function
+ */
+
+/**
+ * Setter for property <code>drawingEffect</code>.
+ *
+ * Default value is <code>normal</code> 
+ *
+ * @param {sap.viz.ui5.types.legend.Common_drawingEffect} oDrawingEffect  new value for property <code>drawingEffect</code>
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#setDrawingEffect
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Settings for legend title.
+ * 
+ * @return {sap.viz.ui5.types.legend.Common_title}
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.legend.Common_title}
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.types.legend.Common} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common#destroyTitle
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/legend/Common.js
+sap.viz.ui5.types.legend.Common.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+
+}; // end of sap.viz.ui5.types.legend.Common
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.types.legend.Common_title') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.types.legend.Common_title.
+jQuery.sap.declare("sap.viz.ui5.types.legend.Common_title");
+
+
+
+/**
+ * Constructor for a new ui5/types/legend/Common_title.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul>
+ * <li>{@link #getVisible visible} : boolean (default: false)</li>
+ * <li>{@link #getText text} : string (default: 'null')</li></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseStructuredType#constructor sap.viz.ui5.core.BaseStructuredType}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Settings for legend title.
+ * @extends sap.viz.ui5.core.BaseStructuredType
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.types.legend.Common_title
+ */
+sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.legend.Common_title", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	properties : {
+		"visible" : {type : "boolean", group : "", defaultValue : false},
+		"text" : {type : "string", group : "", defaultValue : 'null'}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.types.legend.Common_title with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.types.legend.Common_title.extend
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>visible</code>.
+ * Set visibility of legend title.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>visible</code>
+ * @public
+ * @name sap.viz.ui5.types.legend.Common_title#getVisible
+ * @function
+ */
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.viz.ui5.types.legend.Common_title} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common_title#setVisible
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>text</code>.
+ * Set text of legend title.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {string} the value of property <code>text</code>
+ * @public
+ * @name sap.viz.ui5.types.legend.Common_title#getText
+ * @function
+ */
+
+/**
+ * Setter for property <code>text</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string} sText  new value for property <code>text</code>
+ * @return {sap.viz.ui5.types.legend.Common_title} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.legend.Common_title#setText
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/types/legend/Common_title.js
+
+}; // end of sap.viz.ui5.types.legend.Common_title
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.BarRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.BarRenderer");
@@ -11012,7 +15702,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.BubbleRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.BubbleRenderer");
@@ -11028,7 +15718,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.ColumnRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.ColumnRenderer");
@@ -11044,7 +15734,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.CombinationRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.CombinationRenderer");
@@ -11060,7 +15750,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.DonutRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.DonutRenderer");
@@ -11072,11 +15762,107 @@ jQuery.sap.declare("sap.viz.ui5.DonutRenderer");
 sap.viz.ui5.DonutRenderer = sap.viz.ui5.core.BaseChartRenderer;
 
 }; // end of sap.viz.ui5.DonutRenderer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualBarRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+jQuery.sap.declare("sap.viz.ui5.DualBarRenderer");
+
+
+/**
+ * @experimental Since 1.7.2, charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.DualBarRenderer = sap.viz.ui5.core.BaseChartRenderer;
+
+}; // end of sap.viz.ui5.DualBarRenderer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualColumnRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+jQuery.sap.declare("sap.viz.ui5.DualColumnRenderer");
+
+
+/**
+ * @experimental Since 1.7.2, charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.DualColumnRenderer = sap.viz.ui5.core.BaseChartRenderer;
+
+}; // end of sap.viz.ui5.DualColumnRenderer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualCombinationRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+jQuery.sap.declare("sap.viz.ui5.DualCombinationRenderer");
+
+
+/**
+ * @experimental Since 1.7.2, charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.DualCombinationRenderer = sap.viz.ui5.core.BaseChartRenderer;
+
+}; // end of sap.viz.ui5.DualCombinationRenderer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualLineRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+jQuery.sap.declare("sap.viz.ui5.DualLineRenderer");
+
+
+/**
+ * @experimental Since 1.7.2, charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.DualLineRenderer = sap.viz.ui5.core.BaseChartRenderer;
+
+}; // end of sap.viz.ui5.DualLineRenderer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualStackedColumn100Renderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+jQuery.sap.declare("sap.viz.ui5.DualStackedColumn100Renderer");
+
+
+/**
+ * @experimental Since 1.7.2, charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.DualStackedColumn100Renderer = sap.viz.ui5.core.BaseChartRenderer;
+
+}; // end of sap.viz.ui5.DualStackedColumn100Renderer
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualStackedColumnRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+jQuery.sap.declare("sap.viz.ui5.DualStackedColumnRenderer");
+
+
+/**
+ * @experimental Since 1.7.2, charting API is not finished yet and might change completely
+ */
+sap.viz.ui5.DualStackedColumnRenderer = sap.viz.ui5.core.BaseChartRenderer;
+
+}; // end of sap.viz.ui5.DualStackedColumnRenderer
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.LineRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.LineRenderer");
@@ -11092,7 +15878,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.PieRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.PieRenderer");
@@ -11108,7 +15894,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.ScatterRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.ScatterRenderer");
@@ -11124,7 +15910,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.StackedColumn100Renderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.StackedColumn100Renderer");
@@ -11140,7 +15926,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.StackedColumnRenderer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.viz.ui5.StackedColumnRenderer");
@@ -11156,7 +15942,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.core.BaseChart') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -11187,7 +15973,8 @@ jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
  * <li>Properties
  * <ul>
  * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '640px')</li>
- * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '480px')</li></ul>
+ * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '480px')</li>
+ * <li>{@link #getCss css} : string</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -11212,7 +15999,7 @@ jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -11230,7 +16017,8 @@ sap.ui.core.Control.extend("sap.viz.ui5.core.BaseChart", { metadata : {
 	library : "sap.viz",
 	properties : {
 		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '640px'},
-		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '480px'}
+		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '480px'},
+		"css" : {type : "string", group : "Appearance", defaultValue : null}
 	},
 	aggregations : {
     	"dataset" : {type : "sap.viz.ui5.data.Dataset", multiple : false}, 
@@ -11273,7 +16061,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -11285,6 +16072,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>height</code>.
@@ -11298,7 +16086,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -11310,7 +16097,33 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setHeight
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>css</code>.
+ * CSS style of Chart.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>css</code>
+ * @public
+ * @name sap.viz.ui5.core.BaseChart#getCss
+ * @function
+ */
+
+/**
+ * Setter for property <code>css</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sCss  new value for property <code>css</code>
+ * @return {sap.viz.ui5.core.BaseChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.core.BaseChart#setCss
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>dataset</code>.<br/>
  * Dataset for this chart
@@ -11321,6 +16134,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>dataset</code>.
  * @param oDataset {sap.viz.ui5.data.Dataset}
@@ -11329,7 +16143,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setDataset
  * @function
  */
-
+	
 
 /**
  * Destroys the dataset in the aggregation 
@@ -11339,7 +16153,8 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#destroyDataset
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>noData</code>.<br/>
  * Control tree to display when there is no data available
@@ -11350,6 +16165,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>noData</code>.
  * @param oNoData {sap.ui.core.Control}
@@ -11358,7 +16174,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setNoData
  * @function
  */
-
+	
 
 /**
  * Destroys the noData in the aggregation 
@@ -11368,6 +16184,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#destroyNoData
  * @function
  */
+
 
 /**
  * Fired before a new VIZ instance is created. Event parameter "usrOptions" contains the intended value for the parameter with the same name of the createViz call. 
@@ -11402,7 +16219,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'beforeCreateViz' event of this <code>sap.viz.ui5.core.BaseChart</code>.<br/>
  *
@@ -11417,7 +16233,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#detachBeforeCreateViz
  * @function
  */
-
 
 /**
  * Fire event beforeCreateViz to attached listeners.
@@ -11434,6 +16249,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
+
 // Start of sap/viz/ui5/core/BaseChart.js
 
 
@@ -11443,17 +16259,44 @@ sap.viz.ui5.core.BaseChart.prototype.init = function() {
 	this._mVIZHandler = {};
 };
 
+sap.viz.ui5.core.BaseChart.prototype.exit = function() {
+	// unregister from resize handler
+	if ( this._sResizeListenerId ) {
+		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+		delete this._sResizeListenerId;
+	}
+	// properly clean up an existing VIZ instance
+	if ( this._oVIZInstance ) {
+		this._oVIZInstance.destroy();
+		delete this._oVIZInstance;
+	}
+};
+
+sap.viz.ui5.core.BaseChart.prototype.onBeforeRendering = function() {
+	if ( this._sResizeListenerId ) {
+		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+		delete this._sResizeListenerId;
+	}
+};
+
 sap.viz.ui5.core.BaseChart.prototype.onAfterRendering = function() {
 	//TODO How to define feeding API?
-	if ( !this.getDataset().getVIZDataset() ) {
+	if ( !sap.viz.__svg_support || !this.getDataset() || !this.getDataset().getVIZDataset() ) {
 		return;
 	}
 
-	// collect the options fo rthe new VIZ instance
+	// properly clean up an existing VIZ instance
+	if ( this._oVIZInstance ) {
+		this._oVIZInstance.destroy();
+		delete this._oVIZInstance;
+	}
+	
+	// collect the options for the new VIZ instance
 	var oUsrOptions = {
 		type : this.getVIZChartType(),
 		data : this.getDataset().getVIZDataset(),
 		container : this.getDomRef(),
+		css : this.getCss(),
 		options : this._getOptions()
 	}
 
@@ -11463,13 +16306,47 @@ sap.viz.ui5.core.BaseChart.prototype.onAfterRendering = function() {
 	});
 	
   // create a VIZ chart out of it
-	this._oVIZInstance = sap.viz.core.createViz(oUsrOptions); 
+	this._oVIZInstance = sap.viz.core.createViz(oUsrOptions);
 
 	// attach event listeners to the VIZ instance
 	var that=this;
 	jQuery.sap.forIn(this._mVIZHandler, function(sName, fnHandler) {
 		that._oVIZInstance.on(sName + sap.viz.ui5.core.BaseChart.EVENT_SUFFIX, fnHandler);
 	});
+
+	this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), jQuery.proxy(this.onresize, this) );
+};
+
+sap.viz.ui5.core.BaseChart.prototype.onresize = function(o) {
+	// retrieve new size and set it for the viz charts
+	var size = {width : this.$().width(), height: this.$().height()};
+	if ( this._oVIZInstance ) {
+		this._oVIZInstance.size(size);
+	}
+};
+
+/**
+ * Set chart's default selection.
+ * 
+ * @param {object[]} Array of default selection info 
+ * 
+ * @public
+ */
+sap.viz.ui5.core.BaseChart.prototype.setDefaultSelection = function(selectionInfos) {
+  // retrieve new size and set it for the viz charts
+  var ds = this.getDataset();
+  if(ds){
+    var vizds = this.getDataset().getVIZDataset();
+    if(vizds){
+      vizds.info({
+        'type' : 'defaultSelection',
+        'value' : selectionInfos
+      });
+      if(this._oVIZInstance){
+        this._oVIZInstance.data(vizds);
+      }
+    }
+  }
 };
 
 sap.viz.ui5.core.BaseChart.EVENT_SUFFIX = ".sap.viz.ui5.core";
@@ -11511,7 +16388,7 @@ if ( !jQuery.sap.isDeclared('sap.viz.ui5.Bar') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -11543,10 +16420,14 @@ jQuery.sap.declare("sap.viz.ui5.Bar");
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
@@ -11557,10 +16438,11 @@ jQuery.sap.declare("sap.viz.ui5.Bar");
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Bar#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Bar#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Bar#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Bar#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Bar#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Bar#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Bar#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -11576,7 +16458,7 @@ jQuery.sap.declare("sap.viz.ui5.Bar");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -11592,20 +16474,25 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Bar", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.Bar", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -11626,96 +16513,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Bar", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Bar.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
-	
+
 /**
- * Getter for aggregation <code>title</code>.<br/>
- * Module sap.viz.modules.title
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
  * 
- * @return {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.types.RootContainer}
  * @public
- * @name sap.viz.ui5.Bar#getTitle
- * @function
- */
-
-/**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Title}
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#setTitle
+ * @name sap.viz.ui5.Bar#getGeneral
  * @function
  */
 
 
 /**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
  * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bar#destroyTitle
+ * @name sap.viz.ui5.Bar#setGeneral
  * @function
  */
 	
-/**
- * Getter for aggregation <code>legend</code>.<br/>
- * Module sap.viz.modules.legend
- * 
- * @return {sap.viz.ui5.types.Legend}
- * @public
- * @name sap.viz.ui5.Bar#getLegend
- * @function
- */
 
 /**
- * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
  * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bar#setLegend
+ * @name sap.viz.ui5.Bar#destroyGeneral
  * @function
  */
 
 
-/**
- * Destroys the legend in the aggregation 
- * named <code>legend</code>.
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#destroyLegend
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.Bar#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>interaction</code>.<br/>
  * Module sap.viz.modules.controller.interaction
@@ -11726,6 +16557,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>interaction</code>.
  * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
@@ -11734,7 +16566,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Bar#setInteraction
  * @function
  */
-
+	
 
 /**
  * Destroys the interaction in the aggregation 
@@ -11744,7 +16576,194 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Bar#destroyInteraction
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.Bar#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#setTitle
+ * @function
+ */
 	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Bar#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.Bar#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.Bar#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
+ * 
+ * @return {sap.viz.ui5.types.XYContainer}
+ * @public
+ * @name sap.viz.ui5.Bar#getXyContainer
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#setXyContainer
+ * @function
+ */
+	
+
+/**
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#destroyXyContainer
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.Bar#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -11755,25 +16774,27 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bar#setXAxi
+ * @name sap.viz.ui5.Bar#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Bar#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -11784,25 +16805,27 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bar#setYAxi
+ * @name sap.viz.ui5.Bar#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Bar#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -11813,6 +16836,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -11821,7 +16845,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Bar#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -11831,7 +16855,8 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Bar#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.bar
@@ -11842,6 +16867,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Bar}
@@ -11850,7 +16876,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Bar#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -11861,142 +16887,9 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Bar#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bar</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#attachShowTooltip
- * @function
- */
-
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#detachShowTooltip
- * @function
- */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Bar#fireShowTooltip
- * @function
- */
-
-/**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Bar#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bar</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#attachHideTooltip
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bar#detachHideTooltip
- * @function
- */
-
-
-/**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Bar#fireHideTooltip
- * @function
- */
-
-/**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -12035,7 +16928,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -12073,7 +16966,6 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Bar</code>.<br/>
  *
@@ -12089,7 +16981,6 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -12100,8 +16991,9 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Bar#deselectData
  * @event
@@ -12117,7 +17009,7 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -12131,7 +17023,6 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Bar#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Bar</code>.<br/>
@@ -12148,7 +17039,6 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -12159,13 +17049,213 @@ sap.viz.ui5.Bar.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Bar#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Bar#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Bar#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Bar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Bar#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Bar#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Bar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Bar</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Bar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bar#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Bar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Bar#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Bar.js
 sap.viz.ui5.Bar.prototype.getVIZChartType = function() {
   return "viz/bar";
 };
 
+sap.viz.ui5.Bar.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.Bar.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
 sap.viz.ui5.Bar.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Bar.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Bar.prototype.getLegend = function() {
   return this._getOrCreate("legend");
@@ -12173,8 +17263,11 @@ sap.viz.ui5.Bar.prototype.getLegend = function() {
 sap.viz.ui5.Bar.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.Bar.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Bar.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
+}
+sap.viz.ui5.Bar.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.Bar.prototype.getXAxis = function() {
   return this._getOrCreate("xAxis");
@@ -12188,22 +17281,6 @@ sap.viz.ui5.Bar.prototype.getBackground = function() {
 sap.viz.ui5.Bar.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.Bar.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Bar.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Bar.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Bar.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
 sap.viz.ui5.Bar.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -12220,13 +17297,37 @@ sap.viz.ui5.Bar.prototype.detachDeselectData = function(fnHandler, oListener) {
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Bar.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Bar.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Bar.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Bar.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Bar.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Bar.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Bar
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Bubble') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -12258,25 +17359,30 @@ jQuery.sap.declare("sap.viz.ui5.Bubble");
  * </li>
  * <li>Aggregations
  * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getSizeLegend sizeLegend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
  * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Bubble</li>
  * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
- * <li>{@link #getSizeLegend sizeLegend} : sap.viz.ui5.types.Legend</li></ul>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Bubble#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Bubble#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Bubble#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Bubble#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Bubble#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Bubble#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Bubble#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -12292,7 +17398,7 @@ jQuery.sap.declare("sap.viz.ui5.Bubble");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -12308,21 +17414,26 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Bubble", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"sizeLegend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.Bubble", multiple : false}, 
     	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
-    	"sizeLegend" : {type : "sap.viz.ui5.types.Legend", multiple : false}
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -12343,9 +17454,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Bubble", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Bubble.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.Bubble#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setGeneral
+ * @function
+ */
 	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyGeneral
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Module sap.viz.modules.title
@@ -12356,6 +17498,7 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Title}
@@ -12364,7 +17507,7 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Bubble#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -12374,26 +17517,59 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Bubble#destroyTitle
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>legend</code>.<br/>
+ * Getter for aggregation <code>legendGroup</code>.<br/>
  * Module sap.viz.modules.legend
  * 
  * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Bubble#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
  * @public
  * @name sap.viz.ui5.Bubble#getLegend
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
  * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Bubble#setLegend
  * @function
  */
-
+	
 
 /**
  * Destroys the legend in the aggregation 
@@ -12403,200 +17579,28 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Bubble#destroyLegend
  * @function
  */
-	
-/**
- * Getter for aggregation <code>interaction</code>.<br/>
- * Module sap.viz.modules.controller.interaction
- * 
- * @return {sap.viz.ui5.types.controller.Interaction}
- * @public
- * @name sap.viz.ui5.Bubble#getInteraction
- * @function
- */
-
-/**
- * Setter for the aggregated <code>interaction</code>.
- * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#setInteraction
- * @function
- */
 
 
-/**
- * Destroys the interaction in the aggregation 
- * named <code>interaction</code>.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#destroyInteraction
- * @function
- */
-	
-/**
- * Getter for aggregation <code>xAxis</code>.<br/>
- * Module sap.viz.modules.axis
- * 
- * @return {sap.viz.ui5.types.Axis}
- * @public
- * @name sap.viz.ui5.Bubble#getXAxis
- * @function
- */
-
-/**
- * Setter for the aggregated <code>xAxis</code>.
- * @param oXAxis {sap.viz.ui5.types.Axis}
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#setXAxi
- * @function
- */
-
-
-/**
- * Destroys the xAxi in the aggregation 
- * named <code>xAxis</code>.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#destroyXAxis
- * @function
- */
-	
-/**
- * Getter for aggregation <code>yAxis</code>.<br/>
- * Module sap.viz.modules.axis
- * 
- * @return {sap.viz.ui5.types.Axis}
- * @public
- * @name sap.viz.ui5.Bubble#getYAxis
- * @function
- */
-
-/**
- * Setter for the aggregated <code>yAxis</code>.
- * @param oYAxis {sap.viz.ui5.types.Axis}
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#setYAxi
- * @function
- */
-
-
-/**
- * Destroys the yAxi in the aggregation 
- * named <code>yAxis</code>.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#destroyYAxis
- * @function
- */
-	
-/**
- * Getter for aggregation <code>background</code>.<br/>
- * Module sap.viz.modules.background
- * 
- * @return {sap.viz.ui5.types.Background}
- * @public
- * @name sap.viz.ui5.Bubble#getBackground
- * @function
- */
-
-/**
- * Setter for the aggregated <code>background</code>.
- * @param oBackground {sap.viz.ui5.types.Background}
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#setBackground
- * @function
- */
-
-
-/**
- * Destroys the background in the aggregation 
- * named <code>background</code>.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#destroyBackground
- * @function
- */
-	
-/**
- * Getter for aggregation <code>plotArea</code>.<br/>
- * Module sap.viz.modules.bubble
- * 
- * @return {sap.viz.ui5.types.Bubble}
- * @public
- * @name sap.viz.ui5.Bubble#getPlotArea
- * @function
- */
-
-/**
- * Setter for the aggregated <code>plotArea</code>.
- * @param oPlotArea {sap.viz.ui5.types.Bubble}
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#setPlotArea
- * @function
- */
-
-
-/**
- * Destroys the plotArea in the aggregation 
- * named <code>plotArea</code>.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#destroyPlotArea
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.Bubble#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Bubble#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>sizeLegend</code>.<br/>
- * Module sap.viz.modules.legend
+ * Module sap.viz.modules.legend.common
  * 
- * @return {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.types.legend.Common}
  * @public
  * @name sap.viz.ui5.Bubble#getSizeLegend
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>sizeLegend</code>.
- * @param oSizeLegend {sap.viz.ui5.types.Legend}
+ * @param oSizeLegend {sap.viz.ui5.types.legend.Common}
  * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Bubble#setSizeLegend
  * @function
  */
-
+	
 
 /**
  * Destroys the sizeLegend in the aggregation 
@@ -12607,142 +17611,257 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Bubble#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
 
- * @public
- */
- 
 /**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bubble</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
+ * 
+ * @return {sap.viz.ui5.types.XYContainer}
  * @public
- * @name sap.viz.ui5.Bubble#attachShowTooltip
+ * @name sap.viz.ui5.Bubble#getXyContainer
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
  * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bubble#detachShowTooltip
+ * @name sap.viz.ui5.Bubble#setXyContainer
  * @function
  */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Bubble#fireShowTooltip
- * @function
- */
+	
 
 /**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Bubble#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bubble</code>.<br/> itself.
- *
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
  * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bubble#attachHideTooltip
+ * @name sap.viz.ui5.Bubble#destroyXyContainer
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.Bubble#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
  * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Bubble#detachHideTooltip
+ * @name sap.viz.ui5.Bubble#setDataLabel
  * @function
  */
-
+	
 
 /**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
  * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Bubble#fireHideTooltip
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyDataLabel
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.Bubble#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.Bubble#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.Bubble#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.bubble
+ * 
+ * @return {sap.viz.ui5.types.Bubble}
+ * @public
+ * @name sap.viz.ui5.Bubble#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.Bubble}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.Bubble#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.Bubble#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -12781,7 +17900,7 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -12819,7 +17938,6 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
  *
@@ -12835,7 +17953,6 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -12846,8 +17963,9 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Bubble#deselectData
  * @event
@@ -12863,7 +17981,7 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -12877,7 +17995,6 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Bubble#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
@@ -12894,7 +18011,6 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -12905,19 +18021,222 @@ sap.viz.ui5.Bubble.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Bubble#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bubble</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Bubble#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Bubble#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bubble</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Bubble#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Bubble#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Bubble</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Bubble</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Bubble</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Bubble</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Bubble#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Bubble} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Bubble#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Bubble.js
 sap.viz.ui5.Bubble.prototype.getVIZChartType = function() {
   return "viz/bubble";
 };
 
+sap.viz.ui5.Bubble.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
 sap.viz.ui5.Bubble.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Bubble.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Bubble.prototype.getLegend = function() {
   return this._getOrCreate("legend");
 }
-sap.viz.ui5.Bubble.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Bubble.prototype.getSizeLegend = function() {
+  return this._getOrCreate("sizeLegend");
+}
+sap.viz.ui5.Bubble.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
+}
+sap.viz.ui5.Bubble.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.Bubble.prototype.getXAxis = function() {
   return this._getOrCreate("xAxis");
@@ -12934,25 +18253,9 @@ sap.viz.ui5.Bubble.prototype.getPlotArea = function() {
 sap.viz.ui5.Bubble.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.Bubble.prototype.getSizeLegend = function() {
-  return this._getOrCreate("sizeLegend");
+sap.viz.ui5.Bubble.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
 }
-sap.viz.ui5.Bubble.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Bubble.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Bubble.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Bubble.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
 sap.viz.ui5.Bubble.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -12969,13 +18272,37 @@ sap.viz.ui5.Bubble.prototype.detachDeselectData = function(fnHandler, oListener)
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Bubble.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Bubble.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Bubble.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Bubble.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Bubble.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Bubble.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Bubble
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Column') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -13007,10 +18334,13 @@ jQuery.sap.declare("sap.viz.ui5.Column");
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
@@ -13021,10 +18351,11 @@ jQuery.sap.declare("sap.viz.ui5.Column");
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Column#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Column#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Column#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Column#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Column#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Column#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Column#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -13040,7 +18371,7 @@ jQuery.sap.declare("sap.viz.ui5.Column");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -13056,20 +18387,24 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Column", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.VerticalBar", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -13090,96 +18425,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Column", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Column.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
-	
+
 /**
- * Getter for aggregation <code>title</code>.<br/>
- * Module sap.viz.modules.title
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
  * 
- * @return {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.types.RootContainer}
  * @public
- * @name sap.viz.ui5.Column#getTitle
- * @function
- */
-
-/**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Title}
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#setTitle
+ * @name sap.viz.ui5.Column#getGeneral
  * @function
  */
 
 
 /**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
  * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Column#destroyTitle
+ * @name sap.viz.ui5.Column#setGeneral
  * @function
  */
 	
-/**
- * Getter for aggregation <code>legend</code>.<br/>
- * Module sap.viz.modules.legend
- * 
- * @return {sap.viz.ui5.types.Legend}
- * @public
- * @name sap.viz.ui5.Column#getLegend
- * @function
- */
 
 /**
- * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
  * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Column#setLegend
+ * @name sap.viz.ui5.Column#destroyGeneral
  * @function
  */
 
 
-/**
- * Destroys the legend in the aggregation 
- * named <code>legend</code>.
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#destroyLegend
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.Column#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>interaction</code>.<br/>
  * Module sap.viz.modules.controller.interaction
@@ -13190,6 +18469,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>interaction</code>.
  * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
@@ -13198,7 +18478,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Column#setInteraction
  * @function
  */
-
+	
 
 /**
  * Destroys the interaction in the aggregation 
@@ -13208,7 +18488,163 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Column#destroyInteraction
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.Column#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#setTitle
+ * @function
+ */
 	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Column#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.Column#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.Column#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.Column#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -13219,25 +18655,27 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Column#setYAxi
+ * @name sap.viz.ui5.Column#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Column#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -13248,25 +18686,27 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Column#setXAxi
+ * @name sap.viz.ui5.Column#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Column#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -13277,6 +18717,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -13285,7 +18726,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Column#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -13295,7 +18736,8 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Column#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.verticalbar
@@ -13306,6 +18748,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.VerticalBar}
@@ -13314,7 +18757,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Column#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -13325,142 +18768,9 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Column#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Column</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#attachShowTooltip
- * @function
- */
-
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#detachShowTooltip
- * @function
- */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Column#fireShowTooltip
- * @function
- */
-
-/**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Column#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Column</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#attachHideTooltip
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Column#detachHideTooltip
- * @function
- */
-
-
-/**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Column#fireHideTooltip
- * @function
- */
-
-/**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -13499,7 +18809,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -13537,7 +18847,6 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Column</code>.<br/>
  *
@@ -13553,7 +18862,6 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -13564,8 +18872,9 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Column#deselectData
  * @event
@@ -13581,7 +18890,7 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -13595,7 +18904,6 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @name sap.viz.ui5.Column#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Column</code>.<br/>
@@ -13612,7 +18920,6 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -13623,13 +18930,213 @@ sap.viz.ui5.Column.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTo
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Column#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Column</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Column#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Column#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Column</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Column</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Column#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Column#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Column</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Column</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Column</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Column</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Column#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Column} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Column#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Column.js
 sap.viz.ui5.Column.prototype.getVIZChartType = function() {
   return "viz/column";
 };
 
+sap.viz.ui5.Column.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.Column.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
 sap.viz.ui5.Column.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Column.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Column.prototype.getLegend = function() {
   return this._getOrCreate("legend");
@@ -13637,8 +19144,8 @@ sap.viz.ui5.Column.prototype.getLegend = function() {
 sap.viz.ui5.Column.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.Column.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Column.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.Column.prototype.getYAxis = function() {
   return this._getOrCreate("yAxis");
@@ -13652,22 +19159,6 @@ sap.viz.ui5.Column.prototype.getBackground = function() {
 sap.viz.ui5.Column.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.Column.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Column.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Column.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Column.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
 sap.viz.ui5.Column.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -13684,13 +19175,37 @@ sap.viz.ui5.Column.prototype.detachDeselectData = function(fnHandler, oListener)
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Column.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Column.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Column.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Column.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Column.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Column.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Column
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Combination') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -13722,10 +19237,13 @@ jQuery.sap.declare("sap.viz.ui5.Combination");
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
@@ -13736,10 +19254,11 @@ jQuery.sap.declare("sap.viz.ui5.Combination");
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Combination#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Combination#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Combination#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Combination#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Combination#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Combination#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Combination#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -13755,7 +19274,7 @@ jQuery.sap.declare("sap.viz.ui5.Combination");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -13771,20 +19290,24 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Combination", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.Combination", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -13805,96 +19328,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Combination", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Combination.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
-	
+
 /**
- * Getter for aggregation <code>title</code>.<br/>
- * Module sap.viz.modules.title
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
  * 
- * @return {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.types.RootContainer}
  * @public
- * @name sap.viz.ui5.Combination#getTitle
- * @function
- */
-
-/**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Title}
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#setTitle
+ * @name sap.viz.ui5.Combination#getGeneral
  * @function
  */
 
 
 /**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
  * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Combination#destroyTitle
+ * @name sap.viz.ui5.Combination#setGeneral
  * @function
  */
 	
-/**
- * Getter for aggregation <code>legend</code>.<br/>
- * Module sap.viz.modules.legend
- * 
- * @return {sap.viz.ui5.types.Legend}
- * @public
- * @name sap.viz.ui5.Combination#getLegend
- * @function
- */
 
 /**
- * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
  * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Combination#setLegend
+ * @name sap.viz.ui5.Combination#destroyGeneral
  * @function
  */
 
 
-/**
- * Destroys the legend in the aggregation 
- * named <code>legend</code>.
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#destroyLegend
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.Combination#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>interaction</code>.<br/>
  * Module sap.viz.modules.controller.interaction
@@ -13905,6 +19372,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>interaction</code>.
  * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
@@ -13913,7 +19381,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @name sap.viz.ui5.Combination#setInteraction
  * @function
  */
-
+	
 
 /**
  * Destroys the interaction in the aggregation 
@@ -13923,7 +19391,163 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @name sap.viz.ui5.Combination#destroyInteraction
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.Combination#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#setTitle
+ * @function
+ */
 	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Combination#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.Combination#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.Combination#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.Combination#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -13934,25 +19558,27 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Combination#setYAxi
+ * @name sap.viz.ui5.Combination#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Combination#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -13963,25 +19589,27 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Combination#setXAxi
+ * @name sap.viz.ui5.Combination#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Combination#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -13992,6 +19620,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -14000,7 +19629,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @name sap.viz.ui5.Combination#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -14010,7 +19639,8 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @name sap.viz.ui5.Combination#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.combination
@@ -14021,6 +19651,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Combination}
@@ -14029,7 +19660,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @name sap.viz.ui5.Combination#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -14040,142 +19671,9 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Combination#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Combination</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#attachShowTooltip
- * @function
- */
-
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#detachShowTooltip
- * @function
- */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Combination#fireShowTooltip
- * @function
- */
-
-/**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Combination#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Combination</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#attachHideTooltip
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Combination#detachHideTooltip
- * @function
- */
-
-
-/**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Combination#fireHideTooltip
- * @function
- */
-
-/**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -14214,7 +19712,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -14252,7 +19750,6 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Combination</code>.<br/>
  *
@@ -14268,7 +19765,6 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -14279,8 +19775,9 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Combination#deselectData
  * @event
@@ -14296,7 +19793,7 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -14310,7 +19807,6 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @name sap.viz.ui5.Combination#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Combination</code>.<br/>
@@ -14327,7 +19823,6 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -14338,13 +19833,213 @@ sap.viz.ui5.Combination.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'h
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Combination#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Combination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Combination#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Combination#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Combination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Combination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Combination#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Combination#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Combination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Combination</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Combination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Combination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Combination#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Combination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Combination#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Combination.js
 sap.viz.ui5.Combination.prototype.getVIZChartType = function() {
   return "viz/combination";
 };
 
+sap.viz.ui5.Combination.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.Combination.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
 sap.viz.ui5.Combination.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Combination.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Combination.prototype.getLegend = function() {
   return this._getOrCreate("legend");
@@ -14352,8 +20047,8 @@ sap.viz.ui5.Combination.prototype.getLegend = function() {
 sap.viz.ui5.Combination.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.Combination.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Combination.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.Combination.prototype.getYAxis = function() {
   return this._getOrCreate("yAxis");
@@ -14367,22 +20062,6 @@ sap.viz.ui5.Combination.prototype.getBackground = function() {
 sap.viz.ui5.Combination.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.Combination.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Combination.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Combination.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Combination.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
 sap.viz.ui5.Combination.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -14399,13 +20078,37 @@ sap.viz.ui5.Combination.prototype.detachDeselectData = function(fnHandler, oList
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Combination.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Combination.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Combination.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Combination.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Combination.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Combination.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Combination
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Donut') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -14437,20 +20140,26 @@ jQuery.sap.declare("sap.viz.ui5.Donut");
  * </li>
  * <li>Aggregations
  * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Pie</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
- * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Pie</li></ul>
+ * <li>{@link #getDataTransform dataTransform} : sap.viz.ui5.types.Datatransform</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Donut#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Donut#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Donut#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Donut#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Donut#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Donut#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Donut#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -14466,7 +20175,7 @@ jQuery.sap.declare("sap.viz.ui5.Donut");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -14482,16 +20191,22 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Donut", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.Pie", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
-    	"plotArea" : {type : "sap.viz.ui5.types.Pie", multiple : false}
+    	"dataTransform" : {type : "sap.viz.ui5.types.Datatransform", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -14512,9 +20227,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Donut", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Donut.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.Donut#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#setGeneral
+ * @function
+ */
 	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#destroyGeneral
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Module sap.viz.modules.title
@@ -14525,6 +20271,7 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Title}
@@ -14533,7 +20280,7 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @name sap.viz.ui5.Donut#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -14543,26 +20290,59 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @name sap.viz.ui5.Donut#destroyTitle
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>legend</code>.<br/>
+ * Getter for aggregation <code>legendGroup</code>.<br/>
  * Module sap.viz.modules.legend
  * 
  * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Donut#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
  * @public
  * @name sap.viz.ui5.Donut#getLegend
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
  * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Donut#setLegend
  * @function
  */
-
+	
 
 /**
  * Destroys the legend in the aggregation 
@@ -14572,36 +20352,39 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @name sap.viz.ui5.Donut#destroyLegend
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>interaction</code>.<br/>
- * Module sap.viz.modules.controller.interaction
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
  * 
- * @return {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.types.XYContainer}
  * @public
- * @name sap.viz.ui5.Donut#getInteraction
- * @function
- */
-
-/**
- * Setter for the aggregated <code>interaction</code>.
- * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
- * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Donut#setInteraction
+ * @name sap.viz.ui5.Donut#getXyContainer
  * @function
  */
 
 
 /**
- * Destroys the interaction in the aggregation 
- * named <code>interaction</code>.
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
  * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Donut#destroyInteraction
+ * @name sap.viz.ui5.Donut#setXyContainer
  * @function
  */
 	
+
+/**
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#destroyXyContainer
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.pie
@@ -14612,6 +20395,7 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Pie}
@@ -14620,7 +20404,7 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @name sap.viz.ui5.Donut#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -14631,142 +20415,102 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Donut#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
 
- * @public
- */
- 
 /**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Donut</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
  * @public
- * @name sap.viz.ui5.Donut#attachShowTooltip
+ * @name sap.viz.ui5.Donut#getDataLabel
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
  * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Donut#detachShowTooltip
+ * @name sap.viz.ui5.Donut#setDataLabel
  * @function
  */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Donut#fireShowTooltip
- * @function
- */
+	
 
 /**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Donut#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Donut</code>.<br/> itself.
- *
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
  * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Donut#attachHideTooltip
+ * @name sap.viz.ui5.Donut#destroyDataLabel
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.Donut#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
  * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Donut#detachHideTooltip
+ * @name sap.viz.ui5.Donut#setInteraction
  * @function
  */
-
+	
 
 /**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
  * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Donut#fireHideTooltip
+ * @public
+ * @name sap.viz.ui5.Donut#destroyInteraction
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Getter for aggregation <code>dataTransform</code>.<br/>
+ * Module sap.viz.modules.datatransform
+ * 
+ * @return {sap.viz.ui5.types.Datatransform}
+ * @public
+ * @name sap.viz.ui5.Donut#getDataTransform
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataTransform</code>.
+ * @param oDataTransform {sap.viz.ui5.types.Datatransform}
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#setDataTransform
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataTransform in the aggregation 
+ * named <code>dataTransform</code>.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#destroyDataTransform
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -14805,7 +20549,7 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -14843,7 +20587,6 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Donut</code>.<br/>
  *
@@ -14859,7 +20602,6 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -14870,8 +20612,9 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Donut#deselectData
  * @event
@@ -14887,7 +20630,7 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -14901,7 +20644,6 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @name sap.viz.ui5.Donut#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Donut</code>.<br/>
@@ -14918,7 +20660,6 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -14929,39 +20670,229 @@ sap.viz.ui5.Donut.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToo
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Donut#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Donut</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Donut#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Donut#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Donut</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Donut</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Donut#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Donut#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Donut</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Donut</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Donut</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Donut</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Donut#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Donut} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Donut#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Donut.js
 sap.viz.ui5.Donut.prototype.getVIZChartType = function() {
   return "viz/donut";
 };
 
+sap.viz.ui5.Donut.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
 sap.viz.ui5.Donut.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Donut.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Donut.prototype.getLegend = function() {
   return this._getOrCreate("legend");
 }
-sap.viz.ui5.Donut.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Donut.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
 }
 sap.viz.ui5.Donut.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.Donut.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Donut.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Donut.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Donut.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
+sap.viz.ui5.Donut.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.Donut.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.Donut.prototype.getDataTransform = function() {
+  return this._getOrCreate("dataTransform");
+}
 sap.viz.ui5.Donut.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -14978,13 +20909,5707 @@ sap.viz.ui5.Donut.prototype.detachDeselectData = function(fnHandler, oListener) 
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Donut.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Donut.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Donut.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Donut.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Donut.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Donut.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Donut
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualBar') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.DualBar.
+jQuery.sap.declare("sap.viz.ui5.DualBar");
+
+
+
+/**
+ * Constructor for a new ui5/DualBar.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
+ * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Bar</li>
+ * <li>{@link #getXAxis2 xAxis2} : sap.viz.ui5.types.Axis</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.viz.ui5.DualBar#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualBar#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualBar#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualBar#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualBar#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseChart#constructor sap.viz.ui5.core.BaseChart}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Chart ui5/DualBar
+ * @extends sap.viz.ui5.core.BaseChart
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.DualBar
+ */
+sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.DualBar", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
+    	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.Bar", multiple : false}, 
+    	"xAxis2" : {type : "sap.viz.ui5.types.Axis", multiple : false}
+	},
+	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
+		"showTooltip" : {}, 
+		"hideTooltip" : {}, 
+		"initialized" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.DualBar with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.DualBar.extend
+ * @function
+ */
+
+sap.viz.ui5.DualBar.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
+
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.DualBar#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setGeneral
+ * @function
+ */
+	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyGeneral
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.DualBar#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.DualBar#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.DualBar#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.DualBar#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.DualBar#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
+ * 
+ * @return {sap.viz.ui5.types.XYContainer}
+ * @public
+ * @name sap.viz.ui5.DualBar#getXyContainer
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setXyContainer
+ * @function
+ */
+	
+
+/**
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyXyContainer
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.DualBar#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyDataLabel
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualBar#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualBar#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.DualBar#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.bar
+ * 
+ * @return {sap.viz.ui5.types.Bar}
+ * @public
+ * @name sap.viz.ui5.DualBar#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.Bar}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis2</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualBar#getXAxis2
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis2</code>.
+ * @param oXAxis2 {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#setXAxis2
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis2 in the aggregation 
+ * named <code>xAxis2</code>.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#destroyXAxis2
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @name sap.viz.ui5.DualBar#selectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'selectData' event of this <code>sap.viz.ui5.DualBar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualBar</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualBar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#attachSelectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.DualBar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#detachSelectData
+ * @function
+ */
+
+/**
+ * Fire event selectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualBar#fireSelectData
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @name sap.viz.ui5.DualBar#deselectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'deselectData' event of this <code>sap.viz.ui5.DualBar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualBar</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualBar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#attachDeselectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.DualBar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#detachDeselectData
+ * @function
+ */
+
+/**
+ * Fire event deselectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualBar#fireDeselectData
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.DualBar#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.DualBar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualBar</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualBar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.DualBar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualBar#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.DualBar#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.DualBar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualBar</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualBar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.DualBar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualBar#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.DualBar#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.DualBar</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualBar</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualBar</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.DualBar</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualBar#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualBar} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualBar#fireInitialized
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/DualBar.js
+sap.viz.ui5.DualBar.prototype.getVIZChartType = function() {
+  return "viz/dual_bar";
+};
+
+sap.viz.ui5.DualBar.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.DualBar.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.DualBar.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+sap.viz.ui5.DualBar.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
+}
+sap.viz.ui5.DualBar.prototype.getLegend = function() {
+  return this._getOrCreate("legend");
+}
+sap.viz.ui5.DualBar.prototype.getToolTip = function() {
+  return this._getOrCreate("toolTip");
+}
+sap.viz.ui5.DualBar.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
+}
+sap.viz.ui5.DualBar.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.DualBar.prototype.getXAxis = function() {
+  return this._getOrCreate("xAxis");
+}
+sap.viz.ui5.DualBar.prototype.getYAxis = function() {
+  return this._getOrCreate("yAxis");
+}
+sap.viz.ui5.DualBar.prototype.getBackground = function() {
+  return this._getOrCreate("background");
+}
+sap.viz.ui5.DualBar.prototype.getPlotArea = function() {
+  return this._getOrCreate("plotArea");
+}
+sap.viz.ui5.DualBar.prototype.getXAxis2 = function() {
+  return this._getOrCreate("xAxis2");
+}
+sap.viz.ui5.DualBar.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualBar.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
+
+}; // end of sap.viz.ui5.DualBar
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualColumn') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.DualColumn.
+jQuery.sap.declare("sap.viz.ui5.DualColumn");
+
+
+
+/**
+ * Constructor for a new ui5/DualColumn.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
+ * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.VerticalBar</li>
+ * <li>{@link #getYAxis2 yAxis2} : sap.viz.ui5.types.Axis</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.viz.ui5.DualColumn#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualColumn#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualColumn#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualColumn#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualColumn#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseChart#constructor sap.viz.ui5.core.BaseChart}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Chart ui5/DualColumn
+ * @extends sap.viz.ui5.core.BaseChart
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.DualColumn
+ */
+sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.DualColumn", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
+    	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.VerticalBar", multiple : false}, 
+    	"yAxis2" : {type : "sap.viz.ui5.types.Axis", multiple : false}
+	},
+	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
+		"showTooltip" : {}, 
+		"hideTooltip" : {}, 
+		"initialized" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.DualColumn with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.DualColumn.extend
+ * @function
+ */
+
+sap.viz.ui5.DualColumn.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
+
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setGeneral
+ * @function
+ */
+	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyGeneral
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyDataLabel
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.verticalbar
+ * 
+ * @return {sap.viz.ui5.types.VerticalBar}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.VerticalBar}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis2</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualColumn#getYAxis2
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis2</code>.
+ * @param oYAxis2 {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#setYAxis2
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis2 in the aggregation 
+ * named <code>yAxis2</code>.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#destroyYAxis2
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @name sap.viz.ui5.DualColumn#selectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'selectData' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#attachSelectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#detachSelectData
+ * @function
+ */
+
+/**
+ * Fire event selectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualColumn#fireSelectData
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @name sap.viz.ui5.DualColumn#deselectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'deselectData' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#attachDeselectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#detachDeselectData
+ * @function
+ */
+
+/**
+ * Fire event deselectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualColumn#fireDeselectData
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.DualColumn#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualColumn#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.DualColumn#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualColumn#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.DualColumn#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.DualColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualColumn#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualColumn#fireInitialized
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/DualColumn.js
+sap.viz.ui5.DualColumn.prototype.getVIZChartType = function() {
+  return "viz/dual_column";
+};
+
+sap.viz.ui5.DualColumn.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.DualColumn.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.DualColumn.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+sap.viz.ui5.DualColumn.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
+}
+sap.viz.ui5.DualColumn.prototype.getLegend = function() {
+  return this._getOrCreate("legend");
+}
+sap.viz.ui5.DualColumn.prototype.getToolTip = function() {
+  return this._getOrCreate("toolTip");
+}
+sap.viz.ui5.DualColumn.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.DualColumn.prototype.getYAxis = function() {
+  return this._getOrCreate("yAxis");
+}
+sap.viz.ui5.DualColumn.prototype.getXAxis = function() {
+  return this._getOrCreate("xAxis");
+}
+sap.viz.ui5.DualColumn.prototype.getBackground = function() {
+  return this._getOrCreate("background");
+}
+sap.viz.ui5.DualColumn.prototype.getPlotArea = function() {
+  return this._getOrCreate("plotArea");
+}
+sap.viz.ui5.DualColumn.prototype.getYAxis2 = function() {
+  return this._getOrCreate("yAxis2");
+}
+sap.viz.ui5.DualColumn.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualColumn.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
+
+}; // end of sap.viz.ui5.DualColumn
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualCombination') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.DualCombination.
+jQuery.sap.declare("sap.viz.ui5.DualCombination");
+
+
+
+/**
+ * Constructor for a new ui5/DualCombination.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
+ * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Combination</li>
+ * <li>{@link #getYAxis2 yAxis2} : sap.viz.ui5.types.Axis</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.viz.ui5.DualCombination#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualCombination#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualCombination#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualCombination#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualCombination#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseChart#constructor sap.viz.ui5.core.BaseChart}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Chart ui5/DualCombination
+ * @extends sap.viz.ui5.core.BaseChart
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.DualCombination
+ */
+sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.DualCombination", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
+    	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.Combination", multiple : false}, 
+    	"yAxis2" : {type : "sap.viz.ui5.types.Axis", multiple : false}
+	},
+	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
+		"showTooltip" : {}, 
+		"hideTooltip" : {}, 
+		"initialized" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.DualCombination with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.DualCombination.extend
+ * @function
+ */
+
+sap.viz.ui5.DualCombination.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
+
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setGeneral
+ * @function
+ */
+	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyGeneral
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyDataLabel
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.combination
+ * 
+ * @return {sap.viz.ui5.types.Combination}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.Combination}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis2</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualCombination#getYAxis2
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis2</code>.
+ * @param oYAxis2 {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#setYAxis2
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis2 in the aggregation 
+ * named <code>yAxis2</code>.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#destroyYAxis2
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @name sap.viz.ui5.DualCombination#selectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'selectData' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#attachSelectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#detachSelectData
+ * @function
+ */
+
+/**
+ * Fire event selectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualCombination#fireSelectData
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @name sap.viz.ui5.DualCombination#deselectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'deselectData' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#attachDeselectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#detachDeselectData
+ * @function
+ */
+
+/**
+ * Fire event deselectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualCombination#fireDeselectData
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.DualCombination#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualCombination#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.DualCombination#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualCombination#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.DualCombination#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualCombination</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.DualCombination</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualCombination#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualCombination} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualCombination#fireInitialized
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/DualCombination.js
+sap.viz.ui5.DualCombination.prototype.getVIZChartType = function() {
+  return "viz/dual_combination";
+};
+
+sap.viz.ui5.DualCombination.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.DualCombination.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.DualCombination.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+sap.viz.ui5.DualCombination.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
+}
+sap.viz.ui5.DualCombination.prototype.getLegend = function() {
+  return this._getOrCreate("legend");
+}
+sap.viz.ui5.DualCombination.prototype.getToolTip = function() {
+  return this._getOrCreate("toolTip");
+}
+sap.viz.ui5.DualCombination.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.DualCombination.prototype.getYAxis = function() {
+  return this._getOrCreate("yAxis");
+}
+sap.viz.ui5.DualCombination.prototype.getXAxis = function() {
+  return this._getOrCreate("xAxis");
+}
+sap.viz.ui5.DualCombination.prototype.getBackground = function() {
+  return this._getOrCreate("background");
+}
+sap.viz.ui5.DualCombination.prototype.getPlotArea = function() {
+  return this._getOrCreate("plotArea");
+}
+sap.viz.ui5.DualCombination.prototype.getYAxis2 = function() {
+  return this._getOrCreate("yAxis2");
+}
+sap.viz.ui5.DualCombination.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualCombination.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
+
+}; // end of sap.viz.ui5.DualCombination
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualLine') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.DualLine.
+jQuery.sap.declare("sap.viz.ui5.DualLine");
+
+
+
+/**
+ * Constructor for a new ui5/DualLine.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
+ * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Line</li>
+ * <li>{@link #getYAxis2 yAxis2} : sap.viz.ui5.types.Axis</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.viz.ui5.DualLine#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualLine#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualLine#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualLine#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualLine#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseChart#constructor sap.viz.ui5.core.BaseChart}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Chart ui5/DualLine
+ * @extends sap.viz.ui5.core.BaseChart
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.DualLine
+ */
+sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.DualLine", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
+    	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.Line", multiple : false}, 
+    	"yAxis2" : {type : "sap.viz.ui5.types.Axis", multiple : false}
+	},
+	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
+		"showTooltip" : {}, 
+		"hideTooltip" : {}, 
+		"initialized" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.DualLine with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.DualLine.extend
+ * @function
+ */
+
+sap.viz.ui5.DualLine.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
+
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.DualLine#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setGeneral
+ * @function
+ */
+	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyGeneral
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.DualLine#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.DualLine#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.DualLine#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.DualLine#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.DualLine#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.DualLine#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyDataLabel
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualLine#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualLine#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.DualLine#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.line
+ * 
+ * @return {sap.viz.ui5.types.Line}
+ * @public
+ * @name sap.viz.ui5.DualLine#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.Line}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis2</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualLine#getYAxis2
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis2</code>.
+ * @param oYAxis2 {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#setYAxis2
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis2 in the aggregation 
+ * named <code>yAxis2</code>.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#destroyYAxis2
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @name sap.viz.ui5.DualLine#selectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'selectData' event of this <code>sap.viz.ui5.DualLine</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualLine</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualLine</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#attachSelectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.DualLine</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#detachSelectData
+ * @function
+ */
+
+/**
+ * Fire event selectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualLine#fireSelectData
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @name sap.viz.ui5.DualLine#deselectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'deselectData' event of this <code>sap.viz.ui5.DualLine</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualLine</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualLine</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#attachDeselectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.DualLine</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#detachDeselectData
+ * @function
+ */
+
+/**
+ * Fire event deselectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualLine#fireDeselectData
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.DualLine#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.DualLine</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualLine</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualLine</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.DualLine</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualLine#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.DualLine#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.DualLine</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualLine</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualLine</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.DualLine</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualLine#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.DualLine#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.DualLine</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualLine</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualLine</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.DualLine</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualLine#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualLine} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualLine#fireInitialized
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/DualLine.js
+sap.viz.ui5.DualLine.prototype.getVIZChartType = function() {
+  return "viz/dual_line";
+};
+
+sap.viz.ui5.DualLine.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.DualLine.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.DualLine.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+sap.viz.ui5.DualLine.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
+}
+sap.viz.ui5.DualLine.prototype.getLegend = function() {
+  return this._getOrCreate("legend");
+}
+sap.viz.ui5.DualLine.prototype.getToolTip = function() {
+  return this._getOrCreate("toolTip");
+}
+sap.viz.ui5.DualLine.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.DualLine.prototype.getYAxis = function() {
+  return this._getOrCreate("yAxis");
+}
+sap.viz.ui5.DualLine.prototype.getXAxis = function() {
+  return this._getOrCreate("xAxis");
+}
+sap.viz.ui5.DualLine.prototype.getBackground = function() {
+  return this._getOrCreate("background");
+}
+sap.viz.ui5.DualLine.prototype.getPlotArea = function() {
+  return this._getOrCreate("plotArea");
+}
+sap.viz.ui5.DualLine.prototype.getYAxis2 = function() {
+  return this._getOrCreate("yAxis2");
+}
+sap.viz.ui5.DualLine.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualLine.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
+
+}; // end of sap.viz.ui5.DualLine
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualStackedColumn') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.DualStackedColumn.
+jQuery.sap.declare("sap.viz.ui5.DualStackedColumn");
+
+
+
+/**
+ * Constructor for a new ui5/DualStackedColumn.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
+ * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.StackedVerticalBar</li>
+ * <li>{@link #getYAxis2 yAxis2} : sap.viz.ui5.types.Axis</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.viz.ui5.DualStackedColumn#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseChart#constructor sap.viz.ui5.core.BaseChart}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Chart ui5/DualStackedColumn
+ * @extends sap.viz.ui5.core.BaseChart
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.DualStackedColumn
+ */
+sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.DualStackedColumn", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
+    	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.StackedVerticalBar", multiple : false}, 
+    	"yAxis2" : {type : "sap.viz.ui5.types.Axis", multiple : false}
+	},
+	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
+		"showTooltip" : {}, 
+		"hideTooltip" : {}, 
+		"initialized" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.DualStackedColumn with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.DualStackedColumn.extend
+ * @function
+ */
+
+sap.viz.ui5.DualStackedColumn.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
+
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setGeneral
+ * @function
+ */
+	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyGeneral
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyDataLabel
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.stackedverticalbar
+ * 
+ * @return {sap.viz.ui5.types.StackedVerticalBar}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.StackedVerticalBar}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis2</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#getYAxis2
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis2</code>.
+ * @param oYAxis2 {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#setYAxis2
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis2 in the aggregation 
+ * named <code>yAxis2</code>.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#destroyYAxis2
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @name sap.viz.ui5.DualStackedColumn#selectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'selectData' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#attachSelectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#detachSelectData
+ * @function
+ */
+
+/**
+ * Fire event selectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn#fireSelectData
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @name sap.viz.ui5.DualStackedColumn#deselectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'deselectData' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#attachDeselectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#detachDeselectData
+ * @function
+ */
+
+/**
+ * Fire event deselectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn#fireDeselectData
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.DualStackedColumn#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.DualStackedColumn#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.DualStackedColumn#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.DualStackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn#fireInitialized
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/DualStackedColumn.js
+sap.viz.ui5.DualStackedColumn.prototype.getVIZChartType = function() {
+  return "viz/dual_stacked_column";
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getLegend = function() {
+  return this._getOrCreate("legend");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getToolTip = function() {
+  return this._getOrCreate("toolTip");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getYAxis = function() {
+  return this._getOrCreate("yAxis");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getXAxis = function() {
+  return this._getOrCreate("xAxis");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getBackground = function() {
+  return this._getOrCreate("background");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getPlotArea = function() {
+  return this._getOrCreate("plotArea");
+}
+sap.viz.ui5.DualStackedColumn.prototype.getYAxis2 = function() {
+  return this._getOrCreate("yAxis2");
+}
+sap.viz.ui5.DualStackedColumn.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
+
+}; // end of sap.viz.ui5.DualStackedColumn
+if ( !jQuery.sap.isDeclared('sap.viz.ui5.DualStackedColumn100') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.control, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides control sap.viz.ui5.DualStackedColumn100.
+jQuery.sap.declare("sap.viz.ui5.DualStackedColumn100");
+
+
+
+/**
+ * Constructor for a new ui5/DualStackedColumn100.
+ * 
+ * Accepts an object literal <code>mSettings</code> that defines initial 
+ * property values, aggregated and associated objects as well as event handlers. 
+ * 
+ * If the name of a setting is ambiguous (e.g. a property has the same name as an event), 
+ * then the framework assumes property, aggregation, association, event in that order. 
+ * To override this automatic resolution, one of the prefixes "aggregation:", "association:" 
+ * or "event:" can be added to the name of the setting (such a prefixed name must be
+ * enclosed in single or double quotes).
+ *
+ * The supported settings are:
+ * <ul>
+ * <li>Properties
+ * <ul></ul>
+ * </li>
+ * <li>Aggregations
+ * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
+ * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
+ * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.StackedVerticalBar</li>
+ * <li>{@link #getYAxis2 yAxis2} : sap.viz.ui5.types.Axis</li></ul>
+ * </li>
+ * <li>Associations
+ * <ul></ul>
+ * </li>
+ * <li>Events
+ * <ul>
+ * <li>{@link sap.viz.ui5.DualStackedColumn100#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn100#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn100#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn100#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.DualStackedColumn100#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * </li>
+ * </ul> 
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.viz.ui5.core.BaseChart#constructor sap.viz.ui5.core.BaseChart}
+ * can be used as well.
+ *
+ * @param {string} [sId] id for the new control, generated automatically if no id is given 
+ * @param {object} [mSettings] initial settings for the new control
+ *
+ * @class
+ * Chart ui5/DualStackedColumn100
+ * @extends sap.viz.ui5.core.BaseChart
+ *
+ * @author  
+ * @version 1.12.1
+ *
+ * @constructor   
+ * @public
+ * @since 1.7.2
+ * @experimental Since version 1.7.2. 
+ * Charting API is not finished yet and might change completely
+ * @name sap.viz.ui5.DualStackedColumn100
+ */
+sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.DualStackedColumn100", { metadata : {
+
+	// ---- object ----
+
+	// ---- control specific ----
+	library : "sap.viz",
+	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
+    	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
+    	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.StackedVerticalBar", multiple : false}, 
+    	"yAxis2" : {type : "sap.viz.ui5.types.Axis", multiple : false}
+	},
+	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
+		"showTooltip" : {}, 
+		"hideTooltip" : {}, 
+		"initialized" : {}
+	}
+}});
+
+
+/**
+ * Creates a new subclass of class sap.viz.ui5.DualStackedColumn100 with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.viz.ui5.DualStackedColumn100.extend
+ * @function
+ */
+
+sap.viz.ui5.DualStackedColumn100.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
+
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setGeneral
+ * @function
+ */
+	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyGeneral
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setInteraction
+ * @function
+ */
+	
+
+/**
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyInteraction
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setTitle
+ * @function
+ */
+	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyDataLabel
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getYAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis</code>.
+ * @param oYAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setYAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis in the aggregation 
+ * named <code>yAxis</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyYAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>xAxis</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getXAxis
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>xAxis</code>.
+ * @param oXAxis {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setXAxis
+ * @function
+ */
+	
+
+/**
+ * Destroys the xAxis in the aggregation 
+ * named <code>xAxis</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyXAxis
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>background</code>.<br/>
+ * Module sap.viz.modules.background
+ * 
+ * @return {sap.viz.ui5.types.Background}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getBackground
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>background</code>.
+ * @param oBackground {sap.viz.ui5.types.Background}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setBackground
+ * @function
+ */
+	
+
+/**
+ * Destroys the background in the aggregation 
+ * named <code>background</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyBackground
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>plotArea</code>.<br/>
+ * Module sap.viz.modules.stackedverticalbar
+ * 
+ * @return {sap.viz.ui5.types.StackedVerticalBar}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getPlotArea
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>plotArea</code>.
+ * @param oPlotArea {sap.viz.ui5.types.StackedVerticalBar}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setPlotArea
+ * @function
+ */
+	
+
+/**
+ * Destroys the plotArea in the aggregation 
+ * named <code>plotArea</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyPlotArea
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>yAxis2</code>.<br/>
+ * Module sap.viz.modules.axis
+ * 
+ * @return {sap.viz.ui5.types.Axis}
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#getYAxis2
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>yAxis2</code>.
+ * @param oYAxis2 {sap.viz.ui5.types.Axis}
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#setYAxis2
+ * @function
+ */
+	
+
+/**
+ * Destroys the yAxis2 in the aggregation 
+ * named <code>yAxis2</code>.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#destroyYAxis2
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @name sap.viz.ui5.DualStackedColumn100#selectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'selectData' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * //selected element's detail
+ * target:"Dom Element",//an object pointed to corresponding dom element
+ * data:[{val: "...",//value of this element
+ * ctx:{type:"Dimension"||"Measure"||"MND",
+ * //for Dimension
+ * path:{aa:"...",di:"...",dii:"..."},
+ * //for Measure
+ * path:{mg:"...",mi:"...",dii_a1:"...",dii_a2:"..."},
+ * //for MND
+ * path:{mg:"...",mi:"..."}
+ * //path: analysis path
+ * //aa: analysis axis index // 0 for analysis axis 1, 1 for analysis 2
+ * //di: dimension index //zero based
+ * //dii: dimension item index //zero based
+ * //mg: measure group index // 0 for measure group 1,1 for measure group 2
+ * //mi: measure index // measure index in measure group zero based
+ * //dii_a1: each dii of di in analysis axis 1 index
+ * //dii_a2: each dii of di in analysis axis 2 index
+ * }},{
+ * //for bubble, tagcloud and scatter, there will be more than one values in one selected element.
+ * var:"...",ctx:"..."}]},{
+ * //if under multi selection, there will be more than one selected elements
+ * target:"...",data:["..."]}]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#attachSelectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#detachSelectData
+ * @function
+ */
+
+/**
+ * Fire event selectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn100#fireSelectData
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @name sap.viz.ui5.DualStackedColumn100#deselectData
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'deselectData' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#attachDeselectData
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#detachDeselectData
+ * @function
+ */
+
+/**
+ * Fire event deselectData to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn100#fireDeselectData
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.DualStackedColumn100#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn100#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.DualStackedColumn100#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn100#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.DualStackedColumn100#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.DualStackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.DualStackedColumn100#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.DualStackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.DualStackedColumn100#fireInitialized
+ * @function
+ */
+
+
+// Start of sap/viz/ui5/DualStackedColumn100.js
+sap.viz.ui5.DualStackedColumn100.prototype.getVIZChartType = function() {
+  return "viz/100_dual_stacked_column";
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getTitle = function() {
+  return this._getOrCreate("title");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getLegend = function() {
+  return this._getOrCreate("legend");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getToolTip = function() {
+  return this._getOrCreate("toolTip");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getYAxis = function() {
+  return this._getOrCreate("yAxis");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getXAxis = function() {
+  return this._getOrCreate("xAxis");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getBackground = function() {
+  return this._getOrCreate("background");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getPlotArea = function() {
+  return this._getOrCreate("plotArea");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.getYAxis2 = function() {
+  return this._getOrCreate("yAxis2");
+}
+sap.viz.ui5.DualStackedColumn100.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.DualStackedColumn100.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
+
+}; // end of sap.viz.ui5.DualStackedColumn100
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Line') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -15016,10 +26641,13 @@ jQuery.sap.declare("sap.viz.ui5.Line");
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
@@ -15030,10 +26658,11 @@ jQuery.sap.declare("sap.viz.ui5.Line");
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Line#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Line#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Line#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Line#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Line#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Line#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Line#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -15049,7 +26678,7 @@ jQuery.sap.declare("sap.viz.ui5.Line");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -15065,20 +26694,24 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Line", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.Line", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -15099,96 +26732,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Line", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Line.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
-	
+
 /**
- * Getter for aggregation <code>title</code>.<br/>
- * Module sap.viz.modules.title
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
  * 
- * @return {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.types.RootContainer}
  * @public
- * @name sap.viz.ui5.Line#getTitle
- * @function
- */
-
-/**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Title}
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#setTitle
+ * @name sap.viz.ui5.Line#getGeneral
  * @function
  */
 
 
 /**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
  * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Line#destroyTitle
+ * @name sap.viz.ui5.Line#setGeneral
  * @function
  */
 	
-/**
- * Getter for aggregation <code>legend</code>.<br/>
- * Module sap.viz.modules.legend
- * 
- * @return {sap.viz.ui5.types.Legend}
- * @public
- * @name sap.viz.ui5.Line#getLegend
- * @function
- */
 
 /**
- * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
  * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Line#setLegend
+ * @name sap.viz.ui5.Line#destroyGeneral
  * @function
  */
 
 
-/**
- * Destroys the legend in the aggregation 
- * named <code>legend</code>.
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#destroyLegend
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.Line#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>interaction</code>.<br/>
  * Module sap.viz.modules.controller.interaction
@@ -15199,6 +26776,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>interaction</code>.
  * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
@@ -15207,7 +26785,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @name sap.viz.ui5.Line#setInteraction
  * @function
  */
-
+	
 
 /**
  * Destroys the interaction in the aggregation 
@@ -15217,7 +26795,163 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @name sap.viz.ui5.Line#destroyInteraction
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.Line#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#setTitle
+ * @function
+ */
 	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Line#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.Line#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.Line#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.Line#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -15228,25 +26962,27 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Line#setYAxi
+ * @name sap.viz.ui5.Line#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Line#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -15257,25 +26993,27 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Line#setXAxi
+ * @name sap.viz.ui5.Line#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Line#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -15286,6 +27024,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -15294,7 +27033,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @name sap.viz.ui5.Line#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -15304,7 +27043,8 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @name sap.viz.ui5.Line#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.line
@@ -15315,6 +27055,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Line}
@@ -15323,7 +27064,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @name sap.viz.ui5.Line#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -15334,142 +27075,9 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Line#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Line</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#attachShowTooltip
- * @function
- */
-
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#detachShowTooltip
- * @function
- */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Line#fireShowTooltip
- * @function
- */
-
-/**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Line#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Line</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#attachHideTooltip
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Line#detachHideTooltip
- * @function
- */
-
-
-/**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Line#fireHideTooltip
- * @function
- */
-
-/**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -15508,7 +27116,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -15546,7 +27154,6 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Line</code>.<br/>
  *
@@ -15562,7 +27169,6 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -15573,8 +27179,9 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Line#deselectData
  * @event
@@ -15590,7 +27197,7 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -15604,7 +27211,6 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @name sap.viz.ui5.Line#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Line</code>.<br/>
@@ -15621,7 +27227,6 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -15632,13 +27237,213 @@ sap.viz.ui5.Line.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTool
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Line#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Line</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Line#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Line#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Line</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Line</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Line#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Line#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Line</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Line</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Line</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Line</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Line#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Line} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Line#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Line.js
 sap.viz.ui5.Line.prototype.getVIZChartType = function() {
   return "viz/line";
 };
 
+sap.viz.ui5.Line.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.Line.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
 sap.viz.ui5.Line.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Line.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Line.prototype.getLegend = function() {
   return this._getOrCreate("legend");
@@ -15646,8 +27451,8 @@ sap.viz.ui5.Line.prototype.getLegend = function() {
 sap.viz.ui5.Line.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.Line.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Line.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.Line.prototype.getYAxis = function() {
   return this._getOrCreate("yAxis");
@@ -15661,22 +27466,6 @@ sap.viz.ui5.Line.prototype.getBackground = function() {
 sap.viz.ui5.Line.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.Line.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Line.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Line.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Line.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
 sap.viz.ui5.Line.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -15693,13 +27482,37 @@ sap.viz.ui5.Line.prototype.detachDeselectData = function(fnHandler, oListener) {
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Line.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Line.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Line.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Line.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Line.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Line.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Line
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Pie') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -15731,20 +27544,26 @@ jQuery.sap.declare("sap.viz.ui5.Pie");
  * </li>
  * <li>Aggregations
  * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Pie</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
- * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Pie</li></ul>
+ * <li>{@link #getDataTransform dataTransform} : sap.viz.ui5.types.Datatransform</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Pie#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Pie#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Pie#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Pie#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Pie#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Pie#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Pie#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -15760,7 +27579,7 @@ jQuery.sap.declare("sap.viz.ui5.Pie");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -15776,16 +27595,22 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Pie", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"plotArea" : {type : "sap.viz.ui5.types.Pie", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
-    	"plotArea" : {type : "sap.viz.ui5.types.Pie", multiple : false}
+    	"dataTransform" : {type : "sap.viz.ui5.types.Datatransform", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -15806,9 +27631,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Pie", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Pie.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.Pie#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#setGeneral
+ * @function
+ */
 	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyGeneral
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Module sap.viz.modules.title
@@ -15819,6 +27675,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Title}
@@ -15827,7 +27684,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -15837,26 +27694,59 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#destroyTitle
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>legend</code>.<br/>
+ * Getter for aggregation <code>legendGroup</code>.<br/>
  * Module sap.viz.modules.legend
  * 
  * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Pie#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
  * @public
  * @name sap.viz.ui5.Pie#getLegend
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Pie#setLegend
  * @function
  */
-
+	
 
 /**
  * Destroys the legend in the aggregation 
@@ -15866,36 +27756,39 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#destroyLegend
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>interaction</code>.<br/>
- * Module sap.viz.modules.controller.interaction
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
  * 
- * @return {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.types.XYContainer}
  * @public
- * @name sap.viz.ui5.Pie#getInteraction
- * @function
- */
-
-/**
- * Setter for the aggregated <code>interaction</code>.
- * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
- * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Pie#setInteraction
+ * @name sap.viz.ui5.Pie#getXyContainer
  * @function
  */
 
 
 /**
- * Destroys the interaction in the aggregation 
- * named <code>interaction</code>.
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#destroyInteraction
+ * @name sap.viz.ui5.Pie#setXyContainer
  * @function
  */
 	
+
+/**
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyXyContainer
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.pie
@@ -15906,6 +27799,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Pie}
@@ -15914,7 +27808,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -15925,142 +27819,102 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Pie#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
 
- * @public
- */
- 
 /**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
  * @public
- * @name sap.viz.ui5.Pie#attachShowTooltip
+ * @name sap.viz.ui5.Pie#getDataLabel
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#detachShowTooltip
+ * @name sap.viz.ui5.Pie#setDataLabel
  * @function
  */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Pie#fireShowTooltip
- * @function
- */
+	
 
 /**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Pie#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
- *
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#attachHideTooltip
+ * @name sap.viz.ui5.Pie#destroyDataLabel
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
+ * @public
+ * @name sap.viz.ui5.Pie#getInteraction
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Pie#detachHideTooltip
+ * @name sap.viz.ui5.Pie#setInteraction
  * @function
  */
-
+	
 
 /**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
  * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Pie#fireHideTooltip
+ * @public
+ * @name sap.viz.ui5.Pie#destroyInteraction
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Getter for aggregation <code>dataTransform</code>.<br/>
+ * Module sap.viz.modules.datatransform
+ * 
+ * @return {sap.viz.ui5.types.Datatransform}
+ * @public
+ * @name sap.viz.ui5.Pie#getDataTransform
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataTransform</code>.
+ * @param oDataTransform {sap.viz.ui5.types.Datatransform}
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#setDataTransform
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataTransform in the aggregation 
+ * named <code>dataTransform</code>.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#destroyDataTransform
+ * @function
+ */
+
+
+/**
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -16099,7 +27953,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -16137,7 +27991,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Pie</code>.<br/>
  *
@@ -16153,7 +28006,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -16164,8 +28016,9 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Pie#deselectData
  * @event
@@ -16181,7 +28034,7 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -16195,7 +28048,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @name sap.viz.ui5.Pie#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Pie</code>.<br/>
@@ -16212,7 +28064,6 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -16223,39 +28074,229 @@ sap.viz.ui5.Pie.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideToolt
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Pie#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Pie#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Pie#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Pie</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Pie#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Pie#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Pie</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Pie</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Pie</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Pie</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Pie#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Pie} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Pie#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Pie.js
 sap.viz.ui5.Pie.prototype.getVIZChartType = function() {
   return "viz/pie";
 };
 
+sap.viz.ui5.Pie.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
 sap.viz.ui5.Pie.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Pie.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Pie.prototype.getLegend = function() {
   return this._getOrCreate("legend");
 }
-sap.viz.ui5.Pie.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Pie.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
 }
 sap.viz.ui5.Pie.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.Pie.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Pie.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Pie.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Pie.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
+sap.viz.ui5.Pie.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
+}
+sap.viz.ui5.Pie.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.Pie.prototype.getDataTransform = function() {
+  return this._getOrCreate("dataTransform");
+}
 sap.viz.ui5.Pie.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -16272,13 +28313,37 @@ sap.viz.ui5.Pie.prototype.detachDeselectData = function(fnHandler, oListener) {
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Pie.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Pie.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Pie
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.Scatter') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -16310,24 +28375,30 @@ jQuery.sap.declare("sap.viz.ui5.Scatter");
  * </li>
  * <li>Aggregations
  * <ul>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getXyContainer xyContainer} : sap.viz.ui5.types.XYContainer</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
  * <li>{@link #getPlotArea plotArea} : sap.viz.ui5.types.Scatter</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li></ul>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getDataTransform dataTransform} : sap.viz.ui5.types.Datatransform</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.Scatter#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.Scatter#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Scatter#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.Scatter#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Scatter#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.Scatter#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.Scatter#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -16343,7 +28414,7 @@ jQuery.sap.declare("sap.viz.ui5.Scatter");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -16359,20 +28430,26 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Scatter", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"xyContainer" : {type : "sap.viz.ui5.types.XYContainer", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.Scatter", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"dataTransform" : {type : "sap.viz.ui5.types.Datatransform", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -16393,9 +28470,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.Scatter", { metadata : {
  * @function
  */
 
-sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.Scatter.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
+
+/**
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
+ * 
+ * @return {sap.viz.ui5.types.RootContainer}
+ * @public
+ * @name sap.viz.ui5.Scatter#getGeneral
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#setGeneral
+ * @function
+ */
 	
+
+/**
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#destroyGeneral
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>title</code>.<br/>
  * Module sap.viz.modules.title
@@ -16406,6 +28514,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>title</code>.
  * @param oTitle {sap.viz.ui5.types.Title}
@@ -16414,7 +28523,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#setTitle
  * @function
  */
-
+	
 
 /**
  * Destroys the title in the aggregation 
@@ -16424,26 +28533,59 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#destroyTitle
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>legend</code>.<br/>
+ * Getter for aggregation <code>legendGroup</code>.<br/>
  * Module sap.viz.modules.legend
  * 
  * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.Scatter#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
  * @public
  * @name sap.viz.ui5.Scatter#getLegend
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Scatter#setLegend
  * @function
  */
-
+	
 
 /**
  * Destroys the legend in the aggregation 
@@ -16453,36 +28595,70 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#destroyLegend
  * @function
  */
-	
+
+
 /**
- * Getter for aggregation <code>interaction</code>.<br/>
- * Module sap.viz.modules.controller.interaction
+ * Getter for aggregation <code>xyContainer</code>.<br/>
+ * Module sap.viz.modules.xycontainer
  * 
- * @return {sap.viz.ui5.types.controller.Interaction}
+ * @return {sap.viz.ui5.types.XYContainer}
  * @public
- * @name sap.viz.ui5.Scatter#getInteraction
- * @function
- */
-
-/**
- * Setter for the aggregated <code>interaction</code>.
- * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
- * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.Scatter#setInteraction
+ * @name sap.viz.ui5.Scatter#getXyContainer
  * @function
  */
 
 
 /**
- * Destroys the interaction in the aggregation 
- * named <code>interaction</code>.
+ * Setter for the aggregated <code>xyContainer</code>.
+ * @param oXyContainer {sap.viz.ui5.types.XYContainer}
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Scatter#destroyInteraction
+ * @name sap.viz.ui5.Scatter#setXyContainer
  * @function
  */
 	
+
+/**
+ * Destroys the xyContainer in the aggregation 
+ * named <code>xyContainer</code>.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#destroyXyContainer
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.Scatter#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -16493,25 +28669,27 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Scatter#setXAxi
+ * @name sap.viz.ui5.Scatter#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Scatter#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -16522,25 +28700,27 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Scatter#setYAxi
+ * @name sap.viz.ui5.Scatter#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.Scatter#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -16551,6 +28731,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -16559,7 +28740,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -16569,7 +28750,8 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.scatter
@@ -16580,6 +28762,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.Scatter}
@@ -16588,7 +28771,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -16598,7 +28781,8 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#destroyPlotArea
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Module sap.viz.modules.tooltip
@@ -16609,6 +28793,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Tooltip}
@@ -16617,7 +28802,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
@@ -16628,142 +28813,71 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.Scatter#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
 
- * @public
- */
- 
 /**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Scatter</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * Getter for aggregation <code>interaction</code>.<br/>
+ * Module sap.viz.modules.controller.interaction
+ * 
+ * @return {sap.viz.ui5.types.controller.Interaction}
  * @public
- * @name sap.viz.ui5.Scatter#attachShowTooltip
+ * @name sap.viz.ui5.Scatter#getInteraction
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Setter for the aggregated <code>interaction</code>.
+ * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Scatter#detachShowTooltip
+ * @name sap.viz.ui5.Scatter#setInteraction
  * @function
  */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Scatter#fireShowTooltip
- * @function
- */
+	
 
 /**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.Scatter#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Scatter</code>.<br/> itself.
- *
+ * Destroys the interaction in the aggregation 
+ * named <code>interaction</code>.
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Scatter#attachHideTooltip
+ * @name sap.viz.ui5.Scatter#destroyInteraction
  * @function
  */
 
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
+ * Getter for aggregation <code>dataTransform</code>.<br/>
+ * Module sap.viz.modules.datatransform
+ * 
+ * @return {sap.viz.ui5.types.Datatransform}
+ * @public
+ * @name sap.viz.ui5.Scatter#getDataTransform
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataTransform</code>.
+ * @param oDataTransform {sap.viz.ui5.types.Datatransform}
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.Scatter#detachHideTooltip
+ * @name sap.viz.ui5.Scatter#setDataTransform
  * @function
  */
-
+	
 
 /**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * Destroys the dataTransform in the aggregation 
+ * named <code>dataTransform</code>.
  * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.Scatter#fireHideTooltip
+ * @public
+ * @name sap.viz.ui5.Scatter#destroyDataTransform
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -16802,7 +28916,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -16840,7 +28954,6 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
  *
@@ -16856,7 +28969,6 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -16867,8 +28979,9 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.Scatter#deselectData
  * @event
@@ -16884,7 +28997,7 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -16898,7 +29011,6 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @name sap.viz.ui5.Scatter#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
@@ -16915,7 +29027,6 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -16926,19 +29037,219 @@ sap.viz.ui5.Scatter.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideT
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.Scatter#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Scatter</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Scatter#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.Scatter#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Scatter</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Scatter#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.Scatter#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.Scatter</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.Scatter</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.Scatter</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.Scatter</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.Scatter#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.Scatter} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.Scatter#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/Scatter.js
 sap.viz.ui5.Scatter.prototype.getVIZChartType = function() {
   return "viz/scatter";
 };
 
+sap.viz.ui5.Scatter.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
 sap.viz.ui5.Scatter.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.Scatter.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.Scatter.prototype.getLegend = function() {
   return this._getOrCreate("legend");
 }
-sap.viz.ui5.Scatter.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.Scatter.prototype.getXyContainer = function() {
+  return this._getOrCreate("xyContainer");
+}
+sap.viz.ui5.Scatter.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.Scatter.prototype.getXAxis = function() {
   return this._getOrCreate("xAxis");
@@ -16955,22 +29266,12 @@ sap.viz.ui5.Scatter.prototype.getPlotArea = function() {
 sap.viz.ui5.Scatter.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.Scatter.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Scatter.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.Scatter.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.Scatter.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
+sap.viz.ui5.Scatter.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
+sap.viz.ui5.Scatter.prototype.getDataTransform = function() {
+  return this._getOrCreate("dataTransform");
+}
 sap.viz.ui5.Scatter.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -16987,13 +29288,37 @@ sap.viz.ui5.Scatter.prototype.detachDeselectData = function(fnHandler, oListener
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.Scatter.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Scatter.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Scatter.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Scatter.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.Scatter.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.Scatter.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.Scatter
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.StackedColumn') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -17025,10 +29350,13 @@ jQuery.sap.declare("sap.viz.ui5.StackedColumn");
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
@@ -17039,10 +29367,11 @@ jQuery.sap.declare("sap.viz.ui5.StackedColumn");
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.StackedColumn#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.StackedColumn#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.StackedColumn#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.StackedColumn#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.StackedColumn#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.StackedColumn#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.StackedColumn#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -17058,7 +29387,7 @@ jQuery.sap.declare("sap.viz.ui5.StackedColumn");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -17074,20 +29403,24 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.StackedColumn", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.StackedVerticalBar", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -17108,96 +29441,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.StackedColumn", { metadata : {
  * @function
  */
 
-sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.StackedColumn.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
-	
+
 /**
- * Getter for aggregation <code>title</code>.<br/>
- * Module sap.viz.modules.title
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
  * 
- * @return {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.types.RootContainer}
  * @public
- * @name sap.viz.ui5.StackedColumn#getTitle
- * @function
- */
-
-/**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Title}
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#setTitle
+ * @name sap.viz.ui5.StackedColumn#getGeneral
  * @function
  */
 
 
 /**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
  * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn#destroyTitle
+ * @name sap.viz.ui5.StackedColumn#setGeneral
  * @function
  */
 	
-/**
- * Getter for aggregation <code>legend</code>.<br/>
- * Module sap.viz.modules.legend
- * 
- * @return {sap.viz.ui5.types.Legend}
- * @public
- * @name sap.viz.ui5.StackedColumn#getLegend
- * @function
- */
 
 /**
- * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
  * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn#setLegend
+ * @name sap.viz.ui5.StackedColumn#destroyGeneral
  * @function
  */
 
 
-/**
- * Destroys the legend in the aggregation 
- * named <code>legend</code>.
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#destroyLegend
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.StackedColumn#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>interaction</code>.<br/>
  * Module sap.viz.modules.controller.interaction
@@ -17208,6 +29485,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>interaction</code>.
  * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
@@ -17216,7 +29494,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @name sap.viz.ui5.StackedColumn#setInteraction
  * @function
  */
-
+	
 
 /**
  * Destroys the interaction in the aggregation 
@@ -17226,7 +29504,163 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @name sap.viz.ui5.StackedColumn#destroyInteraction
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.StackedColumn#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#setTitle
+ * @function
+ */
 	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.StackedColumn#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.StackedColumn#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.StackedColumn#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.StackedColumn#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -17237,25 +29671,27 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn#setYAxi
+ * @name sap.viz.ui5.StackedColumn#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.StackedColumn#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -17266,25 +29702,27 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn#setXAxi
+ * @name sap.viz.ui5.StackedColumn#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.StackedColumn#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -17295,6 +29733,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -17303,7 +29742,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @name sap.viz.ui5.StackedColumn#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -17313,7 +29752,8 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @name sap.viz.ui5.StackedColumn#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.stackedverticalbar
@@ -17324,6 +29764,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.StackedVerticalBar}
@@ -17332,7 +29773,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @name sap.viz.ui5.StackedColumn#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -17343,142 +29784,9 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.StackedColumn#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#attachShowTooltip
- * @function
- */
-
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#detachShowTooltip
- * @function
- */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.StackedColumn#fireShowTooltip
- * @function
- */
-
-/**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.StackedColumn#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#attachHideTooltip
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn#detachHideTooltip
- * @function
- */
-
-
-/**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.StackedColumn#fireHideTooltip
- * @function
- */
-
-/**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -17517,7 +29825,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -17555,7 +29863,6 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
  *
@@ -17571,7 +29878,6 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -17582,8 +29888,9 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.StackedColumn#deselectData
  * @event
@@ -17599,7 +29906,7 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -17613,7 +29920,6 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @name sap.viz.ui5.StackedColumn#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
@@ -17630,7 +29936,6 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -17641,13 +29946,213 @@ sap.viz.ui5.StackedColumn.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.StackedColumn#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.StackedColumn#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.StackedColumn#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.StackedColumn#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.StackedColumn#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.StackedColumn</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.StackedColumn} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.StackedColumn#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/StackedColumn.js
 sap.viz.ui5.StackedColumn.prototype.getVIZChartType = function() {
   return "viz/stacked_column";
 };
 
+sap.viz.ui5.StackedColumn.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.StackedColumn.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
 sap.viz.ui5.StackedColumn.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.StackedColumn.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.StackedColumn.prototype.getLegend = function() {
   return this._getOrCreate("legend");
@@ -17655,8 +30160,8 @@ sap.viz.ui5.StackedColumn.prototype.getLegend = function() {
 sap.viz.ui5.StackedColumn.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.StackedColumn.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.StackedColumn.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.StackedColumn.prototype.getYAxis = function() {
   return this._getOrCreate("yAxis");
@@ -17670,22 +30175,6 @@ sap.viz.ui5.StackedColumn.prototype.getBackground = function() {
 sap.viz.ui5.StackedColumn.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
-sap.viz.ui5.StackedColumn.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.StackedColumn.prototype.detachShowTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
-};
-
-sap.viz.ui5.StackedColumn.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.StackedColumn.prototype.detachHideTooltip = function(fnHandler, oListener) {
-  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
-};
-
 sap.viz.ui5.StackedColumn.prototype.attachSelectData = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
 };
@@ -17702,13 +30191,37 @@ sap.viz.ui5.StackedColumn.prototype.detachDeselectData = function(fnHandler, oLi
   return this._detachVIZEvent("deselectData", fnHandler, oListener);
 };
 
+sap.viz.ui5.StackedColumn.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn.prototype.detachShowTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("showTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn.prototype.attachHideTooltip = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("hideTooltip", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn.prototype.detachHideTooltip = function(fnHandler, oListener) {
+  return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
+};
+
 
 }; // end of sap.viz.ui5.StackedColumn
 if ( !jQuery.sap.isDeclared('sap.viz.ui5.StackedColumn100') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -17740,10 +30253,13 @@ jQuery.sap.declare("sap.viz.ui5.StackedColumn100");
  * </li>
  * <li>Aggregations
  * <ul>
- * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
- * <li>{@link #getLegend legend} : sap.viz.ui5.types.Legend</li>
- * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getGeneral general} : sap.viz.ui5.types.RootContainer</li>
  * <li>{@link #getInteraction interaction} : sap.viz.ui5.types.controller.Interaction</li>
+ * <li>{@link #getTitle title} : sap.viz.ui5.types.Title</li>
+ * <li>{@link #getLegendGroup legendGroup} : sap.viz.ui5.types.Legend</li>
+ * <li>{@link #getLegend legend} : sap.viz.ui5.types.legend.Common</li>
+ * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Tooltip</li>
+ * <li>{@link #getDataLabel dataLabel} : sap.viz.ui5.types.Datalabel</li>
  * <li>{@link #getYAxis yAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getXAxis xAxis} : sap.viz.ui5.types.Axis</li>
  * <li>{@link #getBackground background} : sap.viz.ui5.types.Background</li>
@@ -17754,10 +30270,11 @@ jQuery.sap.declare("sap.viz.ui5.StackedColumn100");
  * </li>
  * <li>Events
  * <ul>
+ * <li>{@link sap.viz.ui5.StackedColumn100#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.viz.ui5.StackedColumn100#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.StackedColumn100#event:showTooltip showTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.viz.ui5.StackedColumn100#event:hideTooltip hideTooltip} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.StackedColumn100#event:selectData selectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
- * <li>{@link sap.viz.ui5.StackedColumn100#event:deselectData deselectData} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.viz.ui5.StackedColumn100#event:initialized initialized} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
  *
@@ -17773,7 +30290,7 @@ jQuery.sap.declare("sap.viz.ui5.StackedColumn100");
  * @extends sap.viz.ui5.core.BaseChart
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -17789,20 +30306,24 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.StackedColumn100", { metadata : {
 	// ---- control specific ----
 	library : "sap.viz",
 	aggregations : {
-    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
-    	"legend" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
-    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"general" : {type : "sap.viz.ui5.types.RootContainer", multiple : false}, 
     	"interaction" : {type : "sap.viz.ui5.types.controller.Interaction", multiple : false}, 
+    	"title" : {type : "sap.viz.ui5.types.Title", multiple : false}, 
+    	"legendGroup" : {type : "sap.viz.ui5.types.Legend", multiple : false}, 
+    	"legend" : {type : "sap.viz.ui5.types.legend.Common", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Tooltip", multiple : false}, 
+    	"dataLabel" : {type : "sap.viz.ui5.types.Datalabel", multiple : false}, 
     	"yAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"xAxis" : {type : "sap.viz.ui5.types.Axis", multiple : false}, 
     	"background" : {type : "sap.viz.ui5.types.Background", multiple : false}, 
     	"plotArea" : {type : "sap.viz.ui5.types.StackedVerticalBar", multiple : false}
 	},
 	events : {
+		"selectData" : {}, 
+		"deselectData" : {}, 
 		"showTooltip" : {}, 
 		"hideTooltip" : {}, 
-		"selectData" : {}, 
-		"deselectData" : {}
+		"initialized" : {}
 	}
 }});
 
@@ -17823,96 +30344,40 @@ sap.viz.ui5.core.BaseChart.extend("sap.viz.ui5.StackedColumn100", { metadata : {
  * @function
  */
 
-sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideTooltip':'hideTooltip','selectData':'selectData','deselectData':'deselectData'};
+sap.viz.ui5.StackedColumn100.M_EVENTS = {'selectData':'selectData','deselectData':'deselectData','showTooltip':'showTooltip','hideTooltip':'hideTooltip','initialized':'initialized'};
 
-	
+
 /**
- * Getter for aggregation <code>title</code>.<br/>
- * Module sap.viz.modules.title
+ * Getter for aggregation <code>general</code>.<br/>
+ * Module sap.viz.modules.rootContainer
  * 
- * @return {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.types.RootContainer}
  * @public
- * @name sap.viz.ui5.StackedColumn100#getTitle
- * @function
- */
-
-/**
- * Setter for the aggregated <code>title</code>.
- * @param oTitle {sap.viz.ui5.types.Title}
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#setTitle
+ * @name sap.viz.ui5.StackedColumn100#getGeneral
  * @function
  */
 
 
 /**
- * Destroys the title in the aggregation 
- * named <code>title</code>.
+ * Setter for the aggregated <code>general</code>.
+ * @param oGeneral {sap.viz.ui5.types.RootContainer}
  * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn100#destroyTitle
+ * @name sap.viz.ui5.StackedColumn100#setGeneral
  * @function
  */
 	
-/**
- * Getter for aggregation <code>legend</code>.<br/>
- * Module sap.viz.modules.legend
- * 
- * @return {sap.viz.ui5.types.Legend}
- * @public
- * @name sap.viz.ui5.StackedColumn100#getLegend
- * @function
- */
 
 /**
- * Setter for the aggregated <code>legend</code>.
- * @param oLegend {sap.viz.ui5.types.Legend}
+ * Destroys the general in the aggregation 
+ * named <code>general</code>.
  * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn100#setLegend
+ * @name sap.viz.ui5.StackedColumn100#destroyGeneral
  * @function
  */
 
 
-/**
- * Destroys the legend in the aggregation 
- * named <code>legend</code>.
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#destroyLegend
- * @function
- */
-	
-/**
- * Getter for aggregation <code>toolTip</code>.<br/>
- * Module sap.viz.modules.tooltip
- * 
- * @return {sap.viz.ui5.types.Tooltip}
- * @public
- * @name sap.viz.ui5.StackedColumn100#getToolTip
- * @function
- */
-
-/**
- * Setter for the aggregated <code>toolTip</code>.
- * @param oToolTip {sap.viz.ui5.types.Tooltip}
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#setToolTip
- * @function
- */
-
-
-/**
- * Destroys the toolTip in the aggregation 
- * named <code>toolTip</code>.
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#destroyToolTip
- * @function
- */
-	
 /**
  * Getter for aggregation <code>interaction</code>.<br/>
  * Module sap.viz.modules.controller.interaction
@@ -17923,6 +30388,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>interaction</code>.
  * @param oInteraction {sap.viz.ui5.types.controller.Interaction}
@@ -17931,7 +30397,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @name sap.viz.ui5.StackedColumn100#setInteraction
  * @function
  */
-
+	
 
 /**
  * Destroys the interaction in the aggregation 
@@ -17941,7 +30407,163 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @name sap.viz.ui5.StackedColumn100#destroyInteraction
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>title</code>.<br/>
+ * Module sap.viz.modules.title
+ * 
+ * @return {sap.viz.ui5.types.Title}
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#getTitle
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>title</code>.
+ * @param oTitle {sap.viz.ui5.types.Title}
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#setTitle
+ * @function
+ */
 	
+
+/**
+ * Destroys the title in the aggregation 
+ * named <code>title</code>.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#destroyTitle
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legendGroup</code>.<br/>
+ * Module sap.viz.modules.legend
+ * 
+ * @return {sap.viz.ui5.types.Legend}
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#getLegendGroup
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legendGroup</code>.
+ * @param oLegendGroup {sap.viz.ui5.types.Legend}
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#setLegendGroup
+ * @function
+ */
+	
+
+/**
+ * Destroys the legendGroup in the aggregation 
+ * named <code>legendGroup</code>.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#destroyLegendGroup
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>legend</code>.<br/>
+ * Module sap.viz.modules.legend.common
+ * 
+ * @return {sap.viz.ui5.types.legend.Common}
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#getLegend
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>legend</code>.
+ * @param oLegend {sap.viz.ui5.types.legend.Common}
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#setLegend
+ * @function
+ */
+	
+
+/**
+ * Destroys the legend in the aggregation 
+ * named <code>legend</code>.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#destroyLegend
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>toolTip</code>.<br/>
+ * Module sap.viz.modules.tooltip
+ * 
+ * @return {sap.viz.ui5.types.Tooltip}
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#getToolTip
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>toolTip</code>.
+ * @param oToolTip {sap.viz.ui5.types.Tooltip}
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#setToolTip
+ * @function
+ */
+	
+
+/**
+ * Destroys the toolTip in the aggregation 
+ * named <code>toolTip</code>.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#destroyToolTip
+ * @function
+ */
+
+
+/**
+ * Getter for aggregation <code>dataLabel</code>.<br/>
+ * Module sap.viz.modules.datalabel
+ * 
+ * @return {sap.viz.ui5.types.Datalabel}
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#getDataLabel
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataLabel</code>.
+ * @param oDataLabel {sap.viz.ui5.types.Datalabel}
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#setDataLabel
+ * @function
+ */
+	
+
+/**
+ * Destroys the dataLabel in the aggregation 
+ * named <code>dataLabel</code>.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#destroyDataLabel
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>yAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -17952,25 +30574,27 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>yAxis</code>.
  * @param oYAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn100#setYAxi
+ * @name sap.viz.ui5.StackedColumn100#setYAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the yAxi in the aggregation 
+ * Destroys the yAxis in the aggregation 
  * named <code>yAxis</code>.
  * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.StackedColumn100#destroyYAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>xAxis</code>.<br/>
  * Module sap.viz.modules.axis
@@ -17981,25 +30605,27 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>xAxis</code>.
  * @param oXAxis {sap.viz.ui5.types.Axis}
  * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
  * @public
- * @name sap.viz.ui5.StackedColumn100#setXAxi
+ * @name sap.viz.ui5.StackedColumn100#setXAxis
  * @function
  */
-
+	
 
 /**
- * Destroys the xAxi in the aggregation 
+ * Destroys the xAxis in the aggregation 
  * named <code>xAxis</code>.
  * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
  * @public
  * @name sap.viz.ui5.StackedColumn100#destroyXAxis
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>background</code>.<br/>
  * Module sap.viz.modules.background
@@ -18010,6 +30636,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>background</code>.
  * @param oBackground {sap.viz.ui5.types.Background}
@@ -18018,7 +30645,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @name sap.viz.ui5.StackedColumn100#setBackground
  * @function
  */
-
+	
 
 /**
  * Destroys the background in the aggregation 
@@ -18028,7 +30655,8 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @name sap.viz.ui5.StackedColumn100#destroyBackground
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>plotArea</code>.<br/>
  * Module sap.viz.modules.stackedverticalbar
@@ -18039,6 +30667,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>plotArea</code>.
  * @param oPlotArea {sap.viz.ui5.types.StackedVerticalBar}
@@ -18047,7 +30676,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @name sap.viz.ui5.StackedColumn100#setPlotArea
  * @function
  */
-
+	
 
 /**
  * Destroys the plotArea in the aggregation 
@@ -18058,142 +30687,9 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
-/**
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @name sap.viz.ui5.StackedColumn100#showTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
- * //data of one group
- * name:"...",val:[{
- * //data of one row
- * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
- * //this object specifies the plot area of the chart
- * height:"...",width:"...",x:"...",y:"..."},point:{
- * //this object specifies a point which affects the position of tooltip
- * x:"...",y:"..."}}} 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#attachShowTooltip
- * @function
- */
-
 
 /**
- * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#detachShowTooltip
- * @function
- */
-
-
-/**
- * Fire event showTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.StackedColumn100#fireShowTooltip
- * @function
- */
-
-/**
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @name sap.viz.ui5.StackedColumn100#hideTooltip
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
- *  
- * Event fired when the mouse hover out of the specific part of chart, no data is passed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself.
- *
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#attachHideTooltip
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @public
- * @name sap.viz.ui5.StackedColumn100#detachHideTooltip
- * @function
- */
-
-
-/**
- * Fire event hideTooltip to attached listeners.
-
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
- * @protected
- * @name sap.viz.ui5.StackedColumn100#fireHideTooltip
- * @function
- */
-
-/**
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -18232,7 +30728,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
+ * Event fires when certain data point(s) is(are) selected, data context of selected item(s) would be passed in accordance with the following format.<code>{name: "selectData",data:[{
  * //selected element's detail
  * target:"Dom Element",//an object pointed to corresponding dom element
  * data:[{val: "...",//value of this element
@@ -18270,7 +30766,6 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'selectData' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
  *
@@ -18286,7 +30781,6 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
-
 /**
  * Fire event selectData to attached listeners.
 
@@ -18297,8 +30791,9 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
 /**
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @name sap.viz.ui5.StackedColumn100#deselectData
  * @event
@@ -18314,7 +30809,7 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
  *  
- * Event fired when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
+ * Event fires when certain data point(s) is(are) deselected, data context of deselected item(s) would be passed in accordance with the following format.<code>{name: "deselectData",data:["---the same as selectedData---"]} 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -18328,7 +30823,6 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @name sap.viz.ui5.StackedColumn100#attachDeselectData
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'deselectData' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
@@ -18345,7 +30839,6 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
-
 /**
  * Fire event deselectData to attached listeners.
 
@@ -18356,13 +30849,213 @@ sap.viz.ui5.StackedColumn100.M_EVENTS = {'showTooltip':'showTooltip','hideToolti
  * @function
  */
 
+
+/**
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @name sap.viz.ui5.StackedColumn100#showTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover onto the specific part of chart, data context of tooltip would be passed in accordance with the following format.<code>{name:"showTooltip",data:{body:[{
+ * //data of one group
+ * name:"...",val:[{
+ * //data of one row
+ * color:"...",label:"...",shape:"...",value:"..."},"..."]},"..."],footer:[{label:"...",value:"..."},"..."],plotArea:{
+ * //this object specifies the plot area of the chart
+ * height:"...",width:"...",x:"...",y:"..."},point:{
+ * //this object specifies a point which affects the position of tooltip
+ * x:"...",y:"..."}}} 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#attachShowTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'showTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#detachShowTooltip
+ * @function
+ */
+
+/**
+ * Fire event showTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.StackedColumn100#fireShowTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @name sap.viz.ui5.StackedColumn100#hideTooltip
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when the mouse hover out of the specific part of chart, no data is passed. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#attachHideTooltip
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'hideTooltip' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#detachHideTooltip
+ * @function
+ */
+
+/**
+ * Fire event hideTooltip to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.StackedColumn100#fireHideTooltip
+ * @function
+ */
+
+
+/**
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @name sap.viz.ui5.StackedColumn100#initialized
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'initialized' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself. 
+ *  
+ * Event fires when the loading ends. To use the event listener when creating charts, you must use an event that is passed by the events option. For more information on events options, see the usrOptions section of the <a href="sap.viz.core.html#createViz" target="_blank">createViz</a> function in the API document. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.viz.ui5.StackedColumn100</code>.<br/> itself.
+ *
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#attachInitialized
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'initialized' event of this <code>sap.viz.ui5.StackedColumn100</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.StackedColumn100#detachInitialized
+ * @function
+ */
+
+/**
+ * Fire event initialized to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.viz.ui5.StackedColumn100} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.viz.ui5.StackedColumn100#fireInitialized
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/StackedColumn100.js
 sap.viz.ui5.StackedColumn100.prototype.getVIZChartType = function() {
   return "viz/100_stacked_column";
 };
 
+sap.viz.ui5.StackedColumn100.prototype.getGeneral = function() {
+  return this._getOrCreate("general");
+}
+sap.viz.ui5.StackedColumn100.prototype.getInteraction = function() {
+  return this._getOrCreate("interaction");
+}
 sap.viz.ui5.StackedColumn100.prototype.getTitle = function() {
   return this._getOrCreate("title");
+}
+sap.viz.ui5.StackedColumn100.prototype.getLegendGroup = function() {
+  return this._getOrCreate("legendGroup");
 }
 sap.viz.ui5.StackedColumn100.prototype.getLegend = function() {
   return this._getOrCreate("legend");
@@ -18370,8 +31063,8 @@ sap.viz.ui5.StackedColumn100.prototype.getLegend = function() {
 sap.viz.ui5.StackedColumn100.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
-sap.viz.ui5.StackedColumn100.prototype.getInteraction = function() {
-  return this._getOrCreate("interaction");
+sap.viz.ui5.StackedColumn100.prototype.getDataLabel = function() {
+  return this._getOrCreate("dataLabel");
 }
 sap.viz.ui5.StackedColumn100.prototype.getYAxis = function() {
   return this._getOrCreate("yAxis");
@@ -18385,6 +31078,22 @@ sap.viz.ui5.StackedColumn100.prototype.getBackground = function() {
 sap.viz.ui5.StackedColumn100.prototype.getPlotArea = function() {
   return this._getOrCreate("plotArea");
 }
+sap.viz.ui5.StackedColumn100.prototype.attachSelectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn100.prototype.detachSelectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("selectData", fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn100.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
+};
+
+sap.viz.ui5.StackedColumn100.prototype.detachDeselectData = function(fnHandler, oListener) {
+  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+};
+
 sap.viz.ui5.StackedColumn100.prototype.attachShowTooltip = function(oData, fnHandler, oListener) {
   return this._attachVIZEvent("showTooltip", oData, fnHandler, oListener);
 };
@@ -18401,20 +31110,12 @@ sap.viz.ui5.StackedColumn100.prototype.detachHideTooltip = function(fnHandler, o
   return this._detachVIZEvent("hideTooltip", fnHandler, oListener);
 };
 
-sap.viz.ui5.StackedColumn100.prototype.attachSelectData = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("selectData", oData, fnHandler, oListener);
+sap.viz.ui5.StackedColumn100.prototype.attachInitialized = function(oData, fnHandler, oListener) {
+  return this._attachVIZEvent("initialized", oData, fnHandler, oListener);
 };
 
-sap.viz.ui5.StackedColumn100.prototype.detachSelectData = function(fnHandler, oListener) {
-  return this._detachVIZEvent("selectData", fnHandler, oListener);
-};
-
-sap.viz.ui5.StackedColumn100.prototype.attachDeselectData = function(oData, fnHandler, oListener) {
-  return this._attachVIZEvent("deselectData", oData, fnHandler, oListener);
-};
-
-sap.viz.ui5.StackedColumn100.prototype.detachDeselectData = function(fnHandler, oListener) {
-  return this._detachVIZEvent("deselectData", fnHandler, oListener);
+sap.viz.ui5.StackedColumn100.prototype.detachInitialized = function(fnHandler, oListener) {
+  return this._detachVIZEvent("initialized", fnHandler, oListener);
 };
 
 

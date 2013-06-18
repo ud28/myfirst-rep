@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -32,7 +32,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <ul>
  * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
  * <li>{@link #getHeight height} : sap.ui.core.CSSSize</li>
- * <li>{@link #getViewName viewName} : string</li></ul>
+ * <li>{@link #getViewName viewName} : string</li>
+ * <li>{@link #getDisplayBlock displayBlock} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -59,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -78,7 +79,8 @@ sap.ui.core.Control.extend("sap.ui.core.mvc.View", { metadata : {
 	properties : {
 		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-		"viewName" : {type : "string", group : "Misc", defaultValue : null}
+		"viewName" : {type : "string", group : "Misc", defaultValue : null},
+		"displayBlock" : {type : "boolean", group : "Appearance", defaultValue : false}
 	},
 	aggregations : {
     	"content" : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
@@ -123,7 +125,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -135,6 +136,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>height</code>.
@@ -148,7 +150,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -160,6 +161,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#setHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>viewName</code>.
@@ -173,7 +175,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Setter for property <code>viewName</code>.
  *
@@ -185,7 +186,35 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#setViewName
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>displayBlock</code>.
+ * Whether the CSS display should be set to "block".
+ * Set this to "true" if the default display "inline-block" causes a vertical scrollbar with Views that are set to 100% height.
+ * Do not set this to "true" if you want to display other content in the same HTML parent on either side of the View (setting to "true" may push that other content to the next/previous line).
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>displayBlock</code>
+ * @public
+ * @name sap.ui.core.mvc.View#getDisplayBlock
+ * @function
+ */
+
+/**
+ * Setter for property <code>displayBlock</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bDisplayBlock  new value for property <code>displayBlock</code>
+ * @return {sap.ui.core.mvc.View} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.ui.core.mvc.View#setDisplayBlock
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>content</code>.<br/>
  * Child Controls of the view
@@ -195,6 +224,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#getContent
  * @function
  */
+
 
 /**
  * Inserts a content into the aggregation named <code>content</code>.
@@ -212,7 +242,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Adds some content <code>oContent</code> 
  * to the aggregation named <code>content</code>.
@@ -225,7 +254,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Removes an content from the aggregation named <code>content</code>.
  *
@@ -236,7 +264,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>content</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -245,7 +272,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#removeAllContent
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>content</code> 
@@ -258,7 +284,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#indexOfContent
  * @function
  */
-
+	
 
 /**
  * Destroys all the content in the aggregation 
@@ -268,6 +294,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#destroyContent
  * @function
  */
+
 
 /**
  * Fired when the View has parsed the UI description and instantiated the contained controls (/control tree). 
@@ -301,7 +328,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'afterInit' event of this <code>sap.ui.core.mvc.View</code>.<br/>
  *
@@ -317,7 +343,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Fire event afterInit to attached listeners.
 
@@ -327,6 +352,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#fireAfterInit
  * @function
  */
+
 
 /**
  * Fired when the view has received the request to destroy itself, but before it has destroyed anything. 
@@ -360,7 +386,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'beforeExit' event of this <code>sap.ui.core.mvc.View</code>.<br/>
  *
@@ -376,7 +401,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Fire event beforeExit to attached listeners.
 
@@ -386,6 +410,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#fireBeforeExit
  * @function
  */
+
 
 /**
  * Fired when the View has been (re-)rendered and its HTML is present in the DOM. 
@@ -419,7 +444,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'afterRendering' event of this <code>sap.ui.core.mvc.View</code>.<br/>
  *
@@ -435,7 +459,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Fire event afterRendering to attached listeners.
 
@@ -446,8 +469,9 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
+
 /**
- * Fired before this View is re-rendered. Us to unbind event handlers from HTML elements etc. 
+ * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc. 
  *
  * @name sap.ui.core.mvc.View#beforeRendering
  * @event
@@ -463,7 +487,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.ui.core.mvc.View</code>.<br/> itself. 
  *  
- * Fired before this View is re-rendered. Us to unbind event handlers from HTML elements etc. 
+ * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc. 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -477,7 +501,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#attachBeforeRendering
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'beforeRendering' event of this <code>sap.ui.core.mvc.View</code>.<br/>
@@ -494,7 +517,6 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @function
  */
 
-
 /**
  * Fire event beforeRendering to attached listeners.
 
@@ -504,6 +526,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
  * @name sap.ui.core.mvc.View#fireBeforeRendering
  * @function
  */
+
 
 /**
  * Returns the view's Controller instance (if any)
@@ -649,6 +672,30 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
 		this.fireBeforeRendering();
 	};
 
+	/**	
+	 * Override clone method to avoid conflict between generic cloning of content
+	 * and content creation as defined by the UI5 Model View Controller lifecycle.
+	 * 
+	 * For more details see the development guide section about Model View Controller in UI5.
+	 * 
+	 * @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
+	 * @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 * @protected
+	 */
+	sap.ui.core.mvc.View.prototype.clone = function(sIdSuffix, aLocalIds) {
+		var mSettings = {}, sKey, oClone;
+		//Clone properties (only those with non-default value)
+		for(sKey in this.mProperties  && !(this.isBound && this.isBound(sKey))) {
+			if ( this.mProperties.hasOwnProperty(sKey) ) {
+				mSettings[sKey] = this.mProperties[sKey];
+			}
+		}
+		oClone = sap.ui.core.Control.prototype.clone.call(this, sIdSuffix, aLocalIds, {cloneChildren:false, cloneBindings: true});
+		oClone.applySettings(mSettings);
+		return oClone;
+	};
+	
 	/**
 	 * Creates a view of the given type, name and with the given id.
 	 *
@@ -670,6 +717,7 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
 	 * @param {object} [oView] view configuration Object
 	 * @public
 	 * @static
+	 * @return {sap.ui.core.mvc.View} the created View instance
 	 */
 	sap.ui.view = function(oView) {
 		var view = null;
@@ -681,10 +729,25 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
 			view = new sap.ui.core.mvc.JSONView(oView);
 		} else if (oView.type === sap.ui.core.mvc.ViewType.XML) {
 			view = new sap.ui.core.mvc.XMLView(oView);
+		} else if (oView.type === sap.ui.core.mvc.ViewType.HTML) {
+			view = new sap.ui.core.mvc.HTMLView(oView);
 		} else { // unknown view type
 			throw new Error("Unknown view type "+oView.type+" specified.");
 		}
 		return view;
 	};
+
+
+	/**
+	 * An (optional) method to be implemented by Views.
+	 * When no controller instance is given at View instantiation time AND this method exists and returns the (package and class) name of a controller,
+	 * the View tries to load and instantiate the controller and to connect it to itself.
+	 * 
+	 * @return {string} the name of the controller
+	 * @public
+	 * @name sap.ui.core.mvc.View.getControllerName
+	 * @function
+	 */
+
 
 }());

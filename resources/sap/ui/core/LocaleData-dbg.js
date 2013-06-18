@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides the locale object sap.ui.core.LocaleData
@@ -21,7 +21,7 @@ jQuery.sap.require("sap.ui.core.Configuration");
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @constructor
 	 * @public
 	 * @name sap.ui.core.LocaleData
@@ -310,6 +310,30 @@ jQuery.sap.require("sap.ui.core.Configuration");
 	};
 
 	/**
+	 * A set of locales for which the UI5 runtime contains a CLDR JSON file. 
+	 * 
+	 * Helps to avoid unsatisfiable backend calls.
+	 * 
+	 * The string literal below is substituted during the build.
+	 * The value is determined from the names of the CLDR JSON files which 
+	 * are bundled with the UI5 runtime.
+	 * @private
+	 */
+	var M_SUPPORTED_LOCALES = (function() {
+		var LOCALES = "ar,ar_AE,ar_EG,ar_SA,bg,bg_BG,br,ca_ES,cs,cs_CZ,da,da_DK,de,de_AT,de_BE,de_CH,de_DE,de_LU,el,el_CY,el_GR,en,en_AU,en_CA,en_GB,en_HK,en_IE,en_IN,en_NZ,en_SG,en_US,en_ZA,es,es_AR,es_BO,es_CL,es_CO,es_ES,es_MX,es_PE,es_UY,es_VE,et,et_EE,fa,fa_IR,fi,fi_FI,fr,fr_BE,fr_CA,fr_CH,fr_FR,fr_LU,he,he_IL,hi,hi_IN,hr,hr_HR,hu,hu_HU,id,id_ID,it,it_CH,it_IT,ja,ja_JP,ko,ko_KR,lt,lt_LT,lv,lv_LV,nb,nb_NO,nl,nl_BE,nl_NL,nn,nn_NO,pl,pl_PL,pt,pt_BR,pt_PT,ro,ro_RO,ru,ru_RU,ru_UA,sk_SK,sl,sl_SI,sr,sv,sv_SE,th,th_TH,tr,tr_TR,uk,uk_UA,vi,vi_VN,zh_CN,zh_HK,zh_SG,zh_TW".split(","), 
+			i,result;
+		
+		if ( LOCALES.length != 1 || LOCALES[0].indexOf("@") < 0) { // check that list has been substituted 
+			result = {};
+			for(i=0; i<LOCALES.length; i++) {
+				result[LOCALES[i]] = true;
+			}
+		}
+		
+		return result;
+	}());
+	
+	/**
 	 * Locale data cache
 	 *
 	 * @private
@@ -322,33 +346,41 @@ jQuery.sap.require("sap.ui.core.Configuration");
 	function getData(oLocale) {
 
 		var sLanguage = oLocale.getLanguage() || "",
+		sScript = oLocale.getScript() || "",
 		sRegion = oLocale.getRegion() || "",
 		mData;
 
 		function getOrLoad(sId) {
 			var sUrl, oResponse;
-			if ( !mLocaleDatas[sId] ) {
+			if ( !mLocaleDatas[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true) ) {
 				sUrl = sap.ui.resource("sap.ui.core.cldr", sId + ".json");
 				oResponse = jQuery.sap.sjax({url: sUrl, dataType:"json"});
 				if (oResponse.success) {
 					mLocaleDatas[sId] = oResponse.data;
-        } // else: fallback chain is processed, in the end a result is identified and stored in mDatas under the originally requested ID
+				} // else: fallback chain is processed, in the end a result is identified and stored in mDatas under the originally requested ID
 			}
 			return mLocaleDatas[sId];
 		}
 
 		sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
-    
-    var sId = sLanguage + "_" + sRegion; // the originally requested locale; this is the key under which the result (even a fallback one) will be stored in the end 
-    if ( sLanguage && sRegion ) {
-      mData = getOrLoad(sId);
-    }
-    if ( !mData && sLanguage ) {
-      mData = getOrLoad(sLanguage);
-    }
-  
-    mLocaleDatas[sId] = mData || M_DEFAULT_DATA;
-    return mLocaleDatas[sId];
+		if ( sLanguage === "zh" && !sRegion ) {
+			if ( sScript === "Hans" ) {
+				sRegion = "CN"; 
+			} else if ( sScript === "Hant" ) {
+				sRegion = "TW";
+			}
+		}
+
+		var sId = sLanguage + "_" + sRegion; // the originally requested locale; this is the key under which the result (even a fallback one) will be stored in the end 
+		if ( sLanguage && sRegion ) {
+			mData = getOrLoad(sId);
+		}
+		if ( !mData && sLanguage ) {
+			mData = getOrLoad(sLanguage);
+		}
+
+		mLocaleDatas[sId] = mData || M_DEFAULT_DATA;
+		return mLocaleDatas[sId];
 	};
 
 

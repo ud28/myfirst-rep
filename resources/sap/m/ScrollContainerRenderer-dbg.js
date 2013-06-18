@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.ScrollContainerRenderer");
@@ -51,6 +51,12 @@ sap.m.ScrollContainerRenderer.render = function(oRm, oControl) {
 
 	oRm.addClass("sapMScrollCont");
 	oRm.writeClasses();
+	
+	var sTooltip = oControl.getTooltip_AsString();
+	if (sTooltip) {
+		oRm.writeAttributeEscaped("title", sTooltip);
+	}
+	
 	oRm.write("><div id='" + oControl.getId() + "-scroll' class='sapMScrollContScroll'>");
 
 	// render child controls

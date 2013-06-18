@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides helper sap.ui.core.EnabledPropagator
@@ -15,66 +15,66 @@ jQuery.sap.require("sap.ui.core.Control");
  *
  * Example:
  * <code>
- * sap.ui.core.EnabledPropagator.apply(<i>Some-Control</i>.prototype, [<i>Default-values</i>]);
+ * sap.ui.core.EnabledPropagator.call(<i>Some-Control</i>.prototype, <i>Default-value, ...</i>);
  * </code>
  * e.g.
  * <code>
- * sap.ui.core.EnabledPropagator.apply(sap.ui.commons.Button.prototype, [true]);
+ * sap.ui.core.EnabledPropagator.call(sap.ui.commons.Button.prototype);
  * </code>
  *
  * @author Daniel Brinkmann
- * @version 1.8.4
- * @param {boolean}
- *		bDefault the value that should be used as default value for the enhancement of the control.
+ * @version 1.12.1
+ * @param {boolean} [bDefault=true] the value that should be used as default value for the enhancement of the control.
+ * @param {boolean} [bLegacy=false] whether the introduced property should use the old name 'Enabled' 
  * @public
  */
-sap.ui.core.EnabledPropagator = function(bDefault) {
+sap.ui.core.EnabledPropagator = function(bDefault, bLegacy) {
 	// Ensure only Controls are enhanced
-	if(!(this instanceof sap.ui.core.Control)){
-		return;
+	if (!(this instanceof sap.ui.core.Control)) {
+		throw new Error("EnabledPropagator only supports subclasses of Control"); // TODO clarify why. Daniel has added this check, but it is not obvious why?
 	}
 
-	// Ensure not to overwrite existing implementations.
-	var fWalkUp = function(/**sap.ui.core.Control*/oControl){
+	// default for the default
+	if ( bDefault === undefined ) {
+		bDefault = true;
+	}
+
+	// helper to find a parent that has a getEnabled() method 
+	function findParentWithEnabled(/**sap.ui.core.Control*/oControl) {
 		var oParent = oControl.getParent();
-		while(oParent && !oParent.getEnabled && oParent.getParent){
+		while (oParent && !oParent.getEnabled && oParent.getParent) {
 			oParent = oParent.getParent();
 		}
 		return oParent;
-	};
-	if(this.getEnabled === undefined) {
+	}
+	
+	// Ensure not to overwrite existing implementations.
+	if (this.getEnabled === undefined) {
 		// set some default
-		this.getEnabled = function () {
-			var oParent = fWalkUp(this);
-			return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : this.getProperty('Enabled');
+		this.getEnabled = function() {
+			var oParent = findParentWithEnabled(this);
+			return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : this.getProperty("enabled");
 		};
 
-		this.getMetadata().addProperty('Enabled', {type : "boolean", group : "Behavior", defaultValue :  bDefault === true});
+		if ( bLegacy ) {
+			// add Enabled with old spelling for compatibility reasons. Shares the getter and setter with new spelling. 
+			this.getMetadata().addProperty("Enabled", {type : "boolean", group : "Behavior", defaultValue :  !!bDefault});
+		}
+		this.getMetadata().addProperty("enabled", {type : "boolean", group : "Behavior", defaultValue :  !!bDefault});
 		this.getMetadata().addPublicMethods('getEnabled');
 
 	} else {
-//		// What should we do here?
-
-//		// --> Replace?
-//		this.getEnabled = function () {
-//			var oParent = fWalkUp(this);
-////		return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : this.bEnabled;
-//			return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : this.getProperty('Enabled');
-//		}
-
-//		// Or
-
-//		// --> Wrap?
-		var fOld = this.getEnabled;
-		this.getEnabled = function () {
-			var oParent = fWalkUp(this);
-			return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : fOld.apply(this);
+		// 
+		var fnOld = this.getEnabled;
+		this.getEnabled = function() {
+			var oParent = findParentWithEnabled(this);
+			return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : fnOld.apply(this);
 		};
 	}
 
-	if(this.setEnabled === undefined){
-		this.setEnabled = function (bEnabled) {
-			this.setProperty('Enabled', bEnabled);
+	if (this.setEnabled === undefined) {
+		this.setEnabled = function(bEnabled) {
+			this.setProperty("enabled", bEnabled);
 		};
 
 		this.getMetadata().addPublicMethods('setEnabled');

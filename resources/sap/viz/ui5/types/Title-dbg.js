@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,11 +31,12 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: false)</li>
- * <li>{@link #getText text} : string</li>
+ * <li>{@link #getText text} : string (default: 'null')</li>
  * <li>{@link #getAlignment alignment} : sap.viz.ui5.types.Title_alignment (default: sap.viz.ui5.types.Title_alignment.center)</li></ul>
  * </li>
  * <li>Aggregations
- * <ul></ul>
+ * <ul>
+ * <li>{@link #getLayout layout} : sap.viz.ui5.types.Title_layout</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -57,7 +58,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -74,8 +75,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : false},
-		"text" : {type : "string", group : "", defaultValue : null},
+		"text" : {type : "string", group : "", defaultValue : 'null'},
 		"alignment" : {type : "sap.viz.ui5.types.Title_alignment", group : "", defaultValue : sap.viz.ui5.types.Title_alignment.center}
+	},
+	aggregations : {
+    	"layout" : {type : "sap.viz.ui5.types.Title_layout", multiple : false, deprecated: true}
 	}
 }});
 
@@ -109,7 +113,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -122,11 +125,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
+
 /**
  * Getter for property <code>text</code>.
  * Set chart title text.
  *
- * Default value is empty/<code>undefined</code>
+ * Default value is <code>null</code>
  *
  * @return {string} the value of property <code>text</code>
  * @public
@@ -134,11 +138,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
- * Default value is empty/<code>undefined</code> 
+ * Default value is <code>null</code> 
  *
  * @param {string} sText  new value for property <code>text</code>
  * @return {sap.viz.ui5.types.Title} <code>this</code> to allow method chaining
@@ -146,6 +149,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @name sap.viz.ui5.types.Title#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>alignment</code>.
@@ -159,7 +163,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
-
 /**
  * Setter for property <code>alignment</code>.
  *
@@ -172,4 +175,45 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Title", { metadata
  * @function
  */
 
+
+/**
+ * Getter for aggregation <code>layout</code>.<br/>
+ * Settings for layout of title.
+ * 
+ * @return {sap.viz.ui5.types.Title_layout}
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title#getLayout
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>layout</code>.
+ * @param oLayout {sap.viz.ui5.types.Title_layout}
+ * @return {sap.viz.ui5.types.Title} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title#setLayout
+ * @function
+ */
+	
+
+/**
+ * Destroys the layout in the aggregation 
+ * named <code>layout</code>.
+ * @return {sap.viz.ui5.types.Title} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Title#destroyLayout
+ * @function
+ */
+
+
 // Start of sap/viz/ui5/types/Title.js
+sap.viz.ui5.types.Title.prototype.getLayout = function() {
+  return this._getOrCreate("layout");
+}

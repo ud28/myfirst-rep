@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,7 +31,8 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Tooltip_drawingEffect (default: sap.viz.ui5.types.Tooltip_drawingEffect.normal)</li></ul>
+ * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Tooltip_drawingEffect (default: sap.viz.ui5.types.Tooltip_drawingEffect.normal)</li>
+ * <li>{@link #getFormatString formatString} : any[][] (default: [[null]])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -56,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -73,7 +74,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"drawingEffect" : {type : "sap.viz.ui5.types.Tooltip_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Tooltip_drawingEffect.normal}
+		"drawingEffect" : {type : "sap.viz.ui5.types.Tooltip_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Tooltip_drawingEffect.normal},
+		"formatString" : {type : "any[][]", group : "", defaultValue : [[null]]}
 	}
 }});
 
@@ -107,7 +109,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -119,6 +120,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @name sap.viz.ui5.types.Tooltip#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -132,7 +134,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -144,5 +145,31 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Tooltip", { metada
  * @name sap.viz.ui5.types.Tooltip#setDrawingEffect
  * @function
  */
+
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of tooltip. As we may have dual axis with serveral measures, the first array is applied to primary axis and the second one is applied to the second one.If the length of format string list is less than the length of data series, the last format string in the list will be applied to exceeded data series.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {any[][]} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Tooltip#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {any[][]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Tooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Tooltip#setFormatString
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Tooltip.js

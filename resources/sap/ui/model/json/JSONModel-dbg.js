@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -28,38 +28,50 @@ jQuery.sap.require("sap.ui.model.json.JSONTreeBinding");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @param {object} oData either the URL where to load the JSON from or a JS object
  * @constructor
  * @public
+ * @name sap.ui.model.json.JSONModel
  */
-sap.ui.model.json.JSONModel = function(oData) {
-	sap.ui.model.Model.apply(this, arguments);
+sap.ui.model.Model.extend("sap.ui.model.json.JSONModel", /** @lends sap.ui.model.json.JSONModel */ {
 	
-	this.bCache = true;
-	
-	if (typeof oData == "string"){
-		this.loadData(oData);
+	constructor : function(oData) {
+		sap.ui.model.Model.apply(this, arguments);
+		
+		this.bCache = true;
+		
+		if (typeof oData == "string"){
+			this.loadData(oData);
+		}
+		else if (oData && typeof oData == "object"){
+			this.setData(oData);
+		}
+	},
+
+	metadata : {
+		publicMethods : ["loadData", "setData", "getData", "setJSON", "getJSON", "setProperty", "forceNoCache"]
 	}
-	else if (oData && typeof oData == "object"){
-		this.setData(oData);
-	}
-};
 
-// chain the prototypes
-sap.ui.model.json.JSONModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.json.JSONModel.
- * Resulting metadata can be obtained via sap.ui.model.json.JSONModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.json.JSONModel", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Model",
-  publicMethods : ["loadData", "setData", "getData", "setJSON", "getJSON", "setProperty", "forceNoCache"]
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.json.JSONModel with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.json.JSONModel.extend
+ * @function
+ */
 
 /**
  * Sets the JSON encoded data to the model.
@@ -140,10 +152,11 @@ sap.ui.model.json.JSONModel.prototype.getJSON = function(){
  * they are not supported by all browsers.
  * @param {boolean} [bMerge=false] whether the data should be merged instead of replaced
  * @param {string} [bCache=false] force no caching if false. Default is false
+ * @param {object} mHeaders An object of additional header key/value pairs to send along with the request
  *
  * @public
  */
-sap.ui.model.json.JSONModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bMerge, bCache){
+sap.ui.model.json.JSONModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bMerge, bCache, mHeaders){
 	var that = this;
 	if (bAsync !== false) {
 		bAsync = true;
@@ -155,25 +168,26 @@ sap.ui.model.json.JSONModel.prototype.loadData = function(sURL, oParameters, bAs
 		bCache = this.bCache;
 	}
 	
-	this.fireRequestSent({url : sURL, type : sType, async : bAsync, info : "cache="+bCache+";bMerge=" + bMerge});
+	this.fireRequestSent({url : sURL, type : sType, async : bAsync, headers: mHeaders, info : "cache="+bCache+";bMerge=" + bMerge});
 	jQuery.ajax({
 	  url: sURL,
 	  async: bAsync,
 	  dataType: 'json',
 	  cache: bCache,
 	  data: oParameters,
+	  headers: mHeaders,
 	  type: sType,
 	  success: function(oData) {
 		if (!oData) {
 			jQuery.sap.log.fatal("The following problem occurred: No data was retrieved by service: " + sURL);
 		}
 		that.setData(oData, bMerge);
-		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, info : "cache=false;bMerge=" + bMerge});
+		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders, info : "cache=false;bMerge=" + bMerge});
 	  },
 	  error: function(XMLHttpRequest, textStatus, errorThrown){
 		jQuery.sap.log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
 					+ XMLHttpRequest.status + "," + XMLHttpRequest.statusText);
-		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, info : "cache=false;bMerge=" + bMerge});
+		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders, info : "cache=false;bMerge=" + bMerge});
 		that.fireRequestFailed({message : textStatus,
 			statusCode : XMLHttpRequest.status, statusText : XMLHttpRequest.statusText, responseText : XMLHttpRequest.responseText});
 	  }
@@ -230,6 +244,10 @@ sap.ui.model.json.JSONModel.prototype.bindTree = function(sPath, oContext, aFilt
 };
 
 /**
+ * @see sap.ui.model.Model.prototype.bindElement
+ *
+ */
+/**
  * @see sap.ui.model.Model.prototype.createBindingContext
  *
  */
@@ -245,7 +263,7 @@ sap.ui.model.json.JSONModel.prototype.createBindingContext = function(sPath, oCo
 	}
 	// resolve path and create context
 	var sContextPath = this.resolve(sPath, oContext),
-		oNewContext = sContextPath ? this.getContext(sContextPath) : undefined;
+		oNewContext = (sContextPath == undefined) ? undefined : this.getContext(sContextPath ? sContextPath : "/");
 	fnCallBack(oNewContext);
 };
 
@@ -272,10 +290,12 @@ sap.ui.model.json.JSONModel.prototype.setProperty = function(sPath, oValue, oCon
 	if (!sObjectPath && !oContext) {
 		oContext = this.oData;
 	}
-	var oObject = this._getObject(sObjectPath, oContext);
-	oObject[sProperty] = oValue;
 
-	this.checkUpdate();
+	var oObject = this._getObject(sObjectPath, oContext);
+	if (oObject) {
+		oObject[sProperty] = oValue;
+		this.checkUpdate();
+	}
 };
 
 /**
@@ -298,14 +318,9 @@ sap.ui.model.json.JSONModel.prototype.getProperty = function(sPath, oContext) {
  * @returns the node of the specified path/context
  */
 sap.ui.model.json.JSONModel.prototype._getObject = function (sPath, oContext) {
-	var oNode = this.isLegacySyntax() ? this.oData : null,
-		// if path = null context must be respected as well: we handle this as relative here
-		bIsRelative = sPath && jQuery.sap.startsWith(sPath, "/") ? false : true;
-	if (oContext instanceof sap.ui.model.Context && bIsRelative){
+	var oNode = this.isLegacySyntax() ? this.oData : null;
+	if (oContext instanceof sap.ui.model.Context){
 		oNode = this._getObject(oContext.getPath());
-		if (!oNode) {
-			return null;
-		}
 	}
 	else if (oContext){
 		oNode = oContext;

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.mvc.View");
  * @extends sap.ui.core.mvc.View
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -92,7 +92,7 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSONView", { metadata : {
 	/**
 	 * Creates a JSON view of the given name and id.
 	 *
-     * The <code>viewName</code> must either correspond to an JSON module that can be loaded
+	 * The <code>viewName</code> must either correspond to an JSON module that can be loaded
 	 * via the module system (viewName + suffix ".view.json") and which defines the view or must
 	 * be a configuration object for a view.
 	 * The configuration object can have a vieName, viewContent and a controller property. The viewName
@@ -106,6 +106,7 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSONView", { metadata : {
 	 * @param {string | object} vView name of the view or view configuration as described above.
 	 * @public
 	 * @static
+	 * @return {sap.ui.core.mvc.JSONView} the created JSONView instance
 	 */
 	sap.ui.jsonview = function(sId, vView) {
 		var mSettings = {};
@@ -161,7 +162,7 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSONView", { metadata : {
 			// does not happen, already checked
 		}
 
-		if(this._oJSONView.resourceBundleName || this._oJSONView.resourceBundleUrl) {
+		if((this._oJSONView.resourceBundleName || this._oJSONView.resourceBundleUrl) && (!mSettings.models || !mSettings.models[this._oJSONView.resourceBundleAlias])) {
 			var model = new sap.ui.model.resource.ResourceModel({bundleName:this._oJSONView.resourceBundleName, bundleUrl:this._oJSONView.resourceBundleUrl});
 			this.setModel(model, this._oJSONView.resourceBundleAlias);
 		}
@@ -172,11 +173,11 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSONView", { metadata : {
 		var that = this;
 
 		// use preprocessors to fix IDs, associations and event handler references
-		sap.ui.core.Element.runWithPreprocessors(function() {
+		sap.ui.base.ManagedObject.runWithPreprocessors(function() {
 				// parse
 				that.applySettings({ content : that._oJSONView.content});
-			}, 
-			
+			},
+
 			{
 				// preprocessors
 				id : function(sId) {

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
@@ -17,7 +17,7 @@ jQuery.sap.require("sap.ui.debug.PropertyList");
  * @class Central Class for the Debug Environment
  *
  * @author Martin Schaus, Frank Weigel
- * @version 1.8.4
+ * @version 1.12.1
  * @private
  */
 sap.ui.debug.DebugEnv = function() {
@@ -114,6 +114,7 @@ sap.ui.debug.DebugEnv.prototype.init = function(bOnInit) {
 		oControlTreeRoot.style.color = "black";
 		oControlTreeRoot.style.border = "1px solid gray";
 		oControlTreeRoot.style.overflow = "auto";
+		oControlTreeRoot.style.zIndex = "999999";
 		oControlTreeRoot.style.top = "1px";
 		if (bRtl) {
 			oControlTreeRoot.style.left = "1px";
@@ -139,6 +140,7 @@ sap.ui.debug.DebugEnv.prototype.init = function(bOnInit) {
 		oPropertyWindowRoot.style.color = "black";
 		oPropertyWindowRoot.style.border = "1px solid gray";
 		oPropertyWindowRoot.style.overflow = "auto";
+		oPropertyWindowRoot.style.zIndex = "99999";
 		oPropertyWindowRoot.style.width = "196px";
 		oPropertyWindowRoot.style.height = "49%";
 		if (bRtl) {

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.support.plugins.Trace (Trace support plugin)
@@ -17,7 +17,7 @@ jQuery.sap.require("sap.ui.core.support.Plugin");
 	 *
 	 * @abstract
 	 * @extends sap.ui.base.Object
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @constructor
 	 * @private
 	 * @name sap.ui.core.support.plugins.Trace

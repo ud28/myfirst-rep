@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a popup with technical informations about the running SAPUI5 core
@@ -55,6 +55,8 @@ jQuery.sap.require("sap.ui.core.Popup");
 			}
 			var sDCUrl = "/sapui5-internal/download/index.jsp";
 			var bDC = jQuery.sap.syncHead(sDCUrl);
+			var sOUUrl = "/demokit/optimize-module-set";
+			var bOU = jQuery.sap.syncHead(sOUUrl);
 			var bUseDbgSrc = jQuery.sap.debug();
 			var sWeinreId = jQuery.sap.uid();
 			var sWeinreClientUrl = sap.ui.getCore().getConfiguration().getWeinreServer() + "/client/#" + sWeinreId;
@@ -72,6 +74,9 @@ jQuery.sap.require("sap.ui.core.Popup");
 				html.push("</div></td></tr>");
 				if ( bDC ) {
 					html.push("<tr><td></td><td><a id=\"sap-ui-techinfo-customModule\" href=\"" + sDCUrl + "\">Create Custom Bootstrap Module</a></td></tr>");
+				}
+				if ( bOU ) {
+					html.push("<tr><td></td><td><a id=\"sap-ui-techinfo-optimizeModuleSet\" href=\"" + sDCUrl + "\">Calculate Optimized Module Set URL</a></td></tr>");
 				}
 				html.push("<tr><td align='right' valign='top' rowSpan='3'><b>Debug Tools</b></td>", "<td><input id='sap-ui-techinfo-useDbgSources' type='checkbox'",
 						bUseDbgSrc?" checked='checked'":"",
@@ -96,6 +101,12 @@ jQuery.sap.require("sap.ui.core.Popup");
 					html.push("<input type=\"hidden\" name=\"modules\"/>");
 					html.push("</form>");
 				}
+				if ( bOU ) {
+					html.push("<form id=\"sap-ui-techinfo-optimize-submit\" target=\"_blank\" method=\"post\" action=\"" + sOUUrl + "\">");
+					html.push("<input type=\"hidden\" name=\"libs\"/>");
+					html.push("<input type=\"hidden\" name=\"modules\"/>");
+					html.push("</form>");
+				}
 				html.push("<div style='position: absolute; bottom: 5px; right: 5px;'>");
 				html.push("<canvas id='sap-ui-techinfo-qrcode'></canvas>");
 				html.push("<br><a id='sap-ui-techinfo-weinre' href=\"" + sWeinreClientUrl + "\" target=\"_blank\">Remote Web Inspector</a>");
@@ -107,6 +118,7 @@ jQuery.sap.require("sap.ui.core.Popup");
 				this._$Ref.find('#sap-ui-techinfo-more').click(jQuery.proxy(this.onShowAllModules, this));
 				this._$Ref.find('#sap-ui-techinfo-close').click(jQuery.proxy(this.close, this));
 				this._$Ref.find('#sap-ui-techinfo-customModule').click(jQuery.proxy(this.onCreateCustomModule, this));
+				this._$Ref.find('#sap-ui-techinfo-optimizeModuleSet').click(jQuery.proxy(this.onOptimizeModuleSet, this));
 				this._$Ref.find('#sap-ui-techinfo-weinre').click(jQuery.proxy(this.onOpenWebInspector, this));
 			}
 			this._oPopup = new sap.ui.core.Popup(this._$Ref.get(0), /*modal*/true, /*shadow*/true, /*autoClose*/false);
@@ -178,6 +190,17 @@ jQuery.sap.require("sap.ui.core.Popup");
 			var modnames=[]; jQuery.each(this._ojQSData.modules, function(i,v) { modnames.push(i); }); modnames.sort();
 			jQuery("input[name='modules']", this._$Ref).attr("value", modnames.join(","));
 			jQuery("form", this._$Ref)[0].submit();
+		},
+
+		onOptimizeModuleSet : function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var libnames=[]; jQuery.each(sap.ui.getCore().getLoadedLibraries(), function(i,v) { libnames.push(i); });
+			var modnames=[]; jQuery.each(this._ojQSData.modules, function(i,v) { modnames.push(i); }); modnames.sort();
+			var $Form=jQuery("#sap-ui-techinfo-optimize-submit",this._$Ref);
+			jQuery("input[name='libs']", $Form).attr("value", libnames.join(","));
+			jQuery("input[name='modules']", $Form).attr("value", modnames.join(","));
+			$Form[0].submit();
 		},
 
 		ensureDebugEnv : function(bShowControls) {

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 // Provides control sap.m.Input.
 jQuery.sap.declare("sap.m.Input");
 jQuery.sap.require("sap.m.library");
-jQuery.sap.require("sap.ui.core.Control");
+jQuery.sap.require("sap.m.InputBase");
 
 /**
  * Constructor for a new Input.
@@ -30,15 +30,10 @@ jQuery.sap.require("sap.ui.core.Control");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getValue value} : string</li>
  * <li>{@link #getType type} : sap.m.InputType (default: sap.m.InputType.Text)</li>
- * <li>{@link #getWidth width} : sap.ui.core.CSSSize</li>
- * <li>{@link #getEnabled enabled} : boolean (default: true)</li>
- * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getMaxLength maxLength} : int (default: 0)</li>
- * <li>{@link #getValueState valueState} : sap.ui.core.ValueState (default: sap.ui.core.ValueState.None)</li>
- * <li>{@link #getName name} : string</li>
- * <li>{@link #getPlaceholder placeholder} : string</li>
+ * <li>{@link #getValueStateText valueStateText} : string</li>
+ * <li>{@link #getShowValueStateMessage showValueStateMessage} : boolean (default: true)</li>
  * <li>{@link #getDateFormat dateFormat} : string (default: 'YYYY-MM-dd')</li></ul>
  * </li>
  * <li>Aggregations
@@ -49,48 +44,42 @@ jQuery.sap.require("sap.ui.core.Control");
  * </li>
  * <li>Events
  * <ul>
- * <li>{@link sap.m.Input#event:change change} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
  * <li>{@link sap.m.Input#event:liveChange liveChange} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
-
+ *
+ * 
+ * In addition, all settings applicable to the base type {@link sap.m.InputBase#constructor sap.m.InputBase}
+ * can be used as well.
  *
  * @param {string} [sId] id for the new control, generated automatically if no id is given 
  * @param {object} [mSettings] initial settings for the new control
  *
  * @class
  * Enables users to input data.
- * @extends sap.ui.core.Control
+ * @extends sap.m.InputBase
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.2. 
- * API is not yet finished and might change completely
  * @name sap.m.Input
  */
-sap.ui.core.Control.extend("sap.m.Input", { metadata : {
+sap.m.InputBase.extend("sap.m.Input", { metadata : {
 
 	// ---- object ----
 
 	// ---- control specific ----
 	library : "sap.m",
 	properties : {
-		"value" : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
 		"type" : {type : "sap.m.InputType", group : "Data", defaultValue : sap.m.InputType.Text},
-		"width" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
-		"enabled" : {type : "boolean", group : "Behavior", defaultValue : true},
-		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"maxLength" : {type : "int", group : "Behavior", defaultValue : 0},
-		"valueState" : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
-		"name" : {type : "string", group : "Misc", defaultValue : null},
-		"placeholder" : {type : "string", group : "Misc", defaultValue : null},
-		"dateFormat" : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd'}
+		"valueStateText" : {type : "string", group : "Misc", defaultValue : null},
+		"showValueStateMessage" : {type : "boolean", group : "Misc", defaultValue : true},
+		"dateFormat" : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true}
 	},
 	events : {
-		"change" : {}, 
 		"liveChange" : {}
 	}
 }});
@@ -112,56 +101,8 @@ sap.ui.core.Control.extend("sap.m.Input", { metadata : {
  * @function
  */
 
-sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
+sap.m.Input.M_EVENTS = {'liveChange':'liveChange'};
 
-
-/**
- * Getter for property <code>value</code>.
- * Input Value
- *
- * Default value is empty/<code>undefined</code>
- *
- * @return {string} the value of property <code>value</code>
- * @public
- * @name sap.m.Input#getValue
- * @function
- */
-
-
-/**
- * Setter for property <code>value</code>.
- *
- * Default value is empty/<code>undefined</code> 
- *
- * @param {string} sValue  new value for property <code>value</code>
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#setValue
- * @function
- */
-
-/**
- * Binder for property <code>value</code>.
- *
- * @param {string} sPath path to a property in the model 
- * @param {function} [fnFormatter=null] the formatter function
- * @param {sap.ui.model.BindingMode} [sMode=Default] the binding mode to be used for this property binding (e.g. one way) 
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#bindValue
- * @function
- */
-
-
-/**
- * Unbinder for property <code>value</code>.
- *
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#unbindValue
- * @function
-
- */
 
 /**
  * Getter for property <code>type</code>.
@@ -175,7 +116,6 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>type</code>.
  *
@@ -188,80 +128,6 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-/**
- * Getter for property <code>width</code>.
- * Defines the width of the input.
- *
- * Default value is empty/<code>undefined</code>
- *
- * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
- * @public
- * @name sap.m.Input#getWidth
- * @function
- */
-
-
-/**
- * Setter for property <code>width</code>.
- *
- * Default value is empty/<code>undefined</code> 
- *
- * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#setWidth
- * @function
- */
-
-/**
- * Getter for property <code>enabled</code>.
- * Boolean property to enable the control (default is true).
- *
- * Default value is <code>true</code>
- *
- * @return {boolean} the value of property <code>enabled</code>
- * @public
- * @name sap.m.Input#getEnabled
- * @function
- */
-
-
-/**
- * Setter for property <code>enabled</code>.
- *
- * Default value is <code>true</code> 
- *
- * @param {boolean} bEnabled  new value for property <code>enabled</code>
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#setEnabled
- * @function
- */
-
-/**
- * Getter for property <code>visible</code>.
- * Invisible inputs are not rendered
- *
- * Default value is <code>true</code>
- *
- * @return {boolean} the value of property <code>visible</code>
- * @public
- * @name sap.m.Input#getVisible
- * @function
- */
-
-
-/**
- * Setter for property <code>visible</code>.
- *
- * Default value is <code>true</code> 
- *
- * @param {boolean} bVisible  new value for property <code>visible</code>
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#setVisible
- * @function
- */
 
 /**
  * Getter for property <code>maxLength</code>.
@@ -275,7 +141,6 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>maxLength</code>.
  *
@@ -288,96 +153,72 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-/**
- * Getter for property <code>valueState</code>.
- * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success.
- *
- * Default value is <code>None</code>
- *
- * @return {sap.ui.core.ValueState} the value of property <code>valueState</code>
- * @public
- * @name sap.m.Input#getValueState
- * @function
- */
-
 
 /**
- * Setter for property <code>valueState</code>.
- *
- * Default value is <code>None</code> 
- *
- * @param {sap.ui.core.ValueState} oValueState  new value for property <code>valueState</code>
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#setValueState
- * @function
- */
-
-/**
- * Getter for property <code>name</code>.
- * The 'name' property to be used in the HTML code (e.g. for HTML forms that send data to the server via 'submit').
+ * Getter for property <code>valueStateText</code>.
+ * The text which is shown in the value state message popup. If not specfied a default text is shown.
  *
  * Default value is empty/<code>undefined</code>
  *
- * @return {string} the value of property <code>name</code>
+ * @return {string} the value of property <code>valueStateText</code>
  * @public
- * @name sap.m.Input#getName
+ * @name sap.m.Input#getValueStateText
  * @function
  */
 
-
 /**
- * Setter for property <code>name</code>.
+ * Setter for property <code>valueStateText</code>.
  *
  * Default value is empty/<code>undefined</code> 
  *
- * @param {string} sName  new value for property <code>name</code>
+ * @param {string} sValueStateText  new value for property <code>valueStateText</code>
  * @return {sap.m.Input} <code>this</code> to allow method chaining
  * @public
- * @name sap.m.Input#setName
- * @function
- */
-
-/**
- * Getter for property <code>placeholder</code>.
- * text shown when no value available
- *
- * Default value is empty/<code>undefined</code>
- *
- * @return {string} the value of property <code>placeholder</code>
- * @public
- * @name sap.m.Input#getPlaceholder
+ * @name sap.m.Input#setValueStateText
  * @function
  */
 
 
 /**
- * Setter for property <code>placeholder</code>.
+ * Getter for property <code>showValueStateMessage</code>.
+ * Whether the value state message should be shown.
  *
- * Default value is empty/<code>undefined</code> 
+ * Default value is <code>true</code>
  *
- * @param {string} sPlaceholder  new value for property <code>placeholder</code>
- * @return {sap.m.Input} <code>this</code> to allow method chaining
+ * @return {boolean} the value of property <code>showValueStateMessage</code>
  * @public
- * @name sap.m.Input#setPlaceholder
+ * @name sap.m.Input#getShowValueStateMessage
  * @function
  */
+
+/**
+ * Setter for property <code>showValueStateMessage</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowValueStateMessage  new value for property <code>showValueStateMessage</code>
+ * @return {sap.m.Input} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Input#setShowValueStateMessage
+ * @function
+ */
+
 
 /**
  * Getter for property <code>dateFormat</code>.
  * Only used if type=date and no datepicker is available.
  * The data is displayed and the user input is parsed according to this format.
  * NOTE: The value property is always of the form RFC 3339 (YYYY-MM-dd).
- * 
  *
  * Default value is <code>YYYY-MM-dd</code>
  *
  * @return {string} the value of property <code>dateFormat</code>
  * @public
+ * @deprecated Since version 1.9.1. 
+ * sap.m.DateTimeInput should be used for date/time inputs and formating.
  * @name sap.m.Input#getDateFormat
  * @function
  */
-
 
 /**
  * Setter for property <code>dateFormat</code>.
@@ -387,74 +228,12 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @param {string} sDateFormat  new value for property <code>dateFormat</code>
  * @return {sap.m.Input} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.9.1. 
+ * sap.m.DateTimeInput should be used for date/time inputs and formating.
  * @name sap.m.Input#setDateFormat
  * @function
  */
 
-/**
- * This event gets fired when the input operation has finished and the value has changed. 
- *
- * @name sap.m.Input#change
- * @event
- * @param {sap.ui.base.Event} oControlEvent
- * @param {sap.ui.base.EventProvider} oControlEvent.getSource
- * @param {object} oControlEvent.getParameters
-
- * @param {string} oControlEvent.getParameters.newValue the new value of the input
- * @public
- */
- 
-/**
- * Attach event handler <code>fnFunction</code> to the 'change' event of this <code>sap.m.Input</code>.<br/>.
- * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
- * otherwise to this <code>sap.m.Input</code>.<br/> itself. 
- *  
- * This event gets fired when the input operation has finished and the value has changed. 
- *
- * @param {object}
- *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
- * @param {function}
- *            fnFunction The function to call, when the event occurs.  
- * @param {object}
- *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.m.Input</code>.<br/> itself.
- *
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#attachChange
- * @function
- */
-
-
-/**
- * Detach event handler <code>fnFunction</code> from the 'change' event of this <code>sap.m.Input</code>.<br/>
- *
- * The passed function and listener object must match the ones used for event registration.
- *
- * @param {function}
- *            fnFunction The function to call, when the event occurs.
- * @param {object}
- *            oListener Context object on which the given function had to be called.
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @public
- * @name sap.m.Input#detachChange
- * @function
- */
-
-
-/**
- * Fire event change to attached listeners.
- * 
- * Expects following event parameters:
- * <ul>
- * <li>'newValue' of type <code>string</code> the new value of the input</li>
- * </ul>
- *
- * @param {Map} [mArguments] the arguments to pass along with the event.
- * @return {sap.m.Input} <code>this</code> to allow method chaining
- * @protected
- * @name sap.m.Input#fireChange
- * @function
- */
 
 /**
  * This event is fired when the value of the input is changed - e.g. at each keypress 
@@ -489,7 +268,6 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'liveChange' event of this <code>sap.m.Input</code>.<br/>
  *
@@ -504,7 +282,6 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @name sap.m.Input#detachLiveChange
  * @function
  */
-
 
 /**
  * Fire event liveChange to attached listeners.
@@ -521,103 +298,123 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
+
 // Start of sap/m/Input.js
 jQuery.sap.require("sap.ui.core.EnabledPropagator");
-jQuery.sap.require("sap.ui.core.format.DateFormat");
-/**
- * Function is called to define the behavior for the control.
- * 
- * @private
- */
+jQuery.sap.require("sap.ui.core.IconPool");
+sap.ui.core.IconPool.insertFontFaceStyle();
 
-sap.m.Input.prototype.onBeforeRendering = function(oBrowserEvent) {
-	if (this._jQuerydomRef instanceof jQuery) {
-		this._jQuerydomRef.unbind(".input");
-	}
+sap.m.Input.prototype.init = function() {
+	sap.m.InputBase.prototype.init.call(this);
+	this._inputProxy = jQuery.proxy(this._onInput, this);
 };
 
-sap.m.Input.prototype.onAfterRendering = function(oBrowserEvent) {
-	if (jQuery.os.ios) {
-		this._jQuerydomRef = jQuery(this.getDomRef());
-	} else {
-		this._jQuerydomRef = jQuery(this.getDomRef()).children(); // in android and bb the input is inside a div
-	}
-	this._jQuerydomRef.bind("paste.input cut.input", jQuery.proxy(this.onkeyup, this));
-	if (jQuery.os.ios && (this.getType() == 'Date' || this.getType() == 'Month' || this.getType() == 'Datetime' || this.getType() == 'DatetimeLocal' || this.getType() == 'Week')) { // on IOS the date input has no change event
-			this._jQuerydomRef.bind("blur.input", jQuery.proxy(this.onchange, this));
-	} else {
-			this._jQuerydomRef.bind("change.input", jQuery.proxy(this.onchange, this));
-	}
+sap.m.Input.prototype.onAfterRendering = function() {
+	sap.m.InputBase.prototype.onAfterRendering.call(this);
+	this._$input.bind("input.input", this._inputProxy);
 };
 
-sap.m.Input.prototype.getFocusDomRef = function() {
-	if (jQuery.os.android){
-		return jQuery.sap.domById(this.getId() + '-inner');
-	} else {
-		return jQuery.sap.domById(this.getId());
-	}
-};
-
-sap.m.Input.prototype.ontouchstart = function(oEvent) {
-	//for control who need to know if they should handle events from the input control
-	oEvent.originalEvent._sapui_handledByControl = true;
-};
-
-sap.m.Input.prototype.onkeyup = function(oEvent) {
-	var newValue = this._getAndUpdateValue();
-	this.fireLiveChange({newValue: newValue});
-};
-
-sap.m.Input.prototype.onchange = function(oEvent) {
-	var newValue = this._getAndUpdateValue();
-	this.fireChange({newValue: newValue});
+sap.m.Input.prototype._onInput = function(oEvent) {
+	var value = this._$input.val();
+	this.setProperty("value", value, true);
+	this._setLabelVisibility();
+	this.fireLiveChange({
+		newValue : value
+	});
 };
 
 
+(function(){
 
-sap.m.Input.prototype._datePickerAvailable = (function() {
-	var test = document.createElement("input");
-	test.setAttribute("type", "date");
-	return (test.type == "date");
-})();
-
-sap.m.Input.prototype._formatForGetter = function(value){
-	var oUserDateFormat, 
-		oStandardDateFormat,
-		oDate;
-	if ((this.getType() == "Date") && (!this._datePickerAvailable)) {
-
-		oUserDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: this.getDateFormat()});
-		oStandardDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "YYYY-MM-dd"});
-
-		oDate = oUserDateFormat.parse(value);
-		return oStandardDateFormat.format(oDate);
-	}
-	return value;
-};
-
-sap.m.Input.prototype._formatForRendering = function(value){
-	var oUserDateFormat, 
-		oStandardDateFormat,
-		oDate;
+	function closeMessage(oInput){
+		if(oInput._popup){
+			oInput._popup.close();
+		}
+	};
+	
+	function openMessage(oInput){
+		var oState = oInput.getValueState();
 		
-	if ((this.getType() == "Date") && (!this._datePickerAvailable))  {
+		if (oInput.getShowValueStateMessage() && oState && ((oState === sap.ui.core.ValueState.Warning)
+				|| (oState === sap.ui.core.ValueState.Error)) && oInput.getEnabled() && oInput.getEditable()) { 
+			var sText = oInput.getValueStateText();
+			if(!sText){
+				sText = sap.ui.core.ValueStateSupport.getAdditionalText(oInput);
+			}
+			if(!sText){
+				return;
+			}
+		
+			var messageId = oInput.getId()+"-message";
+			if(!oInput._popup){
+				jQuery.sap.require("sap.ui.core.Popup");
+				jQuery.sap.require("jquery.sap.encoder");
+				oInput._popup = new sap.ui.core.Popup("<span></span>" /*Just some dummy*/, false, false, false);
+				oInput._popup.attachClosed(function(){
+					jQuery.sap.byId(messageId).remove();
+				});
+			}
+			
+			var $Input = jQuery(oInput.getFocusDomRef());
+			var dock = sap.ui.core.Popup.Dock;
+			var bIsRightAligned = $Input.css("text-align") === "right";
+			
+			var sClass = "sapMInputMessage " + ((oState === sap.ui.core.ValueState.Warning) ? "sapMInputMessageWarning" : "sapMInputMessageError");
+			
+			oInput._popup.setContent(jQuery("<div style=\"max-width:"+$Input.outerWidth()+"px;\" class=\""+sClass+"\" id=\""+messageId+"\"><span id=\""+messageId+"-text\">"+jQuery.sap.encodeHTML(sText)+"</span></div>"));
+			
+			oInput._popup.close(0);
+			oInput._popup.open(
+					200,
+					bIsRightAligned ? dock.EndTop : dock.BeginTop,
+					bIsRightAligned ? dock.EndBottom : dock.BeginBottom,
+					oInput.getFocusDomRef(),
+					null,
+					null,
+					function(){
+						oInput._popup.close();
+					}
+			);
+		}
+	};
 
-		oUserDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: this.getDateFormat()});
-		oStandardDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "YYYY-MM-dd"});
+	sap.m.Input.prototype.setValueState = function(sValueState) {
+		var sOldValueState = this.getValueState();
+	
+		sap.m.InputBase.prototype.setValueState.apply(this, arguments);
+		
+		var sNewValueState = this.getValueState();
+	
+		if(this.getDomRef() && sNewValueState != sOldValueState && this.getFocusDomRef() === document.activeElement){
+			switch(sNewValueState){
+				case sap.ui.core.ValueState.Error:
+				case sap.ui.core.ValueState.Warning:
+					openMessage(this);
+					break;
+				default:
+					closeMessage(this);
+			}
+			
+		}
+	
+		return this;
+	};
+	
+	sap.m.Input.prototype.setValueStateText = function(sText) {
+		jQuery.sap.byId(this.getId()+"-message-text").text(sText);
+		return this.setProperty("valueStateText", sText, true);
+	};
+	
+	sap.m.Input.prototype.onfocusin = function(oEvent) {
+		openMessage(this);
+	};
+	
+	sap.m.Input.prototype.onkeydown = function(oEvent) {
+		closeMessage(this);
+	};
+	
+	sap.m.Input.prototype.onfocusout = function(oEvent) {
+		closeMessage(this);
+	};
 
-		oDate = oStandardDateFormat.parse(value);
-		return oUserDateFormat.format(oDate);
-	} else {
-		return value;
-	}
-};
-
-sap.m.Input.prototype._getAndUpdateValue = function(){
-	var oldValue = this.getValue();
-	var newValue = this._formatForGetter(this._jQuerydomRef.val());
-	if (oldValue != newValue) {
-		this.setProperty("value", newValue, true); // no rerendering
-	}
-	return newValue;
-}
+})();

@@ -1,91 +1,67 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.UIArea
 jQuery.sap.declare("sap.ui.core.UIArea");
 jQuery.sap.require("jquery.sap.ui");
-jQuery.sap.require("sap.ui.base.EventProvider");
-jQuery.sap.require("sap.ui.core.Control");
+jQuery.sap.require("sap.ui.base.ManagedObject");
+jQuery.sap.require("sap.ui.core.Element");
 
 /**
  * @class An area in a page that hosts a tree of UI elements.
  *
  * Provides means for event-handling, rerendering, etc.
  *
- * @extends sap.ui.base.EventProvider
- * @author Daniel Brinkmann, Martin Schaus
- * @version 1.8.4
- * @param {sap.ui.Core}
- *            oCore internal API of the <core>Core</code> that manages this UIArea
- * @param {object}
- *            [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
+ * @extends sap.ui.base.ManagedObject
+ * @author SAP AG
+ * @version 1.12.1
+ * @param {sap.ui.Core} oCore internal API of the <core>Core</code> that manages this UIArea
+ * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
  * @public
  */
-sap.ui.core.UIArea = function(oCore, oRootNode) {
-	if(arguments.length === 0) {
-		return;
-	}
-	sap.ui.base.EventProvider.apply(this);
+sap.ui.base.ManagedObject.extend("sap.ui.core.UIArea", {
+	constructor: function(oCore, oRootNode) {
+		if(arguments.length === 0) {
+			return;
+		}
 
-	//TODO we could get rid of oCore here, if we wanted to...
-	this.oCore = oCore;
-	this.bLocked = false;
-	this.bInitial = true;
-	this.aContentToRemove = [];
-	this.oModels = {};
-	this.iSuppressInvalidate = 0;
+		// Note: UIArea has a modifiable Id. This doesn't perfectly match the default behavior of ManagedObject
+		// But UIArea overrides getId().
+		sap.ui.base.ManagedObject.apply(this);
 
-	this.mAggregations = {}; //Use the aggregation functionality of sap.ui.core.Element
+		//TODO we could get rid of oCore here, if we wanted to...
+		this.oCore = oCore;
+		this.bLocked = false;
+		this.bInitial = true;
+		this.aContentToRemove = [];
+		
+		this.bNeedsRerendering = false;
+		if (oRootNode != null) {
+			this.setRootNode(oRootNode);
+			// Figure out whether UI Area is pre-rendered (server-side JS rendering)!
+			this.bNeedsRerendering = this.bNeedsRerendering && !jQuery.sap.domById(oRootNode.id + "-Init");
+		}
+		this.mInvalidatedControls = {};
 
-	this.bNeedsRerendering = false;
-	if (oRootNode != null) {
-		this.setRootNode(oRootNode);
-		// Figure out whether UI Area is pre-rendered (server-side JS rendering)!
-		this.bNeedsRerendering = this.bNeedsRerendering && !jQuery.sap.domById(oRootNode.id + "-Init");
-	}
-	this.mInvalidatedControls = {};
+		if(!this.bNeedsRerendering) {
+			this.oRenderControl = null;
+		} else {
+			// Core needs to be notified about an invalid UIArea
+			this.oCore.addInvalidatedUIArea(this);
+		}
 
-	if(!this.bNeedsRerendering) {
-		this.oRenderControl = null;
-	} else {
-		// Core needs to be notified about an invalid UIArea
-		this.oCore.addInvalidatedUIArea(this);
-	}
-
-};
-sap.ui.core.UIArea.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
-sap.ui.base.Object.defineClass("sap.ui.core.UIArea", {
+	},
+	metadata: {
 		// ---- object ----
-		baseType : "sap.ui.base.EventProvider",
-		publicMethods : ["getId", "setRootNode", "getRootNode", "setRootControl", "getRootControl", "getContent", "insertContent", "addContent", "removeContent", "removeAllContent", "indexOfContent", "destroyContent", "lock", "unlock", "isLocked", "getSavedContent", "setModel", "getModel", "hasModel"]
-	});
-
-sap.ui.core.UIArea.M_EVENTS = {};
-
-// UIArea has no metadata, so we have to implement the validation on our own
-// TODO create common baseclass for UIArea and Element (and maybe Core)
-sap.ui.core.UIArea.prototype.validateAggregation = function (sAggregationName, oElement, bMultiple) {
-	if ( sAggregationName != "content" ) {
-		throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
+		publicMethods : ["setRootNode", "getRootNode", "setRootControl", "getRootControl", "lock","unlock", "isLocked"],
+		aggregations : {
+			"content" : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+		}
 	}
-	// TODO should this be part of the validation (raise an error) or not?
-	jQuery.sap.assert(bMultiple, "Aggregation 'content' of " + this + " used with wrong cardinality (declared as \"0..n\")");
-	if ( !(oElement instanceof sap.ui.core.Control) ) {
-		throw new Error("\"" + oElement + "\" is not valid for aggregation \"content\" of " + this);
-	}
-	return oElement; 
-};
-//Use the remaining aggregation functionality of sap.ui.core.Element
-sap.ui.core.UIArea.prototype.getAggregation = sap.ui.core.Element.prototype.getAggregation;
-sap.ui.core.UIArea.prototype.insertAggregation = sap.ui.core.Element.prototype.insertAggregation;
-sap.ui.core.UIArea.prototype.addAggregation = sap.ui.core.Element.prototype.addAggregation;
-sap.ui.core.UIArea.prototype.removeAggregation = sap.ui.core.Element.prototype.removeAggregation;
-sap.ui.core.UIArea.prototype.removeAllAggregation = sap.ui.core.Element.prototype.removeAllAggregation;
-sap.ui.core.UIArea.prototype.indexOfAggregation = sap.ui.core.Element.prototype.indexOfAggregation;
-sap.ui.core.UIArea.prototype.destroyAggregation = sap.ui.core.Element.prototype.destroyAggregation;
+});
 
 /**
  * Returns whether rerendering is currently suppressed on this UIArea
@@ -212,10 +188,8 @@ sap.ui.core.UIArea.prototype._addRemovedContent = function(oDomRef) {
  *
  * @return {sap.ui.core.Control[]}
  * @public
+ * @name sap.ui.core.UIArea.prototype.getContent
  */
-sap.ui.core.UIArea.prototype.getContent = function() {
-	return this.getAggregation("content", []);
-};
 
 /**
  * Inserts a content into the aggregation named <code>content</code>.
@@ -229,11 +203,8 @@ sap.ui.core.UIArea.prototype.getContent = function() {
  *             the last position
  * @return {sap.ui.core.UIArea} <code>this</code> to allow method chaining
  * @public
+ * @name sap.ui.core.UIArea.prototype.insertContent
  */
-sap.ui.core.UIArea.prototype.insertContent = function(oContent, iIndex) {
-	this.insertAggregation("content", oContent, iIndex);
-	return this;
-};
 
 /**
  * Adds some content <code>oContent</code>
@@ -301,10 +272,8 @@ sap.ui.core.UIArea.prototype.removeAllContent = function() {
  *            oContent the content whose index is looked for.
  * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
  * @public
+ * @name sap.ui.core.UIArea.prototype.indexOfContent
  */
-sap.ui.core.UIArea.prototype.indexOfContent = function(oContent) {
-	return this.indexOfAggregation("content", oContent);
-};
 
 /**
  * Destroys all the content in the aggregation
@@ -325,23 +294,6 @@ sap.ui.core.UIArea.prototype.destroyContent = function() {
 	this.destroyAggregation("content");
 	//this.invalidate();
 	return this;
-};
-
-/**
- * Removes the given child from this UI area, where it must have been the root
- * control.
- * @see sap.ui.core.Element#_removeChild
- * @see sap.ui.core.Element#setParent
- *
- * @param {sap.ui.core.Control}
- *            oChild the child element to be removed
- * @protected
- */
-sap.ui.core.UIArea.prototype._removeChild = function(oChild) {
-	var idx = this.indexOfContent(oChild);
-	if(idx >=0){
-		this.removeContent(idx);
-	}
 };
 
 /**
@@ -383,40 +335,6 @@ sap.ui.core.UIArea.prototype.isLocked = function () {
 };
 
 /**
- * Set the model for databinding
- * @param {sap.ui.model.Model} oModel
- * @param {string} [sName]
- * @public
- */
-sap.ui.core.UIArea.prototype.setModel = function(oModel, sName) {
-	this.oModels[sName] = oModel;
-	this.updateBindings(sName);
-};
-
-/**
- * Get the model for databinding
- * @param {string} [sName]
- * @return {sap.ui.model.Model} oModel
- * @public
- */
-sap.ui.core.UIArea.prototype.getModel = function(sName) {
-	return this.oModels[sName] || this.oCore.getModel(sName);
-};
-
-/**
- * Check if a Model is set to the UI Area or to the Core
- * @return {boolean} true or false
- * @public
- */
-sap.ui.core.UIArea.prototype.hasModel = function() {
-	if (!jQuery.isEmptyObject(this.oModels) || this.oCore.hasModel()) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
-/**
  * Provide getBindingContext, as UIArea can be parent of an element.
  * Always returns null.
  *
@@ -425,23 +343,6 @@ sap.ui.core.UIArea.prototype.hasModel = function() {
 sap.ui.core.UIArea.prototype.getBindingContext = function(){
 	return null;
 };
-
-/**
- * Method is called by the core if a model is set to the core to update/recreate all bindings
- * for the UI Areas and its contents.
- *
- * @private
- */
-sap.ui.core.UIArea.prototype.updateBindings = function(sName){
-	jQuery.each(this.getContent(), function (i, oElement){
-		// update binding context, for primary model only
-		if (!sName){oElement.updateBindingContext();}
-		// if the model changes, all bindings have to be recreated (at least those to the previous model)
-		oElement.updateBindings(false, sName, true);
-	});
-};
-
-
 
 // ###########################################################################
 // Convenience for methods
@@ -631,25 +532,18 @@ sap.ui.core.UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 	// TODO: this should be the 'lowest' SAPUI5 Control of this very
 	// UIArea instance's scope -> nesting scenario
 	oElement = jQuery(oEvent.target).control(0);
-	if (oElement == null ||
-		// in case of a Dialog the getUIArea function of the element returns
-		// "null" and in case of nested UIAreas we need to ensure that the
-		// UIArea is the same => BUT in case of nested UIAreas in dialogs
-		// this pattern will not work!
-		// TODO: May be in nested UIAreas in the UIArea is set properly and not
-		//       null like for the root UI Area of the dialog!
-		// TODO: In case of PopUp control it could be that the event is handled
-		//       by the static area where the getUIArea check fails e.g.
-		//       this happens in the MenuButton.qunit.html within the test
-		//       "Menu is hidden after click on a menuitem" so in this case
-		//       we have to ignore this check in case of static area where
-		//       nevertheless the items are rendered invisible!
-		// REMARK: IN GENERAL WE SHOULD RETHINK THE getUIArea FUNCTION
-		//         BECAUSE IN CASE OF NESETED UI AREAS WE NEED TO MAKE SURE TO
-		//         CHECK IF THE EVENT OCCURED WITHIN THE SPECIFIC UIAREA
-		(this.getId() != "sap-ui-static" && oElement.getUIArea() != null && oElement.getUIArea() != this)) {
+	
+	if(oElement === null){
 		return;
 	}
+	
+	//if event is already handled by inner UIArea (as we use the bubbling phase now), returns.
+	//if capturing phase would be used, here means event is already handled by outer UIArea.
+	if((oEvent.originalEvent || oEvent)._sapui_handledByUIArea){
+		(oEvent.originalEvent || oEvent)._sapui_firstUIArea = false;
+		return;
+	}
+	(oEvent.originalEvent || oEvent)._sapui_firstUIArea = true;
 
 	// store the element on the event (aligned with jQuery syntax)
 	oEvent.srcControl = oElement;
@@ -695,11 +589,17 @@ sap.ui.core.UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 			break;
 		}
 
+		// Secret property on the element to allow to cancel bubbling of all events.
+		// This is a very special case, so there is no API method for this in the control. 
+		if (oElement.bStopEventBubbling) {
+			break;
+		}
+		
 		// This is the (not that common) situation that the element was deleted in its own event handler.
 		// i.e. the Element became 'inactive' (see Element#isActive())
 		var oDomRef = oElement.getDomRef();
 		if(!oDomRef) {
-			continue;
+			break;
 		}
 
 		// bubble up to the parent
@@ -721,6 +621,9 @@ sap.ui.core.UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 
 	// reset previously changed currentTarget
 	oEvent.currentTarget = this.getRootNode();
+	
+	// mark on the event that it's already handled by this UIArea
+	(oEvent.originalEvent || oEvent)._sapui_handledByUIArea = true;
 
 	// TODO: rethink about logging levels!
 
@@ -832,3 +735,11 @@ sap.ui.core.UIArea.prototype._ondetach = function() {
 //	ojQRef.unbind("blur", oFH.onfocusout);
 
 };
+
+/**
+ * An UIArea can't be cloned and throws an error when trying to do so.
+ */
+sap.ui.core.UIArea.prototype.clone = function() {
+	throw new Error("UIArea can't be cloned");
+};
+

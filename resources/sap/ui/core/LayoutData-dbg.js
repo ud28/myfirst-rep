@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -88,3 +88,28 @@ sap.ui.core.Element.extend("sap.ui.core.LayoutData", { metadata : {
 
 
 // Start of sap/ui/core/LayoutData.js
+sap.ui.core.LayoutData.prototype.invalidate = function() {
+	//No call of Element.invalidate to avoid bubbling of invalidate
+	var oParent = this.getParent();
+
+	if(oParent && oParent.getMetadata().getName() == "sap.ui.core.VariantLayoutData"){
+		// layout is part of a VariantLayout - so use parent of this one
+		oParent = oParent.getParent();
+	}
+
+	if(oParent){
+		var oLayout = oParent.getParent();
+		if(oLayout){
+			var oEvent = jQuery.Event("LayoutDataChange");
+			oEvent.srcControl = oParent;
+			oLayout._handleEvent(oEvent);
+		}
+	}
+};
+
+sap.ui.core.LayoutData.prototype.setLayoutData = function(oLayoutData) {
+
+	// as LayoutData on LayoutData makes no sense just ignore it.
+	return this;
+
+};

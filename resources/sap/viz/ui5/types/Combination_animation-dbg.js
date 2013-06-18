@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -30,7 +30,9 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li></ul>
+ * <li>{@link #getDataLoading dataLoading} : boolean (default: true)</li>
+ * <li>{@link #getDataUpdating dataUpdating} : boolean (default: true)</li>
+ * <li>{@link #getResizing resizing} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -55,7 +57,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -71,7 +73,9 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
 	// ---- control specific ----
 	library : "sap.viz",
 	properties : {
-		"dataLoading" : {type : "boolean", group : "", defaultValue : true}
+		"dataLoading" : {type : "boolean", group : "", defaultValue : true},
+		"dataUpdating" : {type : "boolean", group : "", defaultValue : true},
+		"resizing" : {type : "boolean", group : "", defaultValue : true}
 	}
 }});
 
@@ -95,7 +99,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
 
 /**
  * Getter for property <code>dataLoading</code>.
- * Set enabled/disabled data loading animation of plot area.
+ * Set enable/disable data loading animation of plot area.
  *
  * Default value is <code>true</code>
  *
@@ -104,7 +108,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
  * @name sap.viz.ui5.types.Combination_animation#getDataLoading
  * @function
  */
-
 
 /**
  * Setter for property <code>dataLoading</code>.
@@ -117,5 +120,56 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_animat
  * @name sap.viz.ui5.types.Combination_animation#setDataLoading
  * @function
  */
+
+
+/**
+ * Getter for property <code>dataUpdating</code>.
+ * Set enable/disable data updating animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>dataUpdating</code>
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#getDataUpdating
+ * @function
+ */
+
+/**
+ * Setter for property <code>dataUpdating</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bDataUpdating  new value for property <code>dataUpdating</code>
+ * @return {sap.viz.ui5.types.Combination_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#setDataUpdating
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>resizing</code>.
+ * Set enable/disable resizing animation of plot area.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>resizing</code>
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#getResizing
+ * @function
+ */
+
+/**
+ * Setter for property <code>resizing</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bResizing  new value for property <code>resizing</code>
+ * @return {sap.viz.ui5.types.Combination_animation} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination_animation#setResizing
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Combination_animation.js

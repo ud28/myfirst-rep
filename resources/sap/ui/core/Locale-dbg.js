@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 //Provides the locale object sap.ui.core.Locale
@@ -32,11 +32,11 @@ jQuery.sap.require("sap.ui.base.Object");
 	 *
 	 * @class Locale represents a locale setting, consisting of a language, script, region, variants, extensions and private use section
 	 *
-	 * @param {string} sLocaleId the locale identifier, in format en_US
+	 * @param {string} sLocaleId the locale identifier, in format en-US or en_US.
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @constructor
 	 * @public
 	 * @name sap.ui.core.Locale
@@ -207,4 +207,48 @@ jQuery.sap.require("sap.ui.base.Object");
 
 	});
 
+	var M_ISO639_OLD_TO_NEW = {
+			"iw" : "he",
+			"ji" : "yi",
+			"in" : "id", 
+			"sh" : "sr"
+	};
+
+	/**
+	 * A list of locales for which the CLDR specifies "right-to-left"
+	 * as the character orientation.
+	 * 
+	 * The string literal below is substituted during the build.
+	 * The value is determined from the CLDR JSON files which are 
+	 * bundled with the UI5 runtime.
+	 */ 
+	var A_RTL_LOCALES = "ar,fa,he".split(",");
+
+	/**
+	 * Checks whether the given language tag implies a character orientation 
+	 * of 'right-to-left' ('RTL').
+	 * 
+	 * The implementation of this method and the configuration above assume 
+	 * that when a language (e.g. 'ar') is marked as 'RTL', then all language/region
+	 * combinations for that language (e.g. 'ar_SA') will be 'RTL' as well, 
+	 * even if the combination is not mentioned in the above configuration.
+	 * There is no mean to define RTL=false for a language/region, when RTL=true for 
+	 * the language alone. 
+	 *
+	 * As of 3/2013 this is true for all supported locales/regions of UI5.
+	 * 
+	 * @private
+	 */
+	sap.ui.core.Locale._impliesRTL = function(sLanguage) {
+		var oLocale = new sap.ui.core.Locale(sLanguage);
+		sLanguage = oLocale.getLanguage() || "";
+		sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
+		var sRegion = oLocale.getRegion() || "";
+		
+		if ( sRegion && jQuery.inArray(sLanguage + "_" + sRegion, A_RTL_LOCALES) >= 0 ) {
+			return true;
+		}
+		return jQuery.inArray(sLanguage, A_RTL_LOCALES) >= 0;
+	};
+	
 }());

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,7 +31,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>Properties
  * <ul>
  * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '640px')</li>
- * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '480px')</li></ul>
+ * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '480px')</li>
+ * <li>{@link #getCss css} : string</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -56,7 +57,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -74,7 +75,8 @@ sap.ui.core.Control.extend("sap.viz.ui5.core.BaseChart", { metadata : {
 	library : "sap.viz",
 	properties : {
 		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '640px'},
-		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '480px'}
+		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '480px'},
+		"css" : {type : "string", group : "Appearance", defaultValue : null}
 	},
 	aggregations : {
     	"dataset" : {type : "sap.viz.ui5.data.Dataset", multiple : false}, 
@@ -117,7 +119,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -129,6 +130,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>height</code>.
@@ -142,7 +144,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -154,7 +155,33 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setHeight
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>css</code>.
+ * CSS style of Chart.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>css</code>
+ * @public
+ * @name sap.viz.ui5.core.BaseChart#getCss
+ * @function
+ */
+
+/**
+ * Setter for property <code>css</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sCss  new value for property <code>css</code>
+ * @return {sap.viz.ui5.core.BaseChart} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.core.BaseChart#setCss
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>dataset</code>.<br/>
  * Dataset for this chart
@@ -165,6 +192,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>dataset</code>.
  * @param oDataset {sap.viz.ui5.data.Dataset}
@@ -173,7 +201,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setDataset
  * @function
  */
-
+	
 
 /**
  * Destroys the dataset in the aggregation 
@@ -183,7 +211,8 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#destroyDataset
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>noData</code>.<br/>
  * Control tree to display when there is no data available
@@ -194,6 +223,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>noData</code>.
  * @param oNoData {sap.ui.core.Control}
@@ -202,7 +232,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#setNoData
  * @function
  */
-
+	
 
 /**
  * Destroys the noData in the aggregation 
@@ -212,6 +242,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#destroyNoData
  * @function
  */
+
 
 /**
  * Fired before a new VIZ instance is created. Event parameter "usrOptions" contains the intended value for the parameter with the same name of the createViz call. 
@@ -246,7 +277,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'beforeCreateViz' event of this <code>sap.viz.ui5.core.BaseChart</code>.<br/>
  *
@@ -261,7 +291,6 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @name sap.viz.ui5.core.BaseChart#detachBeforeCreateViz
  * @function
  */
-
 
 /**
  * Fire event beforeCreateViz to attached listeners.
@@ -278,6 +307,7 @@ sap.viz.ui5.core.BaseChart.M_EVENTS = {'beforeCreateViz':'beforeCreateViz'};
  * @function
  */
 
+
 // Start of sap/viz/ui5/core/BaseChart.js
 jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
 
@@ -287,17 +317,44 @@ sap.viz.ui5.core.BaseChart.prototype.init = function() {
 	this._mVIZHandler = {};
 };
 
+sap.viz.ui5.core.BaseChart.prototype.exit = function() {
+	// unregister from resize handler
+	if ( this._sResizeListenerId ) {
+		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+		delete this._sResizeListenerId;
+	}
+	// properly clean up an existing VIZ instance
+	if ( this._oVIZInstance ) {
+		this._oVIZInstance.destroy();
+		delete this._oVIZInstance;
+	}
+};
+
+sap.viz.ui5.core.BaseChart.prototype.onBeforeRendering = function() {
+	if ( this._sResizeListenerId ) {
+		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+		delete this._sResizeListenerId;
+	}
+};
+
 sap.viz.ui5.core.BaseChart.prototype.onAfterRendering = function() {
 	//TODO How to define feeding API?
-	if ( !this.getDataset().getVIZDataset() ) {
+	if ( !sap.viz.__svg_support || !this.getDataset() || !this.getDataset().getVIZDataset() ) {
 		return;
 	}
 
-	// collect the options fo rthe new VIZ instance
+	// properly clean up an existing VIZ instance
+	if ( this._oVIZInstance ) {
+		this._oVIZInstance.destroy();
+		delete this._oVIZInstance;
+	}
+	
+	// collect the options for the new VIZ instance
 	var oUsrOptions = {
 		type : this.getVIZChartType(),
 		data : this.getDataset().getVIZDataset(),
 		container : this.getDomRef(),
+		css : this.getCss(),
 		options : this._getOptions()
 	}
 
@@ -307,13 +364,47 @@ sap.viz.ui5.core.BaseChart.prototype.onAfterRendering = function() {
 	});
 	
   // create a VIZ chart out of it
-	this._oVIZInstance = sap.viz.core.createViz(oUsrOptions); 
+	this._oVIZInstance = sap.viz.core.createViz(oUsrOptions);
 
 	// attach event listeners to the VIZ instance
 	var that=this;
 	jQuery.sap.forIn(this._mVIZHandler, function(sName, fnHandler) {
 		that._oVIZInstance.on(sName + sap.viz.ui5.core.BaseChart.EVENT_SUFFIX, fnHandler);
 	});
+
+	this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), jQuery.proxy(this.onresize, this) );
+};
+
+sap.viz.ui5.core.BaseChart.prototype.onresize = function(o) {
+	// retrieve new size and set it for the viz charts
+	var size = {width : this.$().width(), height: this.$().height()};
+	if ( this._oVIZInstance ) {
+		this._oVIZInstance.size(size);
+	}
+};
+
+/**
+ * Set chart's default selection.
+ * 
+ * @param {object[]} Array of default selection info 
+ * 
+ * @public
+ */
+sap.viz.ui5.core.BaseChart.prototype.setDefaultSelection = function(selectionInfos) {
+  // retrieve new size and set it for the viz charts
+  var ds = this.getDataset();
+  if(ds){
+    var vizds = this.getDataset().getVIZDataset();
+    if(vizds){
+      vizds.info({
+        'type' : 'defaultSelection',
+        'value' : selectionInfos
+      });
+      if(this._oVIZInstance){
+        this._oVIZInstance.data(vizds);
+      }
+    }
+  }
 };
 
 sap.viz.ui5.core.BaseChart.EVENT_SUFFIX = ".sap.viz.ui5.core";

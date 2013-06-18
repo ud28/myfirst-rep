@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -37,7 +37,9 @@ jQuery.sap.declare("sap.ui.core.theming.Parameters");
 
 			var aJsonUrls = [];
 			jQuery("link[id^=sap-ui-theme-]").each(function() {
-				aJsonUrls.push(this.href.replace(/\/library([^\/.]*)\.(css|less)$/, "/library-parameters$1.json"));
+				aJsonUrls.push(this.href.replace(/\/library([^\/.]*)\.(?:css|less)($|[?#])/, function($0,$1,$2) {
+					return "/library-parameters" + $1 + ".json" + ($2 ? $2 : "");
+				}));
 			});
 			
 			mParameters = {};
@@ -48,7 +50,13 @@ jQuery.sap.declare("sap.ui.core.theming.Parameters");
 				var oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
 				if (oResponse.success) {
 					var oResult = (typeof oResponse.data == "string") ? jQuery.parseJSON(oResponse.data) : oResponse.data;
-					mParameters = jQuery.extend(mParameters, oResult);
+					if ( jQuery.isArray(oResult) ) {
+						for(var j=0; j<oResult.length; j++) {
+						  mParameters = jQuery.extend(mParameters, oResult[j]);
+						}
+					} else {
+					  mParameters = jQuery.extend(mParameters, oResult);
+					}
 				} else {
 					// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
 					jQuery.sap.log.warning("Could not load theme parameters from: " + sUrl); // could be an error as well, but let's avoid more CSN messages...

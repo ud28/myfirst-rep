@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -98,7 +98,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
-	
+
 /**
  * Getter for aggregation <code>left</code>.<br/>
  * Set left border property.
@@ -109,6 +109,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>left</code>.
  * @param oLeft {sap.viz.ui5.types.Background_border_left}
@@ -117,7 +118,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setLeft
  * @function
  */
-
+	
 
 /**
  * Destroys the left in the aggregation 
@@ -127,7 +128,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyLeft
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>right</code>.<br/>
  * Set right border property.
@@ -138,6 +140,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>right</code>.
  * @param oRight {sap.viz.ui5.types.Background_border_right}
@@ -146,7 +149,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setRight
  * @function
  */
-
+	
 
 /**
  * Destroys the right in the aggregation 
@@ -156,7 +159,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyRight
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>top</code>.<br/>
  * Set top border property.
@@ -167,6 +171,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>top</code>.
  * @param oTop {sap.viz.ui5.types.Background_border_top}
@@ -175,7 +180,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setTop
  * @function
  */
-
+	
 
 /**
  * Destroys the top in the aggregation 
@@ -185,7 +190,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyTop
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>bottom</code>.<br/>
  * Set bottom border property.
@@ -196,6 +202,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>bottom</code>.
  * @param oBottom {sap.viz.ui5.types.Background_border_bottom}
@@ -204,7 +211,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#setBottom
  * @function
  */
-
+	
 
 /**
  * Destroys the bottom in the aggregation 
@@ -214,6 +221,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border"
  * @name sap.viz.ui5.types.Background_border#destroyBottom
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Background_border.js
 sap.viz.ui5.types.Background_border.prototype.getLeft = function() {

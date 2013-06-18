@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 jQuery.sap.declare("sap.m.NavContainerRenderer");
@@ -28,13 +28,28 @@ sap.m.NavContainerRenderer.render = function(rm, oControl) {
 	
 	rm.write("<div");
 	rm.writeControlData(oControl);
+	
 	rm.addClass("sapMNav");
-	rm.writeClasses();
 	rm.addStyle("width", oControl.getWidth());
 	rm.addStyle("height", oControl.getHeight());
+
+	if (this.renderAttributes) {
+		this.renderAttributes(rm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
+	}
+	
+	rm.writeClasses();
 	rm.writeStyles();
+	
+	var sTooltip = oControl.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
 	rm.write(">"); // div element
 
+	if (this.renderBeforeContent) {
+		this.renderBeforeContent(rm, oControl); // may be used by inheriting renderers
+	}
+	
 	var oContent = oControl.getCurrentPage();
 	if (oContent) {
 		rm.renderControl(oContent);

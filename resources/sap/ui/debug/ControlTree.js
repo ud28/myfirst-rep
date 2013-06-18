@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.debug.ControlTree");jQuery.sap.require("sap.ui.base.EventProvider");
 sap.ui.debug.ControlTree=function(c,w,p,r){sap.ui.base.EventProvider.apply(this,arguments);this.oWindow=w;this.oDocument=w.document;this.oCore=c;this.oSelectedNode=null;this.oParentDomRef=p;this.oSelectionHighlighter=new sap.ui.debug.Highlighter("sap-ui-testsuite-SelectionHighlighter");this.oHoverHighlighter=new sap.ui.debug.Highlighter("sap-ui-testsuite-HoverHighlighter",true,'#c8f',1);var t=this;jQuery(p).bind("click",function(e){t.onclick(e)}).bind("mouseover",function(e){t.onmouseover(e)}).bind("mouseout",function(e){t.onmouseout(e)});this.enableInplaceControlSelection();this.oCore.attachUIUpdated(this.renderDelayed,this);this.sSelectedNodeId="";this.sResourcePath=r?jQuery.sap.getModulePath("","/"):(window.top.testfwk.sResourceRoot||"../");this.sTestResourcePath=this.sResourcePath+"../test-resources/";this.sSpaceUrl=this.sResourcePath+"testsuite/images/space.gif";this.sMinusUrl=this.sResourcePath+"testsuite/images/minus.gif";this.sPlusUrl=this.sResourcePath+"testsuite/images/plus.gif";this.sLinkUrl=this.sResourcePath+"testsuite/images/link.gif"};

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.ui.core (1.8.4)
+ * Initialization Code and shared classes of library sap.ui.core (1.12.1)
  */
 jQuery.sap.declare("sap.ui.core.library");
 jQuery.sap.require("sap.ui.core.Core");
@@ -32,12 +32,15 @@ sap.ui.getCore().initLibrary({
   types: [
     "sap.ui.core.AccessibleRole",
     "sap.ui.core.BarColor",
+    "sap.ui.core.CSSColor",
     "sap.ui.core.CSSSize",
+    "sap.ui.core.CSSSizeShortHand",
     "sap.ui.core.Collision",
     "sap.ui.core.Design",
     "sap.ui.core.Dock",
     "sap.ui.core.HorizontalAlign",
     "sap.ui.core.ID",
+    "sap.ui.core.IconColor",
     "sap.ui.core.ImeMode",
     "sap.ui.core.MessageType",
     "sap.ui.core.OpenState",
@@ -58,12 +61,19 @@ sap.ui.getCore().initLibrary({
     "string",
     "void"
   ],
-  interfaces: [],
+  interfaces: [
+    "sap.ui.core.Label"
+  ],
   controls: [
+    "sap.ui.core.ComponentContainer",
     "sap.ui.core.Control",
     "sap.ui.core.HTML",
+    "sap.ui.core.Icon",
+    "sap.ui.core.LocalBusyIndicator",
     "sap.ui.core.ScrollBar",
     "sap.ui.core.TooltipBase",
+    "sap.ui.core.UIComponent",
+    "sap.ui.core.mvc.HTMLView",
     "sap.ui.core.mvc.JSONView",
     "sap.ui.core.mvc.JSView",
     "sap.ui.core.mvc.View",
@@ -77,15 +87,16 @@ sap.ui.getCore().initLibrary({
     "sap.ui.core.ListItem",
     "sap.ui.core.Message",
     "sap.ui.core.SeparatorItem",
+    "sap.ui.core.VariantLayoutData",
     "sap.ui.core.search.OpenSearchProvider",
     "sap.ui.core.search.SearchProvider"
   ],
-  version: "1.8.4"});
+  version: "1.12.1"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -101,7 +112,7 @@ jQuery.sap.declare("sap.ui.core.AccessibleRole");
  * For more information, goto "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
  * 
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -497,7 +508,7 @@ sap.ui.core.AccessibleRole = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -511,7 +522,7 @@ jQuery.sap.declare("sap.ui.core.BarColor");
 /**
  * @class Configuration options for the colors of a progress bar
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -546,7 +557,38 @@ sap.ui.core.BarColor = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* -----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ----------------------------------------------------------------------------------- */
+
+// Provides data type sap.ui.core.CSSColor
+jQuery.sap.declare('sap.ui.core.CSSColor');
+jQuery.sap.require('sap.ui.base.DataType');
+
+/**
+ * @class A string type that represents CSS color values. Allowed values are CSS hex colors like "#666666" or "#fff", as well as css color names as 
+ * 	"green" and "darkblue". 
+ *
+ * @static
+ * @public
+ */
+sap.ui.core.CSSColor = sap.ui.base.DataType.createType('sap.ui.core.CSSColor', {
+    isValid : function(vValue) {
+      return /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coralcornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silverskyblue|slateblue|slategray|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/.test(vValue);
+    }
+
+  },
+  sap.ui.base.DataType.getType('string')
+);
+
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -559,14 +601,15 @@ jQuery.sap.declare('sap.ui.core.CSSSize');
 jQuery.sap.require('sap.ui.base.DataType');
 
 /**
- * @class A string type that represents CSS size values.
+ * @class A string type that represents CSS size values. Allowed values are CSS sizes like "1px" or "2em" or "50%", but also the special values "auto" and "inherit". 
+ * Note that CSS does not allow all of these values for every CSS property representing a size. E.g. "auto" is not an allowed value for a padding size.
  *
  * @static
  * @public
  */
 sap.ui.core.CSSSize = sap.ui.base.DataType.createType('sap.ui.core.CSSSize', {
     isValid : function(vValue) {
-      return /^(auto|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))$/.test(vValue);
+      return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))$/.test(vValue);
     }
 
   },
@@ -576,7 +619,39 @@ sap.ui.core.CSSSize = sap.ui.base.DataType.createType('sap.ui.core.CSSSize', {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* -----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ----------------------------------------------------------------------------------- */
+
+// Provides data type sap.ui.core.CSSSizeShortHand
+jQuery.sap.declare('sap.ui.core.CSSSizeShortHand');
+jQuery.sap.require('sap.ui.base.DataType');
+
+/**
+ * @class This type checks the short hand form of a margin or
+ * 		padding definition. E.g. "1px 1px" or up to four values are allowed.
+ * 	
+ *
+ * @static
+ * @public
+ */
+sap.ui.core.CSSSizeShortHand = sap.ui.base.DataType.createType('sap.ui.core.CSSSizeShortHand', {
+    isValid : function(vValue) {
+      return /^(inherit|(auto|[-+]?(0*|(\d+|\d*\.\d+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))){1}(\s(auto|[-+]?(0*|(\d+|\d*\.\d+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))){0,3})$/.test(vValue);
+    }
+
+  },
+  sap.ui.base.DataType.getType('string')
+);
+
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -609,7 +684,7 @@ sap.ui.core.Collision = sap.ui.base.DataType.createType('sap.ui.core.Collision',
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -623,7 +698,7 @@ jQuery.sap.declare("sap.ui.core.Design");
 /**
  * @class Font design for texts
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -646,7 +721,7 @@ sap.ui.core.Design = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -681,7 +756,7 @@ sap.ui.core.Dock = sap.ui.base.DataType.createType('sap.ui.core.Dock', {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -695,7 +770,7 @@ jQuery.sap.declare("sap.ui.core.HorizontalAlign");
 /**
  * @class Configuration options for horizontal alignments of controls
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -736,7 +811,7 @@ sap.ui.core.HorizontalAlign = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -766,7 +841,56 @@ sap.ui.core.ID = sap.ui.base.DataType.createType('sap.ui.core.ID', {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.ui.core.IconColor.
+jQuery.sap.declare("sap.ui.core.IconColor");
+
+/**
+ * @class Semantic Colors of an icon.
+ *
+ * @version 1.12.1
+ * @static
+ * @public
+ */
+sap.ui.core.IconColor = {
+  
+    /**
+     * Default color 
+     * @public
+     */
+    Default : "Default",
+
+    /**
+     * Positive color 
+     * @public
+     */
+    Positive : "Positive",
+
+    /**
+     * Negative color 
+     * @public
+     */
+    Negative : "Negative",
+
+    /**
+     * Critical color 
+     * @public
+     */
+    Critical : "Critical"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -780,7 +904,7 @@ jQuery.sap.declare("sap.ui.core.ImeMode");
 /**
  * @class State of the Input Method Editor (IME) for the control. Depending on its value, it allows users to enter and edit for example Chinese characters.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -812,10 +936,20 @@ sap.ui.core.ImeMode = {
 
   };
   
+/**
+ * 
+ *   Marker interface for controls which are suitable for use as label.
+ *   
+ *
+ * @name sap.ui.core.Label
+ * @interface
+ * @public
+ */
+
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -829,7 +963,7 @@ jQuery.sap.declare("sap.ui.core.MessageType");
 /**
  * @class Defines the different message types of a message
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -870,7 +1004,7 @@ sap.ui.core.MessageType = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -884,7 +1018,7 @@ jQuery.sap.declare("sap.ui.core.OpenState");
 /**
  * @class Defines the different possible states of an element that can be open or closed and does not only toggle between these states, but also spends some time in between (e.g. because of an animation).
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -919,7 +1053,7 @@ sap.ui.core.OpenState = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -933,7 +1067,7 @@ jQuery.sap.declare("sap.ui.core.ScrollBarAction");
 /**
  * @class Actions are: Click on track, button, drag of thumb, or mouse wheel click
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -968,7 +1102,7 @@ sap.ui.core.ScrollBarAction = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -982,7 +1116,7 @@ jQuery.sap.declare("sap.ui.core.Scrolling");
 /**
  * @class Defines the possible values for horizontal and vertical scrolling behavior.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1017,7 +1151,7 @@ sap.ui.core.Scrolling = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1031,7 +1165,7 @@ jQuery.sap.declare("sap.ui.core.TextAlign");
 /**
  * @class Configuration options for text alignments.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1072,7 +1206,7 @@ sap.ui.core.TextAlign = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1086,7 +1220,7 @@ jQuery.sap.declare("sap.ui.core.TextDirection");
 /**
  * @class Configuration options for the direction of texts.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1115,7 +1249,7 @@ sap.ui.core.TextDirection = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* -----------------------------------------------------------------------------------
@@ -1145,7 +1279,7 @@ sap.ui.core.URI = sap.ui.base.DataType.createType('sap.ui.core.URI', {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1159,7 +1293,7 @@ jQuery.sap.declare("sap.ui.core.ValueState");
 /**
  * @class Marker for the correctness of the current value.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1194,7 +1328,7 @@ sap.ui.core.ValueState = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1210,7 +1344,7 @@ jQuery.sap.declare("sap.ui.core.VerticalAlign");
  * Configuration options for vertical alignments, for example of a layout cell content within the borders.
  * 
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1245,7 +1379,7 @@ sap.ui.core.VerticalAlign = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1259,7 +1393,7 @@ jQuery.sap.declare("sap.ui.core.Wrapping");
 /**
  * @class Configuration options for text wrapping.
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1294,7 +1428,7 @@ sap.ui.core.Wrapping = {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -1308,7 +1442,7 @@ jQuery.sap.declare("sap.ui.core.mvc.ViewType");
 /**
  * @class Specifies possible view types
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @static
  * @public
  */
@@ -1327,6 +1461,12 @@ sap.ui.core.mvc.ViewType = {
     XML : "XML",
 
     /**
+     * HTML view 
+     * @public
+     */
+    HTML : "HTML",
+
+    /**
      * JS View 
      * @public
      */
@@ -1339,34 +1479,26 @@ sap.ui.core.mvc.ViewType = {
 // Begin of Library Initialization coding, copied from shared.js
 // -----------------------------------------------------------------------------
 
-// lazy imports for BusyIndicator
-sap.ui.lazyRequire("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
+(function() {
+	
+	var lazy = sap.ui.lazyRequire;
+	
+	function each(sPackage,aClasses,sShortcutPkg) {
+		for(var i=0; i<aClasses.length; i++) {
+			if ( sShortcutPkg ) {
+				lazy(sShortcutPkg, aClasses[i].toLowerCase(), sPackage + aClasses[i]);
+			} else {
+			  lazy(sPackage + aClasses[i], "new extend getMetadata");
+			}
+		}
+	}
+	
+  //lazy imports for BusyIndicator
+	lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 
-// lazy imports for optional model stuff and model implementations
-sap.ui.lazyRequire("sap.ui.model.Filter");
-sap.ui.lazyRequire("sap.ui.model.Sorter");
-sap.ui.lazyRequire("sap.ui.model.json.JSONModel");
-sap.ui.lazyRequire("sap.ui.model.resource.ResourceModel");
-sap.ui.lazyRequire("sap.ui.model.odata.ODataModel");
-sap.ui.lazyRequire("sap.ui.model.xml.XMLModel");
+	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","xml.XMLModel"]);
+	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime"]);
+	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
+	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView"], "sap.ui");
 
-//lazy imports for types
-sap.ui.lazyRequire("sap.ui.model.type.Boolean");
-sap.ui.lazyRequire("sap.ui.model.type.Integer");
-sap.ui.lazyRequire("sap.ui.model.type.Float");
-sap.ui.lazyRequire("sap.ui.model.type.String");
-sap.ui.lazyRequire("sap.ui.model.type.Date");
-sap.ui.lazyRequire("sap.ui.model.type.Time");
-sap.ui.lazyRequire("sap.ui.model.type.DateTime");
-
-//lazy imports for locale
-sap.ui.lazyRequire("sap.ui.core.Locale");
-sap.ui.lazyRequire("sap.ui.core.LocaleData");
-
-// lazy imports for MVC
-sap.ui.lazyRequire("sap.ui.core.mvc.Controller");
-sap.ui.lazyRequire("sap.ui", "controller", "sap.ui.core.mvc.Controller");
-sap.ui.lazyRequire("sap.ui", "view", "sap.ui.core.mvc.View");
-sap.ui.lazyRequire("sap.ui", "jsview", "sap.ui.core.mvc.JSView");
-sap.ui.lazyRequire("sap.ui", "jsonview", "sap.ui.core.mvc.JSONView");
-sap.ui.lazyRequire("sap.ui", "xmlview", "sap.ui.core.mvc.XMLView");
+}());

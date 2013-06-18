@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.EventProvider
@@ -18,7 +18,7 @@ jQuery.sap.require("sap.ui.base.ObjectPool");
  * @abstract
  * @extends sap.ui.base.Object
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  * @name sap.ui.base.EventProvider
@@ -91,6 +91,36 @@ sap.ui.base.EventProvider.prototype.attachEvent = function(sEventId, oData, fnFu
 };
 
 /**
+ * Adds a one time event registration for the given object and given event name. When the event occurs, the handler function is called and removed
+ * from registration.
+ *
+ * @param {String}
+ *            sEventId The identifier of the event to listen for
+ * @param {Object}
+ *            [oData] The object, that should be passed along with the event-object when firing the event
+ * @param {Function}
+ *            fnFunction The function to call, when the event occurs. This function will be called on the
+ *            oListener-instance (if present) or on the event provider-instance
+ * @param {Object}
+ *            [oListener] The object, that wants to be notified, when the event occurs
+ * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
+ * @public
+ */
+sap.ui.base.EventProvider.prototype.attachEventOnce = function(sEventId, oData, fnFunction, oListener) {
+	if(typeof(oData) === "function") {
+		oListener = fnFunction;
+		fnFunction = oData;
+		oData = undefined;
+	}
+	function fnOnce() { 
+		this.detachEvent(sEventId, fnOnce);  // ‘this’ is always the control, due to the context ‘undefined’ in the attach call below
+		fnFunction.apply(oListener || this, arguments);  // needs to do the same resolution as in fireEvent
+	}
+	this.attachEvent(sEventId, oData, fnOnce, undefined);  // a listener of ‘undefined’ enforce a context of ‘this’ even after clone
+	return this;
+};
+
+/**
  * Removes an event registration for the given object and given event name.
  *
  * The passed parameters must match those used for registration with {@link #attachEvent } beforehand!
@@ -105,7 +135,6 @@ sap.ui.base.EventProvider.prototype.attachEvent = function(sEventId, oData, fnFu
  * @public
  */
 sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction, oListener) {
-
 	jQuery.sap.assert(typeof(sEventId) === "string" && sEventId, "EventProvider.detachEvent: sEventId must be a non-empty string" );
 	jQuery.sap.assert(typeof(fnFunction) === "function", "EventProvider.detachEvent: fnFunction must be a function");
 	jQuery.sap.assert(!oListener || typeof(oListener) === "object", "EventProvider.detachEvent: oListener must be empty or an object");
@@ -114,12 +143,16 @@ sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction,
 	if (!aEventListeners) {
 		return this;
 	}
+	
+	var bListenerDetached = false;
+	
 	//PERFOPT use array. remember length to not re-calculate over and over again
 	for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 		//PERFOPT check for identity instead of equality... avoid type conversion
 		if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
 			//delete aEventListeners[i];
 			aEventListeners.splice(i,1);
+			bListenerDetached = true;
 			break;
 		}
 	}
@@ -128,8 +161,10 @@ sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction,
 		delete this.mEventRegistry[sEventId];
 	}
 
-	// Inform interested parties about changed EventHandlers
-	this.fireEvent(sap.ui.base.EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerDetached' });
+	if(bListenerDetached){
+		// Inform interested parties about changed EventHandlers
+		this.fireEvent(sap.ui.base.EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerDetached' });
+	}
 
 	return this;
 };
@@ -147,9 +182,8 @@ sap.ui.base.EventProvider.prototype.detachEvent = function(sEventId, fnFunction,
  * @protected
  */
 sap.ui.base.EventProvider.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
-
 	// at least in BrowserEventManager when firing events of its E_EVENTS enumeration, the type will be an integer... thus avoid this check
-//	jQuery.sap.assert(typeof (sEventId) == "string");
+	//	jQuery.sap.assert(typeof (sEventId) == "string");
 
 	// get optional parameters right
 	if (typeof mParameters == "boolean") {
@@ -265,10 +299,12 @@ sap.ui.base.EventProvider.prototype.toString = function() {
 	}
 };
 
-///**
-// * Destroy this instance of the EventProvider.
-// * @protected
-// */
-//sap.ui.base.EventProvider.prototype.exit = function() {
-//	this.mEventRegistry = null;
-//};
+
+/**
+ * @see sap.ui.base.Object.prototype.destroy
+ * @public
+ */
+sap.ui.base.EventProvider.prototype.destroy = function() {
+	this.mEventRegistry = {};
+	sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+};

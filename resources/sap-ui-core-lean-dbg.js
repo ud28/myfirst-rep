@@ -9578,7 +9578,7 @@ if ( !$.curCSS ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -9674,7 +9674,7 @@ if ( !$.curCSS ) {
 			tag: oTag,
 			url: sUrl,
 			resourceRoot: sResourceRoot
-		}
+		};
 	})();
 
 	/**
@@ -9683,14 +9683,14 @@ if ( !$.curCSS ) {
 	 */
 	(function() {
 		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
-			var bRestart = false,
-				sRestartUrl = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
+			window["sap-ui-bRestart"] = false;
+			window["sap-ui-sRestartUrl"] = "http://localhost:8080/sapui5/resources/sap-ui-core.js";
 
 			// function to replace the bootstrap tag with a newly created script tag to enable
 			// restarting the core from a different server
 			function restartCore() {
 				var oScript = _oBootstrap.tag,
-					sScript = "<script src=\"" + sRestartUrl + "\"";
+					sScript = "<script src=\"" + window["sap-ui-sRestartUrl"] + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
 					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
 						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue + "\"";
@@ -9698,16 +9698,28 @@ if ( !$.curCSS ) {
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
+				
+				// clean up cachebuster stuff
+				jQuery("#sap-ui-bootstrap-cachebusted").remove();
+				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
+				
 				document.write(sScript);
-				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + sRestartUrl);
+				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + window["sap-ui-sRestartUrl"]);
 				oRestart.name = "Restart";
+				
+				// clean up
+				delete window["sap-ui-bRestart"];
+				delete window["sap-ui-sRestartUrl"];
+				
 				throw oRestart;
 			};
 
-			// debugger stops here. if you want to restart from a different server you can adapt the URL
-			// here and set bRestart to true.
+			// debugger stops here. To restart UI5 from somewhere else (default: localhost), set:
+			//    window["sap-ui-bRestart"] = true
+			// If you want to restart from a different server than localhost, you can adapt the URL, e.g.: 
+			//    window["sap-ui-sRestartUrl"] = "http://someserver:8080/sapui5/resources/sap-ui-core.js"
 			debugger;
-			if (bRestart) {
+			if (window["sap-ui-bRestart"]) {
 				restartCore();
 			}
 		}
@@ -9821,7 +9833,7 @@ if ( !$.curCSS ) {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP AG.
 	 *
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @namespace
 	 * @public
 	 * @static
@@ -10927,7 +10939,9 @@ if ( !$.curCSS ) {
 				// execute the script in the window context
 				mod.state = 'executing';
 				_execStack.push(sModuleName);
-				if (_window.execScript && (!mod.data || mod.data.length < MAX_EXEC_SCRIPT_LENGTH) ) { 
+				if ( typeof mod.data === "function" ) {
+					mod.data.apply(window);
+				} else if (_window.execScript && (!mod.data || mod.data.length < MAX_EXEC_SCRIPT_LENGTH) ) { 
 					try {
 						mod.data && _window.execScript(mod.data); // execScript fails if data is empty
 					} catch (e) {
@@ -10951,6 +10965,11 @@ if ( !$.curCSS ) {
 				mod.state = 'failed';
 				mod.error = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 				mod.data = undefined;
+				if ( window["sap-ui-debug"] && (oCfgData["xx-showloaderrors"] || /sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search)) ) {
+					jQuery.sap.log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
+					jQuery.sap.includeScript(mod.url);
+					return;
+				}
 			}
 		}
 	}
@@ -11015,6 +11034,9 @@ if ( !$.curCSS ) {
 	jQuery.sap.registerPreloadedModules = function(oData, bAsync, oSyncPoint) {
 		if ( _verbose ) {
 			jQuery.sap.log.debug(sLogPrefix + "adding preloaded modules from '" + oData.url + "'");
+		}
+		if ( oData.name ) {
+			mPreloadModules[oData.name] = true;
 		}
 		jQuery.each(oData.modules, function(sName,sContent) {
 			if ( !mModules[sName] ) {
@@ -11088,6 +11110,13 @@ if ( !$.curCSS ) {
 		if (sId) {
 			oLink.id = sId;
 		}
+		
+		oLink.onload = function(){
+			jQuery(oLink).attr("sap-ui-ready", "true");
+		}
+		oLink.onerror = function(){
+			jQuery(oLink).attr("sap-ui-ready", "false");
+		}
 
 		// check for existence of the link
 		var oOld, bReplace;
@@ -11141,21 +11170,140 @@ if ( !$.curCSS ) {
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added
 
+	/**
+	 * Holds information about the browser's capabilities and quirks.
+	 * This object is provided and documented by jQuery. 
+	 * But it is extended by SAPUI5 with detection for features not covered by jQuery. This documentation ONLY covers the detection properties added by UI5.
+	 * For the standard detection properties, please refer to the jQuery documentation.
+	 * 
+	 * These properties added by UI5 are only available temporarily until jQuery adds feature detection on their own.
+	 * 
+	 * @name jQuery.support
+	 * @namespace
+	 * @since 1.12
+	 * @public
+	 */
+	
 	if (!jQuery.support) {
 		jQuery.support = {};
 	}
+	
+	jQuery.extend(jQuery.support, {touch: "ontouchend" in document}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+
+	var aPrefixes = ["Webkit", "ms", "Moz"];
+	var oStyle = document.documentElement.style;
+	
+	var preserveOrTestCssPropWithPrefixes = function(detectionName, propName) {
+		if (jQuery.support[detectionName] === undefined) {
+			
+			if (oStyle[propName] !== undefined) { // without vendor prefix
+				jQuery.support[detectionName] = true;
+				return;
+				
+			} else { // try vendor prefixes
+				propName = propName.charAt(0).toUpperCase() + propName.slice(1);
+				for (var i in aPrefixes) {
+					if (oStyle[aPrefixes[i]+propName] !== undefined) {
+						jQuery.support[detectionName] = true;
+						return;
+					}
+				}
+			}
+			jQuery.support[detectionName] = false;
+		}
+	};
 
 	/**
-	 * jQuery.support.flexBoxLayout is true if the current browser supports the CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * Whether the current browser supports (2D) CSS transforms
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransforms
 	 */
-	if (jQuery.support.flexBoxLayout === undefined) {
-		jQuery.support.flexBoxLayout =
-			((document.documentElement.style.MozBoxFlex !== undefined) ||
-				(document.documentElement.style.WebkitBoxFlex !== undefined) ||
-				(document.documentElement.style.MsBoxFlex !== undefined) ||
-				(document.documentElement.style.BoxFlex !== undefined));
+	preserveOrTestCssPropWithPrefixes("cssTransforms", "transform");
+
+	/**
+	 * Whether the current browser supports 3D CSS transforms
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransforms3d
+	 */
+	preserveOrTestCssPropWithPrefixes("cssTransforms3d", "perspective");
+
+	/**
+	 * Whether the current browser supports CSS transitions
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssTransitions
+	 */
+	preserveOrTestCssPropWithPrefixes("cssTransitions", "transition");
+
+	/**
+	 * Whether the current browser supports (named) CSS animations
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssAnimations
+	 */
+	preserveOrTestCssPropWithPrefixes("cssAnimations", "animationName");
+
+	/**
+	 * Whether the current browser supports CSS gradients. Note that ANY support for CSS gradients leads to "true" here, no matter what the syntax is.
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.cssGradients
+	 */
+	if (jQuery.support.cssGradients === undefined) {
+		var oElem = document.createElement('div'),
+		oStyle = oElem.style;
+		try {
+			oStyle.backgroundImage = "linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-moz-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-webkit-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-ms-linear-gradient(left top, red, white)";
+			oStyle.backgroundImage = "-webkit-gradient(linear, left top, right bottom, from(red), to(white))";
+		} catch (e) {/* no support...*/}
+		jQuery.support.cssGradients = (oStyle.backgroundImage && oStyle.backgroundImage.indexOf("gradient") > -1);
+		
+		oElem = null; // free for garbage collection
 	}
 
+	/**
+	 * Whether the current browser supports the OLD CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.flexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("flexBoxLayout", "boxFlex");
+
+	/**
+	 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.ie10FlexBoxLayout
+	 * @since 1.12.0
+	 */
+	preserveOrTestCssPropWithPrefixes("ie10FlexBoxLayout", "flexOrder");	// Just using one of the IE10 properties that's not in the new FlexBox spec
+	
+	/**
+	 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.newFlexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
+
+	/**
+	 * Whether the current browser needs a polyfill as a fallback for flex box support
+	 * @type {boolean}
+	 * @private
+	 * @name jQuery.support.useFlexBoxPolyfill
+	 * @since 1.12.0
+	 */
+	if(!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
+		jQuery.support.useFlexBoxPolyfill = true;
+	} else {
+		jQuery.support.useFlexBoxPolyfill = false;
+	}
+	
 	// *********** fixes for (pending) jQuery bugs **********
 	if (!jQuery.support.opacity) {
 		(function() {
@@ -11222,7 +11370,7 @@ if ( !$.curCSS ) {
 					jQuery.sap.measure.start(url.url, "Request for "+ url.url);
 					fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
-				}
+				};
 			}else if(fnAjax){
 				jQuery.ajax = fnAjax;
 			}

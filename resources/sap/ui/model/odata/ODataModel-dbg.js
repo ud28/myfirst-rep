@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -18,16 +18,18 @@ jQuery.sap.require("sap.ui.thirdparty.datajs");
 jQuery.sap.require("sap.ui.model.Model");
 jQuery.sap.require("sap.ui.model.odata.ODataPropertyBinding");
 jQuery.sap.require("sap.ui.model.odata.ODataListBinding");
+jQuery.sap.require("sap.ui.model.odata.ODataMetadata");
 
 /*global OData *///declare unusual global vars for JSLint/SAPUI5 validation
 
 /**
  * Constructor for a new ODataModel.
  *
- * @param {string} sServiceUrl required - base uri of the service to request data from
+ * @param {string} sServiceUrl required - base uri of the service to request data from; additional URL parameters appended here will be appended to every request
  * @param {string} [bJSON] (optional) true to request data as JSON
  * @param {string} [sUser] (optional) user
  * @param {string} [sPassword] (optional) password
+ * @param {object} [mHeaders] (optional) map of custom headers which should be set in each request.
  *
  * @class
  * Model implementation for oData format
@@ -35,84 +37,99 @@ jQuery.sap.require("sap.ui.model.odata.ODataListBinding");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
  * @public
+ * @name sap.ui.model.odata.ODataModel
  */
-sap.ui.model.odata.ODataModel = function(sServiceUrl, bJSON, sUser, sPassword) {
-	sap.ui.model.Model.apply(this, arguments);
-
-	this.sDefaultBindingMode = sap.ui.model.BindingMode.OneWay;
-	this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
-	this.bCountSupported = true;
-	this.bJSON = bJSON;
-	this.bCache = true;
-	this.oRequestQueue = [];
-	this.aBatchOperations = [];
-	this.oHandler;
-
-	// prepare variables for request headers, data and metadata
-	// TODO: metadata should be an separate object furthermore
-	this.oHeaders = {};
-	this.oData = {};
-	this.oMetadata = {};
-
-	// determine the service base url and the url parameters
-	if (sServiceUrl.indexOf("?") == -1) {
-		this.sServiceUrl = sServiceUrl;
-	} else {
-		var aUrlParts = sServiceUrl.split("?");
-		this.sServiceUrl = aUrlParts[0];
-		this.sUrlParams = aUrlParts[1];
+sap.ui.model.Model.extend("sap.ui.model.odata.ODataModel", /** @lends sap.ui.model.odata.ODataModel */ {
+	
+	constructor : function(sServiceUrl, bJSON, sUser, sPassword, mHeaders) {
+		sap.ui.model.Model.apply(this, arguments);
+	
+		this.sDefaultBindingMode = sap.ui.model.BindingMode.OneWay;
+		this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
+		this.bCountSupported = true;
+		this.bJSON = bJSON;
+		this.bCache = true;
+		this.oRequestQueue = [];
+		this.aBatchOperations = [];
+		this.oHandler;
+		this.sETag = '';
+		
+		// prepare variables for request headers, data and metadata
+		// TODO: metadata should be an separate object furthermore
+		this.oHeaders = {};
+		this.setHeaders(mHeaders);
+		this.oData = {};
+		this.oMetadata = {};
+	
+		// determine the service base url and the url parameters
+		if (sServiceUrl.indexOf("?") == -1) {
+			this.sServiceUrl = sServiceUrl;
+		} else {
+			var aUrlParts = sServiceUrl.split("?");
+			this.sServiceUrl = aUrlParts[0];
+			this.sUrlParams = aUrlParts[1];
+		}
+	
+		// Remove trailing slash (if any)
+		this.sServiceUrl = this.sServiceUrl.replace(/\/$/, "");
+	
+		// store user and password
+		this.sUser = sUser;
+		this.sPassword = sPassword;
+		
+		this.oHeaders["x-csrf-token"] = "Fetch";
+	
+		// load the metadata before setting accept headers because metadata is only available as XML
+		this._loadMetadata();
+	
+		// set the the header for the accepted content types
+		if (this.bJSON) {
+			this.oHeaders["Accept"] = "application/json";
+			this.oHandler = OData.jsonHandler;
+		} else {
+			this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
+			this.oHandler = OData.atomHandler;
+		}
+		
+		this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguage();
+		
+		// the max version number the client can accept in a response 
+		this.oHeaders["MaxDataServiceVersion"] = "2.0";
+		
+		// set version to 2.0 because 1.0 does not support e.g. skip/top, inlinecount...
+		// states the version of the Open Data Protocol used by the client to generate the request.
+		this.oHeaders["DataServiceVersion"] = "2.0";
+		
+	},
+	metadata : {
+	
+		publicMethods : ["create", "remove", "update", "submitChanges", "getServiceMetadata", "read", "hasPendingChanges", "refresh", "resetChanges",
+		                 "isCountSupported", "setCountSupported", "forceNoCache", "setProperty", "refreshSecurityToken", "setHeaders", "getHeaders"]
 	}
-
-	// Remove trailing slash (if any)
-	this.sServiceUrl = this.sServiceUrl.replace(/\/$/, "");
-
-	// store user and password
-	this.sUser = sUser;
-	this.sPassword = sPassword;
-	
-	this.oHeaders["x-csrf-token"] = "Fetch";
-
-	// load the metadata before setting accept headers because metadata is only available as XML
-	this._loadMetadata();
-
-	// set the the header for the accepted content types
-	if (this.bJSON) {
-		this.oHeaders["Accept"] = "application/json";
-		this.oHandler = OData.jsonHandler;
-	} else {
-		this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
-		this.oHandler = OData.atomHandler;
-	}
-	
-	this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguage();
-	
-	// the max version number the client can accept in a response 
-	this.oHeaders["MaxDataServiceVersion"] = "2.0";
-	
-	// set version to 2.0 because 1.0 does not support e.g. skip/top, inlinecount...
-	// states the version of the Open Data Protocol used by the client to generate the request.
-	this.oHeaders["DataServiceVersion"] = "2.0";
-};
-
-// chain the prototypes
-sap.ui.model.odata.ODataModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.odata.ODataModel. Resulting metadata can be obtained via
- * sap.ui.model.odata.ODataModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.odata.ODataModel", {
-
-	// ---- object ----
-	baseType : "sap.ui.model.Model",
-	publicMethods : ["create", "remove", "update", "submitChanges", "getServiceMetadata", "read", "hasPendingChanges", "refresh", "resetChanges",
-	                 "isCountSupported", "setCountSupported", "forceNoCache", "setProperty", "refreshSecurityToken"]
 });
 
+/**
+ * Creates a new subclass of class sap.ui.model.odata.ODataModel with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.odata.ODataModel.extend
+ * @function
+ */
+
+//
 sap.ui.model.odata.ODataModel.M_EVENTS = {
 		RejectChange: "rejectChange"
 };
@@ -168,7 +185,7 @@ sap.ui.model.odata.ODataModel.prototype._createRequest = function(sPath, aUrlPar
 	}
 	
 	var oChangeHeader = {};
-	jQuery.extend(oChangeHeader,this.oHeaders);
+	jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 	
 	// create a request object for the url, url params and async option
 	return {
@@ -179,7 +196,7 @@ sap.ui.model.odata.ODataModel.prototype._createRequest = function(sPath, aUrlPar
 		password: this.sPassword
 	};
 
-};
+}; 
 
 /**
  * Loads the metadata for the service
@@ -195,12 +212,14 @@ sap.ui.model.odata.ODataModel.prototype._loadMetadata = function() {
 
 	function _handleSuccess(oMetadata, oResponse) {
 		if (oResponse) {
+			that._convertHeaders("x-csrf-token", oResponse.headers);
 			that.oHeaders["x-csrf-token"] = oResponse.headers["x-csrf-token"];
 		}
-		that.oMetadata = oMetadata;
+		that.oMetadata = new sap.ui.model.odata.ODataMetadata(oMetadata);
 	}
 
 	function _handleError(oError) {
+		that.oMetadata = new sap.ui.model.odata.ODataMetadata(null);
 		that._handleError(oError);
 	}
 
@@ -210,26 +229,25 @@ sap.ui.model.odata.ODataModel.prototype._loadMetadata = function() {
 };
 
 /**
- * Does a request using the provided sServiceUrl and config
- * parameters in the model's constructor and sets the response data into the
+ * Does a request using the service URL and configuration parameters 
+ * provided in the model's constructor and sets the response data into the
  * model. This request is performed asynchronously.
  *
  * @param {string}
  *            sPath Path A string containing the path to the data which should
- *            be retrieved. The path is concatenated to the sServiceUrl
+ *            be retrieved. The path is concatenated to the <code>sServiceUrl</code>
  *            which was specified in the model constructor.
  * @param {function}
- *            fnSuccess a callback function which is called when the data has
+ *            [fnSuccess] a callback function which is called when the data has
  *            been successfully retrieved and stored in the model
  * @param {function}
- *            fnError a callback function which is called when the request
- *            failed
+ *            [fnError] a callback function which is called when the request failed
  *            
- * @param {boolean} bCache: Force no caching if false: default = true;
- * 					           
+ * @param {boolean} [bCache=true] Force no caching if false
+ *
  * @private
  */
-sap.ui.model.odata.ODataModel.prototype._loadData = function(sPath, aParams, fnSuccess, fnError, oContext, bCache){
+sap.ui.model.odata.ODataModel.prototype._loadData = function(sPath, aParams, fnSuccess, fnError, oContext, bCache, fnHandleUpdate){
 
 	 /*
 	  * TODO: Johannes, Malte: check whether this is OK or not?
@@ -249,7 +267,8 @@ sap.ui.model.odata.ODataModel.prototype._loadData = function(sPath, aParams, fnS
 	  */
 
 	// create a request object for the data request
-	var oRequest = this._createRequest(sPath, aParams, true, bCache || this.bCache);
+	var oRequestHandle,
+		oRequest = this._createRequest(sPath, aParams, true, bCache || this.bCache);
 
 	// request the data of the service for the given path
 	var that = this;
@@ -295,7 +314,6 @@ sap.ui.model.odata.ODataModel.prototype._loadData = function(sPath, aParams, fnS
 		var mParameters = that._handleError(oError);
 		
 		that.sChangeKey = null;
-		that.checkUpdate(oContext); /* TODO: Johannes, Malte: check whether this is OK or not? */
 		
 		that.fireRequestCompleted({url : oRequest.requestUri, type : "GET", async : oRequest.async, info: "Accept headers:" + that.oHeaders["Accept"]});
 		that.fireRequestFailed(mParameters);
@@ -308,7 +326,10 @@ sap.ui.model.odata.ODataModel.prototype._loadData = function(sPath, aParams, fnS
 	 */
 	function readRequestedData(request){
 		// execute the request and use the metadata if available
-		OData.read(oRequest, _handleSuccess, _handleError, this.oHandler, undefined, that.oMetadata);
+		oRequestHandle = OData.read(oRequest, _handleSuccess, _handleError, this.oHandler, undefined, that.oMetadata.getServiceMetadata());
+		if (fnHandleUpdate) { 
+			fnHandleUpdate(oRequestHandle);
+		}
 	}
 
 	// execute request
@@ -323,7 +344,7 @@ sap.ui.model.odata.ODataModel.prototype._loadData = function(sPath, aParams, fnS
  */
 sap.ui.model.odata.ODataModel.prototype._importData = function(oData){
 	var that = this,
-		aList, sKey, oResult;
+		aList, sKey, oResult, oEntry;
 	if (oData.results) {
 		aList = [];
 		jQuery.each(oData.results, function(i, entry) {
@@ -332,17 +353,23 @@ sap.ui.model.odata.ODataModel.prototype._importData = function(oData){
 		return aList;
 	} else {
 		sKey = this._getKey(oData);
-		this.oData[sKey] = oData;
-		jQuery.each(oData, function(i, entry) {
-			if (entry && (entry.__metadata && entry.__metadata.uri || entry.results) && !entry.__deferred) {
-				oResult = that._importData(entry);
+		oEntry = this.oData[sKey];
+		if (!oEntry) {
+			oEntry = oData;	
+			this.oData[sKey] = oEntry;
+		}
+		jQuery.each(oData, function(sName, oProperty) {
+			if (oProperty && (oProperty.__metadata && oProperty.__metadata.uri || oProperty.results) && !oProperty.__deferred) {
+				oResult = that._importData(oProperty);
 				if (jQuery.isArray(oResult)) {
-					oData[i] = { __list: oResult };
+					oEntry[sName] = { __list: oResult };
 				}
 				else {
-					oData[i] = { __ref: oResult	};
+					oEntry[sName] = { __ref: oResult	};
 				}
-			} 
+			} else {
+				oEntry[sName] = oProperty;
+			}
 		});
 		return sKey;
 	}
@@ -460,7 +487,7 @@ sap.ui.model.odata.ODataModel.prototype.bindList = function(sPath, oContext, oSo
 /**
  * @see sap.ui.model.Model.prototype.createBindingContext
  */
-sap.ui.model.odata.ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack) {
+sap.ui.model.odata.ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bForceUpdate) {
 	// optional parameter handling
 	if (typeof oContext == "function") {
 		fnCallBack = oContext;
@@ -471,11 +498,12 @@ sap.ui.model.odata.ODataModel.prototype.createBindingContext = function(sPath, o
 		mParameters = null;
 	}
 	// try to resolve path, send a request to the server if data is not available yet
+	// if we have set forceUpdate in mParameters we send the request even if the data is available
 	var oData = this._getObject(sPath, oContext),
 		sKey,
 		oNewContext,
 		that = this;
-	if (oData) {
+	if (oData && !bForceUpdate) {
 		sKey = this._getKey(oData);
 		oNewContext = this.getContext(sKey);
 		fnCallBack(oNewContext);
@@ -552,6 +580,7 @@ sap.ui.model.odata.ODataModel.prototype.isCountSupported = function() {
 	return this.bCountSupported;
 };
 
+
 /**
  * Returns the key part from the complete entry URI
  */
@@ -566,7 +595,7 @@ sap.ui.model.odata.ODataModel.prototype._getKey = function(oEntry) {
  *
  * @param {string}
  *          sPath the path/name of the property
- * @param {Object} [oContext] the context if available to access the property value
+ * @param {object} [oContext] the context if available to access the property value
  * @param {boolean} [bIncludeExpandEntries=null] This parameter should be set when a URI or custom parameter 
  * with a $expand System Query Option was used to retrieve associated entries embedded/inline.
  * If true then the getProperty function returns a desired property value/entry and includes the associated expand entries (if any).
@@ -609,10 +638,8 @@ sap.ui.model.odata.ODataModel.prototype.getProperty = function(sPath, oContext, 
  */
 sap.ui.model.odata.ODataModel.prototype._getObject = function(sPath, oContext) {
 	var oNode = this.isLegacySyntax() ? this.oData : null,
-		sKey,
-		// if path = null context must be respected as well: we handle this as relative here
-		bIsRelative = sPath && jQuery.sap.startsWith(sPath, "/") ? false : true;
-	if (oContext && bIsRelative) {
+		sKey;
+	if (oContext) {
 		sKey = oContext.getPath();
 		// remove starting slash
 		sKey = sKey.substr(1);
@@ -654,7 +681,7 @@ sap.ui.model.odata.ODataModel.prototype._getObject = function(sPath, oContext) {
  * @param {function} [fnError] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
  *  additional error information.
  * 
- * @param {boolean} [bAsync] true for asynchronous requests. Default is false.
+ * @param {boolean} [bAsync=false] true for asynchronous requests.
  * 
  * @public
  */
@@ -667,10 +694,11 @@ sap.ui.model.odata.ODataModel.prototype.refreshSecurityToken = function(fnSucces
 	// trigger a read to the service url
 	var oRequest = this._createRequest("/", null, bAsync);
 	
-	OData.read(oRequest, _handleSuccess, _handleError, this.oHandler, null, this.oMetadata);
+	OData.read(oRequest, _handleSuccess, _handleError, this.oHandler, null, this.oMetadata.getServiceMetadata());
 
 	function _handleSuccess(oData, oResponse) {
 		if (oResponse) {
+			that._convertHeaders("x-csrf-token", oResponse.headers);
 			that.oHeaders["x-csrf-token"]= oResponse.headers["x-csrf-token"];	
 		}
 		
@@ -710,35 +738,28 @@ sap.ui.model.odata.ODataModel.prototype._submitChange = function(oRequest, fnSuc
 	var that = this;
 	
 	function _handleSuccess(oData, oResponse) {
-		if (fnSuccess) {
-			fnSuccess(oData, oResponse);
-		}
-		
 		if (that._isDataStored(that.oRequestQueue[0]) || that.oRequestQueue[0].method == "POST"){
 			that.sChangeKey = null;
 			that.refresh();
 		}
 		that.oRequestQueue = [];
 		//TODO: do we need to read the data from the server again?
+		if (fnSuccess) {
+			fnSuccess(oData, oResponse);
+		}
 	}
 
-	function _handleError(oError) {		
+	function _handleError(oError) {
 		that._handleError(oError);
-		
-		if (that._isDataStored(that.oRequestQueue[0])){
-			that.sChangeKey = null;
-			that.refresh();
-		}
-		
+
 		that.oRequestQueue = [];
-		
+
 		if (fnError) {
 			fnError(oError);
 		}
 	}
 	
-	OData.request(oRequest, _handleSuccess, _handleError, this.oHandler, undefined, this.oMetadata);
-	
+	return OData.request(oRequest, _handleSuccess, _handleError, this.oHandler, undefined, this.oMetadata.getServiceMetadata());
 };
 
 /**
@@ -788,7 +809,6 @@ sap.ui.model.odata.ODataModel.prototype._submitBatch = function(oRequest, fnSucc
 
 	function _handleError(oError) {
 		that._handleError(oError);
-		
 		that.aBatchOperations = [];
 				
 		if (fnError) {
@@ -796,7 +816,7 @@ sap.ui.model.odata.ODataModel.prototype._submitBatch = function(oRequest, fnSucc
 		}
 	}
 	
-	OData.request(oRequest, _handleSuccess, _handleError, OData.batchHandler, undefined, this.oMetadata);
+	return OData.request(oRequest, _handleSuccess, _handleError, OData.batchHandler, undefined, this.oMetadata.getServiceMetadata());
 	
 };
 
@@ -805,16 +825,23 @@ sap.ui.model.odata.ODataModel.prototype._submitBatch = function(oRequest, fnSucc
  * @private
  */
 sap.ui.model.odata.ODataModel.prototype._handleError = function(oError) {
-	var mParameters = {}; 
+	var mParameters = {}, fnHandler, that = this; 
 	var sErrorMsg = "The following problem occurred: " + oError.message;
 			
 	mParameters.message = oError.message;
 	if (oError.response){
 		// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required. 
 		// a new token will be fetched in the refresh afterwards.
+		this._convertHeaders("x-csrf-token", oError.response.headers);
 		if (oError.response.statusCode == '403' && oError.response.headers["x-csrf-token"]) {
 			this.oHeaders["x-csrf-token"] = oError.response.headers["x-csrf-token"];
-			this.refreshSecurityToken();
+			if (oError.response.headers["x-csrf-token"].toLowerCase() === "required" && !this.bRefreshing) {
+				this.bRefreshing = true;
+				fnHandler = function (){
+					that.bRefreshing = false;
+				}
+				this.refreshSecurityToken(fnHandler, fnHandler);
+			}
 		}
 		sErrorMsg += oError.response.statusCode + "," +
 		oError.response.statusText + "," +
@@ -824,7 +851,12 @@ sap.ui.model.odata.ODataModel.prototype._handleError = function(oError) {
 		mParameters.responseText = oError.response.body;
 	}
 	jQuery.sap.log.fatal(sErrorMsg);
-	return mParameters;
+	if (this.oRequestQueue[0] && this._isDataStored(this.oRequestQueue[0]) && oError.response.statusCode != '412'){
+		this.sChangeKey = null;
+		this.refresh();
+	}
+
+	return mParameters;	
 };
 
 /**
@@ -841,8 +873,8 @@ sap.ui.model.odata.ODataModel.prototype._handleError = function(oError) {
 /**
  * Return requested data as object if the data has already been loaded and stored in the model. 
  * 
- * @param {String} sPath A string containing the path to the data object that should be returned.
- * @param {Object} [oContext] the optional context which is used with the sPath to retrieve the requested data.
+ * @param {string} sPath A string containing the path to the data object that should be returned.
+ * @param {object} [oContext] the optional context which is used with the sPath to retrieve the requested data.
  * @param {boolean} [bIncludeExpandEntries=null] This parameter should be set when a URI or custom parameter 
  * with a $expand System Query Option was used to retrieve associated entries embedded/inline.
  * If true then the getProperty function returns a desired property value/entry and includes the associated expand entries (if any).
@@ -851,7 +883,7 @@ sap.ui.model.odata.ODataModel.prototype._handleError = function(oError) {
  * 
  * return {object} oData Object containing the requested data if the path is valid. 
  * @public
- * @deprecated please use {{{getProperty}}} instead
+ * @deprecated please use {@link #getProperty} instead
  */
 sap.ui.model.odata.ODataModel.prototype.getData = function(sPath, oContext, bIncludeExpandEntries) {
 	return this.getProperty(sPath, oContext, bIncludeExpandEntries);
@@ -885,34 +917,62 @@ sap.ui.model.odata.ODataModel.prototype._getChangeUrl = function(sPath, oContext
 };
 
 /**
- * creation of a request object for changes
+ * sets this.sETag to either the passed sETag or tries to retrieve the ETag from the metadata of oPayload or sPath 
  * 
- * @return {Object} request object
  * @private
  */
-sap.ui.model.odata.ODataModel.prototype._createChangeRequest = function(sUrl, oPayload, sMethod, bAsync) {	
+sap.ui.model.odata.ODataModel.prototype._setCurrentETag = function(sPath, oPayload, sETag) {
+	var sCurrent, sEntry;
+	if(sETag){
+		sCurrent = sETag;
+	}
+	else{
+		if (oPayload && oPayload.__metadata){
+			sCurrent = oPayload.__metadata.etag;
+		}
+		else if(sPath){
+			sEntry = sPath.replace(this.sServiceUrl+'/','');
+			if (this.oData.hasOwnProperty(sEntry)){
+				sCurrent = this.getProperty('/' + sEntry +'/__metadata/etag');
+			}
+		}
+	}
+	this.sETag = sCurrent;
+};
+/**
+ * creation of a request object for changes
+ * 
+ * @return {object} request object
+ * @private
+ */
+sap.ui.model.odata.ODataModel.prototype._createChangeRequest = function(sUrl, oPayload, sMethod, bAsync, sETag) {	
 	var oChangeHeader = {};
-	jQuery.extend(oChangeHeader,this.oHeaders);
-		
+	jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+
+	this._setCurrentETag(sUrl, oPayload, sETag);
+
+	if(this.sETag){
+		oChangeHeader["If-Match"] = this.sETag;
+	}
 	// make sure to set content type header for POST/PUT requests when using JSON format to prevent datajs to add "odata=verbose" to the content-type header
 	// may be removed as later gateway versions support this
 	if (this.bJSON && sMethod != "DELETE") {
 		oChangeHeader["Content-Type"] = "application/json";		
 	}
-	
+
 	if (sMethod == "MERGE") {
 		oChangeHeader["x-http-method"] = "MERGE";
 		sMethod = "POST";
 	}
 	
-	return { 
-		    headers : oChangeHeader, 
-		    requestUri : sUrl, 
-		    method : sMethod,
-		    data : oPayload,
-		    user: this.sUser,
-		    password: this.sPassword,
-		    async: bAsync
+	return {
+			headers : oChangeHeader,
+			requestUri : sUrl,
+			method : sMethod,
+			data : oPayload,
+			user: this.sUser,
+			password: this.sPassword,
+			async: bAsync
 	};
 };
 
@@ -937,104 +997,140 @@ sap.ui.model.odata.ODataModel.prototype._isDataStored = function(oRequest) {
 /**
  * Trigger a PUT/MERGE request to the odata service that was specified in the model constructor. 
  * 
- * @param {String} sPath A string containing the path to the data that should be updated.
+ * @param {string} sPath A string containing the path to the data that should be updated.
  * 							The path is concatenated to the sServiceUrl which was specified 
  * 							in the model constructor.
- * @param {Object} [oContext] If specified the sPath has to be is relative to the path given with the context.
  * @param {object} oData data of the entry that should be updated.
- *            					 
- * @param {function} [fnSuccess] a callback function which is called when the data has
- *            					 been successfully updated.
- *            
- * @param {function} [fnError] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
- * additional error information.
+ * @param {object} [oParameters] Optional, can contain the following attributes:
+ * @param {object} [oParameters.oContext] If specified the sPath has to be is relative to the path given with the context.
+ * @param {function} [oParameters.fnSuccess] a callback function which is called when the data has been successfully updated.
+ * @param {function} [oParameters.fnError] a callback function which is called when the request failed. 
+ *     The handler can have the parameter <code>oError</code> which contains additional error information.
+ * @param {boolean} [oParameters.bMerge=false] trigger a MERGE request instead of a PUT request to perform a differential update
+ * @param {string} [oParameters.sETag] If specified, the If-Match-Header will be set to this Etag.
  * 
- * @param {Boolean} [bMerge=false] trigger a MERGE request instead of a PUT request to perform a differential update
+ * @return {object} an object which has an <code>abort</code> function to abort the current request.
  * 
  * @public
  */
-sap.ui.model.odata.ODataModel.prototype.update = function(sPath, oData, oContext, fnSuccess, fnError, bMerge) {
-	var oRequest, sUrl;
-	
+
+sap.ui.model.odata.ODataModel.prototype.update = function(sPath, oData, oParameters) {
+	var fnSuccess, fnError, bMerge, oRequest, sUrl, oContext, sETag;
+//ensure compatibility, check for old or new declaration of parameters
+	if (oParameters instanceof sap.ui.model.Context || arguments.length >3)
+	{
+		oContext = oParameters;
+		fnSuccess = arguments [3];
+		fnError = arguments [4];
+		bMerge = arguments [5];
+	} 
+	else{
+		if (oParameters instanceof Object){
+		//we are using the new parameters
+			oContext = oParameters.oContext;
+			fnSuccess = oParameters.fnSuccess;
+			fnError = oParameters.fnError;
+			bMerge = oParameters.bMerge;
+			sETag = oParameters.sETag;
+		//else oParameters is just not there
+		}
+	}
 	sUrl = this._getChangeUrl(sPath, oContext);
-	
+ 
 	if (bMerge) {
-		oRequest = this._createChangeRequest(sUrl, oData, "MERGE", false);		
+		oRequest = this._createChangeRequest(sUrl, oData, "MERGE", false, sETag);
 	} else {
-		oRequest = this._createChangeRequest(sUrl, oData, "PUT", false);
-	}		
-	
+		oRequest = this._createChangeRequest(sUrl, oData, "PUT", false, sETag);
+	}
+
 	this.oRequestQueue.push(oRequest);
 
-	this._submitChange(oRequest, fnSuccess, fnError);
+	return this._submitChange(oRequest, fnSuccess, fnError);
 };
 
 /**
  * Trigger a POST request to the odata service that was specified in the model constructor. 
  * 
- * @param {String} sPath A string containing the path to the collection where an entry 
- * 							should be created. The path is concatenated to the sServiceUrl
- *            				which was specified in the model constructor.
- * @param {Object} [oContext] If specified the sPath has to be is relative to the path given with the context. 
+ * @param {string} sPath A string containing the path to the collection where an entry 
+ *                      should be created. The path is concatenated to the sServiceUrl
+ *                      which was specified in the model constructor.
  * @param {object} oData data of the entry that should be created.
- *            					 
+ * @param {object} [oContext] If specified the sPath has to be relative to the path given with the context. 
+ *
  * @param {function} [fnSuccess] a callback function which is called when the data has
- *            					 been successfully retrieved. The handler can have the 
- *            	                 following parameters: oData and response.
- *            						
- * @param {function} [fnError] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
- * additional error information.
+ *                              been successfully retrieved. The handler can have the 
+ *                              following parameters: oData and response.
+ *
+ * @param {function} [fnError] a callback function which is called when the request failed. 
+ *           The handler can have the parameter <code>oError</code> which contains additional error information.
+ * 
+ * @return {object} an object which has an <code>abort</code> function to abort the current request.
  * 
  * @public
  */
 sap.ui.model.odata.ODataModel.prototype.create = function(sPath, oData, oContext, fnSuccess, fnError) {
 	var oRequest, sUrl;
-	
+
 	sUrl = this._getChangeUrl(sPath, oContext);
-	
+
 	oRequest = this._createChangeRequest(sUrl, oData, "POST", false);
-	
+
 	this.oRequestQueue.push(oRequest);
-	
-	this._submitChange(oRequest, fnSuccess, fnError);
+
+	return this._submitChange(oRequest, fnSuccess, fnError);
 };
 
 /**
  * Trigger a DELETE request to the odata service that was specified in the model constructor. 
  *
- * @param {String} sPath A string containing the path to the data that should
- *            				be removed. The path is concatenated to the sServiceUrl
- *            				which was specified in the model constructor.
- * @param {Object} [oContext] If specified the sPath has to be is relative to the path given with the context.
- * @param {function} [fnSuccess]  a callback function which is called when the data has
- *            					 been successfully retrieved. The handler can have the 
- *            	                 following parameters: oData and response.
- * @param {function} [fnError] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
- * additional error information.
+ * @param {string} sPath A string containing the path to the data that should be removed. 
+ *                       The path is concatenated to the sServiceUrl which was specified in the model constructor.
+ * @param {object} [oParameters] Optional, can contain the following attributes: oContext, fnSuccess, fnError, sETag: 
+ * @param {object} [oParameters.oContext] If specified the sPath has to be relative to the path given with the context.
+ * @param {function} [oParameters.fnSuccess]  a callback function which is called when the data has been successfully retrieved. 
+ *                       The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+ * @param {function} [oParameters.fnError] a callback function which is called when the request failed. 
+ *                       The handler can have the parameter: <code>oError</code> which contains additional error information.
+ * @param {string} [oParameters.sETag] If specified, the If-Match-Header will be set to this Etag.
+ * 
+ * @return {object} an object which has an <code>abort</code> function to abort the current request.
  * 
  * @public
  */
-sap.ui.model.odata.ODataModel.prototype.remove = function(sPath, oContext, fnSuccess, fnError) {
-	var oRequest, sUrl;
-	
+sap.ui.model.odata.ODataModel.prototype.remove = function(sPath, oParameters) {
+	var oContext, fnSuccess, fnError, oRequest, sUrl, sETag;
+	// maintain compatibility, check if the old or new function parameters are used and set values accordingly: 
+	if ((oParameters && oParameters instanceof sap.ui.model.Context) || arguments[2])
+	{
+		oContext = oParameters;
+		fnSuccess = arguments [2];
+		fnError = arguments [3];
+	} else {
+	  if (oParameters){
+	  	oContext = oParameters.oContext;
+			fnSuccess = oParameters.fnSuccess;
+			fnError = oParameters.fnError;
+			sETag = oParameters.sETag;
+	  }
+	}
 	sUrl = this._getChangeUrl(sPath, oContext);
-	
-	oRequest = this._createChangeRequest(sUrl, null, "DELETE", false);
+
+	oRequest = this._createChangeRequest(sUrl, null, "DELETE", false, sETag);
 	
 	this.oRequestQueue.push(oRequest);
-	
-	this._submitChange(oRequest, fnSuccess, fnError);
+
+	return this._submitChange(oRequest, fnSuccess, fnError);
 };
 
 /**
  * Trigger a GET request to the odata service that was specified in the model constructor. 
  * The data will not be stored in the model. The requested data is returned with the response.
  *
- * @param {String} sPath A string containing the path to the data which should
+ * @param {string} sPath A string containing the path to the data which should
  *            				be retrieved. The path is concatenated to the sServiceUrl
  *            				which was specified in the model constructor.
- * @param {Object} [oContext] If specified the sPath has to be is relative to the path given with the context. 
- * @param {Array} [aParams] An Array of url parameters which will be concatenated to the read url
+ * @param {object} [oContext] If specified the sPath has to be is relative to the path given with the context. 
+ * @param {any[]} [aUrlParams] An Array of url parameters which will be concatenated to the read url
  *
  * @param {boolean} [bAsync] true for asynchronous requests. Default is true.
  * 
@@ -1044,42 +1140,59 @@ sap.ui.model.odata.ODataModel.prototype.remove = function(sPath, oContext, fnSuc
  * @param {function} [fnError] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
  * additional error information.
  * 
+ * @return {object} an object which has an <code>abort</code> function to abort the current request.
+ * 
  * @public
  */
-sap.ui.model.odata.ODataModel.prototype.read = function(sPath, oContext, aParams, bAsync, fnSuccess, fnError) {
+sap.ui.model.odata.ODataModel.prototype.read = function(sPath, oContext, aUrlParams, bAsync, fnSuccess, fnError) {
 	var oRequest, sUrl;
 	
 	sUrl = this._getChangeUrl(sPath, oContext);
 	
-	oRequest = this._createRequest(sUrl.replace(this.sServiceUrl,''), aParams, bAsync);
+	oRequest = this._createRequest(sUrl.replace(this.sServiceUrl,''), aUrlParams, bAsync);
 	
-	OData.read(oRequest, fnSuccess, fnError, this.oHandler, null, this.oMetadata);
+	return OData.read(oRequest, fnSuccess, fnError, this.oHandler, null, this.oMetadata.getServiceMetadata());
 };
 
 /**
  * Creates a single batch operation (read or change operation) which can be used in a batch request.
  * 
- * @param {String} sPath A string containing the path to the collection or entry where the batch operation should be performed.
+ * @param {string} sPath A string containing the path to the collection or entry where the batch operation should be performed.
  * 						The path is concatenated to the sServiceUrl which was specified in the model constructor.
- * @param {String} sMethod for the batch operation. Possible values are GET, PUT, MERGE, POST, DELETE
- * @param {object} [oData] optional data payload which should be created, updated, deleted in a change batch operation. 
- * 
+ * @param {string} sMethod for the batch operation. Possible values are GET, PUT, MERGE, POST, DELETE
+ * @param {object} [oData] optional data payload which should be created, updated, deleted in a change batch operation.
+ * @param {object} [oParameters] optional parameter for additional information introduced in SAPUI5 1.9.1, 
+ * @param {string} [oParameters.sETag] an ETag which can be used for concurrency control. If it is specified, 
+ *                  it will be used in an If-Match-Header in the request to the server for this entry.    
  * @public
  */
-sap.ui.model.odata.ODataModel.prototype.createBatchOperation = function(sPath, sMethod, oData) {
-	var oChangeHeader = {};
-	jQuery.extend(oChangeHeader,this.oHeaders);
+sap.ui.model.odata.ODataModel.prototype.createBatchOperation = function(sPath, sMethod, oData, oParameters) {
+	var oChangeHeader = {}, sETag;
+	jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 	
 	// for batch remove starting / if any
 	if (jQuery.sap.startsWith(sPath, "/")) {
 		sPath = sPath.substr(1);
 	}
 	
+	if (oParameters){
+		sETag = oParameters.sETag;
+	}
+	
+	if (sMethod != "GET"){
+		this._setCurrentETag(sPath, oData, sETag);
+		if(this.sETag){
+			oChangeHeader["If-Match"] = this.sETag;
+		}
+	}
 	// make sure to set content type header for POST/PUT requests when using JSON format to prevent datajs to add "odata=verbose" to the content-type header
 	// may be removed as later gateway versions support this
-	if (this.bJSON && sMethod != "DELETE" && sMethod != "GET") {
-		oChangeHeader["Content-Type"] = "application/json";
-	} else {
+	if (this.bJSON){
+		if (sMethod != "DELETE" && sMethod != "GET") {
+			oChangeHeader["Content-Type"] = "application/json";
+		}
+	}
+	else {
 		// for XML case set the content-type accordingly so that the data is transformed to XML in the batch part
 		oChangeHeader["Content-Type"] = "application/atom+xml";
 	}
@@ -1102,7 +1215,7 @@ sap.ui.model.odata.ODataModel.prototype.createBatchOperation = function(sPath, s
  * Appends the read batch operations to the end of the batch stack. Only GET batch operations should be included in the specified array. 
  * If an illegal batch operation is added to the batch nothing will be performed and false will be returned.
  * 
- * @param {Array} aReadOperations an array of read batch operations created via <code>createBatchOperation</code> and <code>sMethod</code> = GET
+ * @param {any[]} aReadOperations an array of read batch operations created via <code>createBatchOperation</code> and <code>sMethod</code> = GET
  * 
  * @public
  */
@@ -1126,7 +1239,7 @@ sap.ui.model.odata.ODataModel.prototype.addBatchReadOperations = function(aReadO
  * The operations in the array will be included in a single changeset. To embed change operations in different change sets call this method with the corresponding change operations again.
  * If an illegal batch operation is added to the change set nothing will be performed and false will be returned.
  * 
- * @param {Array} aChangeOperations an array of change batch operations created via <code>createBatchOperation</code> and <code>sMethod</code> = POST, PUT, MERGE or DELETE
+ * @param {any[]} aChangeOperations an array of change batch operations created via <code>createBatchOperation</code> and <code>sMethod</code> = POST, PUT, MERGE or DELETE
  * 
  * @public
  */
@@ -1166,11 +1279,13 @@ sap.ui.model.odata.ODataModel.prototype.clearBatch = function() {
  * additional error information.
  * @param {boolean} [bAsync] true for asynchronous request. Default is true.
  * 
+ * @return {object} an object which has an <code>abort</code> function to abort the current request. Returns false if no request will be performed because the batch is empty.
+ * 
  * @public
  */
 sap.ui.model.odata.ODataModel.prototype.submitBatch = function(fnSuccess, fnError, bAsync) {
 	var oRequest, sUrl; 
-	
+
 	// ensure compatibility with old declaration: // bAsync, fnSuccess, fnError 
 	if (!(typeof(fnSuccess) == "function")) {
 		var fnOldError = bAsync;
@@ -1179,24 +1294,24 @@ sap.ui.model.odata.ODataModel.prototype.submitBatch = function(fnSuccess, fnErro
 		fnSuccess = fnOldSuccess;
 		fnError = fnOldError; 
 	}
-	
+
 	if (this.aBatchOperations.length <= 0) {
 		jQuery.sap.log.warning("No batch operations in batch. No request will be triggered!");
 		return false;
 	}
-	
+
 	sUrl = this.sServiceUrl	+ "/$batch";
 	
 	var oChangeHeader = {};
-	jQuery.extend(oChangeHeader,this.oHeaders);
-	
+	jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+
 	// reset
 	delete oChangeHeader["Content-Type"];
 
 	// create payload
 	var oPayload = { };
 	oPayload.__batchRequests = this.aBatchOperations;
-	
+
 	var oRequest = {
 		    headers : oChangeHeader, 
 		    requestUri : sUrl, 
@@ -1206,8 +1321,8 @@ sap.ui.model.odata.ODataModel.prototype.submitBatch = function(fnSuccess, fnErro
 		    password: this.sPassword,
 		    async: bAsync
 	};
-	
-	this._submitBatch(oRequest, fnSuccess, fnError);
+
+	return this._submitBatch(oRequest, fnSuccess, fnError);
 };
 
 /**
@@ -1217,7 +1332,7 @@ sap.ui.model.odata.ODataModel.prototype.submitBatch = function(fnSuccess, fnErro
  * @public
  */
 sap.ui.model.odata.ODataModel.prototype.getServiceMetadata = function() {
-	return this.oMetadata;
+	return this.oMetadata.getServiceMetadata();
 };
 
 
@@ -1231,23 +1346,25 @@ sap.ui.model.odata.ODataModel.prototype.getServiceMetadata = function() {
  *            	                 following parameters: oData and response. 
  * @param {function} [fnError] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
  * additional error information
+ * @param {object} [oParameters] optional parameter for additional information introduced in SAPUI5 1.9.1 
+ * @param {string} [oParameters.sETag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry.
+ * @return {object} an object which has an <code>abort</code> function to abort the current request.
  * 
  * @public
  */
-sap.ui.model.odata.ODataModel.prototype.submitChanges = function(fnSuccess, fnError) {
-		
-	var oRequest, oPayload, that = this, sPath;
+sap.ui.model.odata.ODataModel.prototype.submitChanges = function(fnSuccess, fnError, oParameters) {
+
+	var oRequest, oPayload, that = this, sPath, sETag;
 	
 	if (this.sChangeKey) {	
-		
+
 		sPath = this.sChangeKey.replace(this.sServiceUrl,'');
-		
+
 		oPayload = this._getObject(sPath);
-		
+
 		if (jQuery.isPlainObject(oPayload)) {
 			// do a copy of the payload or the changes will be deleted in the model as well (reference)
-			oPayload = jQuery.extend(true, {}, oPayload);			
-		
+			oPayload = jQuery.extend(true, {}, oPayload);
 			// remove metadata, navigation properties to reduce payload
 			delete oPayload.__metadata;
 			jQuery.each(oPayload, function(sPropName, oPropValue) {
@@ -1255,12 +1372,15 @@ sap.ui.model.odata.ODataModel.prototype.submitChanges = function(fnSuccess, fnEr
 					delete oPayload[sPropName];
 				}
 			});
-			
+
 			// delete expand refs and __lists properties
 			oPayload = this._removeReferences(oPayload);
 		}
-		
-		oRequest = this._createChangeRequest(this.sChangeKey, oPayload, "MERGE", true);
+		if (oParameters){
+			sETag = oParameters.sETag;
+		}
+
+		oRequest = this._createChangeRequest(this.sChangeKey, oPayload, "MERGE", true, sETag);
 		
 		this.oRequestQueue.push(oRequest);
 
@@ -1277,7 +1397,7 @@ sap.ui.model.odata.ODataModel.prototype.submitChanges = function(fnSuccess, fnEr
 			that.sChangeKey = null;
 		}
 		
-		this._submitChange(oRequest, _handleSuccess, _handleError);
+		return this._submitChange(oRequest, _handleSuccess, _handleError);
 	}
 };
 
@@ -1353,6 +1473,78 @@ sap.ui.model.odata.ODataModel.prototype.setProperty = function(sPath, oValue, oC
 };
 
 
+sap.ui.model.odata.ODataModel.prototype._isHeaderPrivate = function(sHeaderName) {
+	// case sensitive check needed to make sure private headers cannot be overriden by difference in the upper/lower case (e.g. accept and Accept).
+	switch(sHeaderName.toLowerCase()) {
+		case "accept":
+		case "accept-language":
+		case "x-csrf-token":
+		case "maxdataserviceversion":
+		case "dataserviceversion":
+			return true;
+			break;
+		default:
+			return false;
+	}
+};
+
+/**
+ * Set custom headers which are provided in a key/value map. These headers are used for requests against the OData backend.
+ * Private headers which are set in the ODataModel cannot be modified.
+ * These private headers are: accept, accept-language, x-csrf-token, MaxDataServiceVersion, DataServiceVersion.
+ * 
+ * To remove these headers simply set the mCustomHeaders parameter to null. Please also note that when calling this method again all previous custom headers 
+ * are removed unless they are specified again in the mCustomHeaders parameter. 
+ * 
+ * @param {object} mHeaders the header name/value map.
+ * @public
+ */
+sap.ui.model.odata.ODataModel.prototype.setHeaders = function(mHeaders) {	
+	var mCheckedHeaders = {}, 
+		that= this;
+	if (mHeaders) {
+		jQuery.each(mHeaders, function(sHeaderName, sHeaderValue){
+			// case sensitive check needed to make sure private headers cannot be overriden by difference in the upper/lower case (e.g. accept and Accept).
+			if (that._isHeaderPrivate(sHeaderName)){
+				jQuery.sap.log.warning("Not allowed to modify private header: " + sHeaderName);				
+			}
+			else {
+				mCheckedHeaders[sHeaderName] = sHeaderValue;				
+			}
+		});		
+		this.mCustomHeaders = mCheckedHeaders;
+	} else {
+		this.mCustomHeaders = {};
+	}
+	
+};
+
+/**
+ * Returns all headers and custom headers which are stored in the OData model.
+ * @return {object} the header map
+ * @public
+ */
+sap.ui.model.odata.ODataModel.prototype.getHeaders = function() {
+	return jQuery.extend({}, this.mCustomHeaders, this.oHeaders);
+};
+
+/**
+ * Searches the specified headers map for the specified header name and converts the found header to the case form of the sConvertHeader
+ * e.g. sConvertHeader = "myHeader". mHeader = {"MYHEAder" : "test"}
+ * --> will be converted to mHeader = {"myHeader" : "test"}
+ */
+sap.ui.model.odata.ODataModel.prototype._convertHeaders = function(sConvertHeader, mHeaders) {
+	var sHeaderName, oHeaderValue;
+	for (sHeaderName in mHeaders) {
+		if (sHeaderName !== sConvertHeader && sHeaderName.toLowerCase() === sConvertHeader.toLowerCase()) {
+			oHeaderValue = mHeaders[sHeaderName];
+			delete mHeaders[sHeaderName];
+			mHeaders[sConvertHeader] = oHeaderValue;
+			break;
+		}
+	}
+};
+
 /**
  * Checks if there exist pending changes in the model created by the setProperty method.
  * @return {boolean} true/false  
@@ -1364,8 +1556,7 @@ sap.ui.model.odata.ODataModel.prototype.hasPendingChanges = function() {
 
 /**
  * update all bindings
- * @param {boolean} bForceUpdate true/false: Default = false. If set to false an update 
- * 					will only be done when the value of a binding changed.   
+ * @param {boolean} [bForceUpdate=false] If set to false an update  will only be done when the value of a binding changed.
  * @public
  */
 sap.ui.model.odata.ODataModel.prototype.updateBindings = function(bForceUpdate) {
@@ -1374,73 +1565,10 @@ sap.ui.model.odata.ODataModel.prototype.updateBindings = function(bForceUpdate) 
 
 /**
  * Force no caching
- * @param {boolean} force no cache true/false: Default = false  
+ * @param {boolean} [bForceNoCache=false] whether to force no caching
  * @public
  */
 sap.ui.model.odata.ODataModel.prototype.forceNoCache = function(bForceNoCache) {
 	this.bCache = !bForceNoCache; 
 };
 
-
-/**  
-*  extract the entity type metadata of a specified collection out of the metadata document 
-*/  
-sap.ui.model.odata.ODataModel.prototype._getEntityType = function(sCollection) {
-	var sEntityTypeNamespace, sEntityTypeName, oEntityType;
-	if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-		jQuery.sap.assert(undefined, "No metadata loaded!");
-		return null;
-	}
-	jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-		if (oSchema.entityContainer) {
-			jQuery.each(oSchema.entityContainer, function(k, oEntityContainer) {   
-				jQuery.each(oEntityContainer.entitySet, function(j, oEntitySet) {  
-					if (oEntitySet.name === sCollection) {  
-						var iSepIdx = oEntitySet.entityType.lastIndexOf("."); 
-						sEntityTypeNamespace = oEntitySet.entityType.substr(0, iSepIdx);
-						sEntityTypeName = oEntitySet.entityType.substr(iSepIdx + 1);
-						return false;
-					}
-				});
-			});
-		}
-	});
-	if (!sEntityTypeName || !sEntityTypeNamespace) {
-		jQuery.sap.assert(undefined, "EntitySet for Collection "+sCollection+ " not found!"); 
-		return null;
-	}
-	// search again in all schemas for the entity type because it can be in different schemas.
-	jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-		// check if we found the right schema which will contain the type
-		if (oSchema.entityType && oSchema.namespace === sEntityTypeNamespace) {
-			jQuery.each(oSchema.entityType, function(j, oCurrentEntityType) {
-				if (oCurrentEntityType.name === sEntityTypeName) {  
-					oEntityType = oCurrentEntityType;
-					return false;
-				}
-			});
-			return !oEntityType;
-		}
-	});
-	
-	jQuery.sap.assert(oEntityType, "Entity type of Collection "+sCollection+ " not found!");  
-	return oEntityType;  
-};
-
-
-// TODO complex types not supported
-/**  
-*  extract the property metadata of a specified property of a entity type out of the metadata document 
-*/  
-sap.ui.model.odata.ODataModel.prototype._getPropertyMetadata = function(oEntityType, sProperty) {
-	var oPropertyMetadata;
-	jQuery.each(oEntityType.property, function(k, oProperty) {
-		if (oProperty.name === sProperty){
-			oPropertyMetadata = oProperty;
-			return false;
-		}
-	});
-	
-	jQuery.sap.assert(oPropertyMetadata, "Property type for property "+sProperty+ " of Entity type " +oEntityType.name+ " not found!");  
-	return oPropertyMetadata;  
-};

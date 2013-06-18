@@ -4,7 +4,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.debug.DebugEnv') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
@@ -13,7 +13,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.debug.ControlTree') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a tree of controls for the testsuite
@@ -38,7 +38,7 @@ jQuery.sap.require('sap.ui.base.EventProvider'); // unlisted dependency retained
  * @class Control Tree used for the Debug Environment
  * @extends sap.ui.base.EventProvider
  * @author Martin Schaus, Frank Weigel
- * @version 1.8.4
+ * @version 1.12.1
  * @private
  */
 sap.ui.debug.ControlTree = function(oCore, oWindow, oParentDomRef, bRunsEmbedded) {
@@ -414,7 +414,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.debug.Highlighter') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a helper that can highlight a given control
@@ -504,7 +504,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.debug.LogViewer') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a log viewer for debug purposes
@@ -684,7 +684,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.debug.PropertyList') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides a (modifiable) list of properties for a given control
@@ -708,7 +708,7 @@ jQuery.sap.require('sap.ui.core.Core'); // unlisted dependency retained
  *
  * @extends sap.ui.base.EventProvider
  * @author Martin Schaus
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @param {sap.ui.core.Core}
  *            oCore the core instance to use for analysis
@@ -1219,7 +1219,7 @@ sap.ui.debug.PropertyList.prototype.onmouseout = function(oEvent) {
  * @class Central Class for the Debug Environment
  *
  * @author Martin Schaus, Frank Weigel
- * @version 1.8.4
+ * @version 1.12.1
  * @private
  */
 sap.ui.debug.DebugEnv = function() {
@@ -1316,6 +1316,7 @@ sap.ui.debug.DebugEnv.prototype.init = function(bOnInit) {
 		oControlTreeRoot.style.color = "black";
 		oControlTreeRoot.style.border = "1px solid gray";
 		oControlTreeRoot.style.overflow = "auto";
+		oControlTreeRoot.style.zIndex = "999999";
 		oControlTreeRoot.style.top = "1px";
 		if (bRtl) {
 			oControlTreeRoot.style.left = "1px";
@@ -1341,6 +1342,7 @@ sap.ui.debug.DebugEnv.prototype.init = function(bOnInit) {
 		oPropertyWindowRoot.style.color = "black";
 		oPropertyWindowRoot.style.border = "1px solid gray";
 		oPropertyWindowRoot.style.overflow = "auto";
+		oPropertyWindowRoot.style.zIndex = "99999";
 		oPropertyWindowRoot.style.width = "196px";
 		oPropertyWindowRoot.style.height = "49%";
 		if (bRtl) {

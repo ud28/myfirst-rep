@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -105,7 +105,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -117,5 +116,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Background_border_
  * @name sap.viz.ui5.types.Background_border_right#setVisible
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Background_border_right.js

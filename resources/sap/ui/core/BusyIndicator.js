@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.core.BusyIndicator");jQuery.sap.require("sap.ui.core.Popup");sap.ui.core.BusyIndicator=jQuery.extend(jQuery.sap.newObject(sap.ui.base.EventProvider.prototype),{oPopup:null,oDomRef:null,bOpenRequested:false,iDEFAULT_DELAY_MS:1000,sDOM_ID:"sapUiBusyIndicator"});sap.ui.base.EventProvider.apply(sap.ui.core.BusyIndicator);sap.ui.core.BusyIndicator.M_EVENTS={Open:"Open",Close:"Close"};
 sap.ui.core.BusyIndicator._init=function(){var r=document.createElement("div");r.id=this.sDOM_ID;var i=sap.ui.getCore().getStaticAreaRef();i.appendChild(r);jQuery(r).addClass("sapUiBusy").attr("tabindex",0).attr("role","progressbar").attr("alt","").attr("title","Please Wait");this.oDomRef=r;this.oPopup=new sap.ui.core.Popup(r);this.oPopup.setModal(true,"sapUiBlyBusy");this.oPopup.setShadow(false)};

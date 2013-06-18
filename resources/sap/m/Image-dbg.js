@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -48,7 +48,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * </li>
  * <li>Events
  * <ul>
- * <li>{@link sap.m.Image#event:tap tap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.m.Image#event:tap tap} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.m.Image#event:press press} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
 
@@ -59,13 +60,13 @@ jQuery.sap.require("sap.ui.core.Control");
  * @class
  * A wrapper around the IMG tag. The image can be loaded from a remote or local server.
  * 
- * Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
+ * Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided. The valid desity values are 1, 1.5, 2. If the original devicePixelRatio isn't one of the three valid numbers, it's rounded up to the nearest one.
  * 
  * There are various size setting options available, and the images can be combined with actions.
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -89,7 +90,8 @@ sap.ui.core.Control.extend("sap.m.Image", { metadata : {
 		"activeSrc" : {type : "sap.ui.core.URI", group : "Data", defaultValue : ""}
 	},
 	events : {
-		"tap" : {}
+		"tap" : {}, 
+		"press" : {}
 	}
 }});
 
@@ -110,7 +112,7 @@ sap.ui.core.Control.extend("sap.m.Image", { metadata : {
  * @function
  */
 
-sap.m.Image.M_EVENTS = {'tap':'tap'};
+sap.m.Image.M_EVENTS = {'tap':'tap','press':'press'};
 
 
 /**
@@ -125,7 +127,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>src</code>.
  *
@@ -137,6 +138,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setSrc
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -150,7 +152,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -162,6 +163,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -175,7 +177,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -187,6 +188,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>height</code>.
@@ -200,7 +202,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -212,6 +213,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>decorative</code>.
@@ -228,7 +230,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>decorative</code>.
  *
@@ -240,6 +241,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setDecorative
  * @function
  */
+
 
 /**
  * Getter for property <code>alt</code>.
@@ -254,7 +256,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>alt</code>.
  *
@@ -266,6 +267,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setAlt
  * @function
  */
+
 
 /**
  * Getter for property <code>useMap</code>.
@@ -279,7 +281,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>useMap</code>.
  *
@@ -291,6 +292,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setUseMap
  * @function
  */
+
 
 /**
  * Getter for property <code>densityAware</code>.
@@ -308,7 +310,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>densityAware</code>.
  *
@@ -320,6 +321,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#setDensityAware
  * @function
  */
+
 
 /**
  * Getter for property <code>activeSrc</code>.
@@ -333,7 +335,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Setter for property <code>activeSrc</code>.
  *
@@ -346,8 +347,9 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
+
 /**
- * Event is fired when the user clicks on the control. 
+ * Event is fired when the user clicks on the control. (This event is deprecated, use the press event instead) 
  *
  * @name sap.m.Image#tap
  * @event
@@ -363,7 +365,7 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.m.Image</code>.<br/> itself. 
  *  
- * Event is fired when the user clicks on the control. 
+ * Event is fired when the user clicks on the control. (This event is deprecated, use the press event instead) 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -377,7 +379,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @name sap.m.Image#attachTap
  * @function
  */
-
 
 /**
  * Detach event handler <code>fnFunction</code> from the 'tap' event of this <code>sap.m.Image</code>.<br/>
@@ -394,7 +395,6 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-
 /**
  * Fire event tap to attached listeners.
 
@@ -405,16 +405,85 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  * @function
  */
 
-// Start of sap/m/Image.js
+
 /**
- * This function returns the pixel density ratio of the device, if it's not defined then it returns 1 by default.
- * @returns the pixel density of your device.
- * @private
+ * Event is fired when the user clicks on the control. 
+ *
+ * @name sap.m.Image#press
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @public
  */
-sap.m.Image.prototype.getDevicePixelRatio = function(){
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'press' event of this <code>sap.m.Image</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.m.Image</code>.<br/> itself. 
+ *  
+ * Event is fired when the user clicks on the control. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.m.Image</code>.<br/> itself.
+ *
+ * @return {sap.m.Image} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Image#attachPress
+ * @function
+ */
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'press' event of this <code>sap.m.Image</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.m.Image} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Image#detachPress
+ * @function
+ */
+
+/**
+ * Fire event press to attached listeners.
+
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.m.Image} <code>this</code> to allow method chaining
+ * @protected
+ * @name sap.m.Image#firePress
+ * @function
+ */
+
+
+// Start of sap/m/Image.js
+sap.m.Image._currentDevicePixelRatio = (function(){
 	// if devicePixelRatio property is not available, value 1 is assumed by default.
-	return window.devicePixelRatio === undefined ? 1 : window.devicePixelRatio;
-};
+	var ratio = (window.devicePixelRatio === undefined ? 1 : window.devicePixelRatio);
+	
+	//for ratio in our library, only 1 1.5 2 are valid
+	if(ratio <= 1){
+		ratio = 1;
+	}else{
+	//round it to the nearest valid value
+		ratio *= 2;
+		ratio = Math.round(ratio);
+		ratio /= 2;
+	}
+	
+	if(ratio > 2){
+		ratio = 2;
+	}
+	return ratio;
+}());
 
 /**
  * Function is called when image is loaded successfully.
@@ -456,7 +525,7 @@ sap.m.Image.prototype.onerror = function(oEvent){
 	
 	var $domNode = this.$(), 
 		sCurrentSrc = $domNode.attr("src"),
-		d = this.getDevicePixelRatio();
+		d = sap.m.Image._currentDevicePixelRatio;
 
 	$domNode.addClass("sapMNoImg");
 	
@@ -468,17 +537,17 @@ sap.m.Image.prototype.onerror = function(oEvent){
 	if(d === 2 || d < 1){
 		//load the default image
 		this._iLoadImageDensity = 1;
-		$domNode.attr("src", this._generateSrcByDensity(sCurrentSrc, 1));
+		$domNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 1));
 	}else if(d === 1.5){
 		if(this._bVersion2Tried){
 			//if version 2 isn't on the server, load the default image
 			this._iLoadImageDensity = 1;
-			$domNode.attr("src", this._generateSrcByDensity(sCurrentSrc, 1));
+			$domNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 1));
 		}else{
 			//special treatment for density 1.5
 			//verify if the version for density 2 is provided or not
 			this._iLoadImageDensity = 2;
-			$domNode.attr("src", this._generateSrcByDensity(sCurrentSrc, 2));
+			$domNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 2));
 			this._bVersion2Tried = true;
 		}
 	}
@@ -522,10 +591,9 @@ sap.m.Image.prototype.onAfterRendering = function(){
  *
  */
 sap.m.Image.prototype.ontouchstart = function(oEvent){
-	
 	//for control who need to know if they should handle events from the image control
-	if(oEvent.srcControl.mEventRegistry["tap"]){
-		oEvent.originalEvent._sapui_handledByControl = true;
+	if(oEvent.srcControl.mEventRegistry["press"] || oEvent.srcControl.mEventRegistry["tap"]){
+			oEvent.originalEvent._sapui_handledByControl = true;
 	}
 
 	var sActiveSrc = this.getActiveSrc();
@@ -534,20 +602,29 @@ sap.m.Image.prototype.ontouchstart = function(oEvent){
 		if((oEvent.targetTouches && oEvent.targetTouches.length === 1) || !oEvent.targetTouches){
 			this.$().attr("src", this._getDensityAwareActiveSrc());
 
+			this._isActiveState = true;
 			if(!this._touchEndProxy){
 				this._touchEndProxy = jQuery.proxy(this._ontouchend, this);
 			}
 			
-			//here also bound to the mouseup event to enable it working in desktop browsers
-			jQuery(window.document).bind("touchcancel vmouseup", this._touchEndProxy);
+			if(!jQuery.support.touch){
+				//binding to document when runs in desktop browser
+				//here also bound to the mouseup event to enable it working in desktop browsers
+				jQuery(window.document).bind("vmouseup", this._touchEndProxy);
+			}else{
+				//binding to the image itself when runs in mobile device
+				//Galaxy Note (4.0.4) can't bubble the touchend event to document
+				this.$().bind("touchcancel touchend", this._touchEndProxy);
+			}
 		}
 	}
 	
 	//disable the select callout in android
 	//-webkit-touch-callout: none doesn't work in android
 	//preventDefault causes issues for ios
-	if(!jQuery.os.ios)
+	if(jQuery.os.android){
 		oEvent.preventDefault();
+	}
 };
 
 /**
@@ -558,9 +635,13 @@ sap.m.Image.prototype.ontouchstart = function(oEvent){
 sap.m.Image.prototype._ontouchend = function(oEvent){
 	//change the source back only when all fingers leave the image
 	if((oEvent.targetTouches && oEvent.targetTouches.length === 0) || !oEvent.targetTouches){
-		this.$().attr("src", this._getDensityAwareSrc()).show();
-		
-		jQuery(window.document).unbind("touchcancel vmouseup", this._touchEndProxy);
+		this._isActiveState = false;
+		this.$().attr("src", this._getDensityAwareSrc()).removeClass("sapMNoImg");
+		if(!jQuery.support.touch){
+			jQuery(window.document).unbind("vmouseup", this._touchEndProxy);
+		}else{
+			this.$().unbind("touchcancel touchend", this._touchEndProxy);
+		}
 	}
 };
 
@@ -573,6 +654,7 @@ sap.m.Image.prototype.setSrc = function(sSrc){
 		return;
 	}
 	this.setProperty("src", sSrc, true);
+	
 	var oDomRef = this.getDomRef();
 	if(oDomRef){
 		this.$().attr("src", this._getDensityAwareSrc());
@@ -598,7 +680,8 @@ sap.m.Image.prototype.setActiveSrc = function(sActiveSrc){
  * @private
  */
 sap.m.Image.prototype.ontap = function(oEvent) {
-	this.fireTap({/* no parameters */});	
+	this.fireTap({/* no parameters */}); // (This event is deprecated, use the press event instead)
+	this.firePress({/* no parameters */});
 };
 
 
@@ -617,7 +700,7 @@ sap.m.Image.prototype._isWidthOrHeightSet = function(){
  * @private
  */
 sap.m.Image.prototype._getDensityAwareSrc = function(){
-	var d = this.getDevicePixelRatio(),
+	var d = sap.m.Image._currentDevicePixelRatio,
 		sSrc = this.getSrc();
 	
 	//this property is used for resizing the higher resolution image when image is loaded.
@@ -636,7 +719,7 @@ sap.m.Image.prototype._getDensityAwareSrc = function(){
  * @private
  */
 sap.m.Image.prototype._getDensityAwareActiveSrc = function(){
-	var d = this.getDevicePixelRatio(),
+	var d = sap.m.Image._currentDevicePixelRatio,
 		sActiveSrc = this.getActiveSrc();
 	
 	//this property is used for resizing the higher resolution image when image is loaded.
@@ -655,15 +738,21 @@ sap.m.Image.prototype._getDensityAwareActiveSrc = function(){
  * It returns the density aware version of the src property.
  * @private
  */
-sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){
+sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){	
 	if(!sSrc){
 		return "";
+	}
+	
+	// if src is in data uri format, disable the density handling
+	if(this._isDataUri(sSrc)){
+		this._iLoadImageDensity = 1;
+		return sSrc;
 	}
 
 	var iPos = sSrc.lastIndexOf("."),
 		sName = sSrc.substring(0, iPos),
-		sExtension = sSrc.substring(iPos),
-		iAtPos = sName.lastIndexOf("@");
+		sExtension = sSrc.substring(iPos);
+//		iAtPos = sName.lastIndexOf("@");
 	
 	//if there's no extension
 	if(iPos == -1){
@@ -671,9 +760,10 @@ sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){
 	}
 	
 	//remove the existing density information
-	if(iAtPos !== -1 && sName.length - iAtPos < 6){//@2 @1.5 @0.75 only these three cases, if the image itself has a @, these are the only checks we can do.
-		sName = sName.substring(0, iAtPos);
-	}
+	//this is disabled because the orignal src or activeSrc is used
+//	if(iAtPos !== -1 && sName.length - iAtPos < 6){//@2 @1.5 @0.75 only these three cases, if the image itself has a @, these are the only checks we can do.
+//		sName = sName.substring(0, iAtPos);
+//	}
 	
 	if(iDensity === 1){
 		return sName + sExtension;
@@ -681,4 +771,13 @@ sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){
 
 	sName = sName + "@" + iDensity;
 	return sName + sExtension;
+};
+
+
+sap.m.Image.prototype._isDataUri = function(src){
+	if(src){
+		return src.indexOf("data:") === 0;
+	}else{
+		return false;
+	}
 };

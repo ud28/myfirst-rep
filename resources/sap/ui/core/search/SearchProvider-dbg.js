@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -106,7 +106,6 @@ sap.ui.core.Element.extend("sap.ui.core.search.SearchProvider", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>icon</code>.
  *
@@ -118,6 +117,7 @@ sap.ui.core.Element.extend("sap.ui.core.search.SearchProvider", { metadata : {
  * @name sap.ui.core.search.SearchProvider#setIcon
  * @function
  */
+
 
 /**
  * Call this function to get suggest values from the search provider. The given callback function is called with the suggest value (type 'string', 1st parameter) and an array of the suggestions (type '[string]', 2nd parameter).

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -38,7 +38,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getCustomIconDensityAware customIconDensityAware} : boolean (default: true)</li>
  * <li>{@link #getCustomIconWidth customIconWidth} : sap.ui.core.CSSSize</li>
  * <li>{@link #getCustomIconHeight customIconHeight} : sap.ui.core.CSSSize</li>
- * <li>{@link #getSize size} : sap.ui.core.CSSSize</li></ul>
+ * <li>{@link #getSize size} : sap.ui.core.CSSSize</li>
+ * <li>{@link #getDesign design} : string (default: 'auto')</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -60,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -81,7 +82,8 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
 		"customIconDensityAware" : {type : "boolean", group : "", defaultValue : true},
 		"customIconWidth" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 		"customIconHeight" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
-		"size" : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null}
+		"size" : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
+		"design" : {type : "string", group : "Appearance", defaultValue : 'auto'}
 	}
 }});
 
@@ -115,7 +117,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -127,6 +128,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>textDirection</code>.
@@ -140,7 +142,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>textDirection</code>.
  *
@@ -152,6 +153,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setTextDirection
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -165,7 +167,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -177,6 +178,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>customIcon</code>.
@@ -190,7 +192,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>customIcon</code>.
  *
@@ -202,6 +203,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setCustomIcon
  * @function
  */
+
 
 /**
  * Getter for property <code>customIconRotationSpeed</code>.
@@ -215,7 +217,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>customIconRotationSpeed</code>.
  *
@@ -227,6 +228,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setCustomIconRotationSpeed
  * @function
  */
+
 
 /**
  * Getter for property <code>customIconDensityAware</code>.
@@ -244,7 +246,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>customIconDensityAware</code>.
  *
@@ -256,6 +257,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setCustomIconDensityAware
  * @function
  */
+
 
 /**
  * Getter for property <code>customIconWidth</code>.
@@ -269,7 +271,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>customIconWidth</code>.
  *
@@ -281,6 +282,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setCustomIconWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>customIconHeight</code>.
@@ -294,7 +296,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>customIconHeight</code>.
  *
@@ -306,6 +307,7 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @name sap.m.BusyIndicator#setCustomIconHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>size</code>.
@@ -319,7 +321,6 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>size</code>.
  *
@@ -332,31 +333,173 @@ sap.ui.core.Control.extend("sap.m.BusyIndicator", { metadata : {
  * @function
  */
 
-// Start of sap/m/BusyIndicator.js
-///**
-// * This file defines behavior for the control,
-// */
-
 
 /**
- * Initializes the dialog control
+ * Getter for property <code>design</code>.
+ * The design defines how the BusyIndicator should look like. There are 3 possiblities:
+ * auto: automatically sets the design according to the context
+ * dark: dark theme, useful within a light context
+ * light: light theme, useful within a dark context
  *
- * @private
+ * Default value is <code>auto</code>
  *
+ * @return {string} the value of property <code>design</code>
+ * @public
+ * @name sap.m.BusyIndicator#getDesign
+ * @function
  */
 
-sap.m.BusyIndicator.prototype.onAfterRendering = function(){
-	if(this.getCustomIconRotationSpeed()){
-		this.$().children('img').css("-webkit-animation-duration", this.getCustomIconRotationSpeed() + "ms");
+/**
+ * Setter for property <code>design</code>.
+ *
+ * Default value is <code>auto</code> 
+ *
+ * @param {string} sDesign  new value for property <code>design</code>
+ * @return {sap.m.BusyIndicator} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.BusyIndicator#setDesign
+ * @function
+ */
+
+
+// Start of sap/m/BusyIndicator.js
+jQuery.sap.require("sap.ui.core.theming.Parameters");
+
+sap.m.BusyIndicator.prototype.init = function(){
+	this._bUseCanvas = sap.ui.core.theming.Parameters.get("sapMPlatformDependent") != "true";
+	this._bIosStyle = jQuery.os.ios;
+	this._sBColor = sap.ui.core.theming.Parameters.get("sapUiPageBG") || "rgba(0, 0, 0, 0)";
+};
+
+sap.m.BusyIndicator.prototype.exit = function(){
+	this._cancelAnimation();
+};
+
+// Request canvas animation
+// @private 
+if(window.requestAnimationFrame){
+	sap.m.BusyIndicator.prototype._requestAnimation = function(fCallback){
+		return window.requestAnimationFrame(fCallback);
+	};
+} else if(window.webkitRequestAnimationFrame){
+	sap.m.BusyIndicator.prototype._requestAnimation = function(fCallback, oDOM){
+		return window.webkitRequestAnimationFrame(fCallback, oDOM);
+	};	
+} else if(window.mozRequestAnimationFrame){
+	sap.m.BusyIndicator.prototype._requestAnimation = function(fCallback){
+		return window.mozRequestAnimationFrame(fCallback);
+	};
+} else {
+	sap.m.BusyIndicator.prototype._requestAnimation = function(fCallback){
+		return window.setTimeout(fCallback, 1000 / 60);
+	};
+};
+
+// Stop canvas animation
+// @private 
+sap.m.BusyIndicator.prototype._cancelAnimation = function(){
+	if(!this._animationId){ return;}
+	
+	if(window.cancelAnimationFrame){
+		window.cancelAnimationFrame(this._animationId);
+	} else if(window.webkitCancelAnimationFrame){
+		window.webkitCancelAnimationFrame(this._animationId);
+	} else if(window.mozCancelAnimationFrame){
+		window.mozCancelAnimationFrame(this._animationId);
+	} else{	
+		window.cancelTimeout(this._animationId); 
+	};
+	this._animationId = undefined;
+};
+
+// Do the next animation step
+// @private 
+sap.m.BusyIndicator.prototype._animateCanvas = function(){
+	if(!this.oCanvas){ return; }
+	
+	var clientWidth = this.oCanvas.clientWidth,
+		clientHeight = this.oCanvas.clientHeight;
+	
+	if(!clientWidth || !clientHeight){
+			// if the indicator becomes invisible, client width and height are set to 0. 
+			// Stop animation
+			this._animationId = undefined;
+			return;  
 	}
+	
+	// Adjust the canvas size to avoid aliasing artifacts
+	// This is needed only once after first rendering and only for custom size
+	if(clientWidth != this.oCanvas.width){ 
+		this.oCanvas.setAttribute("width", clientWidth);
+	}
+	if(clientHeight != this.oCanvas.height){
+		this.oCanvas.setAttribute("height", clientHeight);
+	}
+	
+	var context = this.oCanvas.getContext("2d"),
+		w = this.oCanvas.width,
+		h = this.oCanvas.height,
+		x = Math.round(w/2),
+		y = Math.round(h/2),
+		r = Math.round(x * 0.7),
+		t = new Date(),
+		startAngle = 0.9 * (t.getSeconds() + t.getMilliseconds() / 1000) * 2 * Math.PI,
+		endAngle = startAngle + 1.25 * Math.PI, // 225 grad
+		counterClock = false,
+		strokeStyle = window.getComputedStyle(this.oCanvas).color,
+		lineWidth = Math.round(w / 10) * 2;
+	
+	context.clearRect(0,0,w,h);
+	
+	// clearRect does not clear canvas in Android browser 4.1, 
+	// workaround: draw a white circle underneath
+	if(jQuery.os.android && jQuery.os.fVersion == 4.1 && !jQuery.browser.chrome){
+		context.strokeStyle = this._sBColor; 
+		context.lineWidth = lineWidth + 2;
+		context.beginPath();
+		context.arc(x, y, r, 0, 2 * Math.PI);
+		context.stroke();
+	}
+	
+	context.strokeStyle = strokeStyle;
+	context.lineWidth = lineWidth;
+	context.beginPath();
+	context.arc(x, y, r, startAngle, endAngle, counterClock);
+	context.stroke();
+	
+	this._animationId = this._requestAnimation(this._fAnimateCallback, this.oCanvas);
+};
+
+// Start the canvas based animation
+// @private 
+sap.m.BusyIndicator.prototype._doCanvas = function(){
+	this.oCanvas = jQuery.sap.domById(this.getId()+"-canvas");
+	this._fAnimateCallback = jQuery.proxy(this._animateCanvas, this);
+	this._animationId = this._requestAnimation(this._fAnimateCallback, this.oCanvas);
+};
+
+// Set rotation speed for the custom icon
+// @private 
+sap.m.BusyIndicator.prototype._doCustomIcon = function(){
+	if(this.getCustomIconRotationSpeed()){
+		var sRotationSpeed = this.getCustomIconRotationSpeed() + "ms";
+		this.$().children('img')
+			.css("-webkit-animation-duration", sRotationSpeed)
+			.css("animation-duration", sRotationSpeed);
+	}
+};
+
+// Do the "old style" css based platform dependent animation
+// @private 
+sap.m.BusyIndicator.prototype._doPlatformDependent = function(){
 	var $_elem = this.$();
 	
 	var parentElement = this.getParent() ? this.getParent()._context : '';
 	//Set the color to the first parents color which is not transparent. Skip this when inside Dialog or Bar.
-	if(!jQuery.os.ios) {
+	if(!this._bIosStyle) {
 		if(!this.getCustomIcon() && this.$().parent('.sapMBusyDialog').length === 0 && parentElement !== 'header') {
-			
 			var bFoundCss = true;
+			
 			while( $_elem.css('background-color') === "rgba(0, 0, 0, 0)" ) {
 				$_elem = $_elem.parent();
 				
@@ -368,13 +511,24 @@ sap.m.BusyIndicator.prototype.onAfterRendering = function(){
 				}
 			}
 			//This is the default color
-			var sBColor = "rgba(0, 0, 0, 0)";
-			if(bFoundCss) {
-				sBColor = $_elem.css('background-color');
-			}
+			var sBColor = bFoundCss? $_elem.css('background-color') : this._sBColor;
 			this.$().children().children('.sapMSpinBar3').children('.sapMSpinBar4').css('background-color', sBColor);
 		}
 	}
+};
+
+sap.m.BusyIndicator.prototype.onBeforeRendering = function(){
+	this._cancelAnimation();
+};
+
+sap.m.BusyIndicator.prototype.onAfterRendering = function(){
+	if(this.getCustomIcon()){
+		this._doCustomIcon();		
+	} else if(this._bUseCanvas) {
+		this._doCanvas();
+	} else {
+		this._doPlatformDependent();
+	};
 };
 
 sap.m.BusyIndicator.prototype.setCustomIconRotationSpeed = function(iSpeed){
@@ -382,6 +536,34 @@ sap.m.BusyIndicator.prototype.setCustomIconRotationSpeed = function(iSpeed){
 		if(iSpeed !== this.getCustomIconRotationSpeed()) {
 			this.setProperty("customIconRotationSpeed", iSpeed, true);
 		}
+	}
+	return this;
+};
+
+sap.m.BusyIndicator.prototype.setDesign = function(sDesign) {
+	this.setProperty("design", sDesign, true);
+	this.$().toggleClass("sapMBusyIndicatorLight", (this.getDesign() === "light"));
+	this.$().toggleClass("sapMBusyIndicatorDark", (this.getDesign() === "dark"));
+};
+
+/**
+ * Setter for property <code>visible</code>.
+ *
+ * Default value is <code>true</code>
+ *
+ * @param {boolean} bVisible  new value for property <code>visible</code>
+ * @return {sap.m.BusyIndicator} <code>this</code> to allow method chaining
+ * @public
+ *
+ * The MessageBar.API.js "setVisible" function is enhanced in order to
+ * toggle the "visibility:hidden;" attribute over the control.
+ */
+sap.m.BusyIndicator.prototype.setVisible = function(bVisible){
+	this.setProperty("visible", bVisible, true);
+	if(!this.getDomRef()){ return; }
+	this.getDomRef().style.visibility = bVisible? "visible" : "hidden";
+	if(bVisible && !this._animationId){
+		this._animateCanvas();
 	}
 	return this;
 }

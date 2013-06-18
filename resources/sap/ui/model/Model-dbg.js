@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base implementation for all model implementations
@@ -33,43 +33,67 @@ jQuery.sap.require("sap.ui.model.Context");
  * @extends sap.ui.base.Object
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
  * @public
+ * @name sap.ui.model.Model
  */
-sap.ui.model.Model = function () {
-	sap.ui.base.EventProvider.apply(this, arguments);
+sap.ui.base.EventProvider.extend("sap.ui.model.Model", /** @lends sap.ui.model.Model */ {
+	
+	constructor : function () {
+		sap.ui.base.EventProvider.apply(this, arguments);
+	
+		this.oData = {};
+		this.aBindings = [];
+		this.mContexts = {};
+		this.iSizeLimit = 100;
+		this.sDefaultBindingMode = sap.ui.model.BindingMode.TwoWay;
+		this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
+		this.bLegacySyntax = false;
+	},
 
-	this.oData = {};
-	this.aBindings = [];
-	this.mContexts = {};
-	this.iSizeLimit = 100;
-	this.sDefaultBindingMode = sap.ui.model.BindingMode.TwoWay;
-	this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
-	this.bLegacySyntax = false;
-};
+	metadata : {
 
-// chain the prototypes
-sap.ui.model.Model.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
-
-/*
- * Describe the sap.ui.model.Model.
- * Resulting metadata can be obtained via sap.ui.model.Model.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Model", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"bindProperty", "bindList", "bindTree", "createBindingContext", "destroyBindingContext", "getProperty",
-	"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
-	"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
-	"detachRequestSent", "setSizeLimit"
-  ]
+		"abstract" : true,
+		publicMethods : [
+			// methods
+			"bindProperty", "bindList", "bindTree", "bindContext", "createBindingContext", "destroyBindingContext", "getProperty",
+			"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
+			"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
+			"detachRequestSent", "setSizeLimit"
+	  ]
+	
+	  /* the following would save code, but requires the new ManagedObject (1.9.1) 
+	  , events : {
+	  	"parseError" : {},
+	  	"requestFailed" : {},
+	  	"requestSent" : {},
+	  	"requestCompleted" ; {} 
+	  }
+	  */
+	
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Model with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Model.extend
+ * @function
+ */
+
 
 /**
  * Map of event names, that are provided by the model.
@@ -158,15 +182,12 @@ sap.ui.model.Model.prototype.detachRequestFailed = function(fnFunction, oListene
 /**
  * Fire event requestFailed to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'message' of type <code>string</code> A text that describes the failure.</li>
- * <li>'statusCode' of type <code>string</code> HTTP status code returned by the request (if available)</li>
- * <li>'statusText' of type <code>string</code> The status as a text, details not specified, intended only for diagnosis output</li>
- * <li>'responseText' of type <code>string</code> Response that has been received for the request ,as a text string</li>
- * </ul>
- *
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {string} [mArguments.message]  A text that describes the failure.
+ * @param {string} [mArguments.statusCode]  HTTP status code returned by the request (if available)
+ * @param {string} [mArguments.statusText] The status as a text, details not specified, intended only for diagnosis output
+ * @param {string} [mArguments.responseText] Response that has been received for the request ,as a text string
+ * 
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -235,18 +256,15 @@ sap.ui.model.Model.prototype.detachParseError = function(fnFunction, oListener) 
 /**
  * Fire event parseError to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'errorCode' of type <code>int</code> </li>
- * <li>'url' of type <code>string</code> </li>
- * <li>'reason' of type <code>string</code> </li>
- * <li>'srcText' of type <code>string</code> </li>
- * <li>'line' of type <code>int</code> </li>
- * <li>'linepos' of type <code>int</code> </li>
- * <li>'filepos' of type <code>int</code> </li>
- * </ul>
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {int} [mArguments.errorCode]
+ * @param {string} [mArguments.url]
+ * @param {string} [mArguments.reason]
+ * @param {string} [mArguments.srcText]
+ * @param {int} [mArguments.line]
+ * @param {int} [mArguments.linepos]
+ * @param {int} [mArguments.filepos]
  *
- * @param {Map} [mArguments] the arguments to pass along with the event.
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -256,7 +274,24 @@ sap.ui.model.Model.prototype.fireParseError = function(mArguments) {
 };
 
 /**
- * Attach event-handler <code>fnFunction</code> to the 'requestSent' event of this <code>sap.ui.model.Model</code>.<br/>
+ * The 'requestSent' event is fired, after a request has been sent to a backend.
+ *
+ * Note: Subclasses might add additional parameters to the event object.
+ * 
+ * @name sap.ui.model.Model#requestSent
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+ * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+ * @param {string} oControlEvent.getParameters.type The type of the request (if available)
+ * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+ * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available)
+ * @public
+ */
+
+/**
+ * Attach event-handler <code>fnFunction</code> to the 'requestSent' event of this <code>sap.ui.model.Model</code>.
  *
  *
  * @param {object}
@@ -276,7 +311,7 @@ sap.ui.model.Model.prototype.attachRequestSent = function(oData, fnFunction, oLi
 };
 
 /**
- * Detach event-handler <code>fnFunction</code> from the 'requestSent' event of this <code>sap.ui.model.Model</code>.<br/>
+ * Detach event-handler <code>fnFunction</code> from the 'requestSent' event of this <code>sap.ui.model.Model</code>.
  *
  * The passed function and listener object must match the ones previously used for event registration.
  *
@@ -295,15 +330,11 @@ sap.ui.model.Model.prototype.detachRequestSent = function(fnFunction, oListener)
 /**
  * Fire event requestSent to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'url' of type <code>string</code> The url which is sent to the backend.</li>
- * <li>'type' of type <code>string</code> The type of the request (if available)</li>
- * <li>'async' of type <code>boolean</code> If the request is synchronous or asynchronous (if available)</li>
- * <li>'info' of type <code>string</code> additional information for the request (if available)</li>
- * </ul>
- *
- * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {string} [mArguments.url] The url which is sent to the backend.
+ * @param {string} [mArguments.type] The type of the request (if available)
+ * @param {boolean} [mArguments.async] If the request is synchronous or asynchronous (if available)
+ * @param {string} [mArguments.info] additional information for the request (if available)
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -313,7 +344,25 @@ sap.ui.model.Model.prototype.fireRequestSent = function(mArguments) {
 };
 
 /**
- * Attach event-handler <code>fnFunction</code> to the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.<br/>
+ * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response), 
+ * no matter whether the request succeeded or not.
+ * 
+ * Note: Subclasses might add additional parameters to the event object.
+ * 
+ * @name sap.ui.model.Model#requestCompleted
+ * @event
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+ * @param {string} oControlEvent.getParameters.url The url which was sent to the backend
+ * @param {string} oControlEvent.getParameters.type The type of the request (if available)
+ * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+ * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available)
+ * @public
+ */
+
+/**
+ * Attach event-handler <code>fnFunction</code> to the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.
  *
  *
  * @param {object}
@@ -333,7 +382,7 @@ sap.ui.model.Model.prototype.attachRequestCompleted = function(oData, fnFunction
 };
 
 /**
- * Detach event-handler <code>fnFunction</code> from the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.<br/>
+ * Detach event-handler <code>fnFunction</code> from the 'requestCompleted' event of this <code>sap.ui.model.Model</code>.
  *
  * The passed function and listener object must match the ones previously used for event registration.
  *
@@ -352,15 +401,12 @@ sap.ui.model.Model.prototype.detachRequestCompleted = function(fnFunction, oList
 /**
  * Fire event requestCompleted to attached listeners.
  *
- * Expects following event parameters:
- * <ul>
- * <li>'url' of type <code>string</code> The url which was sent to the backend.</li>
- * <li>'type' of type <code>string</code> The type of the request (if available)</li>
- * <li>'async' of type <code>boolean</code> If the request was synchronous or asynchronous (if available)</li>
- * <li>'info' of type <code>string</code> additional information for the request (if available)</li>
- * </ul>
+ * @param {object} [mArguments] the arguments to pass along with the event.
+ * @param {string} [mArguments.url] The url which was sent to the backend.
+ * @param {string} [mArguments.type] The type of the request (if available)
+ * @param {boolean} [mArguments.async] If the request was synchronous or asynchronous (if available)
+ * @param {string} [mArguments.info] additional information for the request (if available)
  *
- * @param {Map} [mArguments] the arguments to pass along with the event.
  * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
  * @protected
  */
@@ -443,7 +489,9 @@ sap.ui.model.Model.prototype.fireRequestCompleted = function(mArguments) {
  *		   [mParameters=null] the parameters used to create the new binding context
  * @param {function}
  *         fnCallBack the function which should be called after the binding context has been created
-
+ * @param {boolean}
+ *         [bForceUpdate] force update even if data is already available 
+ *         
  * @public
  */
 
@@ -473,6 +521,26 @@ sap.ui.model.Model.prototype.fireRequestCompleted = function(mArguments) {
  */
 
 /**
+ * Create ContextBinding
+ * 
+ * @name sap.ui.model.Model.prototype.bindContext
+ * @function
+ * @param {string}
+ *         sPath the path pointing to the property that should be bound
+ * @param {object}
+ *         [oContext=null] the context object for this databinding (optional)
+ * @param {object}
+ *         [mParameters=null] additional model specific parameters (optional)
+ * @return {sap.ui.model.ContextBinding}
+ *
+ * @public
+ */
+sap.ui.model.Model.prototype.bindContext = function(sPath, oContext, mParameters) {
+	var oBinding = new sap.ui.model.ContextBinding(this, sPath, oContext, mParameters);
+	return oBinding;
+};
+
+/**
  * Gets a binding context. If context already exists, return it from the map,
  * otherwise create one using the context constructor.
  *
@@ -491,7 +559,18 @@ sap.ui.model.Model.prototype.getContext = function(sPath) {
 };
 
 /**
- * Resolve the path relative to the given context
+ * Resolve the path relative to the given context.
+ * 
+ * If a relative path is given (not starting with a '/') but no context,
+ * then the path can't be resolved and undefined is returned.
+ *
+ * For backward compatibility, the behavior of this method can be changed by 
+ * setting the 'legacySyntax' property. Then an unresolvable, relative path 
+ * is automatically converted into an absolute path.
+ * 
+ * @param {string} sPath path to resolve
+ * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+ * @return {string} resolved path or undefined
  */
 sap.ui.model.Model.prototype.resolve = function(sPath, oContext) {
 	var bIsRelative = !jQuery.sap.startsWith(sPath, "/"),
@@ -503,10 +582,11 @@ sap.ui.model.Model.prototype.resolve = function(sPath, oContext) {
 			sResolvedPath = sContextPath + (jQuery.sap.endsWith(sContextPath, "/") ? "" : "/") + sPath;
 		}
 		else {
-			sResolvedPath = this.isLegacySyntax() ? "/" + sPath : "";
+			sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 		}
 	}
-	if (jQuery.sap.endsWith(sResolvedPath, "/")) {
+	// invariant: path never ends with a slash
+	if (sResolvedPath && jQuery.sap.endsWith(sResolvedPath, "/")) {
 		sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
 	}
 	return sResolvedPath;

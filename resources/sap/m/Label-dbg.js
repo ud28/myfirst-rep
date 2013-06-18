@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -35,7 +35,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getTextAlign textAlign} : sap.ui.core.TextAlign (default: sap.ui.core.TextAlign.Begin)</li>
  * <li>{@link #getTextDirection textDirection} : sap.ui.core.TextDirection (default: sap.ui.core.TextDirection.Inherit)</li>
- * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '')</li></ul>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '')</li>
+ * <li>{@link #getRequired required} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -56,9 +57,10 @@ jQuery.sap.require("sap.ui.core.Control");
  * @class
  * Label control is used in a UI5 mobile application to provide label text for other controls. Design such as bold, and text alignment can be specified.
  * @extends sap.ui.core.Control
+ * @implements sap.ui.core.Label
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -67,6 +69,9 @@ jQuery.sap.require("sap.ui.core.Control");
 sap.ui.core.Control.extend("sap.m.Label", { metadata : {
 
 	// ---- object ----
+	interfaces : [
+		"sap.ui.core.Label"
+	],
 
 	// ---- control specific ----
 	library : "sap.m",
@@ -76,7 +81,8 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"textAlign" : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
 		"textDirection" : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
-		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''}
+		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+		"required" : {type : "boolean", group : "Misc", defaultValue : false}
 	},
 	associations : {
 		"labelFor" : {type : "sap.ui.core.Control", multiple : false}
@@ -113,7 +119,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>design</code>.
  *
@@ -125,6 +130,7 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @name sap.m.Label#setDesign
  * @function
  */
+
 
 /**
  * Getter for property <code>text</code>.
@@ -138,7 +144,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -150,6 +155,7 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @name sap.m.Label#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -163,7 +169,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -175,6 +180,7 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @name sap.m.Label#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>textAlign</code>.
@@ -188,7 +194,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>textAlign</code>.
  *
@@ -200,6 +205,7 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @name sap.m.Label#setTextAlign
  * @function
  */
+
 
 /**
  * Getter for property <code>textDirection</code>.
@@ -213,7 +219,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>textDirection</code>.
  *
@@ -225,6 +230,7 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @name sap.m.Label#setTextDirection
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -238,7 +244,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -251,6 +256,32 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
+
+/**
+ * Getter for property <code>required</code>.
+ * Indicates that user input is required in the input this label labels.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>required</code>
+ * @public
+ * @name sap.m.Label#getRequired
+ * @function
+ */
+
+/**
+ * Setter for property <code>required</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bRequired  new value for property <code>required</code>
+ * @return {sap.m.Label} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Label#setRequired
+ * @function
+ */
+
+
 /**
  * Association to the labeled control.
  * By default the label set the for attribute to the ID of the labeled control. This can be changed implementing function getIdForLabel on the labelled control.
@@ -260,7 +291,6 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @name sap.m.Label#getLabelFor
  * @function
  */
-
 
 /**
  * Association to the labeled control.
@@ -275,5 +305,15 @@ sap.ui.core.Control.extend("sap.m.Label", { metadata : {
  * @function
  */
 
+
+	
 // Start of sap/m/Label.js
 
+/*
+ * As own function to make possible to overwrite it (e.G. from Form).
+ */
+sap.m.Label.prototype.getLabelForRendering = function(){
+
+	return this.getLabelFor();
+
+};

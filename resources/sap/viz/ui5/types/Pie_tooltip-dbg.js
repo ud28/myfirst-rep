@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -32,7 +32,8 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getValueFormat valueFormat} : string (default: 'n')</li>
- * <li>{@link #getPercentageFormat percentageFormat} : string (default: '.0%')</li></ul>
+ * <li>{@link #getPercentageFormat percentageFormat} : string (default: '.0%')</li>
+ * <li>{@link #getFormatString formatString} : string[] (default: ['null'])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -57,7 +58,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -75,7 +76,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
 		"valueFormat" : {type : "string", group : "", defaultValue : 'n'},
-		"percentageFormat" : {type : "string", group : "", defaultValue : '.0%'}
+		"percentageFormat" : {type : "string", group : "", defaultValue : '.0%'},
+		"formatString" : {type : "string[]", group : "", defaultValue : ['null']}
 	}
 }});
 
@@ -109,7 +111,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -121,6 +122,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @name sap.viz.ui5.types.Pie_tooltip#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>valueFormat</code>.
@@ -134,7 +136,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>valueFormat</code>.
  *
@@ -146,6 +147,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @name sap.viz.ui5.types.Pie_tooltip#setValueFormat
  * @function
  */
+
 
 /**
  * Getter for property <code>percentageFormat</code>.
@@ -159,7 +161,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>percentageFormat</code>.
  *
@@ -171,5 +172,31 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie_tooltip", { me
  * @name sap.viz.ui5.types.Pie_tooltip#setPercentageFormat
  * @function
  */
+
+
+/**
+ * Getter for property <code>formatString</code>.
+ * Set format string of tooltip. The first string is applied to value and the second is applied to percentage.
+ *
+ * Default value is <code>null</code>
+ *
+ * @return {string[]} the value of property <code>formatString</code>
+ * @public
+ * @name sap.viz.ui5.types.Pie_tooltip#getFormatString
+ * @function
+ */
+
+/**
+ * Setter for property <code>formatString</code>.
+ *
+ * Default value is <code>null</code> 
+ *
+ * @param {string[]} aFormatString  new value for property <code>formatString</code>
+ * @return {sap.viz.ui5.types.Pie_tooltip} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Pie_tooltip#setFormatString
+ * @function
+ */
+
 
 // Start of sap/viz/ui5/types/Pie_tooltip.js

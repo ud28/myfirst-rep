@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -30,7 +30,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getEnableFlexBox enableFlexBox} : boolean (default: false)</li></ul>
+ * <li>{@link #getEnableFlexBox enableFlexBox} : boolean (default: false)</li>
+ * <li>{@link #getTranslucent translucent} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -55,7 +56,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -68,7 +69,8 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
 	// ---- control specific ----
 	library : "sap.m",
 	properties : {
-		"enableFlexBox" : {type : "boolean", group : "Misc", defaultValue : false}
+		"enableFlexBox" : {type : "boolean", group : "Misc", defaultValue : false},
+		"translucent" : {type : "boolean", group : "Appearance", defaultValue : false}
 	},
 	aggregations : {
     	"contentLeft" : {type : "sap.ui.core.Control", multiple : true, singularName : "contentLeft"}, 
@@ -107,7 +109,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>enableFlexBox</code>.
  *
@@ -119,7 +120,35 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#setEnableFlexBox
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>translucent</code>.
+ * A boolean value indicating whether the bar is partially translucent.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>translucent</code>
+ * @public
+ * @since 1.12
+ * @name sap.m.Bar#getTranslucent
+ * @function
+ */
+
+/**
+ * Setter for property <code>translucent</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bTranslucent  new value for property <code>translucent</code>
+ * @return {sap.m.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.12
+ * @name sap.m.Bar#setTranslucent
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>contentLeft</code>.<br/>
  * this is the left content area, usually containing button or App Icon
@@ -129,6 +158,7 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#getContentLeft
  * @function
  */
+
 
 /**
  * Inserts a contentLeft into the aggregation named <code>contentLeft</code>.
@@ -146,7 +176,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some contentLeft <code>oContentLeft</code> 
  * to the aggregation named <code>contentLeft</code>.
@@ -159,7 +188,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an contentLeft from the aggregation named <code>contentLeft</code>.
  *
@@ -170,7 +198,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>contentLeft</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -179,7 +206,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#removeAllContentLeft
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>contentLeft</code> 
@@ -192,7 +218,7 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#indexOfContentLeft
  * @function
  */
-
+	
 
 /**
  * Destroys all the contentLeft in the aggregation 
@@ -202,7 +228,8 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#destroyContentLeft
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>contentMiddle</code>.<br/>
  * This is the middle content area. Controls such as label, segmented buttons, Select should be placed here. Content that are placed here will always be centrally positioned
@@ -212,6 +239,7 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#getContentMiddle
  * @function
  */
+
 
 /**
  * Inserts a contentMiddle into the aggregation named <code>contentMiddle</code>.
@@ -229,7 +257,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some contentMiddle <code>oContentMiddle</code> 
  * to the aggregation named <code>contentMiddle</code>.
@@ -242,7 +269,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an contentMiddle from the aggregation named <code>contentMiddle</code>.
  *
@@ -253,7 +279,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>contentMiddle</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -262,7 +287,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#removeAllContentMiddle
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>contentMiddle</code> 
@@ -275,7 +299,7 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#indexOfContentMiddle
  * @function
  */
-
+	
 
 /**
  * Destroys all the contentMiddle in the aggregation 
@@ -285,7 +309,8 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#destroyContentMiddle
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>contentRight</code>.<br/>
  * this is the right content area. Controls such as Action buttons or Search field could be placed here.
@@ -295,6 +320,7 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#getContentRight
  * @function
  */
+
 
 /**
  * Inserts a contentRight into the aggregation named <code>contentRight</code>.
@@ -312,7 +338,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Adds some contentRight <code>oContentRight</code> 
  * to the aggregation named <code>contentRight</code>.
@@ -325,7 +350,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Removes an contentRight from the aggregation named <code>contentRight</code>.
  *
@@ -336,7 +360,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>contentRight</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -345,7 +368,6 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#removeAllContentRight
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>contentRight</code> 
@@ -358,7 +380,7 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @name sap.m.Bar#indexOfContentRight
  * @function
  */
-
+	
 
 /**
  * Destroys all the contentRight in the aggregation 
@@ -369,8 +391,8 @@ sap.ui.core.Control.extend("sap.m.Bar", { metadata : {
  * @function
  */
 
-// Start of sap/m/Bar.js
 
+// Start of sap/m/Bar.js
 /**
  * @private
  */
@@ -387,7 +409,7 @@ sap.m.Bar.prototype.onBeforeRendering = function() {
 
 sap.m.Bar.prototype.onAfterRendering = function() {
 	this._updatePosition();
-	
+
 	//listen to resize
 	this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._updatePosition, this));
 };
@@ -414,7 +436,7 @@ sap.m.Bar.prototype._updatePosition = function() {
 	}
 	
 	var $bar = this.$();
-	if ($bar.length == 0) {
+	if ($bar.length == 0 || !$bar.is(":visible")) {
 		return; // if Bar is not rendered anymore do no check and do not re-register the resize handler
 	}
 	
@@ -452,39 +474,42 @@ sap.m.Bar.prototype._updatePosition = function() {
 		$midBarPH.css({'position': 'absolute', 'left': iLBWidth});
 		$midBarPH.width(iBarWidth - iLBWidth - iRBWidth - parseInt($midBarPH.css('margin-left'), 10) - parseInt($midBarPH.css('margin-right'), 10));
 	} else {
-		// handle the case when left and right content are wider than the bar itself
-		if (iBarWidth < (iLBWidth + iRBWidth)){
-			// this scenario happens mostly when a very long title text is set in the left content area
-			// hence we make sure the rightContent always has enough space and reduce the left content area width accordingly
-			if (iRBWidth > iBarWidth){
-				$rightBar.width(iBarWidth);
+		// during flip animation, it happens that the right area is not correctly positioned by the browser yet; If so, the rest of the calculation should be skipped
+		if( oRBPosition.left + iRBWidth >= iBarWidth){
+			// handle the case when left and right content are wider than the bar itself
+			if (iBarWidth < (iLBWidth + iRBWidth)){
+				// this scenario happens mostly when a very long title text is set in the left content area
+				// hence we make sure the rightContent always has enough space and reduce the left content area width accordingly
+				if (iRBWidth > iBarWidth){
+					$rightBar.width(iBarWidth);
+				}
+				if (iBarWidth < iRBWidth){
+					$leftBar.width(0);
+				} else {
+					$leftBar.width(iBarWidth - iRBWidth);
+				}
 			}
-			if (iBarWidth < iRBWidth){
-				$leftBar.width(0);
+			
+			if (oMBPHPosition.left < iLBWidth){
+				// place the middle positioned element directly next to the end of left content area
+				$midBarPH.css({'position': 'absolute', 'left': iLBWidth});
+				oMBPHPosition = $midBarPH.position();
 			} else {
-				$leftBar.width(iBarWidth - iRBWidth);
+				// middle content is smaller than the available space, position content in the middle manually
 			}
-		}
-		
-		if (oMBPHPosition.left < iLBWidth){
-			// place the middle positioned element directly next to the end of left content area
-			$midBarPH.css({'position': 'absolute', 'left': iLBWidth});
-			oMBPHPosition = $midBarPH.position();
-		} else {
-			// middle content is smaller than the available space, position content in the middle manually
-		}
-		
-		// check if middle content area width overlaps with right content area, if yes, shorten the width of middle content area
-		if ((oMBPHPosition.left + iMBPHWidth) > oRBPosition.left){
-			if (oRBPosition.left < oMBPHPosition.left){
-				$midBarPH.width(0);
-			} else {
-				$midBarPH.width(oRBPosition.left - oMBPHPosition.left);
+			
+			// check if middle content area width overlaps with right content area, if yes, shorten the width of middle content area
+			if ((oMBPHPosition.left + iMBPHWidth) > oRBPosition.left){
+				if (oRBPosition.left < oMBPHPosition.left){
+					$midBarPH.width(0);
+				} else {
+					$midBarPH.width(oRBPosition.left - oMBPHPosition.left);
+				}
 			}
-		}
-	
-		if ($midBarPH.outerWidth() > iMBWidth){
-			$midBarPH.width(iMBWidth);
+		
+			if ($midBarPH.outerWidth() > iMBWidth){
+				$midBarPH.width(iMBWidth);
+			}
 		}
 	}
 	$midBarPH.css({'visibility': 'inherit'});
@@ -492,4 +517,3 @@ sap.m.Bar.prototype._updatePosition = function() {
 	//listen to resize
 	this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._updatePosition, this));
 };
-

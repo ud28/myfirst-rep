@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the render manager sap.ui.core.RenderManager
@@ -30,7 +30,7 @@ jQuery.sap.require("sap.ui.base.Interface");
  *
  * @extends sap.ui.base.Object
  * @author Jens Pflueger
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */
@@ -45,7 +45,7 @@ sap.ui.core.RenderManager.prototype = jQuery.sap.newObject(sap.ui.base.Object.pr
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
 						  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
-						  "addStyle", "writeStyles", "writeAccessibilityState",
+						  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
 						  "getConfiguration", "getHTML"];
 	var aNonRendererMethods = ["render", "flush", "destroy"];
 
@@ -152,10 +152,12 @@ sap.ui.core.RenderManager.prototype.renderControl = function(oControl) {
 	jQuery.sap.measure.resume(oControl.getId()+"---renderControl");
 
 	// notify the control that it will be rendered soon (e.g. detached from DOM)
+	this._bLocked = true;
 	var oEvent = jQuery.Event("BeforeRendering");
 	// store the element on the event (aligned with jQuery syntax)
 	oEvent.srcControl = oControl;
 	oControl._handleEvent(oEvent);
+	this._bLocked = false;
 
 	// unbind any generically bound browser event handlers
 	var aBindings = oControl.aBindParameters;
@@ -240,6 +242,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 		for (var i = 0, size = aRenderedControls.length; i < size; i++) {
 			var oControl = aRenderedControls[i];
 			if (oControl.bOutput) {
+				oRM._bLocked = true;
 				var oEvent = jQuery.Event("AfterRendering");
 				// store the element on the event (aligned with jQuery syntax)
 				oEvent.srcControl = oControl;
@@ -248,6 +251,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				oControl._handleEvent(oEvent);
 				// end performance measurement
 				jQuery.sap.measure.end(oControl.getId()+"---AfterRendering");
+				oRM._bLocked = false;
 			}
 		}
 
@@ -280,7 +284,6 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 		}
 	};
 
-
 	/**
 	 * Renders the content of the rendering buffer into the provided DOMNode.
 	 *
@@ -312,15 +315,17 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 			jQuery.sap.log.info("Flush must not be called from control renderers. Call ignored.", null, this);
 			return;
 		}
+		
+		var RenderManager = sap.ui.core.RenderManager;
 
 		// preserve HTML content before flushing HTML into target DOM node
 		if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
-			sap.ui.core.RenderManager.preserveContent(oTargetDomNode);
+			RenderManager.preserveContent(oTargetDomNode);
 		}
 
 		var oStoredFocusInfo = storeCurrentFocus();
 
-		var vHTML = this._prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
+		var vHTML = RenderManager.prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
 
 		if(this._fPutIntoDom){
 			//Case when render function was called
@@ -330,7 +335,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				//TODO It would be enough to loop over the controls for which renderControl was initially called but for this
 				//we have to manage an additional array. Rethink about later.
 				var oldDomNode = this.aRenderedControls[i].getDomRef();
-				if(oldDomNode && !sap.ui.core.RenderManager.isPreservedContent(oldDomNode)) {
+				if(oldDomNode && !RenderManager.isPreservedContent(oldDomNode)) {
 					jQuery(oldDomNode).remove();
 				}
 			}
@@ -353,45 +358,12 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				jQuery(oTargetDomNode).append(vHTML); // Append the HTML into the given DOM Node
 			}
 		}
-
-		var bUseDummy = false;
-		if(jQuery.browser.safari){
-			var aVersion = jQuery.browser.version.split(".");
-			if (parseInt(aVersion[0], 10) < 534 || (parseInt(aVersion[0], 10) == 534 && parseInt(aVersion[1],10) < 5)) {
-				bUseDummy = true;
-			}
-		}
-
-		if(bUseDummy){
-			// in safari we must wait until the CSS are loaded and applied (fixed in Safari 5.1)
-			var jDummy = jQuery("<div id=\"sap-ui-DummyCSSCheck\" class=\"sapUiCssCheck\" style=\"visibility:hidden;position:absolute;height:100px;width:100px;top:-150px;\"></div>");
-			jQuery(document.body).append(jDummy);
-			this._finalizeIfReady(this.aRenderedControls, oStoredFocusInfo);
-		}else{
-			finalizeRendering(this, this.aRenderedControls, oStoredFocusInfo);
-		}
+		
+		finalizeRendering(this, this.aRenderedControls, oStoredFocusInfo);
 
 		this.aRenderedControls = [];
 		this.aBuffer = [];
 		this.aStyleStack = [{}];
-	};
-
-	/**
-	 * Safari applies CSS files only after it finished rendering. So logic based on CSS property onAferRendering
-	 * goes wrong. Therefore we have to wait until the CSS is applied before we call onAfterRendering.
-	 * This is made using a dummy DIV and checking the border defined in Core global.CSS
-	 * We repeat the check until it's OK and the call the onAfterRendering
-	 * @private
-	 */
-	sap.ui.core.RenderManager.prototype._finalizeIfReady = function(aRenderedControls, oStoredFocusInfo){
-		if((jQuery.sap.domById("sap-ui-DummyCSSCheck").offsetHeight - jQuery.sap.domById("sap-ui-DummyCSSCheck").clientHeight) == 20 ){
-			//CSS loaded - fine
-			jQuery.sap.byId("sap-ui-DummyCSSCheck").remove();
-			finalizeRendering(this, aRenderedControls, oStoredFocusInfo);
-		}else{
-			//CSS still not loaded - try again
-			jQuery.sap.delayedCall(1, this, "_finalizeIfReady", [aRenderedControls, oStoredFocusInfo]);
-		}
 	};
 
 	/**
@@ -414,13 +386,9 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 			jQuery.sap.log.info("Render must not be called from control renderers. Call ignored.", null, this);
 			return;
 		}
-
-		if(jQuery.browser.safari){
-			// for Safari CSS bug append CSS class at the end
-			if (!sap.ui.core.RenderManager.initialized) {
-				jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath("sap.ui.core.", "/") + "SafariCheck.css");
-			}
-			sap.ui.core.RenderManager.initialized = true;
+		if(this._bLocked){
+			jQuery.sap.log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
+			return;
 		}
 
 		// Reset the buffer before rendering
@@ -515,7 +483,7 @@ sap.ui.core.RenderManager.getRenderer = function(oControl) {
  * <ol>
  * <li>1. "SHIV": create each HTML5 tag once in the window document to make IE8 aware of it
  * <li>2. "INNERSHIV": IE8 fails when using innerHTML in conjunction with HTML5 tags for a DOM element __not__ part of the document.
- *        _prepareHTML5 uses a dummy DOM element to convert the innerHTML to a set of DOM nodes first.
+ *        prepareHTML5 uses a dummy DOM element to convert the innerHTML to a set of DOM nodes first.
  * </ol>
  * @static
  * @private
@@ -526,7 +494,7 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 
 		var aTags = [ "article", "aside", "audio", "canvas", "command", "datalist", "details",
 				"figcaption", "figure", "footer", "header", "hgroup", "keygen", "mark", "meter", "nav",
-				"output", "progress", "rp", "rt", "ruby", "section", "source", "summary", "time", "video", "wbr" ];
+				"output", "progress", "rp", "rt", "ruby", "section", "source", "summary", "template", "time", "video", "wbr" ];
 
 		// 1. SHIV, create each HTML5 element once to make IE8 recognize it
 		// see http://paulirish.com/2011/the-history-of-the-html5-shiv/ for an explanation
@@ -538,7 +506,7 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 		// see http://jdbartlett.com/innershiv/ for an explanation of the matter
 		var rhtmltags = new RegExp("<(" + aTags.join("|") + ")(\\s|>)", "i");
 		var d = null;
-		sap.ui.core.RenderManager.prototype._prepareHTML5 = function(sHTML) {
+		sap.ui.core.RenderManager.prepareHTML5 = function(sHTML) {
 			if ( sHTML && sHTML.match(rhtmltags) ) {
 				if(!d){
 					d = document.createElement('div');
@@ -561,12 +529,29 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 
 		jQuery.sap.log.info("no IE8 HTML5 support required");
 
-		sap.ui.core.RenderManager.prototype._prepareHTML5 = function(sHTML) {
+		sap.ui.core.RenderManager.prepareHTML5 = function(sHTML) {
 			return sHTML;
 		};
 	}
 };
 
+/**
+ * Helper to enforce a repaint for a given dom node.
+ * 
+ * Introduced to fix repaint issues in Webkit browsers, esp. Chrome.
+ * @param {DOMNode} vDomNode a DOM node or ID of a DOM node
+ * 
+ * @private
+ */
+sap.ui.core.RenderManager.forceRepaint = function(vDomNode) {
+	var oDomNode = typeof vDomNode == "string" ? jQuery.sap.domById(vDomNode) : vDomNode;
+	if ( oDomNode ) {
+		jQuery.sap.log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
+		oDomNode.style.display = "none";
+		oDomNode.offsetHeight;
+		oDomNode.style.display = "";
+	}
+};
 
 //#################################################################################################
 // Methods for preserving HTML content
@@ -581,7 +566,7 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 		var $preserve = jQuery("#"+ID_PRESERVE_AREA);
 		if ($preserve.length === 0){
 			$preserve = jQuery("<DIV/>",{role:"application",id:ID_PRESERVE_AREA}).
-				addClass("sapUiHidden").
+				addClass("sapUiHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
 				appendTo(document.body);
 		}
 		return $preserve;
@@ -608,6 +593,8 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 	 */
 	sap.ui.core.RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
 		jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
+
+		sap.ui.getCore().getEventBus().publish("sap.ui","__preserveContent", { domNode : oRootNode});
 
 		var $preserve = getPreserveArea();
 
@@ -884,6 +871,23 @@ sap.ui.core.RenderManager.prototype.writeElementData = function(oElement) {
 	if(sId) {
 		this.writeAttribute("id", sId).writeAttribute("data-sap-ui", sId);
 	}
+	var aData = oElement.getCustomData();
+	var l = aData.length;
+	for (var i = 0; i < l; i++) {
+		var oData = aData[i];
+		if (oData.getWriteToDom()) { // application wants this to be written to the DOM, but there are some conditions for this to work
+			var key = oData.getKey();
+			if (typeof oData.getValue() === "string") {
+				if ((sap.ui.core.ID.isValid(key)) && (key.indexOf(":") == -1) && (key.indexOf("sap-ui") !== 0)) {
+					this.writeAttributeEscaped("data-" + key, oData.getValue());
+				} else { // error case
+					jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the key is not valid (must be a valid sap.ui.core.ID without any colon and may not start with 'sap-ui').");
+				}
+			} else { // error case: non-string value
+				jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the value is not a string.");
+			}
+		}
+	}
 	return this;
 };
 
@@ -919,9 +923,9 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
 /**
  * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
  * based on the element's properties and associations.
- * 
+ *
  * The ARIA properties are only written when the accessibility feature is activated in the UI5 configuration.
- * 
+ *
  * The following properties/values to ARIA attribute mappings are done (if the element does have such properties):
  * <code>editable===false</code> => <code>aria-readonly="true"</code>
  * <code>enabled===false</code> => <code>aria-disabled="true"</code>
@@ -929,24 +933,29 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
  * <code>required===true</code> => <code>aria-required="true"</code>
  * <code>selected===true</code> => <code>aria-selected="true"</code>
  * <code>checked===true</code> => <code>aria-checked="true"</code>
- * 
+ *
  * Additionally the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
  * the id lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
- * 
+ *
  * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
  * have to check whether it fullfills their requirements. In case of problems (for example the RadioButton has a
  * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
  * result of this function can be influenced via the parameter <code>mProps</code> as described below.
- * 
+ *
  * The parameter <code>mProps</code> can be used to either provide additional attributes which should be added and/or
  * to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended automatically to the keys
  * (Exception: Attribute 'role' does not get the prefix 'aria-').
- * 
+ *
  * Examples:
  * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the precense or absence of
  * the visibility property.
  * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the precense
  * or absence of the visibility property.
+ * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
+ * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code> attributes
+ * the following format can be used:
+ * <code>{describedby : {value: "id1 id2", append: true}}</code> => <code>aria-describedby="ida idb id1 id2"</code> (assuming that "ida idb"
+ * is the auto-generated part based on the association <code>ariaDescribedBy</code>).
  *
  * @param {sap.ui.core.Element}
  *            [oElement] the element whose accessibility state should be rendered
@@ -959,25 +968,25 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 	if(!sap.ui.getCore().getConfiguration().getAccessibility()){
 		return this;
 	}
-	
+
 	if(arguments.length == 1 && !(oElement instanceof sap.ui.core.Element)) {
 		mProps = oElement;
 		oElement = null;
 	}
-	
+
 	var mAriaProps = {};
-	
+
 	if(oElement != null) {
 		var oMetadata = oElement.getMetadata();
 		oMetadata._enrichChildInfos();
-		
+
 		function addACCForProp(sElemProp, sACCProp, oVal){
 			var oProp = oMetadata.getAllProperties()[sElemProp];
 			if(oProp && oElement[oProp._sGetter]() === oVal){
 				mAriaProps[sACCProp] = "true";
 			}
 		}
-		
+
 		function addACCForAssoc(sElemAssoc, sACCProp){
 			var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
 			if(oAssoc && oAssoc.multiple){
@@ -987,7 +996,7 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 				}
 			}
 		}
-		
+
 		addACCForProp("editable", "readonly", false);
 		addACCForProp("enabled", "disabled", false);
 		addACCForProp("visible", "hidden", false);
@@ -997,12 +1006,38 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 		addACCForAssoc("ariaDescribedBy", "describedby");
 		addACCForAssoc("ariaLabelledBy", "labelledby");
 	}
-	
+
 	if(mProps){
+		function checkValue(v){
+			var type = typeof(v);
+			return v === null || v === "" || type === "number" || type === "string" || type === "boolean";
+		}
+		
+		var prop = {};
+		var x, val, type, autoVal;
+		
+		for(x in mProps){
+			val = mProps[x];
+			if(checkValue(val)){
+				prop[x] = val;
+			}else if(typeof(val) === "object" && checkValue(val.value)){
+				autoVal = "";
+				if(val.append && (x === "describedby" || x === "labelledby")){
+					autoVal = mAriaProps[x] ? mAriaProps[x]+" " : "";
+				}
+				prop[x] = autoVal + val.value;
+			}
+		}
+		
 		//The auto-generated values above can be overridden or reset (via null)
-		jQuery.extend(mAriaProps, mProps);
+		jQuery.extend(mAriaProps, prop);
 	}
-	
+
+	// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
+	if (oElement instanceof sap.ui.core.Element && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
+		oElement.getParent().enhanceAccessibilityState(oElement, mAriaProps);
+	}
+
 	for(var p in mAriaProps) {
 		if(mAriaProps[p] != null && mAriaProps[p] !== ""){ //allow 0 and false but no null, undefined or empty string
 			this.writeAttribute(p === "role" ? p : "aria-"+p, mAriaProps[p]);
@@ -1010,4 +1045,64 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 	}
 
 	return this;
+};
+
+
+/**
+ * Writes either an img tag for normal URI or an span tag with needed properties for icon URI.
+ * 
+ * Additional classes and attributes can be added to the tag by given the second and third parameter.
+ * All of the given attributes are escaped for security consideration.
+ * 
+ * 
+ * @param {sap.ui.core.URI} sURI is the URI of an image or an icon registered in sap.ui.core.IconPool.
+ * @param {array|string} aClasses are additional classes that are added to the rendered tag.
+ * @param {object} mAttributes are additional attributes that are added to the rendered tag.
+ * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+ */
+sap.ui.core.RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
+	jQuery.sap.require("sap.ui.core.IconPool");
+	
+	var bIconURI = sap.ui.core.IconPool.isIconURI(sURI),
+		sStartTag = bIconURI ? "<span " : "<img ",
+		sClasses = "", sProp, oIconInfo;
+	
+	if(typeof aClasses === "string"){
+		aClasses = [aClasses];	
+	}
+	
+	if(bIconURI){
+		if(!aClasses){
+			aClasses = [];
+		}
+		aClasses.push("sapUiIcon");
+	}
+	
+	if(jQuery.isArray(aClasses)){
+		sClasses = aClasses.join(" ");
+	}
+	
+	this.write(sStartTag + "class=\"" + sClasses + "\" ");
+
+	if(bIconURI){
+		if(!mAttributes){
+			mAttributes = {};
+		}
+		
+		oIconInfo = sap.ui.core.IconPool.getIconInfo(sURI);
+		mAttributes["data-sap-ui-icon-content"] = oIconInfo.content;
+		this.write("style=\"font-family: " + oIconInfo.fontFamily +";\" ");
+	} else {
+		this.writeAttribute("src", sURI);
+	}
+	
+	if(typeof mAttributes === "object"){
+		for(sProp in mAttributes){
+			if(mAttributes.hasOwnProperty(sProp)){
+				this.writeAttributeEscaped(sProp, mAttributes[sProp]);
+			}
+		}
+	}
+	
+	return this.write(bIconURI ? "></span>" : "/>");
 };

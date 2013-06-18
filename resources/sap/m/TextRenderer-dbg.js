@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides default renderer for control sap.m.Text
@@ -61,6 +61,10 @@ sap.m.TextRenderer.render = function(oRenderManager, oText) {
 	// finish writing html
 	rm.writeClasses();
 	rm.writeStyles();
+	var sTooltip = oText.getTooltip_AsString();
+	if (sTooltip) {
+		rm.writeAttributeEscaped("title", sTooltip);
+	}
 	rm.write(">");
 	rm.writeEscaped(oText.getText(), true);
 	rm.write("</span>");

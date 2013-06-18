@@ -1,3 +1,4 @@
+.theming
 fonts
 fonts/SAP-icons-Android.eot
 fonts/SAP-icons-Android.svg
@@ -9,9 +10,11 @@ fonts/SAP-icons-IOS.ttf
 fonts/SAP-icons-IOS.woff
 global.css
 library-RTL.css
+library-complete.less
 library-parameters-RTL.json
 library-parameters.json
 library.css
 library.less
+parameterClasses.css
 resources.txt
 shared.css

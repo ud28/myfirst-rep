@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
@@ -15,12 +15,18 @@ jQuery.sap.require("jquery.sap.resources");
 jQuery.sap.require("jquery.sap.script");
 jQuery.sap.require("sap.ui.Global");
 jQuery.sap.require("sap.ui.base.EventProvider");
+jQuery.sap.require("sap.ui.base.DataType");
 jQuery.sap.require("sap.ui.core.Configuration");
+jQuery.sap.require("sap.ui.core.ElementMetadata");
+jQuery.sap.require("sap.ui.core.Element");
 jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.require("sap.ui.core.FocusHandler");
 jQuery.sap.require("sap.ui.core.ResizeHandler");
 jQuery.sap.require("sap.ui.core.RenderManager");
 jQuery.sap.require("sap.ui.core.UIArea");
+jQuery.sap.require("sap.ui.core.ThemeCheck");
+jQuery.sap.require("sap.ui.core.Component");
+jQuery.sap.require("sap.ui.Device");
 
 /**
  * @class Core Class of the SAP UI Library.
@@ -44,7 +50,7 @@ jQuery.sap.require("sap.ui.core.UIArea");
  * @extends sap.ui.base.EventProvider
  * @final
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */
@@ -124,6 +130,17 @@ sap.ui.core.Core = function() {
 	this.mElements = {};
 
 	/**
+	 * Map of of created Components keyed by their id.
+	 *
+	 * Each component registers itself in its constructor and deregisters itself in its
+	 * destroy method.
+	 *
+	 * @private
+	 * TODO get rid of this collection as it represents a candidate for memory leaks
+	 */
+	this.mComponents = {};
+
+	/**
 	 * Ordered collection of initEvent listeners
 	 * Moved here (before boot()) so that the libraries can be registered for lazy load!!
 	 * @private
@@ -143,14 +160,32 @@ sap.ui.core.Core = function() {
 	 * Initialized from the global "sap-ui-config" object and from Url parameters
 	 * @private
 	 */
-	this.oConfiguration = new sap.ui.core.Configuration();
+	this.oConfiguration = new sap.ui.core.Configuration(this);
 
+	// enable complex bindings if configured
+	if ( this.oConfiguration["xx-bindingSyntax"] === "complex" ) {
+		sap.ui.base.ManagedObject.bindingParser = sap.ui.base.BindingParser.complexParser; 
+	}
+		
+	// grant ElementMetadata "friend" access to Core for registration
+	sap.ui.core.ElementMetadata.prototype.register = function(oMetadata) {
+		that.registerElementClass(oMetadata);
+	};
+	
 	// grant Element "friend" access to Core for (de-)registration
 	sap.ui.core.Element.prototype.register = function() {
 		that.registerElement(this);
 	};
 	sap.ui.core.Element.prototype.deregister = function() {
 		that.deregisterElement(this);
+	};
+
+	// grant Component "friend" access to Core for (de-)registration
+	sap.ui.core.Component.prototype.register = function() {
+		that.registerComponent(this);
+	};
+	sap.ui.core.Component.prototype.deregister = function() {
+		that.deregisterComponent(this);
 	};
 
 	// handle modules
@@ -171,6 +206,12 @@ sap.ui.core.Core = function() {
 	log.info("Declared modules: " + aModules, METHOD);
 
 	var oCfgData = window["sap-ui-config"];
+	// Configuration might have a themeRoot, if so integrate it in themeroots
+	if ( this.oConfiguration.themeRoot ) {
+		oCfgData = oCfgData || {};
+		oCfgData.themeroots = oCfgData.themeroots || {};
+		oCfgData.themeroots[this.oConfiguration.getTheme()] = this.oConfiguration.themeRoot;
+	}
 	if (oCfgData) {
 		// read themeRoots configuration
 		if (oCfgData.themeroots) {
@@ -201,100 +242,53 @@ sap.ui.core.Core = function() {
 		log.info("RTL mode activated",null,METHOD);
 	}
 
-	function calcBrowserId() {
-
-		var b = jQuery.browser,
-			ua = navigator.userAgent,
-			browserVersion = parseFloat(b.version);
-
-		// jQuery checks for user agent strings. We differentiate between browsers
-		if ( b.mozilla ) {
-			if ( ua.match(/Firefox\/(\d+\.\d+)/) ) {
-				browserVersion = parseFloat(RegExp.$1);
-				b.fVersion = browserVersion;
-				return "ff" + Math.floor(browserVersion);
-			}
-		} else if ( b.webkit ) {
-			if ( ua.match(/Chrome\/(\d+\.\d+).\d+/) ) {
-				b.chrome = true;
-				b.safari = false;
-				browserVersion = parseFloat(RegExp.$1);
-				b.fVersion = browserVersion;
-				return "cr" + browserVersion;
-			} else { // I do not know why but Safari might have an issue with ua.match(...); thus changing
-				var oExp = /Version\/(\d+\.\d+).*Safari/;
-				var oExpMobile = /Mobile/;
-				if(oExp.test(ua)) {
-					b.safari = true;
-					browserVersion = parseFloat(oExp.exec(ua)[1]);
-					b.fVersion = browserVersion;
-					b.mobile = oExpMobile.test(ua);
-					return (b.mobile ? "msf" : "sf") + Math.floor(browserVersion);
-				}
-			}
-		} else if ( b.msie ) {
-			// recognize IE8 when running in compat mode (only then the documentMode property is there)
-			if (document.documentMode) {
-				if(document.documentMode === 7) {
-					// OK, obviously we are IE and seem to be 7... but as documentMode is there this cannot be IE7!
-					log.warning("Browser running in IE7 document mode.", null, METHOD);
-					b.fVersion = 8.0;
-					return "ie8"; // how do we solve this in higher versions? Where do we get this information from?
-				}
-				b.fVersion = parseFloat(document.documentMode);
-				return "ie" + document.documentMode;
-			} else {
-				b.fVersion = browserVersion;
-				return "ie" + browserVersion;
-			}
-		}
-
-		// otherwise not recognized...
-	}
-
-	function getOS(userAgent){
-		userAgent = userAgent || navigator.userAgent;
-		var platform = /\(([a-zA-Z ]+);\s(?:[U]?[;]?)([\D]+)((?:[\d._]*))(?:.*[\)][^\d]*)([\d.]*)\s/;
-		var result = userAgent.match(platform);
-		if (result){
-			var appleDevices = /iPhone|iPad|iPod/;
-			var bbDevices = /PlayBook|BlackBerry/;
-			if (result[0].match(appleDevices)){
-				result[3] = result[3].replace(/_/g, ".");
-				//result[1] contains info of devices
-				return({"version": 'iOS'+result[3] , "css": "sap-ios"});
-			} else if (result[2].match(/Android/)) {
-				result[2] = result[2].replace(/\s/g, "");
-				return({"version": result[2]+result[3] , "css": "sap-android"});
-			} else if (result[0].match(bbDevices)) {
-				return({"version": 'bb'+result[4] , "css": "sap-bb"});
-			} else {
-				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
-				return;
-			} 
-		} else {
-			// Windows phone has a different structure, so we need to check with another regExp.
-			platform = /Windows Phone (?:OS )?([\d.]*)/;
-			result = userAgent.match(platform);
-			if (result){
-				return({"version": "winPhone"+result[1] , "css": "sap-winphone"});
-			} else {
-				return;
-			}
-		}
-	}
 
 	//set the browser for css attribute selectors. do not move this to the onload function because sf and ie do not
 	//use the classes
-	var id = calcBrowserId();
-	if ( id ) {
-		jQuery("html").attr("data-sap-ui-browser", id);
+	var $html = jQuery("html");
+	
+	var b = sap.ui.Device.browser;
+	var id = b.name;
+	
+	if(id === b.BROWSER.CHROME){
+		jQuery.browser.safari = false;
+		jQuery.browser.chrome = true;
+	}else if(id === b.BROWSER.SAFARI){
+		jQuery.browser.safari = true;
+		jQuery.browser.chrome = false;
+		if(b.mobile){
+			id = "m"+id;
+		}
+	}
+	
+	if(id){
+		jQuery.browser.fVersion = b.version;
+		jQuery.browser.mobile = b.mobile;
+		
+		id = id + Math.floor(b.version);
+		$html.attr("data-sap-ui-browser", id);
 		log.debug("Browser-Id: " + id, null, METHOD);
 	}
+	
 
-	var os = getOS();
-	if ( os ){
-		jQuery("html").attr("data-sap-ui-os", os.version).addClass(os.css);
+	$html.attr("data-sap-ui-os", sap.ui.Device.os.name + sap.ui.Device.os.versionStr);
+	var osCSS = null;
+	switch(sap.ui.Device.os.name){
+		case sap.ui.Device.os.OS.IOS:
+			osCSS = "sap-ios";
+			break;
+		case sap.ui.Device.os.OS.ANDROID:
+			osCSS = "sap-android";
+			break;
+		case sap.ui.Device.os.OS.BLACKBERRY:
+			osCSS = "sap-bb";
+			break;
+		case sap.ui.Device.os.OS.WINDOWS_PHONE:
+			osCSS = "sap-winphone";
+			break;
+	}
+	if(osCSS){
+		$html.addClass(osCSS);
 	}
 
 	//if weinre id is set, load weinre target script
@@ -339,6 +333,15 @@ sap.ui.core.Core = function() {
 		oSyncPoint1.finishTask(iCoreBootTask);
 	});
 
+	// when a boot task is configured, add it to syncpoint2
+	var fnCustomBootTask = this.oConfiguration["xx-bootTask"]; 
+	if ( fnCustomBootTask ) {
+    var iCustomBootTask = oSyncPoint2.startTask("custom boot task");
+    fnCustomBootTask( function(bSuccess) { 
+			oSyncPoint2.finishTask(iCustomBootTask, typeof bSuccess === "undefined" || bSuccess === true );
+    });
+	}
+	
 	// when the bootstrap script has finished, it calls sap.ui.getCore().boot() 
 	var iBootstrapScriptTask = oSyncPoint2.startTask("bootstrap script");
 	this.boot = function() {
@@ -375,20 +378,28 @@ sap.ui.base.Object.defineClass("sap.ui.core.Core", {
 		baseType : "sap.ui.base.EventProvider",
 		publicMethods : ["boot", "isInitialized","attachInitEvent","getRenderManager","createRenderManager",
 						 "getConfiguration", "setRoot", "createUIArea", "getUIArea", "getUIDirty", "getElementById",
-						 "getCurrentFocusedControlId", "getControl", "lock", "unlock","isLocked",
+						 "getCurrentFocusedControlId", "getControl", "getComponent", "lock", "unlock","isLocked",
 						 "attachEvent","detachEvent","applyChanges", "getEventBus",
 						 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
 						 "registerPlugin","unregisterPlugin","getLibraryResourceBundle", "byId",
-						 "getLoadedLibraries", "attachControlEvent", "detachControlEvent", "loadLibrary", "initLibrary",
-						 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile", "attachParseError", "detachParseError",
-						 "attachValidationError", "detachValidationError", "attachFormatError", "detachFormatError", "attachValidationSuccess",
-						 "detachValidationSuccess", "fireFormatError", "fireParseError", "fireValidationError", "fireValidationSuccess", "isStaticAreaRef"]
+						 "getLoadedLibraries", "loadLibrary", "initLibrary",
+						 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile", 
+						 "attachControlEvent", "detachControlEvent", 
+						 "attachParseError", "detachParseError", "fireParseError",  
+						 "attachValidationError", "detachValidationError", "fireValidationError",
+						 "attachFormatError", "detachFormatError", "fireFormatError", 
+						 "attachValidationSuccess", "detachValidationSuccess", "fireValidationSuccess",
+						 "attachLocalizationChanged", "detachLocalizationChanged", 
+						 "attachLibraryChanged", "detachLibraryChanged", 
+						 "isStaticAreaRef", "createComponent"]
 	});
+
 /**
  * Map of event names and ids, that are provided by this class
  * @private
  */
-sap.ui.core.Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged",
+sap.ui.core.Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", LocalizationChanged: "localizationChanged",
+		LibraryChanged : "libraryChanged", 
 		ValidationError : "validationError", ParseError : "parseError", FormatError : "formatError", ValidationSuccess : "validationSuccess"};
 
 /**
@@ -402,8 +413,33 @@ sap.ui.core.Core.prototype._boot = function() {
 	//do not allow any event processing until the Core is booting
 	this.lock();
 
-	// initialize the application cachebuster mechanism if configured 
-	if (this.oConfiguration.getAppCacheBuster()) {
+	// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)  
+	var aCSSLibs = this.oConfiguration['xx-preloadLibCss'];
+	if ( aCSSLibs.length > 0 ) {
+		// a leading "!" denotes that the application has loaded the file already 
+		var bAppManaged = aCSSLibs[0].slice(0,1) === "!";
+		if ( bAppManaged ) {
+			aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in this.oConfiguration!
+		}
+		if ( aCSSLibs[0] === "*" ) {
+			// replace with configured libs
+			aCSSLibs.splice(0,1); // remove *
+			var pos=0;
+			jQuery.each(this.oConfiguration.modules, function(i,mod) {
+				var m = mod.match(/^(.*)\.library$/);
+				if ( m ) {
+					aCSSLibs.splice(pos,0,m[1]);
+				}
+			});
+		}
+		if ( !bAppManaged ) {
+			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
+		}
+	}
+
+  // initialize the application cachebuster mechanism if configured 
+	var aACBConfig = this.oConfiguration.getAppCacheBuster();
+	if (aACBConfig && aACBConfig.length > 0) {
 		jQuery.sap.require("sap.ui.core.AppCacheBuster");
 	}
 
@@ -454,32 +490,54 @@ sap.ui.core.Core.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
 
 	// only apply the theme if it is different from the active one
 	if (sThemeName && this.sTheme != sThemeName) {
-		var sCurrentTheme = this.sTheme,
-			that = this;
-		// select "our" stylesheets
-		jQuery("link[id^=sap-ui-theme-]").each(function() {
-			// modify style sheet URL to point to the new theme
-			// be aware of custom css included with the colon (see includeLibraryTheme) // TODO: what is this??
-			var sLibName = this.id.substr(13); // length of "sap-ui-theme-"
-			var pos;
-			if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
-				sLibName = sLibName.substr(0, pos);
-			}
-			var sBaseUrl = that._getThemePath(sLibName, sThemeName);
-			var fileName = this.href.substr(this.href.lastIndexOf("/") + 1);
-			this.href = sBaseUrl + fileName;
-		});
+		var sCurrentTheme = this.sTheme;
+
+		this._updateThemeUrls(sThemeName);
 		this.sTheme = sThemeName;
 		this.getConfiguration()._setTheme(sThemeName);
-
+		
 		// modify the <html> tag's CSS class with the theme name
 		jQuery(document.documentElement).removeClass("sapUiTheme-" + sCurrentTheme).addClass("sapUiTheme-" + sThemeName);
 
 		// notify the listeners
-		jQuery.sap.delayedCall(500, this, "fireThemeChanged", [{theme: sThemeName}]); // TODO: only fire once we are sure the theme has been loaded. E.g. have a certain off-screen element with a width that can be derived from the theme name and is unique. And wait until the element has changed size.
+		if ( this.oThemeCheck ) {
+			this.oThemeCheck.fireThemeChangedEvent(false, true);
+		}
 	}
 };
 
+// modify style sheet URLs to point to the given theme, using the current RTL mode
+sap.ui.core.Core.prototype._updateThemeUrls = function(sThemeName) {
+	var that = this,
+	sRTL = this.oConfiguration.getRTL() ? "-RTL" : "";
+
+	// select "our" stylesheets
+	jQuery("link[id^=sap-ui-theme-]").each(function() {
+		var sLibName = this.id.slice(13), // length of "sap-ui-theme-"
+			sLibFileName = this.href.slice(this.href.lastIndexOf("/") + 1),
+			sStandardLibFilePrefix = "library", 
+			sHref,
+			pos;
+		
+		// handle 'variants'
+		if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
+			sStandardLibFilePrefix += sLibName.slice(pos+2, -1); // 2=length of "-]" 
+			sLibName = sLibName.slice(0, pos);
+		}
+		
+		// try to distinguish "our" library css from custom css included with the ':' notation in includeLibraryTheme
+		if ( sLibFileName === (sStandardLibFilePrefix + ".css") || sLibFileName === (sStandardLibFilePrefix + "-RTL.css") ) {
+			sLibFileName = sStandardLibFilePrefix + sRTL + ".css"; 
+		}
+		
+		// set new URL
+		sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName
+		if ( sHref != this.href ) {
+			this.href = sHref;
+			jQuery(this).removeAttr("sap-ui-ready");
+		}
+	});
+};
 
 /**
  * Returns the URL of the folder in which the CSS file for the given theme and the given library is located .
@@ -506,11 +564,35 @@ sap.ui.core.Core.prototype._getThemePath = function(sLibName, sThemeName) {
 
 
 /**
+ * Defines the root directory from below which UI5 should load the theme with the given name. 
+ * Optionally allows restricting the setting to parts of a theme covering specific control libraries.
  *
+ * Example:
+ * <code>
+ *   core.setThemeRoot("my_theme", "http://mythemeserver.com/allThemes");
+ *   core.applyTheme("my_theme");
+ * </code>
+ * will cause the following file to be loaded:
+ * <code>http://mythemeserver.com/allThemes/sap/ui/core/themes/my_theme/library.css</code>
+ * (and the respective files for all used control libraries, like <code>http://mythemeserver.com/allThemes/sap/ui/commons/themes/my_theme/library.css</code>
+ * if the sap.ui.commons library is used)
  *
- * @param sThemeName
- * @param aLibraryNames
- * @param sThemeBaseUrl
+ * If parts of the theme are at different locations (e.g. because you provide a standard theme like "sap_goldreflection" for a custom control library and
+ * this self-made part of the standard theme is at a different location than the UI5 resources), you can also specify for which control libraries the setting
+ * should be used, by giving an array with the names of the respective control libraries as second parameter:
+ * <code>core.setThemeRoot("sap_goldreflection", ["my.own.library"], "http://mythemeserver.com/allThemes");</code>
+ * This will cause the Gold Reflection theme to be loaded normally from the UI5 location, but the part for styling the "my.own.library" controls will be loaded from:
+ * <code>http://mythemeserver.com/allThemes/my/own/library/themes/sap_goldreflection/library.css</code>
+ *
+ * If the custom theme should be loaded initially (via bootstrap attribute), the "themeRoots" property of the window["sap-ui-config"] object must be used instead
+ * of Core.setThemeRoot(...) in order to configure the theme location early enough.
+ *
+ * @param {string} sThemeName the name of the theme for which to configure the location
+ * @param {string[]} [aLibraryNames] the optional library names to which the configuration should be restricted
+ * @param {string} sThemeBaseUrl the base URL below which the CSS file(s) will be loaded from
+ * @return {sap.ui.core.Core} the Core, to allow method chaining
+ * @since 1.10
+ * @public
  */
 sap.ui.core.Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
 	jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
@@ -521,7 +603,7 @@ sap.ui.core.Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sT
 	}
 
 	// normalize parameters
-	if (!sThemeBaseUrl) {
+	if (sThemeBaseUrl === undefined) {
 		sThemeBaseUrl = aLibraryNames;
 		aLibraryNames = undefined;
 	}
@@ -538,7 +620,8 @@ sap.ui.core.Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sT
 		// registration of theme default base URL
 		this._mThemeRoots[sThemeName] = sThemeBaseUrl;
 	}
-
+	
+	return this;
 };
 
 
@@ -562,6 +645,7 @@ sap.ui.core.Core.prototype.init = function() {
 
 	this.oFocusHandler = new sap.ui.core.FocusHandler(document.body, this);
 	this.oResizeHandler = new sap.ui.core.ResizeHandler(this);
+	this.oThemeCheck = new sap.ui.core.ThemeCheck(this);
 
 	log.info("Initialized",null,METHOD);
 
@@ -602,6 +686,8 @@ sap.ui.core.Core.prototype.init = function() {
 	}
 
 	this._rerenderAllUIAreas(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+	
+	this.oThemeCheck.fireThemeChangedEvent(true);
 };
 
 /**
@@ -768,10 +854,56 @@ sap.ui.core.Core.prototype.loadLibrary = function(sLibrary, sUrl) {
 			jQuery.sap.log.warning("library " + sLibrary + " didn't initialize itself");
 			this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
 		}
+		
+		if ( this.oThemeCheck && this.isInitialized() ) {
+			this.oThemeCheck.fireThemeChangedEvent(true);
+		}
 
 	}
 
 	return this.mLibraries[sLibrary];
+};
+
+/**
+ * Creates a component with the provided id and settings
+ *
+ * When the optional parameter <code>sUrl</code> is given, then all request for resources of the
+ * library will be redirected to the given Url. This is convenience for a call to
+ * <pre>
+ *   jQuery.sap.registerModulePath(sLibrary, sUrl);
+ * </pre>
+ *
+ * @param {string|object} sComponent name of the component to import or object containng all needed parameters
+ * @param {string} [sUrl] the URL to load the component from
+ * @param {string} [sId] the ID for the component instance
+ * @param {object} [mSettings] the settings object for the component
+ * @public
+ */
+sap.ui.core.Core.prototype.createComponent = function(sName, sUrl, sId, mSettings) {
+	// Support object parameter instead of single parameters
+	if (typeof sName == "object") {
+		var oObject = sName;
+		sName = oObject.name;
+		sUrl = oObject.url;
+		sId = oObject.id;
+		mSettings = oObject.settings;
+	}
+
+	jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+
+	if (sUrl) {
+		jQuery.sap.registerModulePath(sName, sUrl);
+	}
+	
+	var sController = sName + ".Component";
+
+	// require the component
+	jQuery.sap.require(sController);
+	var oClass = jQuery.sap.getObject(sController);
+	var oInstance = new oClass(sId, mSettings);
+	jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
+	
+	return oInstance;
 };
 
 /**
@@ -857,14 +989,19 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
 		}
 	}
 
+	// register interface types
+	sap.ui.base.DataType.registerInterfaceTypes(oLibInfo.interfaces);
+	
 	// create lazy imports for all controls and elements
 	var aElements = oLibInfo.controls.concat(oLibInfo.elements);
 	for(var i=0; i<aElements.length; i++) {
-		sap.ui.lazyRequire(aElements[i], "new extend"); // TODO don't create an 'extend' stub for final classes
+		sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
 	}
 
 	// include the library theme
-	this.includeLibraryTheme(sLibName);
+	if ( jQuery.inArray(sLibName, this.oConfiguration['xx-preloadLibCss']) < 0 ) {
+		this.includeLibraryTheme(sLibName);
+	}
 
 	// expose some legacy names
 	oLibInfo.sName = oLibInfo.name;
@@ -877,6 +1014,7 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
 		jQuery.sap.require(sLibName + ".library");
 	}
 
+	this.fireLibraryChanged({name : sLibName, stereotype : "library", operation: "add", metadata : oLibInfo});
 };
 
 /**
@@ -884,9 +1022,10 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
  * will include the variant library theme)
  * @param {string} sLibName the name of the UI library
  * @param {string} [sVariant] the variant to include (optional)
+ * @param {string} [sQuery] to be used only by the Core
  * @public
  */
-sap.ui.core.Core.prototype.includeLibraryTheme = function(sLibName, sVariant) {
+sap.ui.core.Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
 	jQuery.sap.assert(typeof sLibName === "string", "sLibName must be a string");
 	jQuery.sap.assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
 
@@ -917,7 +1056,7 @@ sap.ui.core.Core.prototype.includeLibraryTheme = function(sLibName, sVariant) {
 		}
 
 		// log and include
-		var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css";
+		var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
 		jQuery.sap.log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
 		jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
 
@@ -970,6 +1109,7 @@ sap.ui.core.Core.prototype.setRoot = function(oDomRef, oControl) {
  * @deprecated Use <code>setRoot()</code> instead!
  */
 sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
+	var that = this;
 	jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
 
 	if (!oDomRef) {
@@ -994,15 +1134,19 @@ sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
 	var sId = oDomRef.id;
 	if (!this.mUIAreas[sId]) {
 		this.mUIAreas[sId] = new sap.ui.core.UIArea(this, oDomRef);
+		// propagate Models to newly created UIArea
+		jQuery.each(this.oModels, function (sName, oModel){
+			that.mUIAreas[sId].oPropagatedProperties.oModels[sName] = oModel;
+		});
+		this.mUIAreas[sId].propagateProperties(true);
 	} else {
 		// this should solve the issue of 'recreation' of a UIArea
 		// e.g. via setRoot with a new domRef
 		this.mUIAreas[sId].setRootNode(oDomRef);
 	}
 	return this.mUIAreas[sId];
-
 };
-
+ 
 /**
  * Returns a UIArea if the given ID/Element belongs to one
  *
@@ -1010,7 +1154,7 @@ sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
  * @param {String,DomRef} o a DOM Reference or ID String of the UIArea
  * @return a UIArea with a given id or dom ref.
  * @type sap.ui.core.UIArea
- */
+ */ 
 sap.ui.core.Core.prototype.getUIArea = function(o) {
 	jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
 
@@ -1121,7 +1265,7 @@ sap.ui.core.Core.prototype.getUIDirty = function() {
 };
 
 /**
- * @name sap.ui.core.Core.prototype.UIUpdated
+ * @name sap.ui.core.Core#UIUpdated
  * @event
  * @param {string} a
  * @param {object} source
@@ -1141,7 +1285,7 @@ sap.ui.core.Core.prototype.fireUIUpdated = function(mParameters) {
 };
 
 /**
- * @name sap.ui.core.Core.prototype.ThemeChanged
+ * @name sap.ui.core.Core#ThemeChanged
  * @event
  * @param {string} a
  * @param {object} source
@@ -1176,6 +1320,156 @@ sap.ui.core.Core.prototype.fireThemeChanged = function(mParameters) {
 };
 
 /**
+ * Fired when any of the localization relevant configuration settings has changed
+ * (e.g. language, rtl, formatLocale, datePattern, timePattern, numberSymbol, legacy formats).
+ * 
+ * The parameter <code>changes</code> contains additional information about the change. 
+ * It is a plain object that can contain one or more of the following properties 
+ * <ul>
+ *   <li>language - the language setting has changed</li>
+ *   <li>rtl - the character orientation mode (aka 'LTR/RTL mode') has changed</li>
+ *   <li>formatLocale - the format locale has changed</li>
+ * </ul>
+ * (there might be other, currently undocumented settings)
+ *  
+ * The value for each property will be the new corresponding setting.
+ * 
+ * @name sap.ui.core.Core#localizationChanged
+ * @event
+ * @param {sap.ui.base.Event} oEvent
+ * @param {sap.ui.base.EventProvider} oEvent.getSource
+ * @param {object} oEvent.getParameters
+ * @param {object} oEvent.getParameters.changes a map of the changed localization properties
+ * @public
+ */
+
+/**
+ * Register a listener for the <code>localizationChanged</code> event.
+ * 
+ * @public
+ */
+sap.ui.core.Core.prototype.attachLocalizationChanged = function(fFunction, oListener) {
+	this.attachEvent(sap.ui.core.Core.M_EVENTS.LocalizationChanged, fFunction, oListener);
+};
+
+/**
+ * Unregister a listener from the <code>localizationChanged</code> event.
+ * 
+ * @public
+ */
+sap.ui.core.Core.prototype.detachLocalizationChanged = function(fFunction, oListener) {
+	this.detachEvent(sap.ui.core.Core.M_EVENTS.LocalizationChanged, fFunction, oListener);
+};
+
+/**
+ * @private
+ */
+sap.ui.core.Core.prototype.fireLocalizationChanged = function(mChanges) {
+	var that=this,
+		sEventId = sap.ui.core.Core.M_EVENTS.LocalizationChanged,
+		oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
+		fnAdapt = sap.ui.base.ManagedObject._handleLocalizationChange,
+		changedSettings = [];
+
+	jQuery.each(mChanges, function(key,value) { changedSettings.push(key); } );
+	jQuery.sap.log.info("localization settings changed: " + changedSettings.join(","), null, "sap.ui.core.Core");
+	
+	/*
+	 * Notify models that are able to handle a localization change
+	 */
+	jQuery.each(this.oModels, function(sName, oModel) {
+		if ( oModel && oModel._handleLocalizationChange ) {
+			oModel._handleLocalizationChange(); 
+		}
+	});
+
+	/*
+	 * Notify all UIAreas, Components, Elements to first update their models (phase 1) 
+	 * and then to update their bindings and corresponding data types (phase 2) 
+	 */
+	function notifyAll(iPhase) {
+		jQuery.each(this.mUIAreas, function() {
+			fnAdapt.call(this, iPhase);
+		});
+		jQuery.each(this.mComponents, function() {
+			fnAdapt.call(this, iPhase);
+		});
+		jQuery.each(this.mElements, function() {
+			fnAdapt.call(this, iPhase);
+		});
+	}
+	
+	notifyAll.call(this,1);
+	notifyAll.call(this,2);
+	
+	// special handling for changes of the RTL mode
+	if ( mChanges.rtl != undefined ) {
+		// update the dir attribute of the document
+		jQuery(document.documentElement).attr("dir", mChanges.rtl ? "rtl" : "ltr");
+		// modify style sheet URLs
+		this._updateThemeUrls(this.sTheme);
+		// invalidate all UIAreas
+		jQuery.each(this.mUIAreas, function() {
+			this.invalidate();
+		});
+		jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
+	}
+
+	// notify Elements via a pseudo browser event (onLocalizationChanged)
+	jQuery.each(this.mElements, function(sId, oElement) {
+		this._handleEvent(oBrowserEvent);
+	});
+
+	// notify registered Core listeners 
+	this.fireEvent(sEventId, {changes : mChanges});
+};
+
+/**
+ * Fired when the set of controls, elements etc. for a library has changed
+ * or when the set of libraries has changed.
+ * 
+ * Note: while the parameters of this event could already describe <i>any</i> type of change,
+ * the set of reported changes is currently restricted to the addition of libraries, 
+ * controls and elements. Future implementations might extend the set of reported 
+ * changes. Therefore applications should already check the operation and stereotype 
+ * parameters.
+ * 
+ * @name sap.ui.core.Core#libraryChanged
+ * @event
+ * @param {sap.ui.base.Event} oEvent
+ * @param {sap.ui.base.EventProvider} oEvent.getSource
+ * @param {object} oEvent.getParameters
+ * @param {string} oEvent.getParameters.name name of the newly added entity
+ * @param {string} [oEvent.getParameters.stereotype] stereotype of the newly added entity type ("control", "element")
+ * @param {string} [oEvent.getParameters.operation] type of operation ("add")
+ * @param {sap.ui.base.Metadata|object} [oEvent.getParameters.metadata] metadata for the added entity type. 
+ *         Either an instance of sap.ui.core.ElementMetadata if it is a Control or Element, or a library info object
+ *         if it is a library. Note that the API of all metadata objects is not public yet and might change. 
+ */
+
+/**
+ * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
+ */
+sap.ui.core.Core.prototype.attachLibraryChanged = function(fFunction, oListener) {
+	this.attachEvent(sap.ui.core.Core.M_EVENTS.LibraryChanged, fFunction, oListener);
+};
+
+/**
+ * Unregister a listener from the {@link sap.ui.core.Core#event:libraryChanged} event.
+ */
+sap.ui.core.Core.prototype.detachLibraryChanged = function(fFunction, oListener) {
+	this.detachEvent(sap.ui.core.Core.M_EVENTS.LibraryChanged, fFunction, oListener);
+};
+
+/**
+ * @private
+ */
+sap.ui.core.Core.prototype.fireLibraryChanged = function(oParams) {
+	// notify registered Core listeners 
+	this.fireEvent(sap.ui.core.Core.M_EVENTS.LibraryChanged, oParams);
+};
+
+/**
  * Enforces an immediate update of the visible UI (aka "rendering").
  *
  * In general, applications should avoid calling this method and
@@ -1184,6 +1478,44 @@ sap.ui.core.Core.prototype.fireThemeChanged = function(mParameters) {
  */
 sap.ui.core.Core.prototype.applyChanges = function() {
 	this._rerenderAllUIAreas();
+};
+
+/**
+ * @private
+ */
+sap.ui.core.Core.prototype.registerElementClass = function(oMetadata) {
+	var sName = oMetadata.getName(),
+		sLibraryName = oMetadata.getLibraryName() || "",
+		oLibrary = this.mLibraries[sLibraryName],
+		bControl = sap.ui.core.Control.prototype.isPrototypeOf(oMetadata.getClass().prototype),
+		bChanged = false;
+	
+	if ( !oLibrary ) {
+		oLibrary = this.mLibraries[sLibraryName] = {
+			dependencies : [],
+			types : [],
+			interfaces : [],
+			controls: [],
+			elements : []
+		}
+	}
+	
+	if ( bControl ) {
+		if ( jQuery.inArray(sName, oLibrary.controls) < 0 ) {
+			oLibrary.controls.push(sName);
+			bChanged=true;
+		}
+	} else {
+		if ( jQuery.inArray(sName, oLibrary.elements) < 0 ) {
+			oLibrary.elements.push(sName);
+			bChanged=true;
+		}
+	}
+	
+	if ( bChanged ) {
+		jQuery.sap.log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
+		this.fireLibraryChanged({name : oMetadata.getName(), stereotype : oMetadata.getStereotype(), operation: "add", metadata : oMetadata});
+	}
 };
 
 /**
@@ -1214,6 +1546,31 @@ sap.ui.core.Core.prototype.registerElement = function(oElement) {
 sap.ui.core.Core.prototype.deregisterElement = function(oElement) {
 	delete this.mElements[oElement.getId()];
 };
+
+/**
+ * Registers the given component. Must be called once during construction.
+ * @param {sap.ui.core.Component} oComponent
+ * @private
+ */
+sap.ui.core.Core.prototype.registerComponent = function(oComponent) {
+	var oldComponent = this.getComponent(oComponent.getId());
+	if ( oldComponent && oldComponent !== oComponent ) {
+		jQuery.sap.log.error("adding component with duplicate id '" + oComponent.getId() + "'");
+		throw new Error("Error: adding component with duplicate id '" + oComponent.getId() + "'");
+	}
+
+	this.mComponents[oComponent.getId()] = oComponent;
+};
+
+/**
+ * Deregisters the given Component. Must be called once during destruction.
+ * @param {sap.ui.core.Component} oComponent
+ * @private
+ */
+sap.ui.core.Core.prototype.deregisterComponent = function(oComponent) {
+	delete this.mComponents[oComponent.getId()];
+};
+
 
 /**
  * Returns the registered element for the given id, if any.
@@ -1289,6 +1646,17 @@ sap.ui.core.Core.prototype.getControl = sap.ui.core.Core.prototype.byId;
 sap.ui.core.Core.prototype.getElementById = sap.ui.core.Core.prototype.byId;
 
 /**
+ * Returns the registered component for the given id, if any.
+ * @param {string} sId
+ * @return {sap.ui.core.Component} the component for the given id
+ * @public
+ */
+sap.ui.core.Core.prototype.getComponent = function(sId) {
+	jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
+	return sId == null ? undefined : this.mComponents[sId];
+};
+
+/**
  * Returns the static, hidden area reference belonging to this core instance.<br/> It can be used e.g. for hiding
  * elements like Popups, Shadow, Blocklayer etc.<br/> If it is not yet available, creates one HTML element and attaches
  * it to the body.
@@ -1332,7 +1700,7 @@ sap.ui.core.Core.prototype.isStaticAreaRef = function(oDomRef) {
  * @public
  */
 sap.ui.core.Core.prototype.attachControlEvent = function(fFunction, oListener) {
-	this.attachEvent(sap.ui.core.UIArea.M_EVENTS.ControlEvent, fFunction, oListener);
+	this.attachEvent(sap.ui.core.Core.M_EVENTS.ControlEvent, fFunction, oListener);
 };
 
 /**
@@ -1342,7 +1710,7 @@ sap.ui.core.Core.prototype.attachControlEvent = function(fFunction, oListener) {
  * @public
  */
 sap.ui.core.Core.prototype.detachControlEvent = function(fFunction, oListener) {
-	this.detachEvent(sap.ui.core.UIArea.M_EVENTS.ControlEvent, fFunction, oListener);
+	this.detachEvent(sap.ui.core.Core.M_EVENTS.ControlEvent, fFunction, oListener);
 };
 
 /**
@@ -1351,7 +1719,7 @@ sap.ui.core.Core.prototype.detachControlEvent = function(fFunction, oListener) {
  * @private
  */
 sap.ui.core.Core.prototype.fireControlEvent = function(mParameters) {
-	this.fireEvent(sap.ui.core.UIArea.M_EVENTS.ControlEvent, mParameters);
+	this.fireEvent(sap.ui.core.Core.M_EVENTS.ControlEvent, mParameters);
 };
 
 /**
@@ -1475,27 +1843,56 @@ sap.ui.core.Core.prototype.stopPlugins = function() {
 };
 
 /**
- * Set the model for databinding
- * @param {sap.ui.model.Model} oModel
- * @param {string} [sName]
+ * Sets or unsets a model for the given model name. 
+ * 
+ * The <code>sName</code> must either be <code>undefined</code> (or omitted) or a non-empty string.
+ * When the name is omitted, the default model is set/unset. 
+ * 
+ * When <code>oModel</code> is <code>null</code> or <code>undefined</code>, a previously set model 
+ * with that name is removed from the Core.
+ *  
+ * Any change (new model, removed model) is propagated to all existing UIAreas and their descendants
+ * as long as a descendant doesn't have its own model set for the given name.
+ * 
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ *  
+ * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
+ * @param {string} [sName] the name of the model or <code>undefined</code>
+ * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
  * @public
  */
 sap.ui.core.Core.prototype.setModel = function(oModel, sName) {
-	jQuery.sap.assert(typeof oModel === "object", "oModel must be an object");
+	jQuery.sap.assert(typeof oModel === "object" || !oModel, "oModel must be an object or undefined");
 	jQuery.sap.assert(sName === undefined || typeof sName === "string", "sName must be a string or omitted");
-
-	this.oModels[sName] = oModel;
-
-	// notify all UI areas to update their bindings
-	jQuery.each(this.mUIAreas, function (i, oUIArea){
-		oUIArea.updateBindings(sName);
-	});
-
+	if (!oModel && this.oModels[sName]) {
+		delete this.oModels[sName];
+		// propagate Models to all UI areas 
+		jQuery.each(this.mUIAreas, function (i, oUIArea){
+			delete oUIArea.oPropagatedProperties.oModels[sName];
+			oUIArea.propagateProperties(sName);
+		});
+	} else if (oModel && oModel !== this.oModels[sName] ) { 
+		this.oModels[sName] = oModel;
+		// propagate Models to all UI areas 
+		jQuery.each(this.mUIAreas, function (i, oUIArea){
+			oUIArea.oPropagatedProperties.oModels[sName] = oModel;
+			oUIArea.propagateProperties(sName);
+		});
+	} else {
+		// nothing to do
+	}  
 };
 
 /**
- * Get the model for databinding
- * @param {string} [sName]
+ * Get the model with the given model name.
+ * 
+ * The name can be omitted to reference the default model or it must be a non-empty string.
+ * 
+ * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
+ * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name. 
+ * 
+ * @param {string|undefined} [sName] name of the model to be retrieved
  * @return {sap.ui.model.Model} oModel
  * @public
  */
@@ -1833,7 +2230,7 @@ sap.ui.core.Core.prototype.fireValidationSuccess = function(mArguments) {
  * @public
  */
 sap.ui.core.Core.prototype.isMobile = function() {
-	return !!window.orientation;
+	return jQuery.browser.mobile;
 };
 
 /**

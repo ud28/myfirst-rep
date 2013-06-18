@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.core.ResizeHandler
@@ -130,8 +130,9 @@ jQuery.sap.require("jquery.sap.script");
 		jQuery.each(this.aResizeListeners, function(index, oResizeListener){
 			if(oResizeListener){
 				var oDomRef = oResizeListener.oDomRef;
-				if (oDomRef.offsetWidth != oResizeListener.iWidth ||
-						oDomRef.offsetHeight != oResizeListener.iHeight) {
+				if ( jQuery.contains(document.documentElement, oDomRef) && //check that domref is still active 
+						(oDomRef.offsetWidth != oResizeListener.iWidth ||
+						oDomRef.offsetHeight != oResizeListener.iHeight)) {
 					oResizeListener.iWidth = oDomRef.offsetWidth;
 					oResizeListener.iHeight = oDomRef.offsetHeight;
 					var oEvent = jQuery.Event("resize");

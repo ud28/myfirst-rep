@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -35,7 +35,9 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
  * <li>{@link #getShowPageIndicator showPageIndicator} : boolean (default: true)</li>
- * <li>{@link #getPageIndicatorPlacement pageIndicatorPlacement} : sap.m.PlacementType (default: sap.m.PlacementType.Bottom)</li></ul>
+ * <li>{@link #getPageIndicatorPlacement pageIndicatorPlacement} : sap.m.PlacementType (default: sap.m.PlacementType.Bottom)</li>
+ * <li>{@link #getShowBusyIndicator showBusyIndicator} : boolean (default: true)</li>
+ * <li>{@link #getBusyIndicatorSize busyIndicatorSize} : sap.ui.core.CSSSize (default: '6em')</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -69,7 +71,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -91,7 +93,9 @@ sap.ui.core.Control.extend("sap.m.Carousel", { metadata : {
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 		"showPageIndicator" : {type : "boolean", group : "Appearance", defaultValue : true},
-		"pageIndicatorPlacement" : {type : "sap.m.PlacementType", group : "Behavior", defaultValue : sap.m.PlacementType.Bottom}
+		"pageIndicatorPlacement" : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : sap.m.PlacementType.Bottom},
+		"showBusyIndicator" : {type : "boolean", group : "Appearance", defaultValue : true},
+		"busyIndicatorSize" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '6em'}
 	},
 	defaultAggregation : "pages",
 	aggregations : {
@@ -139,7 +143,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Setter for property <code>height</code>.
  *
@@ -151,6 +154,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#setHeight
  * @function
  */
+
 
 /**
  * Getter for property <code>loop</code>.
@@ -164,7 +168,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Setter for property <code>loop</code>.
  *
@@ -176,6 +179,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#setLoop
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -189,7 +193,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -201,6 +204,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -214,7 +218,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -226,6 +229,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>showPageIndicator</code>.
@@ -239,7 +243,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Setter for property <code>showPageIndicator</code>.
  *
@@ -251,6 +254,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#setShowPageIndicator
  * @function
  */
+
 
 /**
  * Getter for property <code>pageIndicatorPlacement</code>.
@@ -264,7 +268,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Setter for property <code>pageIndicatorPlacement</code>.
  *
@@ -276,7 +279,58 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#setPageIndicatorPlacement
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>showBusyIndicator</code>.
+ * Show or hide a busy indicator in the carousel when loading pages after swipe. These busy indicators are part of the can be swiped as well: they do not block the carousel.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>showBusyIndicator</code>
+ * @public
+ * @name sap.m.Carousel#getShowBusyIndicator
+ * @function
+ */
+
+/**
+ * Setter for property <code>showBusyIndicator</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bShowBusyIndicator  new value for property <code>showBusyIndicator</code>
+ * @return {sap.m.Carousel} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Carousel#setShowBusyIndicator
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>busyIndicatorSize</code>.
+ * Size of the busy indicators which can be displayed in the carousel, when loading pages after swipe.
+ *
+ * Default value is <code>6em</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>busyIndicatorSize</code>
+ * @public
+ * @name sap.m.Carousel#getBusyIndicatorSize
+ * @function
+ */
+
+/**
+ * Setter for property <code>busyIndicatorSize</code>.
+ *
+ * Default value is <code>6em</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sBusyIndicatorSize  new value for property <code>busyIndicatorSize</code>
+ * @return {sap.m.Carousel} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Carousel#setBusyIndicatorSize
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>pages</code>.<br/>
  * The content entities between which this Carousel navigates.
@@ -286,6 +340,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#getPages
  * @function
  */
+
 
 /**
  * Inserts a page into the aggregation named <code>pages</code>.
@@ -303,7 +358,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Adds some page <code>oPage</code> 
  * to the aggregation named <code>pages</code>.
@@ -316,7 +370,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Removes an page from the aggregation named <code>pages</code>.
  *
@@ -327,7 +380,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>pages</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -336,7 +388,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#removeAllPages
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>pages</code> 
@@ -349,7 +400,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#indexOfPage
  * @function
  */
-
+	
 
 /**
  * Destroys all the pages in the aggregation 
@@ -360,6 +411,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
+
 /**
  * Provides getter and setter for the currently displayed page. For the setter, argument may be the control itself, which must be member of the carousel's page list, or the control's id.
  * The getter will return the control id
@@ -369,7 +421,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#getActivePage
  * @function
  */
-
 
 /**
  * Provides getter and setter for the currently displayed page. For the setter, argument may be the control itself, which must be member of the carousel's page list, or the control's id.
@@ -384,6 +435,8 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
+
+	
 /**
  * Carousel requires a new page to be loaded. This event may be used to fill the content of that page 
  *
@@ -417,7 +470,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'loadPage' event of this <code>sap.m.Carousel</code>.<br/>
  *
@@ -433,7 +485,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Fire event loadPage to attached listeners.
  * 
@@ -448,6 +499,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#fireLoadPage
  * @function
  */
+
 
 /**
  * Carousel does not display a page any longer and unloads it. This event may be used to clean up the content of that page. 
@@ -482,7 +534,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'unloadPage' event of this <code>sap.m.Carousel</code>.<br/>
  *
@@ -498,7 +549,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Fire event unloadPage to attached listeners.
  * 
@@ -513,6 +563,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#fireUnloadPage
  * @function
  */
+
 
 /**
  * This event is thrown after a carousel swipe has been completed. It is triggered both by physical swipe events and through API carousel manipulations such as calling 'next', 'previous' or 'setActivePageId' functions. 
@@ -548,7 +599,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'pageChanged' event of this <code>sap.m.Carousel</code>.<br/>
  *
@@ -563,7 +613,6 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#detachPageChanged
  * @function
  */
-
 
 /**
  * Fire event pageChanged to attached listeners.
@@ -580,6 +629,7 @@ sap.m.Carousel.M_EVENTS = {'loadPage':'loadPage','unloadPage':'unloadPage','page
  * @name sap.m.Carousel#firePageChanged
  * @function
  */
+
 
 /**
  * Call this method to display the next page (corresponds to a swipe right). Returns 'this' for method chaining.
@@ -612,8 +662,6 @@ jQuery.sap.require("sap.ui.thirdparty.swipe-view");
  * @private
  */
 sap.m.Carousel.prototype.init = function() {
-	this.orientationProxy = jQuery.proxy(this._handleOrientationChange, this);
-	jQuery(window).bind("orientationchange", this.orientationProxy);
 };
 
 /**
@@ -622,9 +670,6 @@ sap.m.Carousel.prototype.init = function() {
  * @private
  */
 sap.m.Carousel.prototype.exit = function() {
-	if(this.orientationProxy) {
-		jQuery(window).unbind("orientationchange", this.orientationProxy);
-	}
 	if(!!this._oSwipeView) {
 		this._oSwipeView.destroy();
 	}
@@ -635,12 +680,17 @@ sap.m.Carousel.prototype.exit = function() {
 		this._nextButton.destroy();
 	}
 	if(this._aBusyIndicators) {
-		for (var i=0; i<3; i++) {
+		var i;
+		for (i=0; i<3; i++) {
 			this._aBusyIndicators[i].destroy();
 		}
 	}
 	this._cleanUpTapBindings();
-	this.destroy();
+	
+	if (this._sResizeListenerId) {
+		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+		this._sResizeListenerId = null;
+	}
 };
 
 /**
@@ -657,7 +707,7 @@ sap.m.Carousel.prototype._cleanUpTapBindings = function() {
 		jQuery.sap.byId(this._getNextBtnId()).unbind("tap", this.nextProxy);
 		delete this.nextProxy;
 	}
-}
+};
 
 /**
  * Cleans up bindings of 'previous' and 'next' button
@@ -673,7 +723,7 @@ sap.m.Carousel.prototype._createTapBindings = function() {
 		this.nextProxy = jQuery.proxy(this.next, this);
 		jQuery.sap.byId(this._getNextBtnId()).bind("tap", this.nextProxy);
 	}
-}
+};
 
 
 /**
@@ -683,6 +733,11 @@ sap.m.Carousel.prototype._createTapBindings = function() {
  */
 sap.m.Carousel.prototype.onBeforeRendering = function() {
 	this._cleanUpTapBindings();
+	
+	if (this._sResizeListenerId) {
+		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+		this._sResizeListenerId = null;
+	}
 };
 
 /**
@@ -694,52 +749,52 @@ sap.m.Carousel.prototype.onBeforeRendering = function() {
  */
 sap.m.Carousel.prototype.onAfterRendering = function() {	
 	
+	var oScrollParent = jQuery.sap.byId(this.getId()).parent('.sapMPageScroll');
+	if(oScrollParent.length > 0) {
+		oScrollParent.css('height', '100%');
+		jQuery.sap.log.warning(false, "sap.m.Carousel.onAfterRendering: carousel is contained in scroll container. Changed its height to 100%");
+	}
+	
 	var pageList = this.getPages();
+	var contentDomRef = jQuery.sap.domById(this._getContentId());
 	
 	if(!this._oSwipeView) {
-		var domRef = jQuery.sap.domById(this._getContentId());
 		
 		if(!this.getActivePage() && pageList.length > 0) {
 			//initialize active page id
 			this.setActivePage(pageList[0].getId());
 		}
 		
-		this._oSwipeView = new window.SwipeView(domRef, 
+		this._oSwipeView = new window.SwipeView(contentDomRef, 
 			{	numberOfPages : pageList.length,
-				loop: this.getLoop(),
+				loop: this.getLoop()
 			});
+		
+		
 		//remove touch listeners because carousel will delegate
 		//corresponding events (see carousel's'ontouchstart', ontouchmove', ontouchend' functions)
 		var aTEvts = ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mousemove', 'mouseup'];
-		for (var i = 0; i < aTEvts.length; i++) {
-			domRef.removeEventListener(aTEvts[i], this._oSwipeView, false);
+		var i;
+		for (i = 0; i < aTEvts.length; i++) {
+			contentDomRef.removeEventListener(aTEvts[i], this._oSwipeView, false);
 		}
 		//add css class to manipulate slider's properties
-		jQuery(this._oSwipeView.slider).css("-webkit-transition-timing-function", "cubic-bezier(0.31, 0.385, 0.585, 1.0)");
+		var sCubicBezier = "cubic-bezier(0.33, 0.66, 0.66, 1)";
+		jQuery(this._oSwipeView.slider)
+			.css("-webkit-transition-timing-function", sCubicBezier)
+			.css("transition-timing-function", sCubicBezier);
 		
 		this._oSwipeView.fnLoadingCallback = jQuery.proxy( this._toggleBusyIcon, this);
 		this._oSwipeView.onFlip(jQuery.proxy( this._doSwipeCompleted, this));
 		this._oSwipeView.onMoveOut(jQuery.proxy( this._doSwipeStarted, this));
 		this._oSwipeView.onMoveIn(jQuery.proxy( this._doMoveIn, this));
+		this._oSwipeView.updatePageCount(this.getPages().length);
 		
 		this._aMasterPageDivs = [];
 		this._aBusyIndicators = [];
 		
 		
-		var rm = sap.ui.getCore().createRenderManager();
-		for (var i=0; i<3; i++) {
-			var ithContId = this._getContentId() + "-MstPgCont-" + i;
-			rm.write("<div id='" + ithContId +"' class='sapMCrslContMstPag'></div>");
-			this._aBusyIndicators[i] = new sap.m.BusyIndicator({size: '6em'});
-			var $ithMasterPage = jQuery.sap.domById(this._oSwipeView.masterPages[i].id);
-			rm.renderControl(this._aBusyIndicators[i]);
-			rm.flush($ithMasterPage, false);
-			
-			this._aMasterPageDivs[i] = jQuery.sap.byId(ithContId);
-			//add css class to center busy indicator
-			this._aBusyIndicators[i].$().addClass("sapMCrslContMstPag");
-		}
-		rm.destroy();
+		this._rerenderBusinessIndicators(true);
 		
 		if(!this._moveToActivePage()){
 			//this means that initial page has not changed. Since this
@@ -762,10 +817,15 @@ sap.m.Carousel.prototype.onAfterRendering = function() {
 		
 		this._doSwipeCompleted(null, true);
 	}
-	
-	
+
 	//Add tap events to 'Previous' and 'Next' div
 	this._createTapBindings();
+	
+	//listen to resize events
+	if(!!contentDomRef /*May be null if carousel is invisible*/) {
+		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(contentDomRef,  jQuery.proxy(this._handleResize, this));
+	}
+	
 };
 
 
@@ -777,6 +837,12 @@ sap.m.Carousel.prototype.onAfterRendering = function() {
 sap.m.Carousel.prototype.ontouchstart = function(oEvent) {
 	//for controls which need to know if they should handle events from the Carousel control
 	if(this._oSwipeView) {
+		var oElement = jQuery(oEvent.target).control(0);
+		if(!(oElement instanceof sap.m.Slider || oElement instanceof sap.m.Switch)) {
+			//Make sure that swipe is executed for all controls except slider
+			//and Switch, which themselves require horizontal swiping
+			oEvent.originalEvent._sapui_handledByControl = false;
+		}
 		this._oSwipeView.__start(oEvent);
 	}
 	oEvent.originalEvent._sapui_handledByControl = true;
@@ -802,6 +868,7 @@ sap.m.Carousel.prototype.ontouchmove = function(oEvent) {
 sap.m.Carousel.prototype.ontouchend = function(oEvent) {
 	if(this._oSwipeView) {
 		this._oSwipeView.__end(oEvent);
+		this._updateActivePage();
 	}
 };
 
@@ -821,7 +888,13 @@ sap.m.Carousel.prototype.setActivePage = function (oPage) {
 	
 	if(oPageId) {
 		this.setAssociation("activePage", oPageId, true);
-		this._moveToActivePage();
+		var iPageNr = this._getPageNumber(oPageId);
+		
+		if(!isNaN(iPageNr)) {
+			if(!!this._oSwipeView) {
+				this._oSwipeView.goToPage(iPageNr);
+			}
+		} 
 	} else {
 		jQuery.sap.assert(false, "sap.m.Carousel.prototype.setActivePage: Cannot set active page '" + 
 				oPage + "' because it is neither of type 'string' nor a *sap.ui.core.Control'");
@@ -835,12 +908,27 @@ sap.m.Carousel.prototype.setActivePage = function (oPage) {
  * displayed in the carousel or to to insert a control at a certain 
  * position into the list of pages.
  * 
+ * If the page has already been added, an error message is written 
+ * into the log and nothing is done.
+ * 
  * @param oPage page which is added to the list of pages to be 
  *		displayed in the carousel
  * @param iIndex position at which oPage shall be added
  */	
 sap.m.Carousel.prototype._addPage = function(oPage, iIndex) {
-
+	//Check if page has already been added
+	if(jQuery.sap.byId(oPage.getId()).length > 0) {
+		jQuery.sap.assert(false, "sap.m.Carousel.prototype._addPage: Cannot add page '" + 
+				oPage.getId() + "' because it already has been added. Please remove that page from DOM before adding it to carousel'");
+		return;
+	}
+	
+	//Add a css class to views, to make sure they are visible. 
+	//There have been issues when the view contains a page
+	if(oPage instanceof sap.ui.core.mvc.View) {
+		oPage.addStyleClass("sapMCarView");
+	}
+	
 	//Re-render only if there are no pages currently
 	//(in this case there is no dom entry available)
 	var bDoRerender = this.getPages().length == 0; 
@@ -861,8 +949,10 @@ sap.m.Carousel.prototype._addPage = function(oPage, iIndex) {
 				//removed page may be displayed already. To make sure
 				//that this does not cause problems, We will refill all 
 				//master pages' content
-				for (var i=0; i<3; i++) {
-					var ithContId = this._getContentId() + "-MstPgCont-" + i;
+				var ithContId;
+				var i;
+				for (i=0; i<3; i++) {
+					ithContId = this._getContentId() + "-MstPgCont-" + i;
 					jQuery.sap.byId(ithContId).empty();
 				}
 			}
@@ -915,14 +1005,15 @@ sap.m.Carousel.prototype.insertPage = function(oPage, iIndex) {
  * @return sap.m.Carousel the Carousel instance for method chaining 
  */	
 sap.m.Carousel.prototype._removePages = function(bAll, bDestroy, oPage) {
+	var result = this;
 	if(bAll) {
 		if(bDestroy) {
 			this.destroyAggregation("pages", true);
 		} else {
-			this.removeAllAggregation("pages", true);
+			result = this.removeAllAggregation("pages", true);
 		}
-	} else if (!!oPage) {
-		this.removeAggregation("pages", oPage, true);
+	} else {
+		result = this.removeAggregation("pages", oPage, true);
 	}
 	//re-render if swipe view instance is already present
 	if(!!this._oSwipeView) {
@@ -934,8 +1025,10 @@ sap.m.Carousel.prototype._removePages = function(bAll, bDestroy, oPage) {
 		//Removed page may be displayed already. To make sure
 		//that this does not cause problems, We will refill all 
 		//master pages' content
-		for (var i=0; i<3; i++) {
-			var ithContId = this._getContentId() + "-MstPgCont-" + i;
+		var ithContId;
+		var i;
+		for (i=0; i<3; i++) {
+			ithContId = this._getContentId() + "-MstPgCont-" + i;
 			jQuery.sap.byId(ithContId).empty();
 		}
 		
@@ -943,8 +1036,8 @@ sap.m.Carousel.prototype._removePages = function(bAll, bDestroy, oPage) {
 		//in swipe-view's master pages
 		this._oSwipeView.goToPage(this._oSwipeView.page);
 	}
-	return this;
-}
+	return result;
+};
 
 /**
  * API method to remove a control from the list of pages which is 
@@ -952,7 +1045,7 @@ sap.m.Carousel.prototype._removePages = function(bAll, bDestroy, oPage) {
  * 
  * @param oPage page which shall be removed from the list of pages to be 
  *		displayed in the carousel
- * @return sap.m.Carousel the Carousel instance for method chaining 
+ * @return the removed page or null
  * @public
  */	
 sap.m.Carousel.prototype.removePage = function(oPage) {
@@ -966,7 +1059,7 @@ sap.m.Carousel.prototype.removePage = function(oPage) {
  * 
  * @param oPage page which shall be removed from the list of pages to be 
  *		displayed in the carousel
- * @return sap.m.Carousel the Carousel instance for method chaining 
+ * @return an array of the removed pages (might be empty)
  * @public
  */	
 sap.m.Carousel.prototype.removeAllPages = function() {
@@ -1068,7 +1161,7 @@ sap.m.Carousel.prototype.setLoop = function(bLoop) {
 /**
  * API method to set whether the carousel should display the page indicator
  *
- * @param bLoop the new loop property
+ * @param bShowPageIndicator the new show property
  * @public
  */
 sap.m.Carousel.prototype.setShowPageIndicator = function(bShowPageIndicator) {
@@ -1085,6 +1178,35 @@ sap.m.Carousel.prototype.setShowPageIndicator = function(bShowPageIndicator) {
 	
 	//do suppress rerendering
 	this.setProperty("showPageIndicator", bShowPageIndicator, true);
+	return this;
+};
+
+/**
+ * API method to set whether the carousel should display the busy indicators
+ *
+ * @param bShowBusyIndicator the new loop property
+ * @public
+ */
+sap.m.Carousel.prototype.setShowBusyIndicator = function(bShowBusyIndicator) {
+	//do suppress rerendering
+	this.setProperty("showBusyIndicator", bShowBusyIndicator, true);
+	this._rerenderBusinessIndicators(false);
+	
+	
+	return this;
+};
+
+/**
+ * API method to set whether the carousel's busy indicator's.
+ *
+ * @param sBusyIndicatorSize thet new size. Should be a CSS size, for example '1em' or '24px'.
+ * @public
+ */
+sap.m.Carousel.prototype.setBusyIndicatorSize = function(sBusyIndicatorSize) {
+	//do suppress rerendering
+	this.setProperty("busyIndicatorSize", sBusyIndicatorSize, true);
+	this._rerenderBusinessIndicators(false);
+	
 	return this;
 };
 
@@ -1120,6 +1242,44 @@ sap.m.Carousel.prototype.next = function () {
 sap.m.Carousel.prototype._doSwipeStarted = function () {
 	
 	this._oSwipeView.initialSizeCheck();
+	
+	var pageList = this.getPages();
+	var activePageNr = this._oSwipeView.pageIndex;
+	//counter in 'for'-loop
+	var i;
+	
+	//show neighboring pages are visible, when the swipe starts, except....
+	if(pageList.length > 0) {
+		var ithCurrentNr;
+		for (i=0; i<3; i++) {
+			
+			ithCurrentNr = parseInt(this._oSwipeView.masterPages[i].dataset.pageIndex, 10);
+			
+			if(i != this._oSwipeView.currentMasterPage) {
+				//...except for the previous page of the first page and
+				//the next page of the last page, if carousel is not looping
+				if(!this.getLoop()) {
+					if(pageList.length > 2) {
+						if((activePageNr == 0 && ithCurrentNr == pageList.length -1) || 
+								(activePageNr == pageList.length -1 && ithCurrentNr == 0)) {
+							//This way of CSS style manipulation does not comply with our code conventions
+							//It is used though, because it is how it's done in the underlying swipe-view.js
+							//which I prefer, not to adapt as well.
+							this._oSwipeView.masterPages[i].style.visibility = 'hidden';
+						}
+					} else {
+						this._toggleBusyIcon(i, false);
+					}
+				} else {
+					if(pageList.length < 3) {
+						this._toggleBusyIcon(i, false);
+					}
+				}
+			}
+		}
+	}
+	
+	
 	
 	//Make sure the visual indicator is updated when pages 
 	//are flipped quickly
@@ -1157,6 +1317,7 @@ sap.m.Carousel.prototype._doMoveIn = function () {
 sap.m.Carousel.prototype._doSwipeCompleted = function (oEvent, bInitialLoad) {
 	var upcoming, i;
 	var pageList = this.getPages();
+	
 	if(pageList.length == 0) {
 		return;
 	}
@@ -1218,34 +1379,38 @@ sap.m.Carousel.prototype._doSwipeCompleted = function (oEvent, bInitialLoad) {
 				// be added again somewhere else
 				jQuery(pageList[upcoming].getDomRef()).remove();
 			}
+			
 			rm.renderControl(pageList[upcoming]);
 			rm.flush(jQuery.sap.domById(this._getContentId() + "-MstPgCont-" + i ), false);
 			
 			//Event is fired before rendering of new page takes place to let clients
 			//prepare these pages
 			this.fireLoadPage({pageId: pageList[upcoming].getId()});
+			
 		} 
 		var $ithMasterPage = jQuery(this._oSwipeView.masterPages[i]);
 		//Page is loaded, remove busy indicator
-		$ithMasterPage.removeClass("swipeview-loading");
-		this._toggleBusyIcon(i, false);
+		if($ithMasterPage.hasClass("swipeview-loading") || bInitialLoad) {
+			$ithMasterPage.removeClass("swipeview-loading");
+			this._toggleBusyIcon(i, false);
+		}
 		
 		//Make sure that swipe-view pointer to current page is
 		//up to date. This may sometimes not be the case, especially after
 		//hasty page flips
 		if($ithMasterPage.hasClass("swipeview-active")) {
-			//This is where we 
 			this._oSwipeView.pageIndex = upcoming; 
 			//Also make sure that the master page is not hidden
 			//Using same coding style as in swipe-view-js here
-			this._oSwipeView.masterPages[i].style.visibility = '';
-		}
+			if(bInitialLoad) {
+				this._oSwipeView.masterPages[i].style.visibility = '';
+			}
+		} 
 	}
 	
 	this._updatePageWidths();
 	
 	//this updates the active page member and the visual indicator
-	this._updateActivePage();
 	if(!bInitialLoad) {
 		for(i=0; i<3; i++) {
 			if(!isNaN(aDeletedPages[i]) && !!pageList[aDeletedPages[i]]) {
@@ -1256,7 +1421,9 @@ sap.m.Carousel.prototype._doSwipeCompleted = function (oEvent, bInitialLoad) {
 				pageList[aDeletedPages[i]]._handleEvent(oEvent);
 			}
 		}
-	}
+	} 
+	this._updateActivePage();
+	
 	
 	
 	//Delayed call to make sure, any pending rendering is completed
@@ -1290,7 +1457,7 @@ sap.m.Carousel.prototype._moveToActivePage = function () {
 		var newActivePageNr = this._getPageNumber(this.getActivePage());
 		
 		if(isNaN(newActivePageNr)) {
-			jQuery.sap.log.warning(false, "sap.m.Carousel.prototype._moveToActivePage: Cannot navigate to page '" + 
+			jQuery.sap.log.warning(false, "sap.m.Carousel._moveToActivePage: Cannot navigate to page '" + 
 					this.getActivePage() + "' because it is not contained in the carousel's pages aggregation. Using 1. page instead");
 			
 			//initialize active page id
@@ -1407,19 +1574,14 @@ sap.m.Carousel.prototype._getNextBtnId = function() {
 
 
 /**
- * Refresh sizes after Orientation change (only necessary for non ios)
+ * Refresh sizes after resize event
  * @param oEvent the event parameter
  * @private
  */
-sap.m.Carousel.prototype._handleOrientationChange = function() {
-	//Delayed call to make sure, any pending rendering is completed.
-	//Must wait 200ms, otherwise the client width is not updated yet
-	//after orientation change.
-	if(!jQuery.os.ios && !!this._oSwipeView){
-		setTimeout(jQuery.proxy(function() {
-			this._oSwipeView.__resize();
-			this._updatePageWidths();
-		}, this), 250);
+sap.m.Carousel.prototype._handleResize = function() {
+	if(!!this._oSwipeView){
+		this._oSwipeView.__resize();
+		this._updatePageWidths();
 	}
 };
 
@@ -1434,10 +1596,10 @@ sap.m.Carousel.prototype._handleOrientationChange = function() {
 sap.m.Carousel.prototype._toggleBusyIcon = function(iMasterPage, bShowBusyIcon) {
 	if(bShowBusyIcon) {
 		this._aBusyIndicators[iMasterPage].$().show();
-		this._aMasterPageDivs[iMasterPage].hide();
+		this._aMasterPageDivs[iMasterPage].css("visibility", "hidden");
 	} else {
 		this._aBusyIndicators[iMasterPage].$().hide();
-		this._aMasterPageDivs[iMasterPage].show();
+		this._aMasterPageDivs[iMasterPage].css("visibility", "");
 	}
 };
 
@@ -1448,16 +1610,16 @@ sap.m.Carousel.prototype._toggleBusyIcon = function(iMasterPage, bShowBusyIcon) 
  * @private 
  */
 sap.m.Carousel.prototype._updatePageWidths = function() {
-	if(jQuery.os.android && !!jQuery.os.version && (!!jQuery.os.version.match(/2\.3\.[0-9]*/))){
+	if(jQuery.os.android){
 		var pageList = this.getPages();
 		var domRef = jQuery.sap.domById(this._getContentId());
 		var pageWidth = domRef.clientWidth + "px";
 		
-		//In Android 2.3, we overwerite any widths which have been assigned
+		//In Android, we overwrite any widths which have been assigned
 		//to the carousel pages to avoid a sizing issue
 		for(var i=0; i<pageList.length; i++) {
 			if(pageList[i] instanceof sap.m.Image) {
-				jQuery.sap.byId(pageList[i].getId()).css("max-width", pageWidth)
+				jQuery.sap.byId(pageList[i].getId()).css("max-width", pageWidth);
 			}
 		}
 	}
@@ -1483,6 +1645,69 @@ sap.m.Carousel.prototype._rerenderPageIndicatorDots = function() {
 	//Re-create tap bindings for previous - and next- button
 	//after rendering
 	this._createTapBindings();
+};
+
+
+
+/**
+ * Re-renders the carousel's business indicators on each swipe view master page.
+ * @param bWriteMasterDiv if true, a div for the master page is rendered as well
+ *
+ * @private
+ */
+sap.m.Carousel.prototype._rerenderBusinessIndicators = function(bWriteMasterDiv) {
+	if(!!this._oSwipeView) {
+		var i;
+		
+		for (i=0; i<3; i++) {
+			//Remove the busy indicator's dom element
+			var ithIndicator = jQuery.sap.byId(this.getId() + "-indicator-" + i);
+			if(ithIndicator.length > 0) {
+				ithIndicator.remove();
+			}
+		}
+		
+		
+		var rm = sap.ui.getCore().createRenderManager();
+		var ithContId;
+		
+		// (re-)render busy indicators
+		for (i=0; i<3; i++) {
+			ithContId = this._getContentId() + "-MstPgCont-" + i;
+			//Make sure content div is rendered even if busy indicator is not shown
+			if(bWriteMasterDiv) {
+				rm.write("<div id='" + ithContId +"' class='sapMCrslContMstPag'></div>");
+			}
+			
+			var $ithMasterPage = jQuery.sap.domById(this._oSwipeView.masterPages[i].id);
+			
+			if(!this._aBusyIndicators[i]) {
+				this._aBusyIndicators[i] = new sap.m.BusyIndicator(this.getId() + "-indicator-" + i, {size: this.getBusyIndicatorSize()});
+			} else {
+				this._aBusyIndicators[i].setSize(this.getBusyIndicatorSize());
+			}
+			
+			if(this.getShowBusyIndicator()) {
+				rm.renderControl(this._aBusyIndicators[i]);
+			}
+			rm.flush($ithMasterPage, false, true);
+			this._aMasterPageDivs[i] = jQuery.sap.byId(ithContId);
+			if(this.getShowBusyIndicator()) {
+				//add css class to center busy indicator
+				this._aBusyIndicators[i].$().addClass("sapMCrslContMstPag");
+				this._aBusyIndicators[i].$().css("position", "absolute");
+				this._aBusyIndicators[i].$().css("top", "0px");
+			}
+		}
+		rm.destroy();
+		
+		//Make sure that busy indicators are hidden, initially
+		for (i=0; i<3; i++) {
+			this._toggleBusyIcon(i, false);
+		}
+		
+	}
+	return this;
 };
 
 

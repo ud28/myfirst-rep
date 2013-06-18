@@ -1,11 +1,12 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides default renderer for JSView
 jQuery.sap.declare("sap.ui.core.mvc.JSViewRenderer");
+jQuery.sap.require("sap.ui.core.mvc.ViewRenderer");
 
 /**
  * @class JSView renderer.
@@ -30,6 +31,7 @@ sap.ui.core.mvc.JSViewRenderer.render = function(oRenderManager, oControl){
 	rm.writeControlData(oControl);
 	rm.addClass("sapUiView");
 	rm.addClass("sapUiJSView");
+	sap.ui.core.mvc.ViewRenderer.addDisplayClass(rm, oControl);
 	rm.addStyle("width", oControl.getWidth());
 	rm.addStyle("height", oControl.getHeight());
 	rm.writeStyles();

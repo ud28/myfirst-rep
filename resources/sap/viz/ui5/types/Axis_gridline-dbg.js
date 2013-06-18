@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -77,8 +77,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
 	library : "sap.viz",
 	properties : {
 		"visible" : {type : "boolean", group : "", defaultValue : true},
-		"showFirstLine" : {type : "boolean", group : "", defaultValue : false},
-		"showLastLine" : {type : "boolean", group : "", defaultValue : false},
+		"showFirstLine" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"showLastLine" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
 		"type" : {type : "sap.viz.ui5.types.Axis_gridline_type", group : "", defaultValue : sap.viz.ui5.types.Axis_gridline_type.line},
 		"color" : {type : "string", group : "", defaultValue : '#d8d8d8'},
 		"size" : {type : "string", group : "", defaultValue : '1'}
@@ -115,7 +115,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -128,6 +127,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
+
 /**
  * Getter for property <code>showFirstLine</code>.
  * Set enabled/disabled the first line of gridlines.
@@ -136,10 +136,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  *
  * @return {boolean} the value of property <code>showFirstLine</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#getShowFirstLine
  * @function
  */
-
 
 /**
  * Setter for property <code>showFirstLine</code>.
@@ -149,9 +150,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @param {boolean} bShowFirstLine  new value for property <code>showFirstLine</code>
  * @return {sap.viz.ui5.types.Axis_gridline} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#setShowFirstLine
  * @function
  */
+
 
 /**
  * Getter for property <code>showLastLine</code>.
@@ -161,10 +165,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  *
  * @return {boolean} the value of property <code>showLastLine</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#getShowLastLine
  * @function
  */
-
 
 /**
  * Setter for property <code>showLastLine</code>.
@@ -174,9 +179,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @param {boolean} bShowLastLine  new value for property <code>showLastLine</code>
  * @return {sap.viz.ui5.types.Axis_gridline} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Axis_gridline#setShowLastLine
  * @function
  */
+
 
 /**
  * Getter for property <code>type</code>.
@@ -190,7 +198,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>type</code>.
  *
@@ -202,6 +209,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @name sap.viz.ui5.types.Axis_gridline#setType
  * @function
  */
+
 
 /**
  * Getter for property <code>color</code>.
@@ -215,7 +223,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>color</code>.
  *
@@ -227,6 +234,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @name sap.viz.ui5.types.Axis_gridline#setColor
  * @function
  */
+
 
 /**
  * Getter for property <code>size</code>.
@@ -240,7 +248,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @function
  */
 
-
 /**
  * Setter for property <code>size</code>.
  *
@@ -252,5 +259,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Axis_gridline", { 
  * @name sap.viz.ui5.types.Axis_gridline#setSize
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Axis_gridline.js

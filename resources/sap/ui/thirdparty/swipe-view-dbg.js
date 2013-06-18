@@ -278,7 +278,9 @@ var SwipeView = (function (window, document) {
 					this.__end(e);
 					break;
 				case resizeEvent:
-					this.__resize();
+					//SAP MODIFICATION
+					//Use sap.ui.core.ResizeHandler instead
+					//this.__resize();
 					break;
 				case transitionEndEvent:
 				case 'otransitionend':
@@ -313,7 +315,7 @@ var SwipeView = (function (window, document) {
 		__resize: function () {
 			this.refreshSize();
 			this.slider.style[transitionDuration] = '0s';
-			this.__pos(-this.page * this.pageWidth);
+			this.__pos(-this.page * this.pageWidth);			
 		},
 
 		__start: function (e) {
@@ -447,9 +449,29 @@ var SwipeView = (function (window, document) {
 			var pageFlip,
 				pageFlipIndex,
 				className;
+			
+			//SAP MODIFICATION BEGIN
+			//Make sure that swipe works correctly in loop mode with less than 3 pages
+			if(this.options.loop) {
+				if(this.options.numberOfPages === 1) {
+					this.goToPage(0);
+				} else if(this.options.numberOfPages === 2) {
+					if (this.directionX < 0) {
+						if(this.page === 1) {
+							this.goToPage(0);
+						}
+					} else {
+						if(this.page === 0) {
+							this.goToPage(1);
+						}
+					}
+				}
+			}
+			//SAP MODIFICATION END
+			
 
 			this.masterPages[this.currentMasterPage].className = this.masterPages[this.currentMasterPage].className.replace(/(^|\s)swipeview-active(\s|$)/, '');
-
+			
 			// Flip the page
 			if (this.directionX > 0) {
 				this.page = -Math.ceil(this.x / this.pageWidth);

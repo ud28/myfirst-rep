@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -109,7 +109,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -121,7 +120,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @name sap.viz.ui5.types.Combination_line#setWidth
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>marker</code>.<br/>
  * Set marker/data point graphics settings.
@@ -132,6 +132,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>marker</code>.
  * @param oMarker {sap.viz.ui5.types.Combination_line_marker}
@@ -140,7 +141,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @name sap.viz.ui5.types.Combination_line#setMarker
  * @function
  */
-
+	
 
 /**
  * Destroys the marker in the aggregation 
@@ -150,6 +151,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination_line",
  * @name sap.viz.ui5.types.Combination_line#destroyMarker
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Combination_line.js
 sap.viz.ui5.types.Combination_line.prototype.getMarker = function() {

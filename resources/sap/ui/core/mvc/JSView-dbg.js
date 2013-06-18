@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.mvc.View");
  * @extends sap.ui.core.mvc.View
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -110,6 +110,7 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSView", { metadata : {
 	 * @param {string | object} vView name or implementation of the view.
 	 * @public
 	 * @static
+	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView) {
 		var mSettings = {};
@@ -149,9 +150,22 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSView", { metadata : {
 	sap.ui.core.mvc.JSView.prototype.onControllerConnected = function(oController) {
 		var that=this;
 		// unset any preprocessors (e.g. from an enclosing JSON view)
-		sap.ui.core.Element.runWithPreprocessors(function() { 
+		sap.ui.base.ManagedObject.runWithPreprocessors(function() { 
 			that.applySettings({ content : that.createContent(oController) });
 		});
 	};
+
+
+	/**
+	 * A method to be implemented by JSViews, returning the View UI.
+	 * While for declarative View types like XMLView or JSONView the user interface definition is declared in a separate file,
+	 * JSViews programmatically construct the UI. This happens in the createContent method which every JSView needs to implement.
+	 * The View implementation can construct the complete UI in this method - or only return the root control and create the rest of the UI lazily later on.
+	 * 
+	 * @return {sap.ui.core.Control} a control or (typically) tree of controls representing the View user interface
+	 * @public
+	 * @name sap.ui.core.mvc.JSView.createContent
+	 * @function
+	 */
 
 }());

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -39,6 +39,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <ul>
  * <li>{@link #getToolTip toolTip} : sap.viz.ui5.types.Combination_tooltip</li>
  * <li>{@link #getAnimation animation} : sap.viz.ui5.types.Combination_animation</li>
+ * <li>{@link #getDataShape dataShape} : sap.viz.ui5.types.Combination_dataShape</li>
  * <li>{@link #getBar bar} : sap.viz.ui5.types.Combination_bar</li>
  * <li>{@link #getLine line} : sap.viz.ui5.types.Combination_line</li></ul>
  * </li>
@@ -62,7 +63,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -84,8 +85,9 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
 		"drawingEffect" : {type : "sap.viz.ui5.types.Combination_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Combination_drawingEffect.normal}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Combination_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Combination_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.Combination_animation", multiple : false}, 
+    	"dataShape" : {type : "sap.viz.ui5.types.Combination_dataShape", multiple : false}, 
     	"bar" : {type : "sap.viz.ui5.types.Combination_bar", multiple : false}, 
     	"line" : {type : "sap.viz.ui5.types.Combination_line", multiple : false}
 	}
@@ -111,7 +113,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -120,7 +122,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -134,6 +135,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -145,7 +147,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -159,6 +160,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -170,7 +172,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -184,6 +185,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -196,7 +198,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -208,36 +209,45 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setDrawingEffect
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.Combination_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Combination_tooltip}
  * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Combination#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -248,6 +258,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Combination_animation}
@@ -256,7 +267,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -266,7 +277,39 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#destroyAnimation
  * @function
  */
+
+
+/**
+ * Getter for aggregation <code>dataShape</code>.<br/>
+ * Set shape of measure data.
+ * 
+ * @return {sap.viz.ui5.types.Combination_dataShape}
+ * @public
+ * @name sap.viz.ui5.types.Combination#getDataShape
+ * @function
+ */
+
+
+/**
+ * Setter for the aggregated <code>dataShape</code>.
+ * @param oDataShape {sap.viz.ui5.types.Combination_dataShape}
+ * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination#setDataShape
+ * @function
+ */
 	
+
+/**
+ * Destroys the dataShape in the aggregation 
+ * named <code>dataShape</code>.
+ * @return {sap.viz.ui5.types.Combination} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.viz.ui5.types.Combination#destroyDataShape
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>bar</code>.<br/>
  * Settings for bar properties.
@@ -277,6 +320,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>bar</code>.
  * @param oBar {sap.viz.ui5.types.Combination_bar}
@@ -285,7 +329,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setBar
  * @function
  */
-
+	
 
 /**
  * Destroys the bar in the aggregation 
@@ -295,7 +339,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#destroyBar
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>line</code>.<br/>
  * Settings for line properties.
@@ -306,6 +351,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>line</code>.
  * @param oLine {sap.viz.ui5.types.Combination_line}
@@ -314,7 +360,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @name sap.viz.ui5.types.Combination#setLine
  * @function
  */
-
+	
 
 /**
  * Destroys the line in the aggregation 
@@ -325,12 +371,16 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Combination", { me
  * @function
  */
 
+
 // Start of sap/viz/ui5/types/Combination.js
 sap.viz.ui5.types.Combination.prototype.getToolTip = function() {
   return this._getOrCreate("toolTip");
 }
 sap.viz.ui5.types.Combination.prototype.getAnimation = function() {
   return this._getOrCreate("animation");
+}
+sap.viz.ui5.types.Combination.prototype.getDataShape = function() {
+  return this._getOrCreate("dataShape");
 }
 sap.viz.ui5.types.Combination.prototype.getBar = function() {
   return this._getOrCreate("bar");

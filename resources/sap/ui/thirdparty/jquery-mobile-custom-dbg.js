@@ -830,6 +830,13 @@ $.event.special.swipe = {
 			$this = $( thisObject );
 
 		$this.bind( touchStartEvent, function( event ) {
+			
+			// SAP MODIFICATION: mark touch events, so only the lowest UIArea within the hierarchy will create a swipe event
+			if (event.originalEvent._sapui_swipestartHandled) {
+				return;
+			}
+			event.originalEvent._sapui_swipestartHandled = true;
+			
 			var data = event.originalEvent.touches ?
 								event.originalEvent.touches[ 0 ] : event,
 				start = {

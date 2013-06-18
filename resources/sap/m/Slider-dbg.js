@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -30,15 +30,15 @@ jQuery.sap.require("sap.ui.core.Control");
  * <ul>
  * <li>Properties
  * <ul>
- * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: "100%")</li>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
  * <li>{@link #getEnabled enabled} : boolean (default: true)</li>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
- * <li>{@link #getName name} : string (default: "")</li>
- * <li>{@link #getMin min} : int (default: 0)</li>
- * <li>{@link #getMax max} : int (default: 100)</li>
- * <li>{@link #getStep step} : int (default: 1)</li>
+ * <li>{@link #getName name} : string</li>
+ * <li>{@link #getMin min} : float (default: 0)</li>
+ * <li>{@link #getMax max} : float (default: 100)</li>
+ * <li>{@link #getStep step} : float (default: 1)</li>
  * <li>{@link #getProgress progress} : boolean (default: true)</li>
- * <li>{@link #getValue value} : int (default: 0)</li></ul>
+ * <li>{@link #getValue value} : float (default: 0)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -62,7 +62,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -79,15 +79,15 @@ sap.ui.core.Control.extend("sap.m.Slider", { metadata : {
 	// ---- control specific ----
 	library : "sap.m",
 	properties : {
-		"width" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "100%"},
+		"width" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
 		"enabled" : {type : "boolean", group : "Behavior", defaultValue : true},
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
-		"name" : {type : "string", group : "Misc", defaultValue : ""},
-		"min" : {type : "int", group : "Data", defaultValue : 0},
-		"max" : {type : "int", group : "Data", defaultValue : 100},
-		"step" : {type : "int", group : "Data", defaultValue : 1},
+		"name" : {type : "string", group : "Misc", defaultValue : null},
+		"min" : {type : "float", group : "Data", defaultValue : 0},
+		"max" : {type : "float", group : "Data", defaultValue : 100},
+		"step" : {type : "float", group : "Data", defaultValue : 1},
 		"progress" : {type : "boolean", group : "Misc", defaultValue : true},
-		"value" : {type : "int", group : "Data", defaultValue : 0}
+		"value" : {type : "float", group : "Data", defaultValue : 0}
 	},
 	events : {
 		"change" : {}, 
@@ -119,7 +119,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * Getter for property <code>width</code>.
  * Defines the width of the slider element, this value can be provided in %, em, px… and all possible CSS measures.
  *
- * Default value is <code>"100%"</code>
+ * Default value is <code>100%</code>
  *
  * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
  * @public
@@ -127,11 +127,10 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
- * Default value is <code>"100%"</code> 
+ * Default value is <code>100%</code> 
  *
  * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
@@ -139,6 +138,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @name sap.m.Slider#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>enabled</code>.
@@ -152,7 +152,6 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -164,6 +163,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @name sap.m.Slider#setEnabled
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -177,7 +177,6 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -190,11 +189,12 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
+
 /**
  * Getter for property <code>name</code>.
  * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
  *
- * Default value is <code>""</code>
+ * Default value is empty/<code>undefined</code>
  *
  * @return {string} the value of property <code>name</code>
  * @public
@@ -202,11 +202,10 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
- * Default value is <code>""</code> 
+ * Default value is empty/<code>undefined</code> 
  *
  * @param {string} sName  new value for property <code>name</code>
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
@@ -215,30 +214,31 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
+
 /**
  * Getter for property <code>min</code>.
  * The minimum value of the slider.
  *
  * Default value is <code>0</code>
  *
- * @return {int} the value of property <code>min</code>
+ * @return {float} the value of property <code>min</code>
  * @public
  * @name sap.m.Slider#getMin
  * @function
  */
-
 
 /**
  * Setter for property <code>min</code>.
  *
  * Default value is <code>0</code> 
  *
- * @param {int} iMin  new value for property <code>min</code>
+ * @param {float} fMin  new value for property <code>min</code>
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.Slider#setMin
  * @function
  */
+
 
 /**
  * Getter for property <code>max</code>.
@@ -246,24 +246,24 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  *
  * Default value is <code>100</code>
  *
- * @return {int} the value of property <code>max</code>
+ * @return {float} the value of property <code>max</code>
  * @public
  * @name sap.m.Slider#getMax
  * @function
  */
-
 
 /**
  * Setter for property <code>max</code>.
  *
  * Default value is <code>100</code> 
  *
- * @param {int} iMax  new value for property <code>max</code>
+ * @param {float} fMax  new value for property <code>max</code>
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.Slider#setMax
  * @function
  */
+
 
 /**
  * Getter for property <code>step</code>.
@@ -275,24 +275,24 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  *
  * Default value is <code>1</code>
  *
- * @return {int} the value of property <code>step</code>
+ * @return {float} the value of property <code>step</code>
  * @public
  * @name sap.m.Slider#getStep
  * @function
  */
-
 
 /**
  * Setter for property <code>step</code>.
  *
  * Default value is <code>1</code> 
  *
- * @param {int} iStep  new value for property <code>step</code>
+ * @param {float} fStep  new value for property <code>step</code>
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.Slider#setStep
  * @function
  */
+
 
 /**
  * Getter for property <code>progress</code>.
@@ -306,7 +306,6 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Setter for property <code>progress</code>.
  *
@@ -319,30 +318,31 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
+
 /**
  * Getter for property <code>value</code>.
  * Define the value of the slider. If this value is lower than the minimum permited, the minimum will be override the value, or if the value is higher than maximun, the maximum will be override the value.
  *
  * Default value is <code>0</code>
  *
- * @return {int} the value of property <code>value</code>
+ * @return {float} the value of property <code>value</code>
  * @public
  * @name sap.m.Slider#getValue
  * @function
  */
-
 
 /**
  * Setter for property <code>value</code>.
  *
  * Default value is <code>0</code> 
  *
- * @param {int} iValue  new value for property <code>value</code>
+ * @param {float} fValue  new value for property <code>value</code>
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.Slider#setValue
  * @function
  */
+
 
 /**
  * This event is triggered after the end user finishes interacting, if there is any change. 
@@ -353,7 +353,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @param {sap.ui.base.EventProvider} oControlEvent.getSource
  * @param {object} oControlEvent.getParameters
 
- * @param {int} oControlEvent.getParameters.value The current value of the slider after a change.
+ * @param {float} oControlEvent.getParameters.value The current value of the slider after a change.
  * @public
  */
  
@@ -377,7 +377,6 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'change' event of this <code>sap.m.Slider</code>.<br/>
  *
@@ -393,13 +392,12 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Fire event change to attached listeners.
  * 
  * Expects following event parameters:
  * <ul>
- * <li>'value' of type <code>int</code> The current value of the slider after a change.</li>
+ * <li>'value' of type <code>float</code> The current value of the slider after a change.</li>
  * </ul>
  *
  * @param {Map} [mArguments] the arguments to pass along with the event.
@@ -408,6 +406,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @name sap.m.Slider#fireChange
  * @function
  */
+
 
 /**
  * This event is triggered during the dragging period, each time the slider value changes. 
@@ -418,7 +417,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @param {sap.ui.base.EventProvider} oControlEvent.getSource
  * @param {object} oControlEvent.getParameters
 
- * @param {int} oControlEvent.getParameters.value The current value of the slider after a live change.
+ * @param {float} oControlEvent.getParameters.value The current value of the slider after a live change.
  * @public
  */
  
@@ -442,7 +441,6 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'liveChange' event of this <code>sap.m.Slider</code>.<br/>
  *
@@ -458,13 +456,12 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @function
  */
 
-
 /**
  * Fire event liveChange to attached listeners.
  * 
  * Expects following event parameters:
  * <ul>
- * <li>'value' of type <code>int</code> The current value of the slider after a live change.</li>
+ * <li>'value' of type <code>float</code> The current value of the slider after a live change.</li>
  * </ul>
  *
  * @param {Map} [mArguments] the arguments to pass along with the event.
@@ -473,6 +470,7 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @name sap.m.Slider#fireLiveChange
  * @function
  */
+
 
 /**
  * Changes the slider’s value by the value given in the step attribute, multiplied by n.
@@ -508,9 +506,10 @@ sap.m.Slider.M_EVENTS = {'change':'change','liveChange':'liveChange'};
 
 // Start of sap/m/Slider.js
 jQuery.sap.require("sap.ui.core.EnabledPropagator");
+sap.ui.core.EnabledPropagator.apply(sap.m.Slider.prototype, [true]);
 
-sap.m.Slider.prototype._aVEvents = ["_ontouchstart", "_ontouchmove", "_ontouchend"];
 sap.m.Slider.prototype._aEvents = ["ontouchstart", "ontouchmove", "ontouchend"];
+sap.m.Slider.prototype._aVEvents = ["_ontouchstart", "_ontouchmove", "_ontouchend"];
 
 /* =========================================================== */
 /*                   begin: lifecycle methods                  */
@@ -522,13 +521,13 @@ sap.m.Slider.prototype._aEvents = ["ontouchstart", "ontouchmove", "ontouchend"];
  * @private
  */
 sap.m.Slider.prototype.onBeforeRendering = function() {
-	var iMax = this.getMax(),
-		iMin = this.getMin(),
-		iStep = this.getStep(),
+	var fMin = this.getMin(),
+		fMax = this.getMax(),
+		fStep = this.getStep(),
 		bMinbiggerThanMax = false,
 		bError = false;
 
-	/**
+	/*
 	 *	functional dependencies:
 	 *
 	 *	min				-> max
@@ -540,25 +539,25 @@ sap.m.Slider.prototype.onBeforeRendering = function() {
 	 */
 
 	// if the minimum is lower than or equal to the maximum, log a warning
-	if (iMin >= iMax) {
+	if (fMin >= fMax) {
 		bMinbiggerThanMax = true;
 		bError = true;
-		jQuery.sap.log.warning("Property wrong min: " + iMin + " >= max: " + iMax + " on " + this);
+		jQuery.sap.log.warning("Warning: " + "Property wrong min: " + fMin + " >= max: " + fMax + " on ", this);
 	}
 
-	// if the step is negative set to 1 and log a warning
-	if (iStep < 1) {
-		jQuery.sap.log.warning("The step could not be negative on " + this);
-		iStep = 1;
+	// if the step is negative or 0, set to 1 and log a warning
+	if (fStep <= 0) {
+		jQuery.sap.log.warning("Warning: " + "The step could not be negative on ", this);
+		fStep = 1;
 
 		// update the step to 1 and suppress re-rendering
-		this.setProperty("step", iStep, true);
+		this.setProperty("step", fStep, true);
 	}
 
 	// the step can't be bigger than slider range, log a warning
-	if ((iStep > (iMax - iMin)) && !bMinbiggerThanMax) {
+	if (fStep > (fMax - fMin) && !bMinbiggerThanMax) {
 		bError = true;
-		jQuery.sap.log.warning("Property wrong step: " + iStep + " > max: " + iMax + " - " + "min: " + iMin + " on " + this);
+		jQuery.sap.log.warning("Warning: " + "Property wrong step: " + fStep + " > max: " + fMax + " - " + "min: " + fMin + " on ", this);
 	}
 
 	// update the value only if there aren't errors
@@ -566,7 +565,7 @@ sap.m.Slider.prototype.onBeforeRendering = function() {
 		this.setValue(this.getValue());
 
 		// this is the current % value for the slider progress bar
-		this.iProgressValue = this._getPercentageFromValue(this.getValue());
+		this._fProgressValue = this._getPercentFromValue(this.getValue());
 	}
 };
 
@@ -574,24 +573,29 @@ sap.m.Slider.prototype.onBeforeRendering = function() {
  * Required adaptations after rendering.
  *
  * @private
- * @param {jQuery.EventObject} oEvent The event object
  */
 sap.m.Slider.prototype.onAfterRendering = function() {
 
 	// bind only if the slider is enabled
-	(this.getEnabled()) ? this._bindEvents() : this._unbindEvents();
+	this.getEnabled() ? this._bindEvents() : this._unbindEvents();
 
-	// slider control container jQuery selector
-	this._$SldContainer = this.$();
+	// slider control container jQuery reference
+	this._$SliderContainer = this.$();
 
-	// slider jQuery selector
-	this._$Sld = this._$SldContainer.children(".sapMSld");
+	// slider jQuery reference
+	this._$Slider = this._$SliderContainer.children(".sapMSli");
 
-	// thumb jQuery selector
-	this._$Thumb = this._$Sld.children(".sapMSldThumb");
+	//
+	this._$ProgressIndicator = this._$Slider.children(".sapMSliProgress");
 
-	// native input type range jQuery selector
-	this._$Input = this._$SldContainer.children("input[type=range]");
+	// handle jQuery reference
+	this._$Handle = this._$Slider.children(".sapMSliHandle");
+
+	// native input type range jQuery reference
+	this._$Input = this._$SliderContainer.children("input.sapMSliInput");
+
+	//	after all calculations, makes the control visible
+	this._$SliderContainer.css("visibility", "");
 };
 
 /* =========================================================== */
@@ -611,42 +615,45 @@ sap.m.Slider.prototype.onAfterRendering = function() {
  */
 sap.m.Slider.prototype._ontouchstart = function(oEvent) {
 	var $Target = jQuery(oEvent.target),
-		iMin = this.getMin(),
-		iValue;
+		fMin = this.getMin(),
+		fValue;
 
 	//	for control who need to know if they should handle events from the slider control
 	oEvent.originalEvent._sapui_handledByControl = true;
 
-	if (oEvent.targetTouches.length > 1) {		// suppress multiTouch events
+	if (oEvent.targetTouches.length > 1) {	// suppress multiTouch events
 		return;
 	}
 
 	// update the slider measures, those values may change in orientation change
-	this._calcMeasures();
+	this._recalculateStyles();
 
 	// initialization
-	this._iDiffX = this._fSldPaddingRight;
-	this._iStartValue = this.getValue();
+	this._fDiffX = this._fSliderPaddingLeft;
+	this._fStartValue = this.getValue();
 
 	// add active state
-	this._$Sld.addClass("sapMSldPressed");
+	this._$Slider.addClass("sapMSliPressed");
 
-	if ($Target.is(this._$Thumb) || $Target.parent().is(this._$Thumb)) {	// if the target is the slider thumb
+	if ($Target.is(this._$Handle) || $Target.parent().is(this._$Handle)) {	// if the target is the slider handle
 
-		/*  This property is needed only by the ontouchmove handle.
-			When a touch start event occurs, its value is calculated
-			by subtracting the thumb position left from the slider
-			control target pageX.
-			This is the necessary amount to be subtracted when the
-			ontouchmove	event handle is fired.
-			The result is a better dragging experience that behaves
-			much more in the way that the user expects. */
-		this._iDiffX = oEvent.targetTouches[0].pageX - this._$Thumb.offset().left;
+		/*
+		 *	This property is needed only by the ontouchmove handle.
+		 *	When a touch start event occurs, its value is calculated
+		 *	by subtracting the thumb position left from the slider
+		 *	control target pageX.
+		 *	This is the necessary amount to be subtracted when the
+		 *	ontouchmove	event handle is fired.
+		 *	The result is a better dragging experience that behaves
+		 *	much more in the way that the user expects.
+		 */
+		this._fDiffX = oEvent.targetTouches[0].pageX - this._$Handle.offset().left;
 	} else {
-		iValue = Math.round((((oEvent.targetTouches[0].pageX - this._fSldPaddingRight - this._iSldOffsetLeft) / this._iSldWidth) * (this.getMax() - iMin)) +  iMin);
+		fValue = (((oEvent.targetTouches[0].pageX - this._fSliderPaddingLeft - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
 		// update the slider value
-		this.setValue(iValue);
+		this.setValue(fValue);
+		this.fireLiveChange({value: this.getValue()});
 	}
 };
 
@@ -657,39 +664,39 @@ sap.m.Slider.prototype._ontouchstart = function(oEvent) {
  * @private
  */
 sap.m.Slider.prototype._ontouchmove = function(oEvent) {
-	var iMin = this.getMin(),
-		iValue = this.getValue(),
-		iNewValue = Math.round((((oEvent.targetTouches[0].pageX - this._iDiffX - this._iSldOffsetLeft) / this._iSldWidth) * (this.getMax() - iMin)) +  iMin);
+	var fMin = this.getMin(),
+		fValue = this.getValue(),
+		fNewValue = (((oEvent.targetTouches[0].pageX - this._fDiffX - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
 	// validate, update the the slider value and the UI
-	this.setValue(iNewValue);
+	this.setValue(fNewValue);
 
 	// new value validated
-	iNewValue = this.getValue();
+	fNewValue = this.getValue();
 
-	if (iValue !== iNewValue) {
-		this.fireLiveChange({value:iNewValue});
+	if (fValue !== fNewValue) {
+		this.fireLiveChange({value:fNewValue});
 	}
 };
 
 /**
  * Handle the touch end event on the slider.
  *
- * @param {jQuery.EventObject} oEvent The event object
  * @private
  */
 sap.m.Slider.prototype._ontouchend = function() {
+	var fValue = this.getValue();
 
 	// remove active state
-	this._$Sld.removeClass("sapMSldPressed");
+	this._$Slider.removeClass("sapMSliPressed");
 
-	if (this._iStartValue !== this.getValue()) {	// if the value if not the same
-		this.fireChange({value:this.getValue()});
+	if (this._fStartValue !== fValue) {	// if the value if not the same
+		this.fireChange({value: fValue});
 	}
 
 	// remove unused properties
-	delete this._iDiffX;
-	delete this._iStartValue;
+	delete this._fDiffX;
+	delete this._fStartValue;
 };
 
 /* ============================================================ */
@@ -701,39 +708,24 @@ sap.m.Slider.prototype._ontouchend = function() {
 /*                      begin: internal methods                */
 /* =========================================================== */
 
-// configuration data
-sap.m.Slider.prototype._sBackgroundSizeRemainder = (function() {
-	switch (jQuery.os.os) {
-	case "ios":
-		return "% 0.4375em, 100%";
-		break;
-	case "android":
-	case "blackberry":
-		return "% 0.1875em";
-		break;
-
-	// no default
-	};
-})();
-
 /**
- * Calculate slider measures.
+ * Recalculate styles.
  *
  * @private
  */
-sap.m.Slider.prototype._calcMeasures = function() {
+sap.m.Slider.prototype._recalculateStyles = function() {
 
 	// slider width
-	this._iSldWidth = this._$SldContainer.width();
+	this._fSliderWidth = this._$SliderContainer.width();
 
-	// slider padding right
-	this._fSldPaddingRight = parseFloat(this._$SldContainer.css("padding-right"), 10);
+	// slider padding left
+	this._fSliderPaddingLeft = parseFloat(this._$SliderContainer.css("padding-left"));
 
 	// slider offset left
-	this._iSldOffsetLeft = this._$SldContainer.offset().left;
+	this._fSliderOffsetLeft = this._$SliderContainer.offset().left;
 
-	// thumb width
-	this._iThumbWidth = this._$Thumb.width();
+	// handle width
+	this._fHandleWidth = this._$Handle.width();
 };
 
 /**
@@ -743,9 +735,9 @@ sap.m.Slider.prototype._calcMeasures = function() {
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
  */
 sap.m.Slider.prototype._bindEvents = function() {
-	var i;
+	var i = 0;
 
-	for (i = 0; i < this._aVEvents.length; i++) {
+	for (; i < this._aVEvents.length; i++) {
 		this[this._aEvents[i]] = this[this._aVEvents[i]];
 	}
 
@@ -759,9 +751,9 @@ sap.m.Slider.prototype._bindEvents = function() {
  * @return {sap.m.Slider} <code>this</code> to allow method chaining
  */
 sap.m.Slider.prototype._unbindEvents = function() {
-	var i;
+	var i = 0;
 
-	for (i = 0; i < this._aVEvents.length; i++) {
+	for (; i < this._aVEvents.length; i++) {
 		this[this._aEvents[i]] = null;
 	}
 
@@ -771,18 +763,85 @@ sap.m.Slider.prototype._unbindEvents = function() {
 /**
  * Calculate percentage.
  *
- * @param {int} iValue the value from the slider
+ * @param {float} fValue the value from the slider
  * @private
- * @returns {int} percent
+ * @returns {float} percent
  */
-sap.m.Slider.prototype._getPercentageFromValue = function(iValue) {
-	var iMin = this.getMin();
+sap.m.Slider.prototype._getPercentFromValue = function(fValue) {
+	var fMin = this.getMin();
+
 	// never round this number
-	return ((iValue - iMin) / (this.getMax() - iMin)) * 100;
+	return ((fValue - fMin) / (this.getMax() - fMin)) * 100;
 };
 
-sap.m.Slider.prototype._validateStep = function(n) {
-	return (typeof n === "undefined") ? 1 : this.validateProperty("value", n);
+sap.m.Slider.prototype._validateN = function(n) {
+	var sTypeofN = typeof n;
+
+	if (sTypeofN === "undefined") {
+		return 1;	// default n = 1
+	} else if (sTypeofN !== "number") {
+		jQuery.sap.log.warning('Warning: n needs to be a number', this);
+		return 0;
+	} else if (Math.floor(n) === n && isFinite(n)) {
+		return n;
+	} else {
+		jQuery.sap.log.warning('Warning: n needs to be a finite interger', this);
+		return 0;
+	}
+};
+
+sap.m.Slider.prototype._setValue = function(fNewValue) {
+	var fMin = this.getMin(),
+		fMax = this.getMax(),
+		fStep = this.getStep(),
+		fValue = this.getValue(),
+		fModStepVal = Math.abs(fNewValue % fStep),
+		fPerVal;
+
+	// validate the new value before arithmetic calculations
+	if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
+		jQuery.sap.log.error("Error:", '"fNewValue" needs to be a finite number of', this);
+		return this;
+	}
+
+	// round the value to the nearest step
+	fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal
+											: fNewValue - fModStepVal;
+
+	// validate that the value is between maximum and minimum
+	fNewValue = fNewValue > fMax ? fMax
+									: fNewValue < fMin ? fMin : fNewValue;
+
+	//	Floating-point in JavaScript are IEEE 64 bit values and has some problems with big decimals.
+	//	Round the final value to 5 digits after the decimal point.
+	fNewValue = Number(fNewValue.toFixed(5));
+
+	// update the value and suppress re-rendering
+	this.setProperty("value", fNewValue, true);
+
+	// if the value is the same, suppress DOM modifications and event fire
+	if (fValue === this.getValue()) {
+		return this;
+	}
+
+	if (this._$SliderContainer) {	//	after re-rendering
+
+		// update the input type range value
+		this._$Input[0].setAttribute("value", fNewValue);
+
+		fPerVal = this._getPercentFromValue(fNewValue) + "%";
+
+		if (this.getProgress()) {
+
+			// update the progress indicator
+			this._$ProgressIndicator[0].style.width = fPerVal;
+		}
+
+		// update the thumb position
+		this._$Handle[0].style.left = fPerVal;
+	}
+
+	return this;
 };
 
 /* =========================================================== */
@@ -795,62 +854,27 @@ sap.m.Slider.prototype._validateStep = function(n) {
 /* =========================================================== */
 
 sap.m.Slider.prototype.stepUp = function(n) {
-	return this.setValue(this.getValue() + (this._validateStep(n) * this.getStep()));
+	return this.setValue(this.getValue() + (this._validateN(n) * this.getStep()));
 };
 
 sap.m.Slider.prototype.stepDown = function(n) {
-	return this.setValue(this.getValue() - (this._validateStep(n) * this.getStep()));
+	return this.setValue(this.getValue() - (this._validateN(n) * this.getStep()));
 };
 
-/**
- * Change the slider value.
- *
- * @param {float} value
- * @public
- * @return {sap.m.Slider} <code>this</code> to allow method chaining
- */
-sap.m.Slider.prototype.setValue = function(iValue) {
-	var iMax = this.getMax(),
-		iMin = this.getMin(),
-		iStep = this.getStep(),
-		iCurrentVal = this.getValue(),
-		iRemainder = Math.abs(iValue % iStep),
-		iPerValue;
+sap.m.Slider.prototype.setValue = function(fNewValue) {
 
-	iValue = this.validateProperty("value", iValue);
-
-	// round the value to the nearest step
-	iValue = (iRemainder >= iStep / 2) ? iValue + iStep - iRemainder : iValue - iRemainder;
-
-	// validate that the value is between maximum and minimum
-	iValue = (iValue > iMax) ? iMax : (iValue < iMin) ? iMin : iValue;
+	/*
+	 * The first time when setValue() method is called, other properties may
+	 * be outdated, because the invocation order is not always the same.
+	 *
+	 * Overwriting this prototype method with an instance method after the first call,
+	 * will ensure correct calculations.
+	 *
+	 */
+	this.setValue = this._setValue;
 
 	// update the value and suppress re-rendering
-	this.setProperty("value", iValue, true);
-
-	// if the value if the same, suppress DOM modifications and event fire
-	if (iCurrentVal === this.getValue()) {
-		return this;
-	}
-
-	if (this._$Sld instanceof jQuery) {
-
-		// update the input type range value
-		this._$Input.attr("value", iValue);
-
-		iPerValue = this._getPercentageFromValue(iValue);
-
-		if (this.getProgress()) {
-
-			// update the progress bar value
-			this._$Sld.css("-webkit-background-size", iPerValue + this._sBackgroundSizeRemainder);
-		}
-
-		// update the thumb position
-		this._$Thumb.css("left", iPerValue + "%");
-	}
-
-	return this;
+	return this.setProperty("value", fNewValue, true);
 };
 
 /* =========================================================== */

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.DataType
@@ -139,7 +139,7 @@ sap.ui.base.DataType.prototype.isValid = undefined;
 	}
 
 	function createArrayType(componentType) {
-		jQuery.sap.assert(componentType instanceof sap.ui.base.DataType, "DataType.<createArrayType>: compoinentType must be a DataType");
+		jQuery.sap.assert(componentType instanceof sap.ui.base.DataType, "DataType.<createArrayType>: componentType must be a DataType");
 
 		// create a new type object with the base type as prototype
 		var type = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
@@ -256,5 +256,30 @@ sap.ui.base.DataType.prototype.isValid = undefined;
 	 * @public
 	 */
 	sap.ui.base.DataType.createType = createType;
+
+	// ---- minimal support for interface types ----
+	
+	var mInterfaces = {};
+	
+	/**
+	 * Registers the given array of type names as known interface types.
+	 * Only purpose is to enable the {@link #isInterfaceType} check.
+	 * @param {string[]} aTypes interface types to be reigstered  
+	 * @private
+	 */
+	sap.ui.base.DataType.registerInterfaceTypes = function(aTypes) {
+		for(var i=0; i<aTypes.length; i++) {
+			jQuery.sap.setObject(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
+		}
+	};
+	
+	/**
+	 * @param {string} sType name of type to check
+	 * @return {boolean} whether the given type is known to be an interface type
+	 * @private 
+	 */
+	sap.ui.base.DataType.isInterfaceType = function(sType) {
+		return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];
+	};
 
 }());

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.core.HTML");jQuery.sap.require("sap.ui.core.library");jQuery.sap.require("sap.ui.core.Control");sap.ui.core.Control.extend("sap.ui.core.HTML",{metadata:{library:"sap.ui.core",properties:{"content":{type:"string",group:"Misc",defaultValue:null},"preferDOM":{type:"boolean",group:"Misc",defaultValue:true},"sanitizeContent":{type:"boolean",group:"Misc",defaultValue:false}},events:{"afterRendering":{}}}});sap.ui.core.HTML.M_EVENTS={'afterRendering':'afterRendering'};
 sap.ui.core.HTML.prototype.getDomRef=function(){return jQuery.sap.domById("sap-ui-dummy-"+this.getId())||jQuery.sap.domById(this.getId())};

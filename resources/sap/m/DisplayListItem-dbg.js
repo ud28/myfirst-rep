@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ jQuery.sap.require("sap.m.ListItemBase");
  * @extends sap.m.ListItemBase
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -104,7 +104,6 @@ sap.m.ListItemBase.extend("sap.m.DisplayListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>label</code>.
  *
@@ -116,6 +115,7 @@ sap.m.ListItemBase.extend("sap.m.DisplayListItem", { metadata : {
  * @name sap.m.DisplayListItem#setLabel
  * @function
  */
+
 
 /**
  * Getter for property <code>value</code>.
@@ -129,7 +129,6 @@ sap.m.ListItemBase.extend("sap.m.DisplayListItem", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>value</code>.
  *
@@ -141,6 +140,7 @@ sap.m.ListItemBase.extend("sap.m.DisplayListItem", { metadata : {
  * @name sap.m.DisplayListItem#setValue
  * @function
  */
+
 
 // Start of sap/m/DisplayListItem.js
 ///**

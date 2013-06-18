@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides access to Java-like properties files
@@ -26,7 +26,7 @@ jQuery.sap.require("jquery.sap.sjax");
 	 * currently in the list.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public

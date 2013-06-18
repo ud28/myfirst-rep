@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -29,37 +29,32 @@ jQuery.sap.require("jquery.sap.xml");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @param {object} oData either the URL where to load the XML from or a XML
  * @constructor
  * @public
+ * @name sap.ui.model.xml.XMLModel
  */
-sap.ui.model.xml.XMLModel = function (oData) {
-	sap.ui.model.Model.apply(this, arguments);
-	this.oNameSpaces = null;
-	this.bCache = true;
+sap.ui.model.Model.extend("sap.ui.model.xml.XMLModel", /** @lends sap.ui.model.xml.XMLModel */ {
 	
-	if (typeof oData == "string") {
-		this.loadData(oData);
+	constructor : function (oData) {
+		sap.ui.model.Model.apply(this, arguments);
+		this.oNameSpaces = null;
+		this.bCache = true;
+		
+		if (typeof oData == "string") {
+			this.loadData(oData);
+		}
+		else if (oData && oData.documentElement) {
+			this.setData(oData);
+		}
+	},
+	
+	metadata : {
+		publicMethods : ["loadData", "setData", "getData", "setXML", "getXML", "setNameSpace", "forceNoCache", "setProperty"]
 	}
-	else if (oData && oData.documentElement) {
-		this.setData(oData);
-	}
-};
 
-// chain the prototypes
-sap.ui.model.xml.XMLModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.xml.XMLModel.
- * Resulting metadata can be obtained via sap.ui.model.xml.XMLModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.xml.XMLModel", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Model",
-  publicMethods : ["loadData", "setData", "getData", "setXML", "getXML", "setNameSpace", "forceNoCache", "setProperty"]
 });
 
 /**
@@ -124,10 +119,11 @@ sap.ui.model.xml.XMLModel.prototype.setData = function(oData){
  * @param {boolean} [bAsync=true] if the request should be asynchron or not. Default is true.
  * @param {string} [sType=GET] of request. Default is 'GET'
  * @param {string} [bCache=false] force no caching if false. Default is false
+ * @param {object} mHeaders An object of additional header key/value pairs to send along with the request
  *
  * @public
  */
-sap.ui.model.xml.XMLModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bCache){
+sap.ui.model.xml.XMLModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bCache, mHeaders){
 	var that = this;
 	if (bAsync !== false) {
 		bAsync = true;
@@ -139,25 +135,26 @@ sap.ui.model.xml.XMLModel.prototype.loadData = function(sURL, oParameters, bAsyn
 		bCache = this.bCache;
 	}
 	
-	this.fireRequestSent({url : sURL, type : sType, async : bAsync, info : "cache="+bCache});
+	this.fireRequestSent({url : sURL, type : sType, async : bAsync, headers: mHeaders, info : "cache="+bCache});
 	jQuery.ajax({
 	  url: sURL,
 	  async: bAsync,
 	  cache: bCache,
 	  dataType: 'xml',
 	  data: oParameters,
+	  headers: mHeaders,
 	  type: sType,
 	  success: function(oData) {
 		if (!oData) {
 			jQuery.sap.log.fatal("The following problem occurred: No data was retrieved by service: " + sURL);
 		}
 		that.setData(oData);
-		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, info : "cache=false"});
+		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders, info : "cache=false"});
 	  },
 	  error: function(XMLHttpRequest, textStatus, errorThrown){
 		jQuery.sap.log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
 					+ XMLHttpRequest.status + "," + XMLHttpRequest.statusText);
-		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, info : "cache=false"});
+		that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders, info : "cache=false"});
 		that.fireRequestFailed({message : textStatus,
 			statusCode : XMLHttpRequest.status, statusText : XMLHttpRequest.statusText, responseText : XMLHttpRequest.responseText});
 	  }
@@ -235,7 +232,7 @@ sap.ui.model.xml.XMLModel.prototype.createBindingContext = function(sPath, oCont
 	}
 	// create context path
 	var sFullPath = this.resolve(sPath, oContext);
-	oContext = sFullPath ? this.getContext(sFullPath) : undefined;
+	oContext = (sFullPath == undefined) ? undefined : this.getContext(sFullPath ? sFullPath : "/");
 	fnCallBack(oContext);
 };
 
@@ -265,12 +262,18 @@ sap.ui.model.xml.XMLModel.prototype.setProperty = function(sPath, oValue, oConte
 	var oObject;
 	if (sProperty.indexOf("@") == 0) {
 		oObject = sObjectPath ? this._getObject(sObjectPath, oContext) : [this.oData.documentElement];
-		oObject[0].setAttribute(sProperty.substr(1), oValue);
+		if (oObject[0]) {
+			oObject[0].setAttribute(sProperty.substr(1), oValue);
+			this.checkUpdate();
+		}
 	} else {
 		oObject = this._getObject(sPath, oContext);
-		jQuery(oObject[0]).text(oValue);
+		if (oObject[0]) {
+			jQuery(oObject[0]).text(oValue);
+			this.checkUpdate();
+		}
 	}
-	this.checkUpdate();
+	
 };
 
 /**
@@ -296,22 +299,15 @@ sap.ui.model.xml.XMLModel.prototype.getProperty = function(sPath, oContext) {
  * @returns the node of the specified path/context
  */
 sap.ui.model.xml.XMLModel.prototype._getObject = function (sPath, oContext) {
-	var oRootNode = this.oData.documentElement,
-		// if path = null context must be respected as well: we handle this as relative here
-		bIsRelative = sPath && jQuery.sap.startsWith(sPath, "/") ? false : true;
+	var oRootNode = this.oData.documentElement;
 	if (!oRootNode) {
 		return null;
 	}
 	var oNode = this.isLegacySyntax() ? [oRootNode] : [];
-	if (oContext && bIsRelative){
-		if (oContext instanceof sap.ui.model.Context){
-			oNode = this._getObject(oContext.getPath());
-			if (!oNode || oNode.length == 0 || !oNode[0]) {
-				return null;
-			}
-		} else {
-			oNode = [oContext];
-		}
+	if (oContext instanceof sap.ui.model.Context){
+		oNode = this._getObject(oContext.getPath());
+	} else if (oContext) {
+		oNode = [oContext];
 	}
 	if (!sPath) {
 		return oNode;

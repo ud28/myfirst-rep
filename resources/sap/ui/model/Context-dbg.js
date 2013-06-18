@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides an abstraction for model bindings
@@ -23,30 +23,44 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @param {Object} oContext the context object
  * @abstract
  * @public
+ * @name sap.ui.model.Context
  */
-sap.ui.model.Context = function(oModel, sPath){
-	sap.ui.base.Object.apply(this);
+sap.ui.base.Object.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context */ {
+	
+	constructor : function(oModel, sPath){
 
-	this.oModel = oModel;
-	this.sPath = sPath;
-
-};
-sap.ui.model.Context.prototype = jQuery.sap.newObject(sap.ui.base.Object.prototype);
-
-/*
- * Describe the sap.ui.model.Binding.
- * Resulting metadata can be obtained via sap.ui.model.Binding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Context", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"getModel", "getPath", "getProperty", "getObject"
-  ]
+		sap.ui.base.Object.apply(this);
+	
+		this.oModel = oModel;
+		this.sPath = sPath;
+	
+	},
+	
+	metadata : {
+		"abstract" : true,
+	  publicMethods : [
+			"getModel", "getPath", "getProperty", "getObject"
+		]
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Context with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.C.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Context.extend
+ * @function
+ */
 
 // Getter
 /**

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -32,8 +32,10 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <ul>
  * <li>{@link #getColorPalette colorPalette} : string[] (default: ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4'])</li>
  * <li>{@link #getIsDonut isDonut} : boolean (default: false)</li>
+ * <li>{@link #getIsGeoPie isGeoPie} : boolean (default: false)</li>
  * <li>{@link #getValign valign} : sap.viz.ui5.types.Pie_valign (default: sap.viz.ui5.types.Pie_valign.top)</li>
- * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Pie_drawingEffect (default: sap.viz.ui5.types.Pie_drawingEffect.normal)</li></ul>
+ * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Pie_drawingEffect (default: sap.viz.ui5.types.Pie_drawingEffect.normal)</li>
+ * <li>{@link #getPlotScale plotScale} : float (default: 1)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -60,7 +62,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -78,8 +80,10 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
 	properties : {
 		"colorPalette" : {type : "string[]", group : "", defaultValue : ['#748CB2','#9CC677','#EACF5E','#F9AD79','#D16A7C','#8873A2','#3A95B3','#B6D949','#FDD36C','#F47958','#A65084','#0063B1','#0DA841','#FCB71D','#F05620','#B22D6E','#3C368E','#8FB2CF','#95D4AB','#EAE98F','#F9BE92','#EC9A99','#BC98BD','#1EB7B2','#73C03C','#F48323','#EB271B','#D9B5CA','#AED1DA','#DFECB2','#FCDAB0','#F5BCB4']},
 		"isDonut" : {type : "boolean", group : "", defaultValue : false},
-		"valign" : {type : "sap.viz.ui5.types.Pie_valign", group : "", defaultValue : sap.viz.ui5.types.Pie_valign.top},
-		"drawingEffect" : {type : "sap.viz.ui5.types.Pie_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Pie_drawingEffect.normal}
+		"isGeoPie" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"valign" : {type : "sap.viz.ui5.types.Pie_valign", group : "", defaultValue : sap.viz.ui5.types.Pie_valign.top, deprecated: true},
+		"drawingEffect" : {type : "sap.viz.ui5.types.Pie_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Pie_drawingEffect.normal},
+		"plotScale" : {type : "float", group : "", defaultValue : 1, deprecated: true}
 	},
 	aggregations : {
     	"animation" : {type : "sap.viz.ui5.types.Pie_animation", multiple : false}, 
@@ -117,7 +121,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>colorPalette</code>.
  *
@@ -129,6 +132,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setColorPalette
  * @function
  */
+
 
 /**
  * Getter for property <code>isDonut</code>.
@@ -142,7 +146,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>isDonut</code>.
  *
@@ -155,6 +158,36 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
+
+/**
+ * Getter for property <code>isGeoPie</code>.
+ * Set whether is a geo pie.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>isGeoPie</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#getIsGeoPie
+ * @function
+ */
+
+/**
+ * Setter for property <code>isGeoPie</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bIsGeoPie  new value for property <code>isGeoPie</code>
+ * @return {sap.viz.ui5.types.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#setIsGeoPie
+ * @function
+ */
+
+
 /**
  * Getter for property <code>valign</code>.
  * Set vertical aligment.
@@ -163,10 +196,11 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  *
  * @return {sap.viz.ui5.types.Pie_valign} the value of property <code>valign</code>
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Pie#getValign
  * @function
  */
-
 
 /**
  * Setter for property <code>valign</code>.
@@ -176,9 +210,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @param {sap.viz.ui5.types.Pie_valign} oValign  new value for property <code>valign</code>
  * @return {sap.viz.ui5.types.Pie} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Pie#setValign
  * @function
  */
+
 
 /**
  * Getter for property <code>drawingEffect</code>.
@@ -192,7 +229,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>drawingEffect</code>.
  *
@@ -204,7 +240,37 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setDrawingEffect
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>plotScale</code>.
+ * Set plot scale of Pie.
+ *
+ * Default value is <code>1</code>
+ *
+ * @return {float} the value of property <code>plotScale</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#getPlotScale
+ * @function
+ */
+
+/**
+ * Setter for property <code>plotScale</code>.
+ *
+ * Default value is <code>1</code> 
+ *
+ * @param {float} fPlotScale  new value for property <code>plotScale</code>
+ * @return {sap.viz.ui5.types.Pie} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Pie#setPlotScale
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -215,6 +281,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Pie_animation}
@@ -223,7 +290,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -233,7 +300,8 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#destroyAnimation
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
@@ -244,6 +312,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Pie_tooltip}
@@ -252,7 +321,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
@@ -262,6 +331,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Pie", { metadata :
  * @name sap.viz.ui5.types.Pie#destroyToolTip
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Pie.js
 sap.viz.ui5.types.Pie.prototype.getAnimation = function() {

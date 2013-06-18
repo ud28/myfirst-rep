@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides access to Java-like resource bundles in properties file format
@@ -20,7 +20,7 @@ jQuery.sap.require("jquery.sap.properties");
 	 *
 	 * Use {@link jQuery.sap.resources} to create an instance of jQuery.sap.util.ResourceBundle.
 	 * There you have to specify the URL to the base .properties file of a bundle
-     * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
+	 * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
 	 * a locale. The locale is defined as a string of the language and an optional country code
 	 * separated by underscore (e.g. "en_GB" or "fr"). If no locale is passed, the default
 	 * locale is "en" if the SAPUI5 framework is not available. Otherwise the default locale is taken from
@@ -30,24 +30,34 @@ jQuery.sap.require("jquery.sap.properties");
 	 * for a given key will be returned.
 	 *
 	 * With the given locale, the ResourceBundle requests the locale-specific properties file
-	 * (e.g. "mybundle_fr_FR.properties").
-	 * If no file is found for the locale "fr_FR", the fall back is requested. The fall back is the
-	 * language code without any specific country code, in this case "fr".
-	 * The same is true if the getText() method did not find a string value for a given key.
-	 * If no language-specific file is found the English file, it is requested with locale "en".
-	 * If also the English file is not present, the file without language and country code is requested.
-	 * This is the file that is originally used as URL parameter.
+	 * (e.g. "mybundle_fr_FR.properties"). If no file is found for the requested locale or if the file
+	 * does not contain a text for the given key, a sequence of fall back locales is tried one by one. 
+	 * First, if the locale contains a region information (fr_FR), then the locale without the region is
+	 * tried (fr). If that also can't be found or doesn't contain the requested text, the english file 
+	 * is used (en - assuming that most development projects contain at least english texts).    
+	 * If that also fails, the file without locale (base URL of the bundle) is tried.
+	 * 
+	 * If none of the requested files can be found or none of them contains a text for the given key,
+	 * then the key itself is returned as text. 
 	 *
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP AG
-	 * @version 1.8.4
+	 * @version 1.12.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
 	 */
+	
 	/**
-	 * Returns a locale-specific string value for the given key sKey.
+	 * Returns a locale-specific string value for the given key sKey. 
+	 * 
+	 * The text is searched in this resource bundle according to the fallback chain described in 
+	 * {@link jQuery.sap.util.ResourceBundle}. If no text could be found, the key itself is used as text.
+	 * 
+	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer 
+	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key). 
+	 * 
 	 * @param {string} sKey
 	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.
 	 * @return {string} The value belonging to the key, if found; otherwise the key itself.
@@ -74,7 +84,7 @@ jQuery.sap.require("jquery.sap.properties");
 	var rlocale=/^((?:[A-Z]{2,3}(?:-[A-Z]{3}){0,3})|[A-Z]{4}|[A-Z]{5,8})(?:-([A-Z]{4}))?(?:-([A-Z]{2}|[0-9]{3}))?(-[0-9A-Z]{5,8}|(?:[0-9][0-9A-Z]{3}))*(?:-([0-9A-WYZ](?:-[0-9A-Z]{2,8})+))*(?:-(X(?:-[0-9A-Z]{1,8})+))?$/i;
 
 	/**
-	 * Resource bundles are stored according to the Java DEvelopment Kit conventions.
+	 * Resource bundles are stored according to the Java Development Kit conventions.
 	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi", "in" for "id" and "sh" for "sr").
 	 * Make sure to convert newer codes to older ones before creating file names.
 	 */
@@ -100,7 +110,16 @@ jQuery.sap.require("jquery.sap.properties");
 		if ( typeof sLocale === 'string' && (m = rlocale.exec(sLocale.replace(/_/g, '-'))) ) {
 			var sLanguage = m[1].toLowerCase();
 			sLanguage = M_ISO639_NEW_TO_OLD[sLanguage] || sLanguage;
-			return sLanguage + (m[3] ? "_" + m[3].toUpperCase() + (m[4] ? "_" + m[4].slice(1).replace("-","_") : "") : "");
+			var sScript = m[2] ? m[2].toLowerCase() : undefined;
+			var sRegion = m[3] ? m[3].toUpperCase() : undefined;
+			if ( sLanguage === "zh" && !sRegion ) {
+				if ( sScript === "hans" ) {
+					sRegion = "CN"; 
+				} else if ( sScript === "hant" ) {
+					sRegion = "TW";
+				}
+			} 
+			return sLanguage + (sRegion ? "_" + sRegion + (m[4] ? "_" + m[4].slice(1).replace("-","_") : "") : "");
 		}
 	}
 	
@@ -261,25 +280,32 @@ jQuery.sap.require("jquery.sap.properties");
 	 */
 	function load(oBundle, sLocale) {
 		var oUrl = oBundle.oUrlInfo; 
-		if(jQuery.inArray(sLocale, oBundle.aLocales) == -1){
-			var oHeader = null;
-			var sTempUrl;
-			switch (oUrl.ext) {
-				case '.hdbtextbundle':
-					sLocale = convertLocaleToBCP47(sLocale);
-					oHeader = {
-						"Accept-Language": sLocale
-					};
-					sTempUrl = oUrl.url;
-					//Alternative: add locale as query
-					//sTempUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : "");
-					break;
-				default:
-					sTempUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
-					break;
+		if( jQuery.inArray(sLocale, oBundle.aLocales) == -1 ){
+			var props;
+			if ( shouldRequest(sLocale) ) {
+				var oHeader = null;
+				var sTempUrl;
+				switch (oUrl.ext) {
+					case '.hdbtextbundle':
+						sLocale = convertLocaleToBCP47(sLocale);
+						oHeader = {
+							"Accept-Language": sLocale
+						};
+						sTempUrl = oUrl.url;
+						//Alternative: add locale as query
+						//sTempUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : "");
+						break;
+					default:
+						sTempUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
+						break;
+				}
+	
+				props = jQuery.sap.properties({url : sTempUrl, headers: oHeader});
+			} else {
+				props = {
+						getProperty : function() { return undefined; }
+				}
 			}
-
-			var props = jQuery.sap.properties({url : sTempUrl, headers: oHeader});
 			oBundle.aPropertyFiles.push(props);
 			oBundle.aLocales.push(sLocale);
 			return props;
@@ -287,6 +313,14 @@ jQuery.sap.require("jquery.sap.properties");
 		return null;
 	}
 
+	function shouldRequest(sLocale) {
+		var aLanguages = window.sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getConfiguration().getSupportedLanguages();
+		if ( aLanguages && aLanguages.length > 0 ) {
+			return jQuery.inArray(sLocale, aLanguages) >= 0;
+		}
+		return true;
+	}
+	
 	/**
 	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
 	 * using the given URL and locale to determine what to load.

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -118,7 +118,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @function
  */
 
-
 /**
  * Setter for property <code>vertical</code>.
  *
@@ -130,6 +129,7 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#setVertical
  * @function
  */
+
 
 /**
  * Getter for property <code>scrollPosition</code>.
@@ -143,7 +143,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @function
  */
 
-
 /**
  * Setter for property <code>scrollPosition</code>.
  *
@@ -155,6 +154,7 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#setScrollPosition
  * @function
  */
+
 
 /**
  * Getter for property <code>size</code>.
@@ -168,7 +168,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @function
  */
 
-
 /**
  * Setter for property <code>size</code>.
  *
@@ -180,6 +179,7 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#setSize
  * @function
  */
+
 
 /**
  * Getter for property <code>contentSize</code>.
@@ -193,7 +193,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @function
  */
 
-
 /**
  * Setter for property <code>contentSize</code>.
  *
@@ -205,6 +204,7 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#setContentSize
  * @function
  */
+
 
 /**
  * Getter for property <code>steps</code>.
@@ -218,7 +218,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @function
  */
 
-
 /**
  * Setter for property <code>steps</code>.
  *
@@ -230,6 +229,7 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#setSteps
  * @function
  */
+
 
 /**
  * Scroll event. 
@@ -267,7 +267,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'scroll' event of this <code>sap.ui.core.ScrollBar</code>.<br/>
  *
@@ -282,7 +281,6 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#detachScroll
  * @function
  */
-
 
 /**
  * Fire event scroll to attached listeners.
@@ -301,6 +299,7 @@ sap.ui.core.ScrollBar.M_EVENTS = {'scroll':'scroll'};
  * @name sap.ui.core.ScrollBar#fireScroll
  * @function
  */
+
 
 /**
  * Binds the mouse wheel scroll event of the control that has the scrollbar to the scrollbar itself.
@@ -755,6 +754,7 @@ sap.ui.core.ScrollBar.prototype.setScrollPosition = function (scrollPosition) {
 	} else {
 		this.setProperty("scrollPosition", scrollPosition);
 	}
+	return this;
 };
 
 /*
@@ -822,6 +822,7 @@ sap.ui.core.ScrollBar.prototype.setContentSize = function (sContentSize) {
 			}
 		}
 	}
+	return this;
 };
 
 //=============================================================================
@@ -855,7 +856,7 @@ sap.ui.core.ScrollBar.prototype._doScroll = function(eAction, bForward) {
 	if (this._bStepMode) {
 
 		// STEP MODE
-		var iStep = parseInt(iScrollPos / this._iFactor, 10);
+		var iStep = Math.round(iScrollPos / this._iFactor);
 		var iOldStep = this._iOldStep;
 
 		if (iOldStep !== iStep) {

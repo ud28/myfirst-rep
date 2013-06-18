@@ -1,12 +1,13 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the JSON model implementation of a list binding
 jQuery.sap.declare("sap.ui.model.json.JSONListBinding");
 jQuery.sap.require("sap.ui.model.ListBinding");
+jQuery.sap.require("sap.ui.model.ChangeReason");
 
 
 /**
@@ -16,23 +17,41 @@ jQuery.sap.require("sap.ui.model.ListBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.json.JSONListBinding
+ * @extends sap.ui.model.ListBinding
  */
-sap.ui.model.json.JSONListBinding = function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
-	sap.ui.model.ListBinding.apply(this, arguments);
-	this.update();
-};
-sap.ui.model.json.JSONListBinding.prototype = jQuery.sap.newObject(sap.ui.model.ListBinding.prototype);
+sap.ui.model.ListBinding.extend("sap.ui.model.json.JSONListBinding", /** @lends sap.ui.model.json.JSONListBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
+		sap.ui.model.ListBinding.apply(this, arguments);
+		this.update();
+	},
 
-sap.ui.base.Object.defineClass("sap.ui.model.json.JSONListBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.ListBinding",
-  publicMethods : [
-	// methods
-	"getLength"
-  ]
-
+	metadata : {
+	  publicMethods : [
+			"getLength"
+	  ]
+	}
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.json.JSONListBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.json.JSONListBinding.extend
+ * @function
+ */
+
 
 /**
  * Return contexts for the list or a specified subset of contexts
@@ -44,6 +63,9 @@ sap.ui.base.Object.defineClass("sap.ui.model.json.JSONListBinding", {
  * @protected
  */
 sap.ui.model.json.JSONListBinding.prototype.getContexts = function(iStartIndex, iLength) {
+	this.iLastStartIndex = iStartIndex;
+	this.iLastLength = iLength;
+	
 	if (!iStartIndex) {
 		iStartIndex = 0;
 	}
@@ -51,15 +73,58 @@ sap.ui.model.json.JSONListBinding.prototype.getContexts = function(iStartIndex, 
 		iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
 	}
 
-	var iEndIndex = Math.min(iStartIndex + iLength, this.aIndices.length),
-		oContext,
-		aContexts = [],
-		sPrefix = this.oModel.resolve(this.sPath, this.oContext) + "/";
+	var aContexts = this._getContexts(iStartIndex, iLength),
+		oContextData = {};
 	
+	for (var i = 0; i < aContexts.length; i++) {
+		oContextData[aContexts[i].getPath()] = aContexts[i].getObject();
+	}
+	
+	//Check diff
+	if (this.bUseExtendedChangeDetection && this.aLastContexts && iStartIndex < this.iLastEndIndex) {
+		var that = this;
+		var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
+			return jQuery.sap.equal(
+					oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
+					oNewContext && oContextData && oContextData[oNewContext.getPath()]
+				);
+		});
+		aContexts.diff = aDiff;
+	}
+
+	this.iLastEndIndex = iStartIndex + iLength;
+	this.aLastContexts = aContexts.slice(0);
+	this.oLastContextData = jQuery.extend(true, {}, oContextData);
+	return aContexts;
+};
+
+/**
+ * Return contexts for the list or a specified subset of contexts
+ * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
+ * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
+ * Default is the whole list length.
+ *
+ * @return {Array} the contexts array
+ * @private
+ */
+sap.ui.model.json.JSONListBinding.prototype._getContexts = function(iStartIndex, iLength) {
+	if (!iStartIndex) {
+		iStartIndex = 0;
+	}
+	if (!iLength) {
+		iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
+	}
+	
+	var iEndIndex = Math.min(iStartIndex + iLength, this.aIndices.length),
+	oContext,
+	aContexts = [],
+	sPrefix = this.oModel.resolve(this.sPath, this.oContext) + "/";
+
 	for (var i = iStartIndex; i < iEndIndex; i++) {
 		oContext = this.oModel.getContext(sPrefix + this.aIndices[i]);
 		aContexts.push(oContext);
 	}
+	
 	return aContexts;
 };
 
@@ -71,7 +136,7 @@ sap.ui.model.json.JSONListBinding.prototype.setContext = function(oContext) {
 	if (this.oContext != oContext) {
 		this.oContext = oContext;
 		this.update();
-		this._fireChange();
+		this._fireChange({reason: sap.ui.model.ChangeReason.Context});
 	}
 };
 
@@ -102,7 +167,11 @@ sap.ui.model.json.JSONListBinding.prototype._getLength = function() {
 sap.ui.model.json.JSONListBinding.prototype.update = function(){
 	var oList = this.oModel._getObject(this.sPath, this.oContext);
 	if (oList && jQuery.isArray(oList)) {
-		this.oList = oList.slice(0);
+		if (this.bUseExtendedChangeDetection) {
+			this.oList = jQuery.extend(true, [], oList);
+		} else {
+			this.oList = oList.slice(0);
+		}
 		this.updateIndices();
 		this.applyFilter();
 		this.applySort();
@@ -123,10 +192,41 @@ sap.ui.model.json.JSONListBinding.prototype.update = function(){
  * 
  */
 sap.ui.model.json.JSONListBinding.prototype.checkUpdate = function(bForceupdate){
-	var oList = this.oModel._getObject(this.sPath, this.oContext);
-	if (!jQuery.sap.equal(this.oList, oList) || bForceupdate) {
-		this.update();
-		this._fireChange();
+	if (!this.bUseExtendedChangeDetection) {
+		var oList = this.oModel._getObject(this.sPath, this.oContext);
+		if (!jQuery.sap.equal(this.oList, oList) || bForceupdate) {
+			this.update();
+			this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+		}
+	} else {
+		var bChangeDetected = false;
+		var that = this;
+		
+		//If the list has changed we need to update the indices first
+		var oList = this.oModel._getObject(this.sPath, this.oContext);
+		if (!jQuery.sap.equal(this.oList, oList)) {
+			this.update();
+		}
+		
+		//Get contexts for visible area and compare with stored contexts
+		var aContexts = this._getContexts(this.iLastStartIndex, this.iLastLength);
+		if (this.aLastContexts) {
+			if (this.aLastContexts.length != aContexts.length) {
+				bChangeDetected = true;
+			} else {
+				jQuery.each(this.aLastContexts, function(iIndex, oContext) {
+					if (!jQuery.sap.equal(aContexts[iIndex].getObject(), that.oLastContextData[oContext.getPath()])) {
+						bChangeDetected = true;
+						return false;
+					}
+				});
+			}
+		} else {
+			bChangeDetected = true;
+		}
+		if (bChangeDetected || bForceupdate) {
+			this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+		}
 	}
 };
 
@@ -154,8 +254,10 @@ sap.ui.model.json.JSONListBinding.prototype.sort = function(oSorter){
 		this.oSorter = oSorter;
 		this.applySort();
 	}
-	this._fireChange();
-	this._fireSort({sorter: oSorter});
+	this._fireChange({reason: sap.ui.model.ChangeReason.Sort});
+	// TODO remove this if the sorter event gets removed which is deprecated
+	this._fireSort({sorter: oSorter}); 
+	return this;
 };
 
 /**
@@ -209,14 +311,16 @@ sap.ui.model.json.JSONListBinding.prototype.applySort = function(){
 };
 
 /**
- * 
  * Filters the list.
+ * 
  * Filters are first grouped according to their binding path.
  * All filters belonging to a group are ORed and after that the
  * results of all groups are ANDed.
  * Usually this means, all filters applied to a single table column
  * are ORed, while filters on different table columns are ANDed.
- * @param {Array} aFilters Array of sap.ui.model.Filter objects
+ * 
+ * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+ * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining 
  * 
  * @public
  */
@@ -230,8 +334,10 @@ sap.ui.model.json.JSONListBinding.prototype.filter = function(aFilters){
 		this.applyFilter();
 	}
 	this.applySort();
-	this._fireChange();
-	this._fireFilter({filters: aFilters});
+	this._fireChange({reason: sap.ui.model.ChangeReason.Filter});
+	// TODO remove this if the filter event gets removed which is deprecated
+	this._fireFilter({filters: aFilters}); 
+	return this;
 };
 
 /**
@@ -318,7 +424,7 @@ sap.ui.model.json.JSONListBinding.prototype.getFilterFunction = function(oFilter
 		case "GE":
 			oFilter.fnTest = function(value) { return value >= oValue1; }; break;
 		case "BT":
-			oFilter.fnTest = function(value) { return (value > oValue1) && (value < oValue2); }; break;
+			oFilter.fnTest = function(value) { return (value >= oValue1) && (value <= oValue2); }; break;
 		case "Contains":
 			oFilter.fnTest = function(value) {
 				if (typeof value != "string") {

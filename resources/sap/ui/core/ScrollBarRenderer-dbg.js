@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // A renderer for the ScrollBar control
@@ -103,7 +103,7 @@ sap.ui.core.ScrollBarRenderer.render = function(oRenderManager, oScrollBar){
 		// Middle div - ScrollBar itself.
 		rm.write("<div ");
 		rm.writeAttribute( "id", oScrollBar.getId() + "-sb");
-        rm.write(" style=\"width:100%;height:" + sHeight*2 + "px;margin-top:-" + sHeight + "px;overflow-x:scroll;overflow-y:hidden\">");
+        rm.write(" style=\"height:" + sHeight*2 + "px;margin-top:-" + sHeight + "px;overflow-x:scroll;overflow-y:hidden\">");
 
 		//Last div - The content div   <div style="width:1000px;height:16px;"></div>
 		rm.write("<div");

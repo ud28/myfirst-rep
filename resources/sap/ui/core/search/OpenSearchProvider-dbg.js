@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ jQuery.sap.require("sap.ui.core.search.SearchProvider");
  * @extends sap.ui.core.search.SearchProvider
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -104,7 +104,6 @@ sap.ui.core.search.SearchProvider.extend("sap.ui.core.search.OpenSearchProvider"
  * @function
  */
 
-
 /**
  * Setter for property <code>suggestUrl</code>.
  *
@@ -116,6 +115,7 @@ sap.ui.core.search.SearchProvider.extend("sap.ui.core.search.OpenSearchProvider"
  * @name sap.ui.core.search.OpenSearchProvider#setSuggestUrl
  * @function
  */
+
 
 /**
  * Getter for property <code>suggestType</code>.
@@ -129,7 +129,6 @@ sap.ui.core.search.SearchProvider.extend("sap.ui.core.search.OpenSearchProvider"
  * @function
  */
 
-
 /**
  * Setter for property <code>suggestType</code>.
  *
@@ -141,6 +140,7 @@ sap.ui.core.search.SearchProvider.extend("sap.ui.core.search.OpenSearchProvider"
  * @name sap.ui.core.search.OpenSearchProvider#setSuggestType
  * @function
  */
+
 
 // Start of sap/ui/core/search/OpenSearchProvider.js
 jQuery.sap.require("jquery.sap.encoder");

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -110,7 +110,9 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
 
 /**
  * Getter for property <code>width</code>.
- * Set the width of the SegmentedButton control. If not set, it consumes the complete available width.
+ * Set the width of the SegmentedButton control. If not set, it uses the minimum required width to make all buttons inside of the same size (based on the biggest button).
+ * 
+ * 
  *
  * Default value is empty/<code>undefined</code>
  *
@@ -119,7 +121,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#getWidth
  * @function
  */
-
 
 /**
  * Setter for property <code>width</code>.
@@ -133,6 +134,7 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
+
 /**
  * Getter for property <code>visible</code>.
  * boolean property to make the control visible or invisible
@@ -145,7 +147,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -157,7 +158,8 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#setVisible
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>buttons</code>.<br/>
  * Buttons of the SegmentedButton control
@@ -167,6 +169,7 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#getButtons
  * @function
  */
+
 
 /**
  * Inserts a button into the aggregation named <code>buttons</code>.
@@ -184,7 +187,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Adds some button <code>oButton</code> 
  * to the aggregation named <code>buttons</code>.
@@ -197,7 +199,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Removes an button from the aggregation named <code>buttons</code>.
  *
@@ -208,7 +209,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Removes all the controls in the aggregation named <code>buttons</code>.<br/>
  * Additionally unregisters them from the hosting UIArea.
@@ -217,7 +217,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#removeAllButtons
  * @function
  */
-
 
 /**
  * Checks for the provided <code>sap.m.Button</code> in the aggregation named <code>buttons</code> 
@@ -230,7 +229,7 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#indexOfButton
  * @function
  */
-
+	
 
 /**
  * Destroys all the buttons in the aggregation 
@@ -241,6 +240,7 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
+
 /**
  * Pointer to the selected button of a SegmentedButton control.
  *
@@ -249,7 +249,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#getSelectedButton
  * @function
  */
-
 
 /**
  * Pointer to the selected button of a SegmentedButton control.
@@ -263,6 +262,8 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
+
+	
 /**
  * Event is fired when the user selects a button, which returns the id and button object 
  *
@@ -297,7 +298,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'select' event of this <code>sap.m.SegmentedButton</code>.<br/>
  *
@@ -312,7 +312,6 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#detachSelect
  * @function
  */
-
 
 /**
  * Fire event select to attached listeners.
@@ -329,6 +328,7 @@ sap.m.SegmentedButton.M_EVENTS = {'select':'select'};
  * @name sap.m.SegmentedButton#fireSelect
  * @function
  */
+
 
 /**
  * Convenient method to add a button with a text as title OR an URI for an icon. Using both is not supported.
@@ -358,24 +358,30 @@ sap.m.SegmentedButton.prototype.init = function() {
 		sap.m.SegmentedButton.prototype.ontouchstart = this._ontouchstart;
 		sap.m.SegmentedButton.prototype.ontouchend = this._ontouchend;
 	}
+	if(jQuery.browser.msie && jQuery.browser.fVersion <= 10) {
+		this._isMie = true;
+	}
 	//bind the resize event to window
 	jQuery(window).resize(jQuery.proxy(this._fHandleResize, this));
 };
-/**
- *	This function is called after Rendering which triggers the width calculation of
- *	the SegmentedButton buttons. The timeout is needed, because otherwise the returned width of
- *	the parent element is wrong. (Number is bigger than the actual screen width). This is only needed
- *	after page reload. On desktop browsers no timeout is needed, therefore the speed of mobile browsers
- *	is too slow to finish calculation and rendering the page before the get width function is called.
- */
+
 sap.m.SegmentedButton.prototype.onAfterRendering = function() {
-	var that = this;
 	//Flag if control is inside the bar. If inside bar the buttons always use the width they need.
 	this._bInsideBar = (this.$().closest('.sapMBar').length > 0) ? true : false;
-	setTimeout(function(){
-		that._fCalcBtnWidth();
-	},0);
-	
+	var aButtons = this.getButtons();
+	var bAllIcons = true;
+	var self = this;
+	for(var i=0; i < aButtons.length; i++) {
+		if(aButtons[i].getIcon() == "") {
+			bAllIcons = false;
+		}
+	}
+	if(bAllIcons) {
+		this.$().toggleClass("sapMSegBIcons", true);
+	}
+	setTimeout(function() {
+		self._fCalcBtnWidth();
+	},10);
 };
 /**
  * Called after the theme has been switched, required for new width calc
@@ -391,15 +397,20 @@ sap.m.SegmentedButton.prototype.onThemeChanged = function(oEvent){
  * @private
  */
 sap.m.SegmentedButton.prototype._fCalcBtnWidth = function() {
-	var iItm = this.getButtons().length,
-		aBtnWidth = [],
+	var iItm = this.getButtons().length;
+	if (iItm === 0 || !this.$().is(":visible")) {
+		return;
+	}
+	
+	var aBtnWidth = [],
 		iMaxWidth = 5,
 		$this = this.$(),
+		iParentWidth = 0,
 		iInnerWidth = $this.children('#' + this.getButtons()[0].getId()).outerWidth(true)-$this.children('#' + this.getButtons()[0].getId()).width(),
 		//Outerwidth of control, if developer manually sets margin or padding to the control itself
 		iCntOutWidth = $this.outerWidth(true) - $this.width();
 		//if parent width is bigger than actual screen width set parent width to screen width => android 2.3
-		var iParentWidth = (window.screen.width < $this.parent().width()) ? window.screen.width : $this.parent().width();
+		iParentWidth = (jQuery(window).width() < $this.parent().outerWidth()) ? jQuery(window).width() : $this.parent().width();
 	if(this.getWidth() && this.getWidth().indexOf("%") === -1) {
 		iMaxWidth = parseInt(this.getWidth()) / iItm;
 		for(var i = 0; i < iItm; i++) {
@@ -419,24 +430,21 @@ sap.m.SegmentedButton.prototype._fCalcBtnWidth = function() {
 			iMaxWidth = iMaxWidth - iInnerWidth;
 		}
 	}
+
 	for(var i = 0; i < iItm; i++) {
-		if (!isNaN(iMaxWidth))
-			$this.children('#' + this.getButtons()[i].getId()).width(iMaxWidth).css('visibility', 'visible');			
+		if (!isNaN(iMaxWidth)) {
+			$this.children('#' + this.getButtons()[i].getId()).width(iMaxWidth);
+		}
 	}
 };
 /**
  * The orientationchange event listener
 */
 sap.m.SegmentedButton.prototype._fHandleResize = function() {
-	//check if control is hidden (not shown) when resize event is fired. Happens when keyboard is shown on another page, for example.
-	if(this.$().is(":visible")) {
-		if(!this.getWidth() || this.getWidth().indexOf("%") !== -1) {
-			for(var i = 0; i < this.getButtons().length; i++) {			
-				this.$().children('#' + this.getButtons()[i].getId()).width('').css('visibility', 'hidden');	
-			}
-			this._fCalcBtnWidth();
-		}
-	}
+	var self = this;
+	setTimeout(function() {
+		self._fCalcBtnWidth();
+	},10);
 };
 /**
  * Convenient method to add a button with a text as title or an uri for an icon. 

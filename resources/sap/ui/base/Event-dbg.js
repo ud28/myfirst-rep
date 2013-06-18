@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.base.Event
@@ -19,7 +19,7 @@ jQuery.sap.require("sap.ui.base.Object");
  * @extends sap.ui.base.Object
  * @implements sap.ui.base.Poolable
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.8.4
+ * @version 1.12.1
  * @public
  */
 // TODO Previous documentation stated that sId is numerical, but this seems not to be true

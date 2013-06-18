@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides helper class sap.ui.core.Popup
@@ -12,6 +12,7 @@ jQuery.sap.require("sap.ui.base.Object");
 jQuery.sap.require("sap.ui.base.EventProvider");
 jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.require("sap.ui.core.RenderManager");
+jQuery.sap.require("sap.ui.core.IntervalTrigger");
 
 /**
  * Creates an instance of <code>sap.ui.core.Popup</code> that can be used to open controls as a Popup,
@@ -70,6 +71,11 @@ sap.ui.core.Popup = function (oContent, bModal, bShadow, bAutoClose) {
 	//this function needs to be put onto the instance other than the prototype because functions on the prototype are treated as same function and can't be bound twice.
 	if(this.touchEnabled){
 		this._fAutoCloseHandler = function(oEvent){
+			// call the close handler only when it's fully opened
+			// this also prevents calling close while closing
+			if(this.eOpenState !== sap.ui.core.OpenState.OPEN){
+				return;
+			}
 			var oDomNode = oEvent.target,
 				oPopupDomNode = this._$().get(0),
 				oParentDomNode = this._oLastPosition.of === document ? null : this._oLastPosition.of,
@@ -419,9 +425,10 @@ sap.ui.core.Popup.prototype.oBlindLayerPool = new sap.ui.base.ObjectPool(sap.ui.
  * @param {DOMNode|sap.ui.core.Element} [of=document] the DOM element or control to dock to
  * @param {string} [offset="0 0"] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
  * @param {string} [collision="flip"] defines how the position of an element should be adjusted in case it overflows the window in some direction.
+ * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
  * @public
  */
-sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, collision) {
+sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, collision, followOf) {
 	jQuery.sap.assert(this.oContent, "Popup content must have been set by now");
 	// other asserts follow after parameter shifting
 
@@ -441,9 +448,16 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 		oStatic.addContent(this.oContent, true);
 		this._bContentAddedToStatic = true;
 	}
+	
+	// the content needs to be connected with a UIArea to make sure that it works properly
+	// this could not be the case when returning e.g. a Thing Inspector as content of a view
+	if(this.oContent instanceof sap.ui.core.Element && (!this.oContent.getUIArea || this.oContent.getUIArea() !== null)) {
+		jQuery.sap.log.warning("The Popup content is already connected with an UIArea and may not work properly!");
+	}
 
 	// iDuration is optional... if not given:
 	if (typeof(iDuration) == "string") {
+		followOf = collision;
 		collision = offset;
 		offset = of;
 		of = at;
@@ -493,6 +507,7 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 
 	var oStaticArea = sap.ui.getCore().getStaticAreaRef();
 	$Ref.css("position", "absolute").css("visibility", "hidden");
+	
 	if(!($Ref[0].parentNode == oStaticArea)) { // do not move in DOM if not required - otherwise this destroys e.g. the RichTextEditor
 		$Ref.appendTo(oStaticArea);
 	}
@@ -500,6 +515,9 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 
 	jQuery.sap.log.debug("position popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(_oPosition.at) : String(_oPosition.at)));
 	this._applyPosition(_oPosition);
+	
+	//Remeber the custom follow of handler: TODO Make this public?
+	this._followOfHandler = (typeof(followOf) === "function") ? followOf : null;
 
 	var that = this;
 	var fnOpened = function() {
@@ -523,6 +541,10 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 		}
 
 		that.eOpenState = sap.ui.core.OpenState.OPEN;
+		
+		if(followOf === true || typeof(followOf) === "function"){
+			sap.ui.core.Popup.DockTrigger.addListener(sap.ui.core.Popup.checkDocking, that);
+		}
 
 		// notify that opening has completed
 		if (jQuery.browser.msie && jQuery.browser.version == '9.0') {
@@ -531,6 +553,11 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 			});
 		} else {
 			that.fireEvent(sap.ui.core.Popup.M_EVENTS.opened);
+		}
+		
+		//autoclose implementation for mobile or desktop browser in touch mode
+		if(that.touchEnabled && !that._bModal && that._bAutoClose){
+			jQuery(document).bind("vmousedown", jQuery.proxy(that._fAutoCloseHandler, that));
 		}
 
 	};
@@ -586,12 +613,6 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 					}
 				}
 			}
-		}
-	}
-	//autoclose implementation for mobile or desktop browser in touch mode
-	else{
-		if(!this._bModal && this._bAutoClose){
-			jQuery(document).bind("vmousedown", jQuery.proxy(this._fAutoCloseHandler, this));
 		}
 	}
 	
@@ -707,11 +728,16 @@ sap.ui.core.Popup.prototype.close = function(iDuration) {
 	//if(this.eOpenState != sap.ui.core.OpenState.OPEN) return; // this is the more conservative approach: to only close when the Popup is OPEN
 
 	this.eOpenState = sap.ui.core.OpenState.CLOSING;
+	
+	sap.ui.core.Popup.DockTrigger.removeListener(sap.ui.core.Popup.checkDocking, this);
+	this._followOfHandler = null;
 
 	// If we added the content control to the static UIArea,
 	// then we should remove it again now.
 	// Assumption: application did not move the content in the meantime!
 	if ( this.oContent && this._bContentAddedToStatic ) {
+		//Fix for RTE in PopUp
+		sap.ui.getCore().getEventBus().publish("sap.ui","__beforePopupClose", { domNode : this._$().get(0) });
 		var oStatic = sap.ui.getCore().getStaticAreaRef();
 		oStatic = sap.ui.getCore().getUIArea(oStatic);
 		oStatic.removeContent(oStatic.indexOfContent(this.oContent), true);
@@ -893,10 +919,11 @@ sap.ui.core.Popup.prototype.getContent = function() {
  * @param {sap.ui.core.Popup.Dock | object {left: {sap.ui.core.CSSSize}, top: {sap.ui.core.CSSSize}}} at specifies the point of the reference element to which the given Content should be aligned
  * @param {string | sap.ui.core.Control | DOMRef | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should be aligned as specified in the other parameters
  * @param {string} [offset="0 0"] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
+ * @param {string} defines how the position of an element should be adjusted in case it overflows the window in some direction.
  * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
  * @public
  */
-sap.ui.core.Popup.prototype.setPosition = function(my, at, of, offset, collision) { // TODO: document collision and implications on offset
+sap.ui.core.Popup.prototype.setPosition = function(my, at, of, offset, collision) {
 	jQuery.sap.assert(typeof my === "string", "my must be a string");
 	jQuery.sap.assert(typeof at === "string" || (typeof at === "object" && (typeof at.left === "number") && (typeof at.top === "number")), "my must be a string or an object with 'left' and 'top' properties");
 	jQuery.sap.assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
@@ -920,7 +947,6 @@ sap.ui.core.Popup.prototype.setPosition = function(my, at, of, offset, collision
 	return this;
 };
 
-
 /**
  * Applies the given position to the Popup which is assumed to be currently open
  *
@@ -930,9 +956,45 @@ sap.ui.core.Popup.prototype._applyPosition = function(oPosition) {
 	var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 	var $Ref = this._$();
 	var oAt = oPosition.at;
+	
 	if(typeof(oAt) === "string") {
+		//TODO enable this stuff when a jQueryUI update has been made
+		// this is the version where the offset was used as a separate parameter for positioning
+		// this is not final and has to be edited when going to be used! 
+		
+//		var aVersOld = [1, 8, 23];
+//		var aVers = jQuery.ui.version.split(".");
+//		var bNewOffset = false;
+//		
+//		if (aVers.length === 3){
+//			if (parseInt(aVers[0]) > aVersOld[0]){
+//				bNewOffset = true;
+//			}
+//			if (parseInt(aVers[1]) > aVersOld[1]){
+//				bNewOffset = true;
+//			}
+//			if (parseInt(aVers[2]) > aVersOld[2]){
+//				bNewOffset = true;
+//			}
+//		} else {
+//			bNewOffset = true;
+//		}
+//		
+//		if (bNewOffset) {
+//			var pattern;
+//			
+//			var aMy = oPosition.my.split(" ");
+//			var aOffset = oPosition.offset.split(" ");
+//			var _oPosition = jQuery.extend({}, oPosition);
+//			
+//			_oPosition.my = aMy[0] + aOffset[0] + " " + aMy[1] + aOffset[1];
+//				
+//			$Ref.css("display", "block").position(this._resolveReference(this._convertPositionRTL(_oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
+//			this._fixPositioning(_oPosition, bRtl);
+//		} else {
 		$Ref.css("display", "block").position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
 		this._fixPositioning(oPosition, bRtl);
+//		}
 	} else if(sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
 		$Ref.css("left", oAt.left).css("top", oAt.top);
 	} else if(sap.ui.core.CSSSize.isValid(oAt.right) && sap.ui.core.CSSSize.isValid(oAt.top)) {
@@ -949,6 +1011,7 @@ sap.ui.core.Popup.prototype._applyPosition = function(oPosition) {
 
 	// remember given position for later redraws
 	this._oLastPosition = oPosition;
+	this._oLastOfRect = jQuery(oPosition.of instanceof sap.ui.core.Element ? oPosition.of.getDomRef() : oPosition.of).rect();
 };
 
 /**
@@ -1270,6 +1333,33 @@ sap.ui.core.Popup.prototype._hideBlockLayer = function() {
 };
 
 
+//****************************************************
+//Handling of movement of the dock references
+//****************************************************
+sap.ui.core.Popup.DockTrigger = new sap.ui.core.IntervalTrigger(200);
+
+sap.ui.core.Popup.checkDocking = function(){
+	if(this.getOpenState() === sap.ui.core.OpenState.OPEN){
+		var oCurrentOfRect = jQuery(this._oLastPosition.of instanceof sap.ui.core.Element ? this._oLastPosition.of.getDomRef() : this._oLastPosition.of).rect();
+		
+		/* 
+		 * It's possible that the triggering has already started since the listener is added in 'open' and the Popup hasn't opened yet.
+		 * Therefore '_oLastOfRect' wasn't set due to the Popup didn't set it in '_applyPosition'.
+		 */
+		if (this._oLastOfRect){
+			if(this._oLastOfRect.left != oCurrentOfRect.left
+					|| this._oLastOfRect.top != oCurrentOfRect.top
+					|| this._oLastOfRect.width != oCurrentOfRect.width
+					|| this._oLastOfRect.height != oCurrentOfRect.height){
+				if(this._followOfHandler){
+					this._followOfHandler();
+				}else{
+					this._applyPosition(this._oLastPosition);
+				}
+			}
+		}
+	}
+};
 
 //****************************************************
 //Focus Handling Delegate function for use with the given content (of type sap.ui.core.Element)
@@ -1307,11 +1397,9 @@ sap.ui.core.Popup.prototype.onmousedown = function(oEvent) {
 sap.ui.core.Popup.prototype.onAfterRendering = function(oEvent){
 	var $Ref = this.getContent().$();
 
+	// TODO all stuff done in 'open' is destroyed if the content was rerendered 
 	$Ref.toggleClass("sapUiShd", this._bShadow);
-	var pos = $Ref.css("position");
-	if (!pos || pos == "static") {
-		$Ref.css("position", "absolute");
-	} // only set 'position:absolute' if nobody else has set positioning yet
+	$Ref.css("position", "absolute");
 
 	// Ensure right position is used for this call
 	var ref = $Ref[0];

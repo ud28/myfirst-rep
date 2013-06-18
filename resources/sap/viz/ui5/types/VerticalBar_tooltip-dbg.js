@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -55,18 +55,19 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
  * @since 1.7.2
- * @experimental Since version 1.7.2. 
- * Charting API is not finished yet and might change completely
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.VerticalBar_tooltip
  */
 sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_tooltip", { metadata : {
 
 	// ---- object ----
+	deprecated : true,
 
 	// ---- control specific ----
 	library : "sap.viz",
@@ -105,7 +106,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_toolti
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -117,5 +117,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.VerticalBar_toolti
  * @name sap.viz.ui5.types.VerticalBar_tooltip#setEnabled
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/VerticalBar_tooltip.js

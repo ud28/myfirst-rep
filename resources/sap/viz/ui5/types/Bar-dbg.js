@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -34,7 +34,9 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * <li>{@link #getPrimaryValuesColorPalette primaryValuesColorPalette} : string[] (default: ['#8FBADD','#B8D4E9','#7AAED6','#A3C7E3','#3D88C4','#66A1D0','#297CBE','#5295CA','#005BA3','#146FB7','#005395','#0063B1'])</li>
  * <li>{@link #getSecondaryValuesColorPalette secondaryValuesColorPalette} : string[] (default: ['#F6A09B','#F9C3C0','#F58E88','#F8B1AD','#F05B52','#F37D76','#EE4A40','#F16C64','#D92419','#ED382D','#C52117','#EB271B'])</li>
  * <li>{@link #getDrawingEffect drawingEffect} : sap.viz.ui5.types.Bar_drawingEffect (default: sap.viz.ui5.types.Bar_drawingEffect.normal)</li>
- * <li>{@link #getIsRoundCorner isRoundCorner} : boolean (default: false)</li></ul>
+ * <li>{@link #getIsRoundCorner isRoundCorner} : boolean (default: false)</li>
+ * <li>{@link #getImageFill imageFill} : boolean (default: false)</li>
+ * <li>{@link #getImagePalette imagePalette} : string[] (default: ['http://www.sap.com/global/ui/images/global/sap-logo.png'])</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -61,7 +63,7 @@ jQuery.sap.require("sap.viz.ui5.core.BaseStructuredType");
  * @extends sap.viz.ui5.core.BaseStructuredType
  *
  * @author  
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -81,10 +83,12 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
 		"primaryValuesColorPalette" : {type : "string[]", group : "", defaultValue : ['#8FBADD','#B8D4E9','#7AAED6','#A3C7E3','#3D88C4','#66A1D0','#297CBE','#5295CA','#005BA3','#146FB7','#005395','#0063B1']},
 		"secondaryValuesColorPalette" : {type : "string[]", group : "", defaultValue : ['#F6A09B','#F9C3C0','#F58E88','#F8B1AD','#F05B52','#F37D76','#EE4A40','#F16C64','#D92419','#ED382D','#C52117','#EB271B']},
 		"drawingEffect" : {type : "sap.viz.ui5.types.Bar_drawingEffect", group : "", defaultValue : sap.viz.ui5.types.Bar_drawingEffect.normal},
-		"isRoundCorner" : {type : "boolean", group : "", defaultValue : false}
+		"isRoundCorner" : {type : "boolean", group : "", defaultValue : false},
+		"imageFill" : {type : "boolean", group : "", defaultValue : false, deprecated: true},
+		"imagePalette" : {type : "string[]", group : "", defaultValue : ['http://www.sap.com/global/ui/images/global/sap-logo.png'], deprecated: true}
 	},
 	aggregations : {
-    	"toolTip" : {type : "sap.viz.ui5.types.Bar_tooltip", multiple : false}, 
+    	"toolTip" : {type : "sap.viz.ui5.types.Bar_tooltip", multiple : false, deprecated: true}, 
     	"animation" : {type : "sap.viz.ui5.types.Bar_animation", multiple : false}
 	}
 }});
@@ -109,7 +113,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
 
 /**
  * Getter for property <code>colorPalette</code>.
- * Set color palette for non_dual chart. Or dual chart's color palette if MND is on Category axis.
+ * Set color palette for non-dual chart. Or dual chart's color palette when MND is not fed on legend color.
  *
  * Default value is <code>#748CB2,#9CC677,#EACF5E,#F9AD79,#D16A7C,#8873A2,#3A95B3,#B6D949,#FDD36C,#F47958,#A65084,#0063B1,#0DA841,#FCB71D,#F05620,#B22D6E,#3C368E,#8FB2CF,#95D4AB,#EAE98F,#F9BE92,#EC9A99,#BC98BD,#1EB7B2,#73C03C,#F48323,#EB271B,#D9B5CA,#AED1DA,#DFECB2,#FCDAB0,#F5BCB4</code>
  *
@@ -118,7 +122,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>colorPalette</code>.
@@ -132,6 +135,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>primaryValuesColorPalette</code>.
  * Set axis 1 color palette for dual chart.
@@ -143,7 +147,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getPrimaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>primaryValuesColorPalette</code>.
@@ -157,6 +160,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>secondaryValuesColorPalette</code>.
  * Set axis 2 color palette for dual chart.
@@ -168,7 +172,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getSecondaryValuesColorPalette
  * @function
  */
-
 
 /**
  * Setter for property <code>secondaryValuesColorPalette</code>.
@@ -182,6 +185,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>drawingEffect</code>.
  * Set drawing effect of XY.
@@ -193,7 +197,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#getDrawingEffect
  * @function
  */
-
 
 /**
  * Setter for property <code>drawingEffect</code>.
@@ -207,6 +210,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Getter for property <code>isRoundCorner</code>.
  * Set enable/disable round corner of bar.
@@ -219,7 +223,6 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
-
 /**
  * Setter for property <code>isRoundCorner</code>.
  *
@@ -231,36 +234,103 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#setIsRoundCorner
  * @function
  */
-	
+
+
+/**
+ * Getter for property <code>imageFill</code>.
+ * Set enabled/disabled image fill.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>imageFill</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#getImageFill
+ * @function
+ */
+
+/**
+ * Setter for property <code>imageFill</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bImageFill  new value for property <code>imageFill</code>
+ * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#setImageFill
+ * @function
+ */
+
+
+/**
+ * Getter for property <code>imagePalette</code>.
+ * images to fill the bar
+ *
+ * Default value is <code>http://www.sap.com/global/ui/images/global/sap-logo.png</code>
+ *
+ * @return {string[]} the value of property <code>imagePalette</code>
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#getImagePalette
+ * @function
+ */
+
+/**
+ * Setter for property <code>imagePalette</code>.
+ *
+ * Default value is <code>http://www.sap.com/global/ui/images/global/sap-logo.png</code> 
+ *
+ * @param {string[]} aImagePalette  new value for property <code>imagePalette</code>
+ * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
+ * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
+ * @name sap.viz.ui5.types.Bar#setImagePalette
+ * @function
+ */
+
+
 /**
  * Getter for aggregation <code>toolTip</code>.<br/>
  * Settings for tooltip related properties.
  * 
  * @return {sap.viz.ui5.types.Bar_tooltip}
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar#getToolTip
  * @function
  */
+
 
 /**
  * Setter for the aggregated <code>toolTip</code>.
  * @param oToolTip {sap.viz.ui5.types.Bar_tooltip}
  * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar#setToolTip
  * @function
  */
-
+	
 
 /**
  * Destroys the toolTip in the aggregation 
  * named <code>toolTip</code>.
  * @return {sap.viz.ui5.types.Bar} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.12. 
+ * This Property has been deprecated. This interface will be removed from the SAPUI5 delivery in one of the next releases.
  * @name sap.viz.ui5.types.Bar#destroyToolTip
  * @function
  */
-	
+
+
 /**
  * Getter for aggregation <code>animation</code>.<br/>
  * Settings for animation of plot area.
@@ -271,6 +341,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @function
  */
 
+
 /**
  * Setter for the aggregated <code>animation</code>.
  * @param oAnimation {sap.viz.ui5.types.Bar_animation}
@@ -279,7 +350,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#setAnimation
  * @function
  */
-
+	
 
 /**
  * Destroys the animation in the aggregation 
@@ -289,6 +360,7 @@ sap.viz.ui5.core.BaseStructuredType.extend("sap.viz.ui5.types.Bar", { metadata :
  * @name sap.viz.ui5.types.Bar#destroyAnimation
  * @function
  */
+
 
 // Start of sap/viz/ui5/types/Bar.js
 sap.viz.ui5.types.Bar.prototype.getToolTip = function() {

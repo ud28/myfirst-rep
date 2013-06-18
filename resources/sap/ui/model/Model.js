@@ -1,11 +1,9 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
-jQuery.sap.declare("sap.ui.model.Model");jQuery.sap.require("sap.ui.base.EventProvider");jQuery.sap.require("sap.ui.model.BindingMode");jQuery.sap.require("sap.ui.model.Context");
-sap.ui.model.Model=function(){sap.ui.base.EventProvider.apply(this,arguments);this.oData={};this.aBindings=[];this.mContexts={};this.iSizeLimit=100;this.sDefaultBindingMode=sap.ui.model.BindingMode.TwoWay;this.mSupportedBindingModes={"OneWay":true,"TwoWay":true,"OneTime":true};this.bLegacySyntax=false};
-sap.ui.model.Model.prototype=jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);sap.ui.base.Object.defineClass("sap.ui.model.Model",{baseType:"sap.ui.base.Object",publicMethods:["bindProperty","bindList","bindTree","createBindingContext","destroyBindingContext","getProperty","getDefaultBindingMode","setDefaultBindingMode","isBindingModeSupported","attachParseError","detachParseError","attachRequestCompleted","detachRequestCompleted","attachRequestFailed","detachRequestFailed","attachRequestSent","detachRequestSent","setSizeLimit"]});sap.ui.model.Model.M_EVENTS={ParseError:"parseError",RequestFailed:"requestFailed",RequestSent:"requestSent",RequestCompleted:"requestCompleted"};
+jQuery.sap.declare("sap.ui.model.Model");jQuery.sap.require("sap.ui.base.EventProvider");jQuery.sap.require("sap.ui.model.BindingMode");jQuery.sap.require("sap.ui.model.Context");sap.ui.base.EventProvider.extend("sap.ui.model.Model",{constructor:function(){sap.ui.base.EventProvider.apply(this,arguments);this.oData={};this.aBindings=[];this.mContexts={};this.iSizeLimit=100;this.sDefaultBindingMode=sap.ui.model.BindingMode.TwoWay;this.mSupportedBindingModes={"OneWay":true,"TwoWay":true,"OneTime":true};this.bLegacySyntax=false},metadata:{"abstract":true,publicMethods:["bindProperty","bindList","bindTree","bindContext","createBindingContext","destroyBindingContext","getProperty","getDefaultBindingMode","setDefaultBindingMode","isBindingModeSupported","attachParseError","detachParseError","attachRequestCompleted","detachRequestCompleted","attachRequestFailed","detachRequestFailed","attachRequestSent","detachRequestSent","setSizeLimit"]}});sap.ui.model.Model.M_EVENTS={ParseError:"parseError",RequestFailed:"requestFailed",RequestSent:"requestSent",RequestCompleted:"requestCompleted"};
 sap.ui.model.Model.prototype.attachRequestFailed=function(d,f,l){this.attachEvent("requestFailed",d,f,l);return this};
 sap.ui.model.Model.prototype.detachRequestFailed=function(f,l){this.detachEvent("requestFailed",f,l);return this};
 sap.ui.model.Model.prototype.fireRequestFailed=function(a){this.fireEvent("requestFailed",a);return this};
@@ -18,8 +16,9 @@ sap.ui.model.Model.prototype.fireRequestSent=function(a){this.fireEvent("request
 sap.ui.model.Model.prototype.attachRequestCompleted=function(d,f,l){this.attachEvent("requestCompleted",d,f,l);return this};
 sap.ui.model.Model.prototype.detachRequestCompleted=function(f,l){this.detachEvent("requestCompleted",f,l);return this};
 sap.ui.model.Model.prototype.fireRequestCompleted=function(a){this.fireEvent("requestCompleted",a);return this};
+sap.ui.model.Model.prototype.bindContext=function(p,c,P){var b=new sap.ui.model.ContextBinding(this,p,c,P);return b};
 sap.ui.model.Model.prototype.getContext=function(p){var c=this.mContexts[p];if(!c){if(!jQuery.sap.startsWith(p,"/")){p="/"+p}c=new sap.ui.model.Context(this,p);this.mContexts[p]=c}return c};
-sap.ui.model.Model.prototype.resolve=function(p,c){var i=!jQuery.sap.startsWith(p,"/"),r=p,C;if(i){if(c){C=c.getPath();r=C+(jQuery.sap.endsWith(C,"/")?"":"/")+p}else{r=this.isLegacySyntax()?"/"+p:""}}if(jQuery.sap.endsWith(r,"/")){r=r.substr(0,r.length-1)}return r};
+sap.ui.model.Model.prototype.resolve=function(p,c){var i=!jQuery.sap.startsWith(p,"/"),r=p,C;if(i){if(c){C=c.getPath();r=C+(jQuery.sap.endsWith(C,"/")?"":"/")+p}else{r=this.isLegacySyntax()?"/"+p:undefined}}if(r&&jQuery.sap.endsWith(r,"/")){r=r.substr(0,r.length-1)}return r};
 sap.ui.model.Model.prototype.addBinding=function(b){this.aBindings.push(b)};
 sap.ui.model.Model.prototype.removeBinding=function(b){for(var i=0;i<this.aBindings.length;i++){if(this.aBindings[i]==b){this.aBindings.splice(i,1);break}}};
 sap.ui.model.Model.prototype.getDefaultBindingMode=function(){return this.sDefaultBindingMode};

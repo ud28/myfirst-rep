@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides the base implementation for all model implementations
@@ -18,32 +18,41 @@ jQuery.sap.require("sap.ui.core.format.NumberFormat");
  * @extends sap.ui.model.SimpleType
  *
  * @author SAP AG
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor
  * @public
+ * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.NumberFormat.getIntegerInstance NumberFormat.getIntegerInstance}
+ * @param {object} [oConstraints] value constraints. 
+ * @param {int} [oConstraints.minimum] smallest value allowed for this type  
+ * @param {int} [oConstraints.maximum] largest value allowed for this type  
+ * @name sap.ui.model.type.Integer
  */
-sap.ui.model.type.Integer = function () {
-	sap.ui.model.SimpleType.apply(this, arguments);
-	this.sName = "Integer";
-};
-
-// chain the prototypes
-sap.ui.model.type.Integer.prototype = jQuery.sap.newObject(sap.ui.model.SimpleType.prototype);
-
-/*
- * Describe the sap.ui.model.type.Integer.
- * Resulting metadata can be obtained via sap.ui.model.type.Integer.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.type.Integer", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.SimpleType",
-  publicMethods : [
-    // methods
-  ]
+sap.ui.model.SimpleType.extend("sap.ui.model.type.Integer", /** @lends sap.ui.model.type.Integer */ {
+	
+	constructor : function () {
+		sap.ui.model.SimpleType.apply(this, arguments);
+		this.sName = "Integer";
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.type.Integer with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.type.Integer.extend
+ * @function
+ */
 
 /**
  * @see sap.ui.model.SimpleType.prototype.formatValue
@@ -71,7 +80,7 @@ sap.ui.model.type.Integer.prototype.parseValue = function(oValue, sInternalType)
 	switch(sInternalType) {
 		case "float":
 		case "string":
-			iResult = this.oFormat.parse(oValue);
+			iResult = this.oFormat.parse(String(oValue));
 			if (isNaN(iResult)) {
 				throw new sap.ui.model.ParseException(oValue + " is not a valid Integer value");
 			}
@@ -113,6 +122,13 @@ sap.ui.model.type.Integer.prototype.validateValue = function(iValue) {
  */
 sap.ui.model.type.Integer.prototype.setFormatOptions = function(oFormatOptions) {
 	this.oFormatOptions = oFormatOptions;
-	this.oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance(this.oFormatOptions);
+	this._handleLocalizationChange();
 };
 
+/**
+ * Called by the framework when any localization setting changed
+ * @private
+ */
+sap.ui.model.type.Integer.prototype._handleLocalizationChange = function() {
+	this.oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance(this.oFormatOptions);
+};

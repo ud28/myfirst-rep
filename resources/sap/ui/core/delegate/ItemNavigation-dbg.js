@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /**
@@ -21,7 +21,7 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  *
  * @class Delegate for the ItemNavigation with the keyboard
  *
- * @author Martin Schaus
+ * @author SAP
  *
  * Delegate for the ItemNavigation with
  * arrow keys over a one dimensional list of items.
@@ -87,7 +87,7 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @param {array} aItemDomRefs Array of DOM nodes representing the items for the navigation
  * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
  *
- * @version 1.8.4
+ * @version 1.12.1
  * @constructor
  * @public
  */
@@ -200,6 +200,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.setItemDomRefs = function(aItemDom
 				$Item.attr("tabIndex", -1);
 			}
 			$Item.data("sap.INItem", true);
+			$Item.data("sap.InNavArea", true); //Item is in navigation area - allow navigation mode and edit mode
 
 			if ($Item.data("sap.INRoot")) {
 				// item is root of an nested ItemNavigation -> set tabindexes from its items to -1
@@ -224,7 +225,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.setItemsTabindex = function() {
 	for (var i=0; i<this.aItemDomRefs.length; i++) {
 		if (this.aItemDomRefs[i]) { // separators return null here
 			var $Item = jQuery(this.aItemDomRefs[i]);
-			if ($Item.is(":focusable")) {
+			if ($Item.is(":sapFocusable")) {
 				// not focusable items (like labels) must not get a tabindex attribute
 				if(i == this.iFocusedIndex && !jQuery(this.oDomRef).data("sap.INItem")){
 					$Item.attr("tabIndex", this.iActiveTabIndex);
@@ -275,6 +276,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.destroy = function() {
 		for (var i=0; i<this.aItemDomRefs.length; i++) {
 			if (this.aItemDomRefs[i]) { // separators return null here
 				jQuery(this.aItemDomRefs[i]).removeData("sap.INItem");
+				jQuery(this.aItemDomRefs[i]).removeData("sap.InNavArea");
 			}
 		}
 		this.aItemDomRefs = null;
@@ -347,24 +349,25 @@ sap.ui.core.delegate.ItemNavigation.prototype.setColumns = function(iColumns) {
  */
 sap.ui.core.delegate.ItemNavigation.prototype.focusItem = function(iIndex, oEvent) {
 
-	jQuery.sap.log.info('FocusItem: '+iIndex+' iFocusedIndex: '+this.iFocusedIndex);
+	jQuery.sap.log.info('FocusItem: '+iIndex+' iFocusedIndex: '+this.iFocusedIndex, 'focusItem', 'ItemNavigation');
 	if(iIndex == this.iFocusedIndex && this.aItemDomRefs[this.iFocusedIndex] == document.activeElement){
 		return; // item already focused -> nothing to do
 	}
 	// if there is no item to put the focus on, we don't even try it
-	if(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")) {
+	if(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
 		return;
 	}
 	this.fireEvent(sap.ui.core.delegate.ItemNavigation.Events.BeforeFocus,{index:iIndex, event:oEvent});
 	this.setFocusedIndex(iIndex);
 	this.bISetFocus = true;
 
-	if (jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot")) {
+	if (jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot") && oEvent) {
 		// store event type for nested ItemNavigations
 		var oItemItemNavigation = jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot");
 		oItemItemNavigation._sFocusEvent = oEvent.type;
 	}
 
+	jQuery.sap.log.info('Set Focus on ID: '+this.aItemDomRefs[this.iFocusedIndex].id, 'focusItem', 'ItemNavigation');
 	jQuery.sap.focus(this.aItemDomRefs[this.iFocusedIndex]);
 
 	this.fireEvent(sap.ui.core.delegate.ItemNavigation.Events.AfterFocus,{index:iIndex, event:oEvent});
@@ -443,8 +446,8 @@ sap.ui.core.delegate.ItemNavigation.prototype.onfocusin = function(oEvent) {
 		}
 
 		var iIndex;
-		if (jQuery(this.oDomRef).data("sap.INItem") && this._sFocusEvent) {
-			// if nested ItemNavigation need to know if focused by parent ItemNavigation
+		if (jQuery(this.oDomRef).data("sap.INItem") && this._sFocusEvent && !jQuery(this.oDomRef).data("sap.InNavArea")) {
+			// if nested ItemNavigation need to know if focused by parent ItemNavigation (not in Navigation mode)
 			switch (this._sFocusEvent) {
 			case "sapnext":
 				iIndex = 0;
@@ -462,6 +465,24 @@ sap.ui.core.delegate.ItemNavigation.prototype.onfocusin = function(oEvent) {
 		}
 
 		this.focusItem(iIndex, oEvent);
+		if (this.iFocusedIndex == -1) {
+			// no item focused, maybe not focusable -> try the next one
+			for (var i=iIndex+1; i<this.aItemDomRefs.length; i++) {
+				this.focusItem(i,oEvent);
+				if (this.iFocusedIndex == i) {
+					break;
+				}
+			}
+			if (this.iFocusedIndex == -1 && iIndex > 0) {
+				// still no item selected, try to find a previous one
+				for (var i=iIndex-1; i>=0; i--) {
+					this.focusItem(i,oEvent);
+					if (this.iFocusedIndex == i) {
+						break;
+					}
+				}
+			}
+		}
 		//cancel the bubbling of event in this case
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -492,6 +513,12 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapfocusleave = function(oEvent)
 	if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.oDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 		// entirely leaving the control handled by this ItemNavigation instance
 		this.setFocusedIndex(this.iSelectedIndex != -1 ?  this.iSelectedIndex : (this.iFocusedIndex != -1 ? this.iFocusedIndex : 0));
+
+		var $DomRef = jQuery(this.oDomRef);
+		if($DomRef.data("sap.InNavArea") === false) { // check for false to avoid undefinded
+			// if in action mode switch back to navigation mode
+			$DomRef.data("sap.InNavArea", true);
+		}
 	}
 };
 
@@ -517,7 +544,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onmousedown = function(oEvent) {
 				} else {
 					// only focus the items if the click did not happen on a
 					// focusable element!
-					if (oItem === oSource || !jQuery(oSource).is(":focusable")) {
+					if (oItem === oSource || !jQuery(oSource).is(":sapFocusable")) {
 						this.focusItem(i, oEvent);
 						// the table mode requires not to prevent the default
 						// behavior on click since we want to allow text selection
@@ -549,9 +576,14 @@ sap.ui.core.delegate.ItemNavigation.prototype.onmousedown = function(oEvent) {
 
  */
 sap.ui.core.delegate.ItemNavigation.prototype.onsapnext = function(oEvent) {
-
+	
 	if(!jQuery.sap.containsOrEquals(this.oDomRef,oEvent.target)){
 		// current element is not part of the navigation content
+		return;
+	}
+
+	if (jQuery(this.oDomRef).data("sap.InNavArea")) {
+		// control is in navigation mode -> no ItemNavigation
 		return;
 	}
 
@@ -618,7 +650,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapnext = function(oEvent) {
 
 			// if item is not visible or a dummy item go to the next one
 			}while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-				|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable"));
+				|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 		}
 		this.focusItem(iIndex, oEvent);
 		//cancel the event otherwise the browser will scroll
@@ -643,6 +675,12 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapprevious = function(oEvent) {
 
 	if(!jQuery.sap.containsOrEquals(this.oDomRef,oEvent.target)){
 		// current element is not part of the navigation content
+		return;
+	}
+
+
+	if (jQuery(this.oDomRef).data("sap.InNavArea")) {
+		// control is in navigation mode -> no ItemNavigation
 		return;
 	}
 
@@ -720,7 +758,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapprevious = function(oEvent) {
 
 			// if item is not visible or a dummy item go to the next one
 			}while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-				|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable"));
+				|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 		}
 		this.focusItem(iIndex, oEvent);
 		//cancel the event otherwise the browser will scroll
@@ -757,7 +795,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsappageup = function(oEvent) {
 		var iIndex = this.iFocusedIndex;
 		if (iIndex > -1) {
 			iIndex = iIndex - this.iPageSize;
-			while (iIndex > 0 && !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+			while (iIndex > 0 && !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 				iIndex--;
 			}
 			if (iIndex < 0) {
@@ -804,7 +842,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsappagedown = function(oEvent) {
 			var iIndex = this.iFocusedIndex;
 			if (iIndex > -1) {
 				iIndex = iIndex + this.iPageSize;
-				while (iIndex < this.aItemDomRefs.length-1 && !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+				while (iIndex < this.aItemDomRefs.length-1 && !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 					iIndex++;
 				}
 				if (iIndex > this.aItemDomRefs.length-1) {
@@ -852,7 +890,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsaphome = function(oEvent) {
 			return;
 		}
 		while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-			|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+			|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 			iIndex++;
 			if (iIndex == this.aItemDomRefs.length) {
 				// no visible item -> no new focus
@@ -905,7 +943,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapend = function(oEvent) {
 			return;
 		}
 		while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-			|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+			|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 			iIndex--;
 			if (iIndex < 0) {
 				// no visible item -> no new focus
@@ -934,5 +972,23 @@ sap.ui.core.delegate.ItemNavigation.prototype.setTabIndex0 = function() {
 
 	this.iTabIndex = 0;
 	this.iActiveTabIndex = 0;
+
+};
+
+/*
+ * toggle navigation/action mode on F2
+ */
+sap.ui.core.delegate.ItemNavigation.prototype.onkeyup = function(oEvent) {
+
+	if (oEvent.keyCode == jQuery.sap.KeyCodes.F2) {
+		var $DomRef = jQuery(this.oDomRef);
+		if ($DomRef.data("sap.InNavArea")) {
+			$DomRef.data("sap.InNavArea", false);
+		} else if($DomRef.data("sap.InNavArea") === false) { // check for false to avoid undefined
+			$DomRef.data("sap.InNavArea", true);
+		}
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+	}
 
 };

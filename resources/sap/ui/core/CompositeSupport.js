@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.declare("sap.ui.core.CompositeSupport");jQuery.sap.require("sap.ui.core.Control");jQuery.sap.require("sap.ui.model.control.ControlModel");sap.ui.core.CompositeSupport={};
 sap.ui.core.CompositeSupport.mixInto=function(c,f,m){if(arguments.length==2&&typeof f==="object"){m=f;f="ComponentFactory"}function _(){var M=c.getMetadata();do{M=M.getParent();if(M&&M.getComponentFactoryClass){return M.getComponentFactoryClass()}}while(M);return sap.ui.core.ComponentFactory}c[f]=(_()).subclass(m);c.getMetadata().getComponentFactoryClass=jQuery.sap.getter(c[f]);if(!c.prototype._initCompositeSupport){c.prototype._initCompositeSupport=function(s){var F=new(this.getMetadata().getComponentFactoryClass())(this);if(s.componentFactory){F.customize(s.componentFactory);delete s.componentFactory}this.getComponentFactory=jQuery.sap.getter(F)}}if(!c.prototype._exitCompositeSupport){c.prototype._exitCompositeSupport=function(){this.getComponentFactory().destroy();delete this.getComponentFactory}}};

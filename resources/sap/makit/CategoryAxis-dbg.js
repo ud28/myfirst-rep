@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -31,7 +31,8 @@ jQuery.sap.require("sap.makit.Axis");
  * <li>Properties
  * <ul>
  * <li>{@link #getSortOrder sortOrder} : sap.makit.SortOrder (default: sap.makit.SortOrder.None)</li>
- * <li>{@link #getDisplayLastLabel displayLastLabel} : boolean (default: false)</li></ul>
+ * <li>{@link #getDisplayLastLabel displayLastLabel} : boolean (default: false)</li>
+ * <li>{@link #getDisplayAll displayAll} : boolean (default: true)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -56,12 +57,11 @@ jQuery.sap.require("sap.makit.Axis");
  * @extends sap.makit.Axis
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
- * @experimental Since version 1.8. 
- * API is not yet finished and might change completely
+ * @since 1.8
  * @name sap.makit.CategoryAxis
  */
 sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
@@ -72,7 +72,8 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
 	library : "sap.makit",
 	properties : {
 		"sortOrder" : {type : "sap.makit.SortOrder", group : "Misc", defaultValue : sap.makit.SortOrder.None},
-		"displayLastLabel" : {type : "boolean", group : "Misc", defaultValue : false}
+		"displayLastLabel" : {type : "boolean", group : "Misc", defaultValue : false},
+		"displayAll" : {type : "boolean", group : "Misc", defaultValue : true}
 	}
 }});
 
@@ -106,7 +107,6 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>sortOrder</code>.
  *
@@ -118,6 +118,7 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @name sap.makit.CategoryAxis#setSortOrder
  * @function
  */
+
 
 /**
  * Getter for property <code>displayLastLabel</code>.
@@ -131,7 +132,6 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @function
  */
 
-
 /**
  * Setter for property <code>displayLastLabel</code>.
  *
@@ -143,6 +143,32 @@ sap.makit.Axis.extend("sap.makit.CategoryAxis", { metadata : {
  * @name sap.makit.CategoryAxis#setDisplayLastLabel
  * @function
  */
+
+
+/**
+ * Getter for property <code>displayAll</code>.
+ * Specify whether to display all the category values when there are multiple category data regions.
+ *
+ * Default value is <code>true</code>
+ *
+ * @return {boolean} the value of property <code>displayAll</code>
+ * @public
+ * @name sap.makit.CategoryAxis#getDisplayAll
+ * @function
+ */
+
+/**
+ * Setter for property <code>displayAll</code>.
+ *
+ * Default value is <code>true</code> 
+ *
+ * @param {boolean} bDisplayAll  new value for property <code>displayAll</code>
+ * @return {sap.makit.CategoryAxis} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.makit.CategoryAxis#setDisplayAll
+ * @function
+ */
+
 
 // Start of sap/makit/CategoryAxis.js
 /*!

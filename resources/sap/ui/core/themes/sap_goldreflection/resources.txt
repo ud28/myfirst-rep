@@ -1,3 +1,4 @@
+.theming
 BlindLayer.css
 BrowserScrollbar.css
 BusyIndicator.css
@@ -25,6 +26,7 @@ img/arrow_UP_hover.png
 img/scrollbar_grip_horizontal.png
 img/scrollbar_grip_vertical.png
 library-RTL.css
+library-complete.less
 library-parameters-RTL.json
 library-parameters.json
 library.css

@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 jQuery.sap.require("sap.m.FlexBoxStylingHelper");
 jQuery.sap.declare("sap.m.FlexBoxRenderer");
@@ -24,22 +24,23 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 	if (!oControl.getVisible()) {
 		return;
 	}
-
-	if (!jQuery.support.flexBoxLayout) {
-		throw new Error("This browser does not support Flexible Box Layouts.");
+	
+	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
+		jQuery.sap.log.warning("This browser does not support Flexible Box Layouts natively.");
+		sap.m.FlexBoxRenderer.usePolyfill = true;
 	}
 
 	// Make sure HBox and VBox don't get the wrong direction and get the appropriate class
 	var hvClass = "";
 	if(oControl.getDirection() === "Row" || oControl.getDirection() === "RowReverse") {
 		if(oControl instanceof sap.m.VBox) {
-			throw new Error("Flex direction cannot be set to Row or RowReverse on VBox controls.");
+			jQuery.sap.log.error("Flex direction cannot be set to Row or RowReverse on VBox controls.");
 		} else {
 			hvClass = "sapMHBox";
 		}
 	} else if(oControl.getDirection() === "Column" || oControl.getDirection() === "ColumnReverse"){
 		if(oControl instanceof sap.m.HBox) {
-			throw new Error("Flex direction cannot be set to Column or ColumnReverse on HBox controls.");
+			jQuery.sap.log.error("Flex direction cannot be set to Column or ColumnReverse on HBox controls.");
 		} else {
 			hvClass = "sapMVBox";
 		}
@@ -50,11 +51,13 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 	if(oControl.getParent() instanceof sap.m.FlexBox) {
 		oRm.addClass("sapMFlexItem");
 
+
 		// Set layout properties
 		var oLayoutData = oControl.getLayoutData();
-		if(oLayoutData instanceof sap.m.FlexItemData) {
+		if(oLayoutData instanceof sap.m.FlexItemData && !sap.m.FlexBoxRenderer.usePolyfill) {
 			sap.m.FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
 		}
+
 		if(oParent.getRenderType() === 'List') {
 			oRm.write('<li');
 			oRm.writeClasses();
@@ -72,8 +75,16 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 	oRm.addClass("sapMFlexBox");
 	oRm.addClass(hvClass);
 	oRm.writeClasses();
-	sap.m.FlexBoxStylingHelper.setFlexBoxStyles(oRm, oControl);
+	oRm.addStyle("width", oControl.getWidth());
+	oRm.addStyle("height", oControl.getHeight());
+	if(!sap.m.FlexBoxRenderer.usePolyfill) {
+		sap.m.FlexBoxStylingHelper.setFlexBoxStyles(oRm, oControl);
+	}
 	oRm.writeStyles();
+	var sTooltip = oControl.getTooltip_AsString();
+	if (sTooltip) {
+		oRm.writeAttributeEscaped("title", sTooltip);
+	}
 	oRm.write(">");
 
 	// Now render the flex items
@@ -97,7 +108,10 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 					if(oLayoutData.getStyleClass()) {
 						oRm.addClass(oLayoutData.getStyleClass());
 					}
-					sap.m.FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
+					
+					if(!sap.m.FlexBoxRenderer.usePolyfill) {
+						sap.m.FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
+					}
 
 					// ScrollContainer needs height:100% on the flex item
 					if(aChildren[i] instanceof sap.m.ScrollContainer) {
@@ -125,7 +139,7 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 			}
 		}
 	}
-
+	
 	// Close the flexbox
 	if(oControl.getRenderType() === "List") {
 		oRm.write("</ul>");

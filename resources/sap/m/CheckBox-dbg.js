@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 /* ----------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.8.4
+ * @version 1.12.1
  *
  * @constructor   
  * @public
@@ -119,7 +119,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>selected</code>.
  *
@@ -131,6 +130,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setSelected
  * @function
  */
+
 
 /**
  * Getter for property <code>visible</code>.
@@ -144,7 +144,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>visible</code>.
  *
@@ -156,6 +155,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setVisible
  * @function
  */
+
 
 /**
  * Getter for property <code>enabled</code>.
@@ -169,7 +169,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>enabled</code>.
  *
@@ -181,6 +180,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setEnabled
  * @function
  */
+
 
 /**
  * Getter for property <code>name</code>.
@@ -194,7 +194,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>name</code>.
  *
@@ -206,6 +205,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setName
  * @function
  */
+
 
 /**
  * Getter for property <code>text</code>.
@@ -219,7 +219,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>text</code>.
  *
@@ -231,6 +230,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setText
  * @function
  */
+
 
 /**
  * Getter for property <code>textDirection</code>.
@@ -244,7 +244,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>textDirection</code>.
  *
@@ -256,6 +255,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setTextDirection
  * @function
  */
+
 
 /**
  * Getter for property <code>width</code>.
@@ -269,7 +269,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>width</code>.
  *
@@ -281,6 +280,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setWidth
  * @function
  */
+
 
 /**
  * Getter for property <code>activeHandling</code>.
@@ -294,7 +294,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Setter for property <code>activeHandling</code>.
  *
@@ -306,6 +305,7 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#setActiveHandling
  * @function
  */
+
 
 /**
  * Event is triggered when the control status is changed by the user by selecting or deselecting the checkbox. 
@@ -340,7 +340,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
-
 /**
  * Detach event handler <code>fnFunction</code> from the 'select' event of this <code>sap.m.CheckBox</code>.<br/>
  *
@@ -355,7 +354,6 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @name sap.m.CheckBox#detachSelect
  * @function
  */
-
 
 /**
  * Fire event select to attached listeners.
@@ -372,10 +370,13 @@ sap.m.CheckBox.M_EVENTS = {'select':'select'};
  * @function
  */
 
+
 // Start of sap/m/CheckBox.js
 
 sap.m.CheckBox.prototype.init = function() {
 	this.addActiveState(this);
+	jQuery.sap.require("sap.ui.core.IconPool");
+	sap.ui.core.IconPool.insertFontFaceStyle();
 };
 
 
@@ -390,7 +391,11 @@ sap.m.CheckBox.prototype.ontouchstart = function(oEvent) {
 };
 
 sap.m.CheckBox.prototype.setSelected = function(bSelected) {
-	jQuery.sap.byId(this.getId()+'-CB').toggleClass("sapMCbMarkChecked", bSelected);
+	jQuery.sap.byId(this.getId()+'-CbBg').toggleClass("sapMCbMarkChecked", bSelected);
+	var oCheckBox = jQuery.sap.domById(this.getId()+'-CB');
+	if (oCheckBox){
+		bSelected ? oCheckBox.setAttribute('checked', 'checked') : oCheckBox.removeAttribute('checked');
+	}
 	this.setProperty("selected", bSelected, true);
 	return this;
 }
@@ -464,6 +469,6 @@ sap.m.CheckBox.prototype.exit = function() {
 
 sap.m.CheckBox.prototype._createLabel = function(prop, value){
 	this._oLabel = new sap.m.Label(this.getId() + "-label", {
-					}).addStyleClass("sapMRbBLabel").setParent(this, null, true);
+					}).addStyleClass("sapMCbLabel").setParent(this, null, true);
 	this._oLabel.setProperty(prop, value, false);
 }

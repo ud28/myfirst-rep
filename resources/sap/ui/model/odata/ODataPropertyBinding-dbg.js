@@ -1,7 +1,7 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ * (c) Copyright 2009-2013 SAP AG. All rights reserved
  */
 
 // Provides class sap.ui.model.odata.ODataPropertyBinding
@@ -15,24 +15,36 @@ jQuery.sap.require("sap.ui.model.PropertyBinding");
  *
  * @param sPath
  * @param [oModel]
+ * 
+ * @name sap.ui.model.odata.ODataPropertyBinding
+ * @extends sap.ui.model.PropertyBinding
  */
-sap.ui.model.odata.ODataPropertyBinding = function(oModel, sPath, oContext){
-	sap.ui.model.PropertyBinding.apply(this, arguments);
-
-	this.oValue = this._getValue();
-};
-sap.ui.model.odata.ODataPropertyBinding.prototype = jQuery.sap.newObject(sap.ui.model.PropertyBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.odata.ODataPropertyBinding", {
-
-	  // ---- object ----
-	  baseType : "sap.ui.model.PropertyBinding",
-	  publicMethods : [
-		// methods
-	  ]
+sap.ui.model.PropertyBinding.extend("sap.ui.model.odata.ODataPropertyBinding", /** @lends sap.ui.model.odata.ODataPropertyBinding */ {
+	
+	constructor : function(oModel, sPath, oContext){
+		sap.ui.model.PropertyBinding.apply(this, arguments);
+	
+		this.oValue = this._getValue();
+	}
 
 });
 
+/**
+ * Creates a new subclass of class sap.ui.model.odata.ODataPropertyBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.odata.ODataPropertyBinding.extend
+ * @function
+ */
 
 /**
  * Returns the current value of the bound target
